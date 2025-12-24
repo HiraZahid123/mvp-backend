@@ -15,9 +15,13 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
+            \App\Http\Middleware\SecurityHeaders::class,
         ]);
 
-        //
+        $middleware->alias([
+            'admin' => \App\Http\Middleware\AdminMiddleware::class,
+            'rate-limit-otp' => \App\Http\Middleware\RateLimitOTPRequests::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

@@ -27,7 +27,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email'],
+            'email' => ['required', 'string'],
             'password' => ['required', 'string'],
         ];
     }
@@ -41,7 +41,18 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        $credentials = $this->only('email', 'password');
+        $loginField = filter_var($credentials['email'], FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
+
+        // Try to find user by email or phone
+        $user = null;
+        if ($loginField === 'email') {
+            $user = \App\Models\User::where('email', $credentials['email'])->first();
+        } else {
+            $user = \App\Models\User::where('phone', $credentials['email'])->first();
+        }
+
+        if (!$user || !\Illuminate\Support\Facades\Hash::check($credentials['password'], $user->password)) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
@@ -49,7 +60,17 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        // Store user for later login after OTP verification
+        $this->user = $user;
         RateLimiter::clear($this->throttleKey());
+    }
+
+    /**
+     * Get the validated user (without actually logging them in)
+     */
+    public function getValidatedUser()
+    {
+        return $this->user ?? null;
     }
 
     /**
