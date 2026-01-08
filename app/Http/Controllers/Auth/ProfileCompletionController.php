@@ -36,6 +36,7 @@ class ProfileCompletionController extends Controller
             'location_lat' => 'required|numeric|between:-90,90',
             'location_lng' => 'required|numeric|between:-180,180',
             'discovery_radius_km' => 'required|integer|min:1|max:50',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $user = Auth::user();
@@ -44,12 +45,18 @@ class ProfileCompletionController extends Controller
             return redirect()->route('auth.select-role');
         }
 
+        $avatarPath = null;
+        if ($request->hasFile('avatar')) {
+            $avatarPath = $request->file('avatar')->store('avatars', 'public');
+        }
+
         $user->update([
             'name' => $request->name,
             'location_address' => $request->location_address,
             'location_lat' => $request->location_lat,
             'location_lng' => $request->location_lng,
             'discovery_radius_km' => $request->discovery_radius_km,
+            'avatar' => $avatarPath,
         ]);
 
         return redirect()->route('dashboard');

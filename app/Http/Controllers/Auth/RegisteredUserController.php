@@ -29,15 +29,7 @@ class RegisteredUserController extends Controller
      */
     public function create(): Response
     {
-        $selectedRole = Session::get('selected_role');
-
-        if (!$selectedRole) {
-            return redirect()->route('auth.select-role');
-        }
-
-        return Inertia::render('Auth/Register', [
-            'selectedRole' => $selectedRole,
-        ]);
+        return Inertia::render('Auth/Register');
     }
 
     /**
@@ -47,25 +39,17 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $selectedRole = Session::get('selected_role');
-
-        if (!$selectedRole) {
-            return redirect()->route('auth.select-role');
-        }
-
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
-            'phone' => 'required|string|max:20|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'phone' => $request->phone,
             'password' => Hash::make($request->password),
-            'role_type' => $selectedRole,
+            // role_type will be selected later
         ]);
 
         event(new Registered($user));

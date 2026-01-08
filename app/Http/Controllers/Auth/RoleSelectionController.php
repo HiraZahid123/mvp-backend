@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class RoleSelectionController extends Controller
@@ -19,7 +20,7 @@ class RoleSelectionController extends Controller
     }
 
     /**
-     * Store the selected role in session and redirect to registration.
+     * Store the selected role and redirect to profile completion.
      */
     public function store(Request $request)
     {
@@ -27,10 +28,17 @@ class RoleSelectionController extends Controller
             'role' => 'required|in:customer,performer,both',
         ]);
 
-        // Store the selected role in session
-        $request->session()->put('selected_role', $request->role);
+        $user = Auth::user();
+        
+        if (!$user) {
+            return redirect()->route('login');
+        }
 
-        // Redirect to registration
-        return redirect()->route('register');
+        $user->update([
+            'role_type' => $request->role,
+        ]);
+
+        // Redirect to profile completion
+        return redirect()->route('auth.complete-profile');
     }
 }

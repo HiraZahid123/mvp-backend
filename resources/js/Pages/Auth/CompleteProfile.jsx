@@ -1,14 +1,24 @@
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { GoogleMap, Marker, Circle, useLoadScript } from '@react-google-maps/api';
+import useTranslation from '@/Hooks/useTranslation';
+import AuthSplitLayout from '@/Layouts/AuthSplitLayout';
+import TextInput from '@/Components/TextInput';
+import InputLabel from '@/Components/InputLabel';
+import PrimaryButton from '@/Components/PrimaryButton';
+import InputError from '@/Components/InputError';
+import BackButton from '@/Components/BackButton';
 
 const libraries = ['places'];
 
 export default function CompleteProfile() {
     const { user } = usePage().props;
-    const [mapCenter, setMapCenter] = useState({ lat: 40.7128, lng: -74.0060 }); // Default to NYC
+    const { t } = useTranslation();
+    const fileInputRef = useRef(null);
+    const [preview, setPreview] = useState(user?.avatar || "/default-avatar.svg");
+    const [mapCenter, setMapCenter] = useState({ lat: 40.7128, lng: -74.0060 });
     const [selectedLocation, setSelectedLocation] = useState(null);
-    const [radius, setRadius] = useState(10); // Default 10km
+    const [radius, setRadius] = useState(10);
 
     const { isLoaded, loadError } = useLoadScript({
         googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
@@ -17,26 +27,54 @@ export default function CompleteProfile() {
 
     const { data, setData, post, processing, errors } = useForm({
         name: user?.name || '',
+        zip_code: '',
         location_address: '',
         location_lat: null,
         location_lng: null,
-        discovery_radius_km: 10,
+        discovery_radius_km: 25,
+        avatar: null,
     });
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setData('avatar', file);
+            setPreview(URL.createObjectURL(file));
+        }
+    };
 
     const handleMapClick = useCallback((event) => {
         const lat = event.latLng.lat();
         const lng = event.latLng.lng();
 
         setSelectedLocation({ lat, lng });
-        setData('location_lat', lat);
-        setData('location_lng', lng);
+        setData(prev => ({
+            ...prev,
+            location_lat: lat,
+            location_lng: lng,
+        }));
 
-        // Reverse geocode to get address
         if (window.google && window.google.maps) {
             const geocoder = new window.google.maps.Geocoder();
             geocoder.geocode({ location: { lat, lng } }, (results, status) => {
                 if (status === 'OK' && results[0]) {
-                    setData('location_address', results[0].formatted_address);
+                    const addressComponents = results[0].address_components;
+                    let zipCode = '';
+                    
+                    for (const component of addressComponents) {
+                        if (component.types.includes('postal_code')) {
+                            zipCode = component.long_name;
+                            break;
+                        }
+                    }
+
+                    setData(prev => ({
+                        ...prev,
+                        location_lat: lat,
+                        location_lng: lng,
+                        location_address: results[0].formatted_address,
+                        zip_code: zipCode || prev.zip_code
+                    }));
                 }
             });
         }
@@ -49,179 +87,189 @@ export default function CompleteProfile() {
 
     const submit = (e) => {
         e.preventDefault();
-
-        post(route('auth.complete-profile'), {
-            onSuccess: () => {
-                // Redirect will be handled by controller
-            },
-        });
+        post(route('auth.complete-profile'));
     };
 
     const mapContainerStyle = {
         width: '100%',
-        height: '300px',
+        height: '240px',
+        borderRadius: '1.5rem'
     };
 
     const circleOptions = {
-        strokeColor: '#3B82F6',
+        strokeColor: '#D4AF37',
         strokeOpacity: 0.8,
         strokeWeight: 2,
-        fillColor: '#3B82F6',
+        fillColor: '#D4AF37',
         fillOpacity: 0.1,
         clickable: false,
-        draggable: false,
-        editable: false,
-        visible: true,
-        radius: radius * 1000, // Convert km to meters
+        radius: radius * 1000,
         center: selectedLocation || mapCenter,
     };
 
-    if (loadError) {
-        return <div>Error loading maps</div>;
-    }
-
     return (
-        <>
-            <Head title="Complete Your Profile" />
+        <AuthSplitLayout
+            heroImage="/basic-profile.svg"
+            heroHeading="Welcome"
+            heroSubtext="Oflem makes life easy by connecting people to hire help or earn money by completing tasks quickly and reliably."
+            bgAccentClass="bg-cream-accent"
+        >
+            <Head title="Complete Profile" />
+            
+            <div className="mb-8 lg:mb-10 text-center lg:text-left relative">
+                 <BackButton 
+                    href={route('auth.select-role')} 
+                    className="absolute -top-12 left-0" 
+                />
 
-            <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-                <div className="flex min-h-screen items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
-                    <div className="w-full max-w-2xl space-y-8">
-                        {/* Header */}
-                        <div className="text-center">
-                            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                                Complete Your Profile
-                            </h1>
-                            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                                Set your location and discovery preferences
-                            </p>
+                <h2 className="text-lg font-medium text-primary-black mb-1">{t('Promis, c\'est le dernier truc')}</h2>
+                <h1 className="text-[32px] lg:text-[40px] font-black text-primary-black tracking-tight mb-2">
+                    {t('Juste ta zone. Après, Oflem gère.')}
+                </h1>
+                <div className="flex flex-col items-center w-full mt-6 mb-2">
+                    <div className="relative mb-2">
+                        <div className="w-24 h-24 rounded-full bg-gray-100 border-2 border-white shadow-sm overflow-hidden flex items-center justify-center">
+                            <img src={preview} alt="Profile" className="w-full h-full object-cover" />
                         </div>
+                        <button 
+                            type="button"
+                            onClick={() => fileInputRef.current.click()}
+                            className="absolute bottom-0 right-0 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center border border-gray-border overflow-hidden hover:bg-gold-accent transition-colors group"
+                        >
+                             <svg className="w-4 h-4 text-gray-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                            </svg>
+                        </button>
+                        <input 
+                            type="file" 
+                            ref={fileInputRef}
+                            className="hidden"
+                            accept="image/*"
+                            onChange={handleImageChange}
+                        />
+                    </div>
+                    <button 
+                        type="button"
+                        onClick={() => fileInputRef.current.click()}
+                        className="text-xs font-black text-gray-muted hover:text-primary-black transition-colors"
+                    >
+                        Edit Profile
+                    </button>
+                </div>
+                </div>
 
-                        {/* Profile Form */}
-                        <form onSubmit={submit} className="space-y-6">
-                            {/* Name */}
-                            <div>
-                                <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                    Display Name
-                                </label>
-                                <div className="mt-1">
-                                    <input
-                                        id="name"
-                                        name="name"
-                                        type="text"
-                                        autoComplete="name"
-                                        required
-                                        value={data.name}
-                                        onChange={(e) => setData('name', e.target.value)}
-                                        className="block w-full appearance-none rounded-lg border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
-                                        placeholder="How should we call you?"
-                                    />
-                                </div>
-                                {errors.name && (
-                                    <p className="mt-1 text-sm text-red-600">{errors.name}</p>
-                                )}
-                            </div>
 
-                            {/* Location Section */}
-                            <div className="space-y-4">
-                                <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                                    Set Your Location
-                                </h3>
-                                <p className="text-sm text-gray-600 dark:text-gray-400">
-                                    Click on the map to set your location and adjust the discovery radius
-                                </p>
+            <form onSubmit={submit} className="space-y-5 pb-8">
+                <div className="space-y-1.5">
+                    <InputLabel htmlFor="name" value={t('Full Name')} />
+                    <TextInput
+                        id="name"
+                        type="text"
+                        value={data.name}
+                        onChange={(e) => setData('name', e.target.value)}
+                        placeholder="Enter Your Name"
+                        autoComplete="name"
+                        required
+                    />
+                    <InputError message={errors.name} />
+                </div>
 
-                                {/* Map */}
-                                <div className="rounded-lg overflow-hidden border border-gray-300 dark:border-gray-600">
-                                    {isLoaded ? (
-                                        <GoogleMap
-                                            mapContainerStyle={mapContainerStyle}
-                                            center={mapCenter}
-                                            zoom={10}
-                                            onClick={handleMapClick}
-                                        >
-                                            {selectedLocation && (
-                                                <>
-                                                    <Marker position={selectedLocation} />
-                                                    <Circle
-                                                        center={selectedLocation}
-                                                        options={circleOptions}
-                                                    />
-                                                </>
-                                            )}
-                                        </GoogleMap>
-                                    ) : (
-                                        <div className="w-full h-[300px] bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                                            <div className="text-gray-500 dark:text-gray-400">Loading map...</div>
-                                        </div>
-                                    )}
-                                </div>
+                <div className="space-y-1.5">
+                    <InputLabel htmlFor="zip_code" value={t('ZIP Code')} />
+                    <TextInput
+                        id="zip_code"
+                        type="text"
+                        value={data.zip_code}
+                        onChange={(e) => setData('zip_code', e.target.value)}
+                        placeholder="e.g. 10001"
+                        required
+                    />
+                    <InputError message={errors.zip_code} />
+                </div>
 
-                                {/* Address Display */}
-                                {data.location_address && (
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                            Selected Address
-                                        </label>
-                                        <div className="mt-1 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600">
-                                            <p className="text-sm text-gray-900 dark:text-white">
-                                                {data.location_address}
-                                            </p>
-                                        </div>
-                                    </div>
-                                )}
+                <div className="space-y-1.5">
+                    <InputLabel htmlFor="location_address" value={t('Location')} />
+                    <TextInput
+                        id="location_address"
+                        type="text"
+                        value={data.location_address}
+                        onChange={(e) => setData('location_address', e.target.value)}
+                        placeholder="New York City, USA"
+                        required
+                    />
+                    <InputError message={errors.location_address} />
+                </div>
 
-                                {/* Radius Slider */}
-                                <div>
-                                    <label htmlFor="radius" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                        Discovery Radius: {radius} km
-                                    </label>
-                                    <div className="mt-2">
-                                        <input
-                                            id="radius"
-                                            name="radius"
-                                            type="range"
-                                            min="1"
-                                            max="50"
-                                            value={radius}
-                                            onChange={(e) => handleRadiusChange(parseInt(e.target.value))}
-                                            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+                <div className="space-y-4 pt-2">
+                    <div className="flex justify-between items-center px-4">
+                        <div>
+                            <InputLabel value={t('Radius')} className="ml-0" />
+                            <p className="text-[10px] text-gray-muted font-bold">{t('Pick a radius to make tasking easier')}</p>
+                        </div>
+                        <span className="text-sm font-black text-primary-black">{radius} km</span>
+                    </div>
+                    
+                    <div className="px-4">
+                        <input
+                            type="range"
+                            min="1"
+                            max="50"
+                            value={radius}
+                            onChange={(e) => handleRadiusChange(parseInt(e.target.value))}
+                            className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-gold-accent"
+                        />
+                    </div>
+
+                    <div className="rounded-[24px] overflow-hidden border border-gray-border relative mx-4">
+                        {isLoaded ? (
+                            <GoogleMap
+                                mapContainerStyle={mapContainerStyle}
+                                center={selectedLocation || mapCenter}
+                                zoom={11}
+                                onClick={handleMapClick}
+                                options={{
+                                    disableDefaultUI: true,
+                                    zoomControl: false,
+                                    styles: [
+                                        {
+                                            featureType: "all",
+                                            elementType: "geometry",
+                                            stylers: [{ color: "#f5f5f5" }]
+                                        }
+                                    ]
+                                }}
+                            >
+                                {selectedLocation && (
+                                    <>
+                                        <Marker 
+                                            position={selectedLocation} 
+                                            draggable={true}
+                                            onDragEnd={handleMapClick}
                                         />
-                                    </div>
-                                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                                        This determines how far you'll discover performers or customers from your location
-                                    </p>
-                                </div>
+                                        <Circle
+                                            center={selectedLocation}
+                                            options={circleOptions}
+                                        />
+                                    </>
+                                )}
+                            </GoogleMap>
+                        ) : (
+                            <div className="w-full h-[240px] bg-gray-100 flex items-center justify-center italic text-gray-400">
+                                {loadError ? 'Error loading maps' : 'Loading map...'}
                             </div>
-
-                            {/* Submit Button */}
-                            <div className="text-center">
-                                <button
-                                    type="submit"
-                                    disabled={processing || !selectedLocation}
-                                    className="inline-flex items-center px-8 py-3 text-base font-medium text-white bg-indigo-600 border border-transparent rounded-lg shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                                >
-                                    {processing ? 'Saving...' : 'Complete Profile'}
-                                </button>
-                            </div>
-
-                            {/* General Error */}
-                            {errors.general && (
-                                <div className="text-center text-red-600 text-sm">
-                                    {errors.general}
-                                </div>
-                            )}
-                        </form>
-
-                        {/* Footer */}
-                        <div className="text-center">
-                            <p className="text-sm text-gray-600 dark:text-gray-400">
-                                You can change these settings later in your profile
-                            </p>
-                        </div>
+                        )}
                     </div>
                 </div>
-            </div>
-        </>
+
+                {errors.general && <p className="text-red-500 text-sm font-bold text-center">{errors.general}</p>}
+                {errors.avatar && <p className="text-red-500 text-sm font-bold text-center">{errors.avatar}</p>}
+
+                <div className="pt-4">
+                    <PrimaryButton className="w-full" disabled={processing}>
+                        {t('Complete Profile')}
+                    </PrimaryButton>
+                </div>
+            </form>
+        </AuthSplitLayout>
     );
 }

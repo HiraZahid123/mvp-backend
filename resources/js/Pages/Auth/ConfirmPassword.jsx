@@ -1,9 +1,11 @@
-import InputError from '@/Components/InputError';
+import { Head, useForm } from '@inertiajs/react';
+import React from 'react';
+import AuthSplitLayout from '@/Layouts/AuthSplitLayout';
+import TextInput from '@/Components/TextInput';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
-import GuestLayout from '@/Layouts/GuestLayout';
-import { Head, useForm } from '@inertiajs/react';
+import InputError from '@/Components/InputError';
+import BackButton from '@/Components/BackButton';
 
 export default function ConfirmPassword() {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -19,37 +21,46 @@ export default function ConfirmPassword() {
     };
 
     return (
-        <GuestLayout>
+        <AuthSplitLayout
+            heroHeading="Secure Access"
+            heroSubtext="Please confirm your password to proceed to this sensitive area."
+            bgAccentClass="bg-cream-accent"
+        >
             <Head title="Confirm Password" />
 
-            <div className="mb-4 text-sm text-gray-600 dark:text-gray-400">
-                This is a secure area of the application. Please confirm your
-                password before continuing.
+            <div className="mb-8 lg:mb-10 text-center lg:text-left relative">
+                <BackButton 
+                    href={route('dashboard')} 
+                    className="absolute -top-12 left-0" 
+                />
+
+                <h2 className="text-lg font-medium text-primary-black mb-1">Oflem</h2>
+                <h1 className="text-[32px] lg:text-[40px] font-black text-primary-black mb-2 tracking-tight">Confirm Password</h1>
+                <p className="text-gray-muted text-sm font-medium">This is a secure area. Please confirm your password before continuing.</p>
             </div>
 
-            <form onSubmit={submit}>
-                <div className="mt-4">
+            <form onSubmit={submit} className="space-y-6">
+                <div className="space-y-1.5">
                     <InputLabel htmlFor="password" value="Password" />
-
                     <TextInput
                         id="password"
                         type="password"
                         name="password"
                         value={data.password}
-                        className="mt-1 block w-full"
-                        isFocused={true}
                         onChange={(e) => setData('password', e.target.value)}
+                        placeholder="Enter your password"
+                        required
+                        autoFocus
                     />
-
-                    <InputError message={errors.password} className="mt-2" />
+                    <InputError message={errors.password} />
                 </div>
 
-                <div className="mt-4 flex items-center justify-end">
-                    <PrimaryButton className="ms-4" disabled={processing}>
+                <div className="pt-4">
+                    <PrimaryButton className="w-full" disabled={processing}>
                         Confirm
                     </PrimaryButton>
                 </div>
             </form>
-        </GuestLayout>
+        </AuthSplitLayout>
     );
 }

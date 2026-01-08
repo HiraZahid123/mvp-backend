@@ -1,34 +1,33 @@
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import useTranslation from '@/Hooks/useTranslation';
 import axios from 'axios';
+import AuthSplitLayout from '@/Layouts/AuthSplitLayout';
+import PrimaryButton from '@/Components/PrimaryButton';
+import InputError from '@/Components/InputError';
+import BackButton from '@/Components/BackButton';
 
 export default function VerifyOTP() {
-    // Added default values to prevent destructuring errors
+    const { t } = useTranslation();
     const { email = '', phone = '' } = usePage().props;
-    const [timeLeft, setTimeLeft] = useState(300); // 5 minutes
+    const [timeLeft, setTimeLeft] = useState(300);
     const [canResend, setCanResend] = useState(false);
     const [otpSent, setOtpSent] = useState(false);
     const [selectedMethod, setSelectedMethod] = useState(null);
+    const [otp, setOtp] = useState(['', '', '', '', '', '']);
 
     const { data, setData, post, processing, errors, reset } = useForm({
         code: '',
     });
 
-    // Countdown timer
     useEffect(() => {
-        const timer = setInterval(() => {
-            setTimeLeft((prev) => {
-                if (prev <= 1) {
-                    setCanResend(true);
-                    clearInterval(timer);
-                    return 0;
-                }
-                return prev - 1;
-            });
-        }, 1000);
-
-        return () => clearInterval(timer);
-    }, []);
+        if (otpSent && timeLeft > 0) {
+            const timer = setInterval(() => setTimeLeft(prev => prev - 1), 1000);
+            return () => clearInterval(timer);
+        } else if (timeLeft === 0) {
+            setCanResend(true);
+        }
+    }, [otpSent, timeLeft]);
 
     const formatTime = (seconds) => {
         const mins = Math.floor(seconds / 60);
@@ -42,160 +41,223 @@ export default function VerifyOTP() {
         setTimeLeft(300);
         setCanResend(false);
 
-        // Axios handles the CSRF token automatically 
         axios.post(route('auth.verify-otp.send'), { method })
-            .then(response => {
-                console.log('OTP sent successfully:', response.data.message);
-            })
-            .catch(error => {
-                // Handle the error state if the server fails
-                console.error('Error sending OTP:', error.response?.data?.message || error.message);
-                setOtpSent(false); // Let them try to click the button again
-            });
+            .catch(() => setOtpSent(false));
+    };
+
+    const handlePaste = (e) => {
+        e.preventDefault();
+        const pastedData = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+        
+        if (!pastedData) return;
+
+        const newOtp = [...otp];
+        for (let i = 0; i < pastedData.length; i++) {
+            newOtp[i] = pastedData[i];
+        }
+        
+        setOtp(newOtp);
+        setData('code', newOtp.join(''));
+
+        const nextIndex = Math.min(pastedData.length, 5);
+        const element = document.getElementById(`otp-${nextIndex}`);
+        if (element) element.focus();
+    };
+
+    const handleOtpChange = (value, index) => {
+        if (isNaN(value)) return;
+        const newOtp = [...otp];
+        newOtp[index] = value;
+        setOtp(newOtp);
+        setData('code', newOtp.join(''));
+
+        if (value && index < 5) {
+            document.getElementById(`otp-${index + 1}`).focus();
+        }
     };
 
     const submit = (e) => {
         e.preventDefault();
-        post(route('auth.verify-otp'), {
-            onSuccess: () => reset('code'),
-        });
-    };
-
-    const handleCodeChange = (field, value) => {
-        const numericValue = value.replace(/\D/g, '').slice(0, 6);
-        setData(field, numericValue);
+        post(route('auth.verify-otp'));
     };
 
     return (
-        <>
-            <Head title="Verify Your Account" />
+        <AuthSplitLayout 
+            heroImage={!otpSent ? "/otp-verification-slection.svg" : "/otp-verify-code.svg"}
+            heroHeading={
+                !otpSent ? t("Un petit code et c'est parti") : (
+                    <>
+                        <span className="hidden lg:inline">{t("Presque fini")}</span>
+                        <span className="lg:hidden">{t("Presque fini")}</span>
+                    </>
+                )
+            }
+            heroSubtext={
+                !otpSent ? (
+                    <>
+                        <span className="hidden lg:inline">{t("On t'envoie un code par e-mail pour continuer.")}</span>
+                        <span className="lg:hidden">{t("On t'envoie un code par e-mail pour continuer.")}</span>
+                    </>
+                ) : (
+                    <>
+                        <span className="hidden lg:inline">{t("6 chiffres, et Oflem prend le relais.")}</span>
+                        <span className="lg:hidden">{t("6 chiffres, et Oflem prend le relais.")}</span>
+                    </>
+                )
+            }
+            bgAccentClass="bg-cream-accent"
+        >
+            <Head title="Verify OTP" />
+            
+            <div className="mb-8 lg:mb-10 text-center lg:text-left relative">
+                <BackButton 
+                    href={otpSent ? "#" : route('login')} 
+                    onClick={otpSent ? (e) => { e.preventDefault(); setOtpSent(false); } : undefined}
+                    className="absolute -top-12 left-0" 
+                />
 
-            <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-                <div className="flex min-h-screen items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
-                    <div className="w-full max-w-2xl space-y-8">
-                        <div className="text-center">
-                            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                                Verify Your Account
-                            </h1>
-                            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                                Please verify your identity to continue
-                            </p>
-                        </div>
+                <h2 className="text-lg font-medium text-primary-black mb-1">{t('Oflem')}</h2>
+                <h1 className="text-[32px] lg:text-[40px] font-black text-primary-black tracking-tight mb-2">
+                    {!otpSent ? t("Un petit code et c'est parti") : t("Presque fini")}
+                </h1>
+                <p className="text-gray-muted text-sm font-medium">
+                    {!otpSent 
+                        ? t("On t'envoie un code par e-mail pour continuer.")
+                        : t("Entre le code reçu par e-mail.")}
+                </p>
+            </div>
 
-                        <div className="text-center">
-                            <div className="inline-flex items-center px-4 py-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg">
-                                <svg className="w-5 h-5 text-indigo-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                <span className="text-sm font-medium text-indigo-800 dark:text-indigo-200">
-                                    Time remaining: {formatTime(timeLeft)}
-                                </span>
+            <div className="space-y-6">
+                {!otpSent ? (
+                    <div className="space-y-4">
+                        <div
+                            onClick={() => setSelectedMethod('email')}
+                            className={`p-5 bg-white border rounded-[24px] cursor-pointer transition-all flex items-center justify-between group ${
+                                selectedMethod === 'email' ? 'border-gold-accent ring-1 ring-gold-accent' : 'border-gray-border hover:border-gold-accent'
+                            }`}
+                        >
+                            <div className="flex items-center space-x-4">
+                                <div className="w-12 h-12 rounded-full bg-cream-accent flex items-center justify-center text-gold-accent transition-colors group-hover:bg-gold-accent group-hover:text-white">
+                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 className="font-black text-primary-black">Send code to email :</h3>
+                                    <p className="text-sm text-gray-muted font-bold">{email}</p>
+                                </div>
+                            </div>
+                            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                                selectedMethod === 'email' ? 'border-gold-accent' : 'border-gray-border group-hover:border-gold-accent'
+                            }`}>
+                                <div className={`w-3 h-3 rounded-full transition-colors ${
+                                    selectedMethod === 'email' ? 'bg-gold-accent' : 'bg-transparent'
+                                }`}></div>
                             </div>
                         </div>
 
-                        <form onSubmit={submit} className="space-y-6">
-                            {!otpSent ? (
-                                <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-                                    <div className="text-center mb-6">
-                                        <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Choose Verification Method</h3>
-                                        <p className="text-sm text-gray-500 dark:text-gray-400">Select how you'd like to receive your verification code</p>
-                                    </div>
-
-                                    <div className="space-y-3">
-                                        <button
-                                            type="button"
-                                            onClick={() => sendOTP('email')}
-                                            className="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-600"
-                                        >
-                                            <svg className="w-5 h-5 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                            </svg>
-                                            Send code to email: {email}
-                                        </button>
-
-                                        <button
-                                            type="button"
-                                            onClick={() => sendOTP('phone')}
-                                            className="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-600"
-                                        >
-                                            <svg className="w-5 h-5 mr-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                                            </svg>
-                                            Send code to phone: {phone}
-                                        </button>
-                                    </div>
+                        <div
+                            onClick={() => setSelectedMethod('phone')}
+                            className={`p-5 bg-white border rounded-[24px] cursor-pointer transition-all flex items-center justify-between group ${
+                                selectedMethod === 'phone' ? 'border-gold-accent ring-1 ring-gold-accent' : 'border-gray-border hover:border-gold-accent'
+                            }`}
+                        >
+                            <div className="flex items-center space-x-4">
+                                <div className="w-12 h-12 rounded-full bg-cream-accent flex items-center justify-center text-gold-accent transition-colors group-hover:bg-gold-accent group-hover:text-white">
+                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                    </svg>
                                 </div>
-                            ) : (
-                                <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-                                    <div className="text-center mb-4">
-                                        <div className={`inline-flex items-center justify-center w-12 h-12 rounded-full mb-3 ${selectedMethod === 'email' ? 'bg-blue-100 dark:bg-blue-900/30' : 'bg-green-100 dark:bg-green-900/30'}`}>
-                                            {selectedMethod === 'email' ? (
-                                                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                                </svg>
-                                            ) : (
-                                                <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                                                </svg>
-                                            )}
-                                        </div>
-                                        <h3 className="text-lg font-medium text-gray-900 dark:text-white">Enter Verification Code</h3>
-                                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                                            Sent to: {selectedMethod === 'email' ? email : phone}
-                                        </p>
-                                    </div>
+                                <div>
+                                    <h3 className="font-black text-primary-black">Send code to phone number :</h3>
+                                    <p className="text-sm text-gray-muted font-bold">{phone}</p>
+                                </div>
+                            </div>
+                            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                                selectedMethod === 'phone' ? 'border-gold-accent' : 'border-gray-border group-hover:border-gold-accent'
+                            }`}>
+                                <div className={`w-3 h-3 rounded-full transition-colors ${
+                                    selectedMethod === 'phone' ? 'bg-gold-accent' : 'bg-transparent'
+                                }`}></div>
+                            </div>
+                        </div>
 
-                                    <div>
+                        <PrimaryButton 
+                            onClick={() => sendOTP(selectedMethod)}
+                            disabled={!selectedMethod}
+                            className="w-full mt-6"
+                        >
+                            Verify Account
+                        </PrimaryButton>
+                    </div>
+                ) : (
+                    <>
+                        <div className="mb-6">
+                             <p className="text-primary-black font-black text-center">{selectedMethod === 'email' ? email : phone}</p>
+                        </div>
+
+                        <form onSubmit={submit} className="space-y-8">
+                            <div className="space-y-2">
+                                <label className="text-sm font-black text-primary-black block text-center">{t('Entre le code reçu par e-mail.')}</label>
+                                <div className="flex justify-between gap-1 sm:gap-2 max-w-sm mx-auto">
+                                    {otp.map((digit, index) => (
                                         <input
-                                            id="code"
-                                            name="code"
+                                            key={index}
+                                            id={`otp-${index}`}
                                             type="text"
-                                            inputMode="numeric"
-                                            autoComplete="one-time-code"
-                                            required
-                                            value={data.code}
-                                            onChange={(e) => handleCodeChange('code', e.target.value)}
-                                            className="block w-full text-center text-2xl font-mono tracking-widest appearance-none rounded-lg border border-gray-300 px-3 py-4 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                                            placeholder="000000"
-                                            maxLength={6}
+                                            maxLength="1"
+                                            value={digit}
+                                            onChange={(e) => handleOtpChange(e.target.value, index)}
+                                            onPaste={handlePaste}
+                                            className="w-10 h-10 sm:w-12 sm:h-12 text-center text-xl font-black bg-input-bg border border-gray-border focus:ring-1 focus:ring-gold-accent focus:border-gold-accent rounded-full outline-none transition-all"
                                         />
-                                        {errors.code && (
-                                            <p className="mt-2 text-sm text-red-600">{errors.code}</p>
-                                        )}
-                                    </div>
-
-                                    <div className="mt-4 text-center">
-                                        <button
-                                            type="button"
-                                            onClick={() => sendOTP(selectedMethod)}
-                                            disabled={!canResend}
-                                            className="text-sm text-indigo-600 hover:text-indigo-500 disabled:text-gray-400 disabled:cursor-not-allowed"
-                                        >
-                                            Resend code
-                                        </button>
-                                    </div>
+                                    ))}
                                 </div>
-                            )}
+                            </div>
 
-                            <div className="text-center">
-                                <button
-                                    type="submit"
-                                    disabled={processing || data.code.length !== 6 || !otpSent}
-                                    className="inline-flex items-center px-8 py-3 text-base font-medium text-white bg-indigo-600 border border-transparent rounded-lg shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                            <InputError message={errors.code} className="text-center ml-0" />
+
+                            <PrimaryButton
+                                type="submit"
+                                disabled={processing || data.code.length !== 6}
+                                className="w-full"
+                            >
+                                {t('Verify Code')}
+                            </PrimaryButton>
+
+                            <div className="text-center space-y-4">
+                                <p className="text-sm text-gray-muted font-bold">
+                                    {timeLeft > 0 ? (
+                                        <>
+                                            <span className="hidden lg:inline">Resend Code in {formatTime(timeLeft)}</span>
+                                            <span className="lg:hidden">Resend Code {formatTime(timeLeft)}</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            Didn't receive code? 
+                                            <button
+                                                type="button"
+                                                onClick={() => sendOTP(selectedMethod)}
+                                                className="text-primary-black font-black underline ml-1 hover:text-gold-accent transition-colors"
+                                            >
+                                                Resend Code
+                                            </button>
+                                        </>
+                                    )}
+                                </p>
+                                
+                                <button 
+                                    type="button" 
+                                    onClick={() => setOtpSent(false)} 
+                                    className="text-xs text-gray-muted font-black hover:text-primary-black transition-colors"
                                 >
-                                    {processing ? 'Verifying...' : 'Verify Account'}
+                                    Change Method
                                 </button>
                             </div>
-
-                            {errors.general && (
-                                <div className="text-center text-red-600 text-sm">
-                                    {errors.general}
-                                </div>
-                            )}
                         </form>
-                    </div>
-                </div>
+                    </>
+                )}
             </div>
-        </> 
+        </AuthSplitLayout>
     );
 }

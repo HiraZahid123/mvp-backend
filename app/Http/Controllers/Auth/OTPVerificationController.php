@@ -121,12 +121,12 @@ class OTPVerificationController extends Controller
             }
 
             // Clear session data
-            Session::forget(['user_id', 'otp_token', 'otp_method', 'selected_role']);
+            Session::forget(['user_id', 'otp_token', 'otp_method']);
 
             // Log the user in
             Auth::login($user);
 
-            return redirect()->route('auth.complete-profile');
+            return redirect()->route('auth.select-role');
 
         } catch (\Exception $e) {
             return back()->withErrors(['general' => 'Verification failed. Please try again.']);

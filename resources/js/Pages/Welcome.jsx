@@ -1,51 +1,61 @@
 import { Head, Link } from '@inertiajs/react';
+import React from 'react';
+import useTranslation from '@/Hooks/useTranslation';
+import AuthSplitLayout from '@/Layouts/AuthSplitLayout';
 
 export default function Welcome() {
+    const { t } = useTranslation();
     return (
-        <>
-            <Head title="Welcome to Oflem" />
-            <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-                <div className="flex min-h-screen items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
-                    <div className="w-full max-w-md space-y-8">
-                        {/* Logo/Brand */}
-                        <div className="text-center">
-                            <h1 className="text-4xl font-bold text-gray-900 dark:text-white">
-                                Oflem
-                            </h1>
-                            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                                Connect with performers in your area
-                            </p>
-                        </div>
+        <AuthSplitLayout
+            heroImage="/login-page-hero.svg"
+            heroHeading={t('Bienvenue sur Oflem')}
+            heroSubtext={t('La première plateforme des flemmards.')}
+            bgAccentClass="bg-cream-accent"
+        >
+            <Head title={t('Welcome')} />
+            
+            <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
+                <div className="mb-10 lg:mb-12">
+                    <h2 className="text-xl font-medium text-primary-black mb-1">{t('Oflem')}</h2>
+                    <h1 className="text-[40px] lg:text-[56px] font-black text-black tracking-tight leading-tight">
+                        {t('Life Made')} <span className="text-gold-accent">{t('Easier')}</span>.
+                    </h1>
+                    <p className="mt-4 text-gray-muted text-base lg:text-lg max-w-md font-bold leading-relaxed">
+                        {t('Whether you need a hand or want to lend one, Oflem connects you with the right people at the right time.')}
+                    </p>
+                </div>
 
-                        {/* Main Actions */}
-                        <div className="space-y-4">
-                            <Link
-                                href={route('auth.select-role')}
-                                className="group relative flex w-full justify-center rounded-lg bg-indigo-600 px-4 py-3 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:bg-indigo-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                            >
-                                Get Started
-                            </Link>
+                <div className="w-full max-w-sm space-y-4">
+                    <Link
+                        href={route('register')}
+                        className="flex w-full justify-center items-center py-4 bg-gold-accent text-primary-black font-black rounded-full hover:opacity-90 transition-all shadow-sm text-lg"
+                    >
+                        {t('Get Started')}
+                    </Link>
 
-                            <Link
-                                href={route('login')}
-                                className="group relative flex w-full justify-center rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-sm transition-all duration-200 hover:bg-gray-50 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
-                            >
-                                Sign In
-                            </Link>
-                        </div>
+                    <Link
+                        href={route('login')}
+                        className="flex w-full justify-center items-center py-4 bg-white border border-gray-border text-primary-black font-black rounded-full hover:bg-gray-50 transition-all text-lg shadow-sm"
+                    >
+                        {t('Sign In')}
+                    </Link>
+                </div>
 
-                        {/* Admin Access */}
-                        <div className="text-center">
-                            <Link
-                                href={route('admin.login')}
-                                className="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                            >
-                                Admin Access
-                            </Link>
-                        </div>
+                <div className="mt-16 pt-8 border-t border-gray-border w-full">
+                    <p className="text-sm text-gray-muted italic font-bold">
+                        "{t('Simplifying tasks, empowering performers.')}"
+                    </p>
+                    
+                    <div className="mt-8">
+                        <Link
+                            href={route('admin.login')}
+                            className="text-[10px] font-black uppercase tracking-widest text-gray-muted hover:text-primary-black transition-colors"
+                        >
+                            {t('Admin Portal')}
+                        </Link>
                     </div>
                 </div>
             </div>
-        </>
+        </AuthSplitLayout>
     );
 }

@@ -117,23 +117,78 @@ class OTPService
      */
     protected function sendSMSOTP(string $phone, string $otp): void
     {
-        try {
-            // For development, just log the OTP
-            if (app()->environment('local')) {
-                Log::info("SMS OTP for {$phone}: {$otp}");
-                return;
-            }
+        // Format phone number to international format
+        $formattedPhone = $this->formatPhoneNumber($phone);
 
-            $this->twilio->messages->create(
+        // For development, just log the OTP (or use test SMS service)
+        if (app()->environment('local')) {
+            Log::info("SMS OTP for {$formattedPhone}: {$otp}");
+
+            // Optional: Send test SMS using Twilio test credentials
+            if (config('services.twilio.test_mode')) {
+                $this->sendTestSMS($formattedPhone, $otp);
+            }
+            return;
+        }
+
+        // Production: Send real SMS via Twilio
+        $this->twilio->messages->create(
+            $formattedPhone,
+            [
+                'from' => config('services.twilio.from'),
+                'body' => "Your Oflem verification code is: {$otp}. Valid for 5 minutes."
+            ]
+        );
+
+        Log::info("SMS OTP sent successfully to {$formattedPhone}");
+    }
+
+    /**
+     * Format phone number to international format
+     */
+    protected function formatPhoneNumber(string $phone): string
+    {
+        // Remove any non-numeric characters except +
+        $cleaned = preg_replace('/[^\d+]/', '', $phone);
+
+        // If it starts with +, assume it's already international
+        if (str_starts_with($cleaned, '+')) {
+            return $cleaned;
+        }
+
+        // For US numbers, add +1 prefix
+        if (strlen($cleaned) === 10) {
+            return '+1' . $cleaned;
+        }
+
+        // For international numbers without +, try to detect
+        // This is a basic implementation - consider using a phone validation library
+        return $cleaned;
+    }
+
+    /**
+     * Send test SMS using Twilio test credentials
+     */
+    protected function sendTestSMS(string $phone, string $otp): void
+    {
+        try {
+            // Use Twilio test credentials for development
+            $testClient = new Client(
+                config('services.twilio.test_sid', 'ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'),
+                config('services.twilio.test_token', 'your_test_token')
+            );
+
+            $testClient->messages->create(
                 $phone,
                 [
-                    'from' => config('services.twilio.from'),
-                    'body' => "Your OTP code is: {$otp}"
+                    'from' => config('services.twilio.test_from', '+15005550006'),
+                    'body' => "TEST: Your Oflem verification code is: {$otp}"
                 ]
             );
+
+            Log::info("TEST SMS OTP sent to {$phone}: {$otp}");
         } catch (\Exception $e) {
-            Log::error('Failed to send SMS OTP: ' . $e->getMessage());
-            throw new \Exception('Failed to send OTP SMS. Please try again.');
+            Log::warning("Test SMS failed: " . $e->getMessage());
         }
     }
 

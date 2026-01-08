@@ -1,50 +1,70 @@
-import PrimaryButton from '@/Components/PrimaryButton';
-import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
+import React from 'react';
+import AuthSplitLayout from '@/Layouts/AuthSplitLayout';
+import PrimaryButton from '@/Components/PrimaryButton';
+import BackButton from '@/Components/BackButton';
 
 export default function VerifyEmail({ status }) {
     const { post, processing } = useForm({});
 
     const submit = (e) => {
         e.preventDefault();
-
         post(route('verification.send'));
     };
 
     return (
-        <GuestLayout>
+        <AuthSplitLayout
+            heroHeading="Verify and Explore!"
+            heroSubtext="Check your inbox to confirm your email and unlock all features."
+            bgAccentClass="bg-cream-accent"
+        >
             <Head title="Email Verification" />
+            
+            <div className="mb-8 lg:mb-10 text-center lg:text-left relative">
+                <BackButton 
+                    href="/" 
+                    className="absolute -top-12 left-0" 
+                />
 
-            <div className="mb-4 text-sm text-gray-600 dark:text-gray-400">
-                Thanks for signing up! Before getting started, could you verify
-                your email address by clicking on the link we just emailed to
-                you? If you didn't receive the email, we will gladly send you
-                another.
+                <h2 className="text-lg font-medium text-primary-black mb-1">Oflem</h2>
+                <h1 className="text-[32px] lg:text-[40px] font-black text-primary-black tracking-tight mb-2">Check Email</h1>
+                <p className="text-gray-muted text-sm font-medium italic">Thanks for signing up!</p>
+            </div>
+
+            <div className="p-8 bg-white border border-gray-border rounded-[24px] mb-8 text-center sm:text-left">
+                <div className="w-16 h-16 bg-cream-accent rounded-full flex items-center justify-center mx-auto sm:mx-0 mb-6 shadow-sm">
+                    <svg className="w-8 h-8 text-gold-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                </div>
+                <p className="text-sm text-gray-muted leading-relaxed font-bold">
+                    Please verify your email address by clicking the link we just emailed to you.
+                    If you didn't receive it, we'll send another.
+                </p>
             </div>
 
             {status === 'verification-link-sent' && (
-                <div className="mb-4 text-sm font-medium text-green-600 dark:text-green-400">
-                    A new verification link has been sent to the email address
-                    you provided during registration.
+                <div className="mb-6 p-4 bg-green-50 text-green-700 rounded-[24px] text-sm font-bold border border-green-100 text-center">
+                    A new verification link has been sent to your email.
                 </div>
             )}
 
-            <form onSubmit={submit}>
-                <div className="mt-4 flex items-center justify-between">
-                    <PrimaryButton disabled={processing}>
-                        Resend Verification Email
-                    </PrimaryButton>
-
+            <form onSubmit={submit} className="space-y-6">
+                <PrimaryButton className="w-full" disabled={processing}>
+                    Resend Verification Email
+                </PrimaryButton>
+                
+                <div className="text-center pt-2">
                     <Link
                         href={route('logout')}
                         method="post"
                         as="button"
-                        className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
+                        className="text-sm text-gray-muted hover:text-primary-black transition-colors font-bold underline underline-offset-4 decoration-1"
                     >
                         Log Out
                     </Link>
                 </div>
             </form>
-        </GuestLayout>
+        </AuthSplitLayout>
     );
 }

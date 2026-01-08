@@ -46,71 +46,61 @@ export default function DeleteUserForm({ className = '' }) {
     };
 
     return (
-        <section className={`space-y-6 ${className}`}>
-            <header>
-                <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+        <section className={`${className} bg-white rounded-[32px] p-8 border border-red-100`}>
+            <header className="mb-8">
+                <h2 className="text-2xl font-black text-red-600 tracking-tight">
                     Delete Account
                 </h2>
 
-                <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                    Once your account is deleted, all of its resources and data
-                    will be permanently deleted. Before deleting your account,
-                    please download any data or information that you wish to
-                    retain.
+                <p className="mt-2 text-sm text-gray-muted font-bold">
+                    Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.
                 </p>
             </header>
 
             <DangerButton onClick={confirmUserDeletion}>
-                Delete Account
+                Delete My Account
             </DangerButton>
 
             <Modal show={confirmingUserDeletion} onClose={closeModal}>
-                <form onSubmit={deleteUser} className="p-6">
-                    <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                        Are you sure you want to delete your account?
+                <form onSubmit={deleteUser} className="p-10 bg-white rounded-[32px]">
+                    <h2 className="text-2xl font-black text-primary-black tracking-tight mb-4 text-center">
+                        Are you absolutely sure?
                     </h2>
 
-                    <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                        Once your account is deleted, all of its resources and
-                        data will be permanently deleted. Please enter your
-                        password to confirm you would like to permanently delete
-                        your account.
+                    <p className="text-sm text-gray-muted font-bold text-center mb-10">
+                        This action cannot be undone. Please enter your password to confirm you would like to permanently delete your account.
                     </p>
 
-                    <div className="mt-6">
-                        <InputLabel
-                            htmlFor="password"
-                            value="Password"
-                            className="sr-only"
-                        />
-
+                    <div className="space-y-1.5 max-w-sm mx-auto">
+                        <InputLabel htmlFor="password" value="Password" />
                         <TextInput
                             id="password"
                             type="password"
                             name="password"
                             ref={passwordInput}
                             value={data.password}
-                            onChange={(e) =>
-                                setData('password', e.target.value)
-                            }
-                            className="mt-1 block w-3/4"
-                            isFocused
-                            placeholder="Password"
+                            onChange={(e) => setData('password', e.target.value)}
+                            className="mt-1 block w-full"
+                            autoFocus
+                            placeholder="Enter password to confirm"
                         />
-
-                        <InputError
-                            message={errors.password}
-                            className="mt-2"
-                        />
+                        <InputError className="mt-2" message={errors.password} />
                     </div>
 
-                    <div className="mt-6 flex justify-end">
-                        <SecondaryButton onClick={closeModal}>
-                            Cancel
+                    <div className="mt-10 flex flex-col md:flex-row justify-center gap-4">
+                        <SecondaryButton 
+                            onClick={closeModal}
+                            className="w-full md:w-auto px-10"
+                        >
+                            No, Cancel
                         </SecondaryButton>
 
-                        <DangerButton className="ms-3" disabled={processing}>
-                            Delete Account
+                        <DangerButton 
+                            type="submit"
+                            disabled={processing}
+                            className="w-full md:w-auto px-10 shadow-lg shadow-red-200"
+                        >
+                            Yes, Delete Account
                         </DangerButton>
                     </div>
                 </form>

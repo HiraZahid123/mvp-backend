@@ -244,4 +244,84 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'Logged out successfully']);
     }
+
+    /**
+     * Forgot Password - Send OTP
+     */
+    public function forgotPassword(Request $request)
+    {
+        $request->validate([
+            'login' => 'required|string', // email or phone
+        ]);
+
+        $loginField = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
+        $user = User::where($loginField, $request->login)->first();
+
+        if (!$user) {
+            // We return 200 even if user not found for security reasons
+            return response()->json(['message' => 'If the account exists, an OTP has been sent.']);
+        }
+
+        try {
+            $method = $loginField;
+            $identifier = $request->login;
+            $otp = $this->otpService->sendOTP($identifier, $method, $user);
+
+            return response()->json([
+                'message' => 'OTP sent successfully',
+                'token' => $otp->token,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
+    }
+
+    /**
+     * Reset Password using OTP
+     */
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'code' => 'required|string|size:6',
+            'token' => 'required|string',
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ]);
+
+        $verified = $this->otpService->verifyOTP($request->token, $request->code);
+
+        if (!$verified) {
+            return response()->json(['message' => 'Invalid or expired verification code'], 400);
+        }
+
+        $otpVerification = \App\Models\OTPVerification::where('token', $request->token)->first();
+        $user = $otpVerification?->user;
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        $user->update([
+            'password' => Hash::make($request->password),
+        ]);
+
+        return response()->json(['message' => 'Password reset successfully']);
+    }
+
+    /**
+     * Change Password (Authenticated)
+     */
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => ['required', 'current_password'],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ]);
+
+        $user = Auth::user();
+        $user->update([
+            'password' => Hash::make($request->password),
+        ]);
+
+        return response()->json(['message' => 'Password changed successfully']);
+    }
 }

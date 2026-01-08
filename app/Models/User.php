@@ -32,6 +32,11 @@ class User extends Authenticatable
         'location_address',
         'discovery_radius_km',
         'is_admin',
+        'provider',
+        'provider_id',
+        'provider_token',
+        'provider_refresh_token',
+        'provider_token_expires_at',
     ];
 
     /**
@@ -129,5 +134,63 @@ class User extends Authenticatable
             $this->location_lat = null;
             $this->location_lng = null;
         }
+    }
+
+    /**
+     * Get user's avatar URL.
+     */
+    public function getAvatarAttribute($value): ?string
+    {
+        return $value ? asset('storage/' . $value) : null;
+    }
+
+    /**
+     * Check if user authenticated via social provider
+     */
+    public function isSocialUser(): bool
+    {
+        return !empty($this->provider);
+    }
+
+    /**
+     * Find user by social provider and provider ID
+     */
+    public static function findByProvider(string $provider, string $providerId): ?self
+    {
+        return self::where('provider', $provider)
+                  ->where('provider_id', $providerId)
+                  ->first();
+    }
+
+    /**
+     * Create user from social provider data
+     */
+    public static function createFromProvider(string $provider, array $providerUser, string $roleType = 'customer'): self
+    {
+        return self::create([
+            'name' => $providerUser['name'] ?? $providerUser['nickname'] ?? 'User',
+            'email' => $providerUser['email'],
+            'provider' => $provider,
+            'provider_id' => $providerUser['id'],
+            'provider_token' => $providerUser['token'] ?? null,
+            'provider_refresh_token' => $providerUser['refreshToken'] ?? null,
+            'provider_token_expires_at' => isset($providerUser['expiresIn'])
+                ? now()->addSeconds($providerUser['expiresIn'])
+                : null,
+            'email_verified_at' => now(), // Social providers verify emails
+            'role_type' => $roleType,
+        ]);
+    }
+
+    /**
+     * Update social provider token information
+     */
+    public function updateProviderToken(string $token, ?string $refreshToken = null, ?int $expiresIn = null): void
+    {
+        $this->update([
+            'provider_token' => $token,
+            'provider_refresh_token' => $refreshToken,
+            'provider_token_expires_at' => $expiresIn ? now()->addSeconds($expiresIn) : null,
+        ]);
     }
 }
