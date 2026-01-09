@@ -107,3 +107,13 @@ Route::middleware('admin')->group(function () {
     Route::get('/admin/dashboard', AdminDashboardController::class)->name('admin.dashboard');
     Route::post('/admin/logout', [AdminLoginController::class, 'destroy'])->name('admin.logout');
 });
+
+// Optimization & Cache Clearing Route
+Route::get('/optimize-system', function () {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('optimize:clear');
+        return "System Optimization & Cache Clearing Successful!<br><br><pre>" . \Illuminate\Support\Facades\Artisan::output() . "</pre>";
+    } catch (\Exception $e) {
+        return "Error occurred while clearing cache: " . $e->getMessage();
+    }
+})->name('system.optimize');
