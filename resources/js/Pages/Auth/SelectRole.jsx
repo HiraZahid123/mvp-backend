@@ -98,7 +98,7 @@ export default function SelectRole({ intended }) {
                                 <p className="text-xs text-gray-muted font-bold">{role.description}</p>
                             </div>
                         </div>
-                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
                             selectedRole === role.id ? 'border-gold-accent' : 'border-gray-border group-hover:border-gold-accent'
                         }`}>
                             <div className={`w-3 h-3 rounded-full transition-colors ${

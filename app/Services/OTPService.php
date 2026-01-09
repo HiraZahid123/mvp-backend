@@ -95,20 +95,21 @@ class OTPService
     protected function sendEmailOTP(string $email, string $otp): void
     {
         try {
-            // For development, just log the OTP
+            // Log OTP for easy access during development
             if (app()->environment('local')) {
                 Log::info("Email OTP for {$email}: {$otp}");
-                return;
             }
 
-            // TODO: Send actual email
-            Mail::raw("Your OTP code is: {$otp}", function ($message) use ($email) {
-                $message->to($email)
-                        ->subject('Your OTP Code');
-            });
+            // Send actual email using the Mailable
+            Mail::to($email)->send(new \App\Mail\OTPMail($otp));
+
         } catch (\Exception $e) {
             Log::error('Failed to send email OTP: ' . $e->getMessage());
-            throw new \Exception('Failed to send OTP email. Please try again.');
+            // In local environment, we might not have mail configured, so we don't throw if it fails 
+            // after logging the OTP. But if it's production we should throw.
+            if (!app()->environment('local')) {
+                 throw new \Exception('Failed to send OTP email. Please try again.');
+            }
         }
     }
 

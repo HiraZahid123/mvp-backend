@@ -10,7 +10,7 @@ import BackButton from '@/Components/BackButton';
 export default function VerifyOTP() {
     const { t } = useTranslation();
     const { email = '', phone = '' } = usePage().props;
-    const [timeLeft, setTimeLeft] = useState(300);
+    const [timeLeft, setTimeLeft] = useState(30);
     const [canResend, setCanResend] = useState(false);
     const [otpSent, setOtpSent] = useState(false);
     const [selectedMethod, setSelectedMethod] = useState(null);
@@ -38,7 +38,7 @@ export default function VerifyOTP() {
     const sendOTP = (method) => {
         setSelectedMethod(method);
         setOtpSent(true);
-        setTimeLeft(300);
+        setTimeLeft(30);
         setCanResend(false);
 
         axios.post(route('auth.verify-otp.send'), { method })
@@ -185,6 +185,7 @@ export default function VerifyOTP() {
                         <PrimaryButton 
                             onClick={() => sendOTP(selectedMethod)}
                             disabled={!selectedMethod}
+                            processing={false}
                             className="w-full mt-6"
                         >
                             {t('Verify Account')}
@@ -220,6 +221,7 @@ export default function VerifyOTP() {
                             <PrimaryButton
                                 type="submit"
                                 disabled={processing || data.code.length !== 6}
+                                processing={processing}
                                 className="w-full"
                             >
                                 {t('Verify Code')}
@@ -227,23 +229,24 @@ export default function VerifyOTP() {
 
                             <div className="text-center space-y-4">
                                 <p className="text-sm text-gray-muted font-bold">
-                                    {timeLeft > 0 ? (
-                                        <>
-                                            <span className="hidden lg:inline">{t('Resend Code in')} {formatTime(timeLeft)}</span>
-                                            <span className="lg:hidden">{t('Resend Code')} {formatTime(timeLeft)}</span>
-                                        </>
-                                    ) : (
-                                        <>
-                                            {t("Didn't receive code?")} 
-                                            <button
-                                                type="button"
-                                                onClick={() => sendOTP(selectedMethod)}
-                                                className="text-primary-black font-black underline ml-1 hover:text-gold-accent transition-colors"
-                                            >
-                                                {t('Resend Code')}
-                                            </button>
-                                        </>
-                                    )}
+                                    <div className="flex items-center justify-center gap-1">
+                                        <span className="text-gray-muted">{t("Didn't receive code?")}</span>
+                                        <button
+                                            type="button"
+                                            onClick={() => sendOTP(selectedMethod)}
+                                            disabled={timeLeft > 0}
+                                            className={`font-black transition-colors ${timeLeft > 0 ? 'text-gray-400 cursor-not-allowed' : 'text-primary-black underline hover:text-gold-accent'}`}
+                                        >
+                                            {timeLeft > 0 ? (
+                                                <>
+                                                    <span className="hidden lg:inline">{t('Resend Code in')} {formatTime(timeLeft)}</span>
+                                                    <span className="lg:hidden">{t('Resend in')} {formatTime(timeLeft)}</span>
+                                                </>
+                                            ) : (
+                                                t('Resend Code')
+                                            )}
+                                        </button>
+                                    </div>
                                 </p>
                                 
                                 <button 
