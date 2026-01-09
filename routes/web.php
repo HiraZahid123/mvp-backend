@@ -56,6 +56,11 @@ Route::middleware('guest')->group(function () {
     Route::post('/verify-otp/send', [OTPVerificationController::class, 'sendOTP'])->name('auth.verify-otp.send');
     Route::post('/verify-otp', [OTPVerificationController::class, 'store'])->name('auth.verify-otp.store')->middleware('throttle:6,1');
 
+    // Login OTP Routes
+    Route::get('/login-verify-otp', [LoginOTPVerificationController::class, 'create'])->name('login.verify-otp');
+    Route::post('/login-verify-otp', [LoginOTPVerificationController::class, 'store'])->name('login.verify-otp.store');
+    Route::post('/login-verify-otp/resend', [LoginOTPVerificationController::class, 'sendOTP'])->name('login.verify-otp.resend');
+
     // Social Authentication Routes
     Route::get('/auth/{provider}', [SocialAuthController::class, 'redirect'])->name('social.redirect');
     Route::get('/auth/{provider}/callback', [SocialAuthController::class, 'callback'])->name('social.callback');

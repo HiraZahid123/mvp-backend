@@ -119,6 +119,11 @@ class LoginOTPVerificationController extends Controller
             Auth::login($user);
             $request->session()->regenerate();
 
+            // Check if user has completed profile setup (required for dashboard)
+            if (!$user->location_lat || !$user->location_lng) {
+                return redirect()->route('auth.complete-profile');
+            }
+
             return redirect()->intended(route('dashboard', absolute: false));
 
         } catch (\Exception $e) {
