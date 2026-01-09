@@ -12,13 +12,26 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+    $tasks = \App\Models\Task::with('attachments')
+        ->where('user_id', auth()->id())
+        ->latest() // Default sort
+        ->get();
+        // ->sortBy('created_at'); // We can sort in frontend or here. Frontend expects old to new for chat, usually.
+        // Let's pass latest and sort in JS as implemented in ChatInterface.
+
+    return Inertia::render('Dashboard', [
+        'tasks' => $tasks
+    ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Task Creator Routes
+    Route::get('/api/tasks', [\App\Http\Controllers\TaskController::class, 'index'])->name('tasks.index');
+    Route::post('/api/tasks', [\App\Http\Controllers\TaskController::class, 'store'])->name('tasks.store');
 });
 
 Route::post('/language-switch', function (Request $request) {

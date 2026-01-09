@@ -1,9 +1,11 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import MinimalAuthenticatedLayout from '@/Layouts/MinimalAuthenticatedLayout';
 import { Head, usePage, Link } from '@inertiajs/react';
 import React from 'react';
 import useTranslation from '@/Hooks/useTranslation';
+import ChatInterface from '@/Pages/Creator/Partials/ChatInterface'; // Build path check
 
-export default function Dashboard() {
+export default function Dashboard({ tasks }) { // Receive tasks prop
     const { t } = useTranslation();
     const { auth } = usePage().props;
     const user = auth.user;
@@ -11,83 +13,47 @@ export default function Dashboard() {
     const getDashboardContent = () => {
         switch (user.role_type) {
             case 'customer':
-                return <CustomerDashboard user={user} t={t} />;
+                return (
+                    <MinimalAuthenticatedLayout>
+                         <Head title={t('Task AI')} />
+                        <ChatInterface initialTasks={tasks} user={user} />
+                    </MinimalAuthenticatedLayout>
+                );
             case 'performer':
-                return <PerformerDashboard user={user} t={t} />;
+                return (
+                    <AuthenticatedLayout header={t('Dashboard')}>
+                        <Head title={t('Dashboard')} />
+                        <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+                             <PerformerDashboard user={user} t={t} />
+                        </div>
+                    </AuthenticatedLayout>
+                );
             case 'both':
-                return <BothDashboard user={user} t={t} />;
+                return (
+                     <AuthenticatedLayout header={t('Dashboard')}>
+                        <Head title={t('Dashboard')} />
+                        <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+                             <BothDashboard user={user} t={t} />
+                        </div>
+                    </AuthenticatedLayout>
+                );
             default:
-                return <DefaultDashboard user={user} t={t} />;
+                return (
+                     <AuthenticatedLayout header={t('Dashboard')}>
+                        <Head title={t('Dashboard')} />
+                         <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+                            <DefaultDashboard user={user} t={t} />
+                        </div>
+                    </AuthenticatedLayout>
+                );
         }
     };
 
-    return (
-        <AuthenticatedLayout header={t('Dashboard')}>
-            <Head title={t('Dashboard')} />
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-                {getDashboardContent()}
-            </div>
-        </AuthenticatedLayout>
-    );
+    return getDashboardContent();
 }
 
-function CustomerDashboard({ user, t }) {
-    return (
-        <div className="space-y-10">
-            {/* Welcome Section */}
-            <div className="bg-cream-accent rounded-[32px] p-8 lg:p-12 border border-gold-accent/20 relative overflow-hidden group">
-                <div className="relative z-10 max-w-2xl">
-                    <h3 className="text-3xl lg:text-4xl font-black text-primary-black mb-4 leading-tight">
-                        {t('Hello')}, {user.name.split(' ')[0]}! 👋
-                    </h3>
-                    <p className="text-gray-muted text-lg font-bold">
-                        {t('Ready to find amazing performers in your area? Let\'s get things done today.')}
-                    </p>
-                    <button className="mt-8 bg-gold-accent text-primary-black font-black py-3 px-8 rounded-full hover:opacity-90 transition-all shadow-md">
-                        {t('Find a Motive')}
-                    </button>
-                </div>
-                {/* Decorative Element */}
-                <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-gold-accent opacity-10 rounded-full group-hover:scale-110 transition-transform duration-1000"></div>
-            </div>
+// Removed old CustomerDashboard function as it is replaced by ChatInterface
 
-            {/* Quick Actions */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <DashboardCard 
-                    title={t('Find Performers')} 
-                    subtitle={t('Discover talent in your area')}
-                    icon={<svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>}
-                />
-                <DashboardCard 
-                    title={t('Book Events')} 
-                    subtitle={t('Schedule performances')}
-                    icon={<svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>}
-                />
-                <DashboardCard 
-                    title={t('View Analytics')} 
-                    subtitle={t('Track your bookings')}
-                    icon={<svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>}
-                />
-            </div>
-
-            {/* Recent Activity */}
-            <div className="bg-white border border-gray-border rounded-[32px] p-8">
-                <div className="flex justify-between items-center mb-8">
-                    <h4 className="text-xl font-black text-primary-black">{t('Recent Activity')}</h4>
-                    <button className="text-sm font-black text-gold-accent hover:underline">{t('View All')}</button>
-                </div>
-                <div className="flex flex-col items-center justify-center py-20 text-center">
-                    <div className="w-20 h-20 bg-off-white-bg rounded-full flex items-center justify-center mb-6">
-                        <svg className="w-10 h-10 text-gray-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                    </div>
-                    <p className="text-gray-muted font-bold">{t('No recent activity yet. Start by finding performers!')}</p>
-                </div>
-            </div>
-        </div>
-    );
-}
 
 function PerformerDashboard({ user, t }) {
     return (
