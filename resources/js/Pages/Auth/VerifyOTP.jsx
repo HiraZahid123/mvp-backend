@@ -85,29 +85,29 @@ export default function VerifyOTP() {
         <AuthSplitLayout 
             heroImage={!otpSent ? "/otp-verification-slection.svg" : "/otp-verify-code.svg"}
             heroHeading={
-                !otpSent ? t("Un petit code et c'est parti") : (
+                !otpSent ? t("One small code to go") : (
                     <>
-                        <span className="hidden lg:inline">{t("Presque fini")}</span>
-                        <span className="lg:hidden">{t("Presque fini")}</span>
+                        <span className="hidden lg:inline">{t("Almost done")}</span>
+                        <span className="lg:hidden">{t("Almost done")}</span>
                     </>
                 )
             }
             heroSubtext={
                 !otpSent ? (
                     <>
-                        <span className="hidden lg:inline">{t("On t'envoie un code par e-mail pour continuer.")}</span>
-                        <span className="lg:hidden">{t("On t'envoie un code par e-mail pour continuer.")}</span>
+                        <span className="hidden lg:inline">{t("We'll send you a code by email to continue.")}</span>
+                        <span className="lg:hidden">{t("We'll send you a code by email to continue.")}</span>
                     </>
                 ) : (
                     <>
-                        <span className="hidden lg:inline">{t("6 chiffres, et Oflem prend le relais.")}</span>
-                        <span className="lg:hidden">{t("6 chiffres, et Oflem prend le relais.")}</span>
+                        <span className="hidden lg:inline">{t("6 digits, and Oflem takes over.")}</span>
+                        <span className="lg:hidden">{t("6 digits, and Oflem takes over.")}</span>
                     </>
                 )
             }
             bgAccentClass="bg-cream-accent"
         >
-            <Head title="Verify OTP" />
+            <Head title={t('Verify OTP')} />
             
             <div className="mb-8 lg:mb-10 text-center lg:text-left relative">
                 <BackButton 
@@ -118,12 +118,12 @@ export default function VerifyOTP() {
 
                 <h2 className="text-lg font-medium text-primary-black mb-1">{t('Oflem')}</h2>
                 <h1 className="text-[32px] lg:text-[40px] font-black text-primary-black tracking-tight mb-2">
-                    {!otpSent ? t("Un petit code et c'est parti") : t("Presque fini")}
+                    {!otpSent ? t("One small code to go") : t("Almost done")}
                 </h1>
                 <p className="text-gray-muted text-sm font-medium">
                     {!otpSent 
-                        ? t("On t'envoie un code par e-mail pour continuer.")
-                        : t("Entre le code reçu par e-mail.")}
+                        ? t("We'll send you a code by email to continue.")
+                        : t("Enter the code received by email.")}
                 </p>
             </div>
 
@@ -143,7 +143,7 @@ export default function VerifyOTP() {
                                     </svg>
                                 </div>
                                 <div>
-                                    <h3 className="font-black text-primary-black">Send code to email :</h3>
+                                    <h3 className="font-black text-primary-black">{t('Send code to email :')}</h3>
                                     <p className="text-sm text-gray-muted font-bold">{email}</p>
                                 </div>
                             </div>
@@ -169,7 +169,7 @@ export default function VerifyOTP() {
                                     </svg>
                                 </div>
                                 <div>
-                                    <h3 className="font-black text-primary-black">Send code to phone number :</h3>
+                                    <h3 className="font-black text-primary-black">{t('Send code to phone number :')}</h3>
                                     <p className="text-sm text-gray-muted font-bold">{phone}</p>
                                 </div>
                             </div>
@@ -187,7 +187,7 @@ export default function VerifyOTP() {
                             disabled={!selectedMethod}
                             className="w-full mt-6"
                         >
-                            Verify Account
+                            {t('Verify Account')}
                         </PrimaryButton>
                     </div>
                 ) : (
@@ -198,7 +198,7 @@ export default function VerifyOTP() {
 
                         <form onSubmit={submit} className="space-y-8">
                             <div className="space-y-2">
-                                <label className="text-sm font-black text-primary-black block text-center">{t('Entre le code reçu par e-mail.')}</label>
+                                <label className="text-sm font-black text-primary-black block text-center">{t('Enter the code received by email.')}</label>
                                 <div className="flex justify-between gap-1 sm:gap-2 max-w-sm mx-auto">
                                     {otp.map((digit, index) => (
                                         <input
@@ -229,18 +229,18 @@ export default function VerifyOTP() {
                                 <p className="text-sm text-gray-muted font-bold">
                                     {timeLeft > 0 ? (
                                         <>
-                                            <span className="hidden lg:inline">Resend Code in {formatTime(timeLeft)}</span>
-                                            <span className="lg:hidden">Resend Code {formatTime(timeLeft)}</span>
+                                            <span className="hidden lg:inline">{t('Resend Code in')} {formatTime(timeLeft)}</span>
+                                            <span className="lg:hidden">{t('Resend Code')} {formatTime(timeLeft)}</span>
                                         </>
                                     ) : (
                                         <>
-                                            Didn't receive code? 
+                                            {t("Didn't receive code?")} 
                                             <button
                                                 type="button"
                                                 onClick={() => sendOTP(selectedMethod)}
                                                 className="text-primary-black font-black underline ml-1 hover:text-gold-accent transition-colors"
                                             >
-                                                Resend Code
+                                                {t('Resend Code')}
                                             </button>
                                         </>
                                     )}
@@ -251,7 +251,7 @@ export default function VerifyOTP() {
                                     onClick={() => setOtpSent(false)} 
                                     className="text-xs text-gray-muted font-black hover:text-primary-black transition-colors"
                                 >
-                                    Change Method
+                                    {t('Change Method')}
                                 </button>
                             </div>
                         </form>

@@ -122,9 +122,9 @@ export default function CompleteProfile() {
                     className="absolute -top-12 left-0" 
                 />
 
-                <h2 className="text-lg font-medium text-primary-black mb-1">{t('Promis, c\'est le dernier truc')}</h2>
+                <h2 className="text-lg font-medium text-primary-black mb-1">{t('Promise, this is the last thing')}</h2>
                 <h1 className="text-[32px] lg:text-[40px] font-black text-primary-black tracking-tight mb-2">
-                    {t('Juste ta zone. Après, Oflem gère.')}
+                    {t('Just your area. After that, Oflem handles it.')}
                 </h1>
                 <div className="flex flex-col items-center w-full mt-6 mb-2">
                     <div className="relative mb-2">
@@ -153,7 +153,7 @@ export default function CompleteProfile() {
                         onClick={() => fileInputRef.current.click()}
                         className="text-xs font-black text-gray-muted hover:text-primary-black transition-colors"
                     >
-                        Edit Profile
+                        {t('Edit Profile')}
                     </button>
                 </div>
                 </div>
@@ -167,7 +167,7 @@ export default function CompleteProfile() {
                         type="text"
                         value={data.name}
                         onChange={(e) => setData('name', e.target.value)}
-                        placeholder="Enter Your Name"
+                        placeholder={t('Enter Your Name')}
                         autoComplete="name"
                         required
                     />

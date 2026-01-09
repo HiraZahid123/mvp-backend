@@ -83,9 +83,9 @@ export default function UpdateProfileInformation({
                         onClick={() => fileInputRef.current.click()}
                         className="text-sm font-black text-primary-black hover:text-gold-accent transition-colors"
                     >
-                        Change Photo
+                        {t('Change Photo')}
                     </button>
-                    <p className="text-xs text-gray-muted font-bold">JPG, GIF or PNG. Max 1MB.</p>
+                    <p className="text-xs text-gray-muted font-bold">{t('JPG, GIF or PNG. Max 1MB.')}</p>
                 </div>
             </div>
 
@@ -101,7 +101,7 @@ export default function UpdateProfileInformation({
                         required
                         autoFocus
                         autoComplete="name"
-                        placeholder="Enter your full name"
+                        placeholder={t('Enter your full name')}
                     />
                     <InputError className="mt-2" message={errors.name} />
                 </div>
@@ -116,7 +116,7 @@ export default function UpdateProfileInformation({
                         onChange={(e) => setData('email', e.target.value)}
                         required
                         autoComplete="username"
-                        placeholder="Enter your email address"
+                        placeholder={t('Enter your email address')}
                     />
                     <InputError className="mt-2" message={errors.email} />
                 </div>
@@ -124,20 +124,20 @@ export default function UpdateProfileInformation({
                 {mustVerifyEmail && user.email_verified_at === null && (
                     <div className="p-4 bg-cream-accent rounded-[16px] border border-gold-accent/20">
                         <p className="text-sm text-primary-black font-bold">
-                            Your email address is unverified.
+                            {t('Your email address is unverified.')}
                             <Link
                                 href={route('verification.send')}
                                 method="post"
                                 as="button"
                                 className="ml-2 font-black text-gold-accent hover:underline focus:outline-none"
                             >
-                                Click here to re-send.
+                                {t('Click here to re-send.')}
                             </Link>
                         </p>
 
                         {status === 'verification-link-sent' && (
                             <div className="mt-2 text-xs font-black text-green-600">
-                                A new verification link has been sent!
+                                {t('A new verification link has been sent!')}
                             </div>
                         )}
                     </div>
@@ -156,7 +156,7 @@ export default function UpdateProfileInformation({
                         leaveTo="opacity-0"
                     >
                         <p className="text-xs font-black text-green-600">
-                            Saved Successfully!
+                            {t('Saved Successfully!')}
                         </p>
                     </Transition>
                 </div>

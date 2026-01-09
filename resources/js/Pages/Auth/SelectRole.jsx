@@ -26,8 +26,8 @@ export default function SelectRole({ intended }) {
     const roles = [
         {
             id: 'customer',
-            title: t("J'ai la flemme !"),
-            description: 'Post your tasks and relax. Let our Motives handle it for you.',
+            title: t("I'm lazy!"),
+            description: t('Post your tasks and relax. Let our Motives handle it for you.'),
             icon: (
                 <div className="w-12 h-12 bg-off-white-bg rounded-full flex items-center justify-center mb-0 flex-shrink-0 transition-colors group-hover:bg-cream-accent">
                     <svg className="w-6 h-6 text-gold-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -38,8 +38,8 @@ export default function SelectRole({ intended }) {
         },
         {
             id: 'performer',
-            title: t("Je suis motivé(e)"),
-            description: 'Pick tasks that match your skills. Work when you want, earn what you deserve.',
+            title: t("I'm motivated"),
+            description: t('Pick tasks that match your skills. Work when you want, earn what you deserve.'),
             icon: (
                 <div className="w-12 h-12 bg-off-white-bg rounded-full flex items-center justify-center mb-0 flex-shrink-0 transition-colors group-hover:bg-cream-accent">
                     <svg className="w-6 h-6 text-gold-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -50,8 +50,8 @@ export default function SelectRole({ intended }) {
         },
         {
             id: 'both',
-            title: t("Les deux"),
-            description: 'Enjoy the best of both worlds. Be a Motive and a Task Creator.',
+            title: t("Both"),
+            description: t('Enjoy the best of both worlds. Be a Motive and a Task Creator.'),
             icon: (
                 <div className="w-12 h-12 bg-off-white-bg rounded-full flex items-center justify-center mb-0 flex-shrink-0 transition-colors group-hover:bg-cream-accent">
                     <svg className="w-6 h-6 text-gold-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -65,11 +65,11 @@ export default function SelectRole({ intended }) {
     return (
         <AuthSplitLayout
             heroImage="/role-selection.svg"
-            heroHeading={t('Tu veux faire quoi sur Oflem ?')}
-            heroSubtext={t('Choisis ce qui te correspond le mieux. Tu pourras changer plus tard.')}
+            heroHeading={t('What do you want to do?')}
+            heroSubtext={t('Choose what suits you best. You can change later.')}
             bgAccentClass="bg-cream-accent"
         >
-            <Head title="Select Role" />
+            <Head title={t('Select Role')} />
             
             <div className="mb-8 lg:mb-10 text-center lg:text-left relative">
                 <BackButton 
@@ -78,8 +78,8 @@ export default function SelectRole({ intended }) {
                 />
 
                 <h2 className="text-lg font-medium text-primary-black mb-1">{t('Oflem')}</h2>
-                <h1 className="text-[32px] lg:text-[40px] font-black text-primary-black tracking-tight mb-2">{t('Tu veux faire quoi sur Oflem ?')}</h1>
-                <p className="text-gray-muted text-sm font-medium">{t('Choisis ce qui te correspond le mieux. Tu pourras changer plus tard.')}</p>
+                <h1 className="text-[32px] lg:text-[40px] font-black text-primary-black tracking-tight mb-2">{t('What do you want to do?')}</h1>
+                <p className="text-gray-muted text-sm font-medium">{t('Choose what suits you best. You can change later.')}</p>
             </div>
 
             <div className="space-y-4">
@@ -119,7 +119,7 @@ export default function SelectRole({ intended }) {
                     disabled={!selectedRole || processing}
                     className="w-full"
                 >
-                    Join
+                    {t('Join')}
                 </PrimaryButton>
             </div>
         </AuthSplitLayout>

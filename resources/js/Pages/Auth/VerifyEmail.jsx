@@ -1,10 +1,12 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import React from 'react';
+import useTranslation from '@/Hooks/useTranslation';
 import AuthSplitLayout from '@/Layouts/AuthSplitLayout';
 import PrimaryButton from '@/Components/PrimaryButton';
 import BackButton from '@/Components/BackButton';
 
 export default function VerifyEmail({ status }) {
+    const { t } = useTranslation();
     const { post, processing } = useForm({});
 
     const submit = (e) => {
@@ -14,11 +16,11 @@ export default function VerifyEmail({ status }) {
 
     return (
         <AuthSplitLayout
-            heroHeading="Verify and Explore!"
-            heroSubtext="Check your inbox to confirm your email and unlock all features."
+            heroHeading={t('Verify and Explore!')}
+            heroSubtext={t('Check your inbox to confirm your email and unlock all features.')}
             bgAccentClass="bg-cream-accent"
         >
-            <Head title="Email Verification" />
+            <Head title={t('Email Verification')} />
             
             <div className="mb-8 lg:mb-10 text-center lg:text-left relative">
                 <BackButton 
@@ -26,9 +28,9 @@ export default function VerifyEmail({ status }) {
                     className="absolute -top-12 left-0" 
                 />
 
-                <h2 className="text-lg font-medium text-primary-black mb-1">Oflem</h2>
-                <h1 className="text-[32px] lg:text-[40px] font-black text-primary-black tracking-tight mb-2">Check Email</h1>
-                <p className="text-gray-muted text-sm font-medium italic">Thanks for signing up!</p>
+                <h2 className="text-lg font-medium text-primary-black mb-1">{t('Oflem')}</h2>
+                <h1 className="text-[32px] lg:text-[40px] font-black text-primary-black tracking-tight mb-2">{t('Check Email')}</h1>
+                <p className="text-gray-muted text-sm font-medium italic">{t('Thanks for signing up!')}</p>
             </div>
 
             <div className="p-8 bg-white border border-gray-border rounded-[24px] mb-8 text-center sm:text-left">
@@ -38,20 +40,19 @@ export default function VerifyEmail({ status }) {
                     </svg>
                 </div>
                 <p className="text-sm text-gray-muted leading-relaxed font-bold">
-                    Please verify your email address by clicking the link we just emailed to you.
-                    If you didn't receive it, we'll send another.
+                    {t('Please verify your email address by clicking the link we just emailed to you. If you didn\'t receive it, we\'ll send another.')}
                 </p>
             </div>
 
             {status === 'verification-link-sent' && (
                 <div className="mb-6 p-4 bg-green-50 text-green-700 rounded-[24px] text-sm font-bold border border-green-100 text-center">
-                    A new verification link has been sent to your email.
+                    {t('A new verification link has been sent to your email.')}
                 </div>
             )}
 
             <form onSubmit={submit} className="space-y-6">
                 <PrimaryButton className="w-full" disabled={processing}>
-                    Resend Verification Email
+                    {t('Resend Verification Email')}
                 </PrimaryButton>
                 
                 <div className="text-center pt-2">
@@ -61,7 +62,7 @@ export default function VerifyEmail({ status }) {
                         as="button"
                         className="text-sm text-gray-muted hover:text-primary-black transition-colors font-bold underline underline-offset-4 decoration-1"
                     >
-                        Log Out
+                        {t('Log Out')}
                     </Link>
                 </div>
             </form>

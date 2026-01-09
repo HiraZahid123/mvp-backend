@@ -1,37 +1,39 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link } from '@inertiajs/react';
+import useTranslation from '@/Hooks/useTranslation';
 
 export default function Dashboard({ stats, recentUsers }) {
+    const { t } = useTranslation();
     return (
-        <AuthenticatedLayout header="Admin Control Center">
-            <Head title="Admin Dashboard" />
+        <AuthenticatedLayout header={t('Admin Control Center')}>
+            <Head title={t('Admin Dashboard')} />
 
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 space-y-10">
                 {/* Stats Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                     <StatCard 
-                        title="Total Users" 
+                        title={t('Total Users')} 
                         value={stats.total_users} 
                         icon={<UsersIcon />}
                         color="text-blue-600"
                         bg="bg-blue-50"
                     />
                     <StatCard 
-                        title="Customers" 
+                        title={t('Customers')} 
                         value={stats.customers} 
                         icon={<CustomerIcon />}
                         color="text-green-600"
                         bg="bg-green-50"
                     />
                     <StatCard 
-                        title="Performers" 
+                        title={t('Performers')} 
                         value={stats.performers} 
                         icon={<PerformerIcon />}
                         color="text-purple-600"
                         bg="bg-purple-50"
                     />
                     <StatCard 
-                        title="Admins" 
+                        title={t('Admins')} 
                         value={stats.admins} 
                         icon={<AdminIcon />}
                         color="text-red-600"
@@ -42,17 +44,17 @@ export default function Dashboard({ stats, recentUsers }) {
                 {/* Recent Users Table */}
                 <div className="bg-white border border-gray-border rounded-[32px] overflow-hidden shadow-sm">
                     <div className="p-8 border-b border-gray-border flex justify-between items-center bg-white">
-                        <h3 className="text-xl font-bold text-primary-black tracking-tight">Recent User Onboarding</h3>
-                        <button className="text-sm font-bold text-gold-accent hover:underline">Manage All Users</button>
+                        <h3 className="text-xl font-bold text-primary-black tracking-tight">{t('Recent User Onboarding')}</h3>
+                        <button className="text-sm font-bold text-gold-accent hover:underline">{t('Manage All Users')}</button>
                     </div>
                     <div className="overflow-x-auto">
                         <table className="min-w-full divide-y divide-gray-100">
                             <thead className="bg-off-white-bg">
                                 <tr>
-                                    <th className="px-8 py-4 text-left text-xs font-black text-gray-muted uppercase tracking-[0.2em]">Name & Email</th>
-                                    <th className="px-8 py-4 text-left text-xs font-black text-gray-muted uppercase tracking-[0.2em]">Role Type</th>
-                                    <th className="px-8 py-4 text-left text-xs font-black text-gray-muted uppercase tracking-[0.2em]">Joined Date</th>
-                                    <th className="px-8 py-4 text-right text-xs font-black text-gray-muted uppercase tracking-[0.2em]">Action</th>
+                                    <th className="px-8 py-4 text-left text-xs font-black text-gray-muted uppercase tracking-[0.2em]">{t('Name & Email')}</th>
+                                    <th className="px-8 py-4 text-left text-xs font-black text-gray-muted uppercase tracking-[0.2em]">{t('Role Type')}</th>
+                                    <th className="px-8 py-4 text-left text-xs font-black text-gray-muted uppercase tracking-[0.2em]">{t('Joined Date')}</th>
+                                    <th className="px-8 py-4 text-right text-xs font-black text-gray-muted uppercase tracking-[0.2em]">{t('Action')}</th>
                                 </tr>
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-50">
@@ -76,7 +78,7 @@ export default function Dashboard({ stats, recentUsers }) {
                                             {new Date(user.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                                         </td>
                                         <td className="px-8 py-5 whitespace-nowrap text-right text-sm">
-                                            <button className="text-gold-accent font-bold hover:underline opacity-0 group-hover:opacity-100 transition-opacity">Details</button>
+                                            <button className="text-gold-accent font-bold hover:underline opacity-0 group-hover:opacity-100 transition-opacity">{t('Details')}</button>
                                         </td>
                                     </tr>
                                 ))}

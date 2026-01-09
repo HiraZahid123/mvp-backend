@@ -29,11 +29,11 @@ export default function Register() {
     return (
         <AuthSplitLayout 
             heroImage="/register-page-hero.svg"
-            heroHeading={t("Un peu la flemme aujourd'hui ?")}
+            heroHeading={t("Feeling a bit lazy today?")}
             heroSubtext={
                 <>
-                    <span className="hidden lg:inline">{t("Inscris-toi, respire... Oflem s'occupe du reste.")}</span>
-                    <span className="lg:hidden">{t("Inscris-toi, respire... Oflem s'occupe du reste.")}</span>
+                    <span className="hidden lg:inline">{t("Sign up, breathe... Oflem handles the rest.")}</span>
+                    <span className="lg:hidden">{t("Sign up, breathe... Oflem handles the rest.")}</span>
                 </>
             }
             bgAccentClass="bg-cream-accent"
@@ -46,10 +46,10 @@ export default function Register() {
                     className="absolute -top-12 left-0" 
                 />
 
-                <h2 className="text-lg font-medium text-primary-black mb-1">{t('Bienvenue sur Oflem')}</h2>
-                <h1 className="text-[32px] lg:text-[40px] font-black text-primary-black tracking-tight mb-2">{t("Un peu la flemme aujourd'hui ?")}</h1>
-                <p className="text-gray-muted text-sm font-medium hidden lg:block">{t("Inscris-toi, respire... Oflem s'occupe du reste.")}</p>
-                <p className="text-gray-muted text-sm font-medium lg:hidden">{t("Inscris-toi, respire... Oflem s'occupe du reste.")}</p>
+                <h2 className="text-lg font-medium text-primary-black mb-1">{t('Welcome to Oflem')}</h2>
+                <h1 className="text-[32px] lg:text-[40px] font-black text-primary-black tracking-tight mb-2">{t("Feeling a bit lazy today?")}</h1>
+                <p className="text-gray-muted text-sm font-medium hidden lg:block">{t("Sign up, breathe... Oflem handles the rest.")}</p>
+                <p className="text-gray-muted text-sm font-medium lg:hidden">{t("Sign up, breathe... Oflem handles the rest.")}</p>
             </div>
 
             <form onSubmit={submit} className="space-y-6">

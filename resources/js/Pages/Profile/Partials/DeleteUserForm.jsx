@@ -5,9 +5,11 @@ import Modal from '@/Components/Modal';
 import SecondaryButton from '@/Components/SecondaryButton';
 import TextInput from '@/Components/TextInput';
 import { useForm } from '@inertiajs/react';
+import useTranslation from '@/Hooks/useTranslation';
 import { useRef, useState } from 'react';
 
 export default function DeleteUserForm({ className = '' }) {
+    const { t } = useTranslation();
     const [confirmingUserDeletion, setConfirmingUserDeletion] = useState(false);
     const passwordInput = useRef();
 
@@ -49,30 +51,30 @@ export default function DeleteUserForm({ className = '' }) {
         <section className={`${className} bg-white rounded-[32px] p-8 border border-red-100`}>
             <header className="mb-8">
                 <h2 className="text-2xl font-black text-red-600 tracking-tight">
-                    Delete Account
+                    {t('Delete Account')}
                 </h2>
 
                 <p className="mt-2 text-sm text-gray-muted font-bold">
-                    Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.
+                    {t('Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.')}
                 </p>
             </header>
 
             <DangerButton onClick={confirmUserDeletion}>
-                Delete My Account
+                {t('Delete My Account')}
             </DangerButton>
 
             <Modal show={confirmingUserDeletion} onClose={closeModal}>
                 <form onSubmit={deleteUser} className="p-10 bg-white rounded-[32px]">
                     <h2 className="text-2xl font-black text-primary-black tracking-tight mb-4 text-center">
-                        Are you absolutely sure?
+                        {t('Are you absolutely sure?')}
                     </h2>
 
                     <p className="text-sm text-gray-muted font-bold text-center mb-10">
-                        This action cannot be undone. Please enter your password to confirm you would like to permanently delete your account.
+                        {t('This action cannot be undone. Please enter your password to confirm you would like to permanently delete your account.')}
                     </p>
 
                     <div className="space-y-1.5 max-w-sm mx-auto">
-                        <InputLabel htmlFor="password" value="Password" />
+                        <InputLabel htmlFor="password" value={t('Password')} />
                         <TextInput
                             id="password"
                             type="password"
@@ -82,7 +84,7 @@ export default function DeleteUserForm({ className = '' }) {
                             onChange={(e) => setData('password', e.target.value)}
                             className="mt-1 block w-full"
                             autoFocus
-                            placeholder="Enter password to confirm"
+                            placeholder={t('Enter password to confirm')}
                         />
                         <InputError className="mt-2" message={errors.password} />
                     </div>
@@ -92,7 +94,7 @@ export default function DeleteUserForm({ className = '' }) {
                             onClick={closeModal}
                             className="w-full md:w-auto px-10"
                         >
-                            No, Cancel
+                            {t('No, Cancel')}
                         </SecondaryButton>
 
                         <DangerButton 
@@ -100,7 +102,7 @@ export default function DeleteUserForm({ className = '' }) {
                             disabled={processing}
                             className="w-full md:w-auto px-10 shadow-lg shadow-red-200"
                         >
-                            Yes, Delete Account
+                            {t('Yes, Delete Account')}
                         </DangerButton>
                     </div>
                 </form>

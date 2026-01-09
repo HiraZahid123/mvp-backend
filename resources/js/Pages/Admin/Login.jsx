@@ -2,9 +2,11 @@ import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 import { Head, Link, useForm } from '@inertiajs/react';
+import useTranslation from '@/Hooks/useTranslation';
 import { useState } from 'react';
 
 export default function Login() {
+    const { t } = useTranslation();
     const [showPassword, setShowPassword] = useState(false);
 
     const { data, setData, post, processing, errors } = useForm({
@@ -20,24 +22,24 @@ export default function Login() {
 
     return (
         <>
-            <Head title="Admin Login" />
+            <Head title={t('Admin Login')} />
 
             <div className="min-h-screen bg-off-white-bg flex items-center justify-center p-6">
                 <div className="w-full max-w-md animate-in fade-in slide-in-from-bottom-8 duration-700">
                     {/* Brand Branding */}
                     <div className="text-center mb-10">
-                        <span className="text-xs font-black uppercase tracking-[0.3em] text-gold-accent block mb-2">Oflem Admin</span>
+                        <span className="text-xs font-black uppercase tracking-[0.3em] text-gold-accent block mb-2">{t('Oflem Admin')}</span>
                         <h1 className="text-4xl font-black text-primary-black tracking-tight leading-none mb-4">
-                            Welcome Back
+                            {t('Welcome Back')}
                         </h1>
-                        <p className="text-sm font-bold text-gray-muted">Enter administrative credentials to proceed</p>
+                        <p className="text-sm font-bold text-gray-muted">{t('Enter administrative credentials to proceed')}</p>
                     </div>
 
                     <div className="bg-white rounded-[40px] p-10 border border-gray-border shadow-xl shadow-gold-accent/5">
                         <form className="space-y-6" onSubmit={submit}>
                             {/* Email */}
                             <div className="space-y-1.5">
-                                <InputLabel htmlFor="email" value="Admin Email" />
+                                <InputLabel htmlFor="email" value={t('Admin Email')} />
                                 <TextInput
                                     id="email"
                                     type="email"
@@ -46,14 +48,14 @@ export default function Login() {
                                     value={data.email}
                                     onChange={(e) => setData('email', e.target.value)}
                                     className="mt-1 block w-full"
-                                    placeholder="yourname@oflem.com"
+                                    placeholder={t('yourname@oflem.com')}
                                 />
                                 <InputError className="mt-2" message={errors.email} />
                             </div>
 
                             {/* Password */}
                             <div className="space-y-1.5">
-                                <InputLabel htmlFor="password" value="Secure Password" />
+                                <InputLabel htmlFor="password" value={t('Secure Password')} />
                                 <div className="relative">
                                     <TextInput
                                         id="password"
@@ -90,7 +92,7 @@ export default function Login() {
                                 disabled={processing}
                                 className="w-full bg-primary-black text-white font-black py-4 px-6 rounded-full hover:bg-gold-accent hover:text-primary-black transition-all duration-300 shadow-lg shadow-primary-black/10 disabled:opacity-50 mt-4 uppercase tracking-[0.2em] text-[10px]"
                             >
-                                {processing ? 'Authenticating...' : 'Secure Access'}
+                                {processing ? t('Authenticating...') : t('Secure Access')}
                             </button>
                         </form>
                     </div>
@@ -102,7 +104,7 @@ export default function Login() {
                             className="text-sm font-black text-gray-muted hover:text-gold-accent transition-colors flex items-center justify-center gap-2"
                         >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-                            Back to Oflem Portal
+                            {t('Back to Oflem Portal')}
                         </Link>
                     </div>
                 </div>

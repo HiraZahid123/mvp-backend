@@ -1,14 +1,17 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
+import useTranslation from '@/Hooks/useTranslation';
 import DeleteUserForm from './Partials/DeleteUserForm';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm';
 import BackButton from '@/Components/BackButton';
 
 export default function Edit({ mustVerifyEmail, status }) {
+    const { t } = useTranslation();
+
     return (
-        <AuthenticatedLayout header="Profile Settings">
-            <Head title="Profile" />
+        <AuthenticatedLayout header={t('Profile Settings')}>
+            <Head title={t('Profile')} />
 
             <div className="mb-6">
                 <BackButton href={route('dashboard')} />

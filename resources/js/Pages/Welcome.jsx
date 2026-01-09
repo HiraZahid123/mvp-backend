@@ -7,9 +7,9 @@ export default function Welcome() {
     const { t } = useTranslation();
     return (
         <AuthSplitLayout
-            heroImage="/login-page-hero.svg"
-            heroHeading={t('Bienvenue sur Oflem')}
-            heroSubtext={t('La première plateforme des flemmards.')}
+            heroImage="/welcome-page-illustration.svg"
+            heroHeading={t('Welcome to Oflem')}
+            heroSubtext={t('The #1 platform for slackers.')}
             bgAccentClass="bg-cream-accent"
         >
             <Head title={t('Welcome')} />
@@ -43,7 +43,7 @@ export default function Welcome() {
 
                 <div className="mt-16 pt-8 border-t border-gray-border w-full">
                     <p className="text-sm text-gray-muted italic font-bold">
-                        "{t('Simplifying tasks, empowering performers.')}"
+                        {t('Simplifying tasks, empowering performers.')}
                     </p>
                     
                     <div className="mt-8">
