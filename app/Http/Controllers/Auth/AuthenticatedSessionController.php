@@ -41,16 +41,16 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
-        $user = $request->getValidatedUser();
+        $request->session()->regenerate();
 
-        if ($user) {
-            Session::put('login_user_id', $user->id);
-            Session::put('login_email', $user->email);
-            
-            return redirect()->route('login.verify-otp');
+        $user = Auth::user();
+
+        // Check if user has completed profile setup (required for dashboard)
+        if (!$user->location_lat || !$user->location_lng) {
+            return redirect()->route('auth.complete-profile');
         }
 
-        return redirect()->route('login');
+        return redirect()->intended(route('dashboard', absolute: false));
     }
 
     /**

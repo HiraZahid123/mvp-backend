@@ -60,17 +60,8 @@ class LoginRequest extends FormRequest
             ]);
         }
 
-        // Store user for later login after OTP verification
-        $this->user = $user;
+        Auth::login($user, $this->boolean('remember'));
         RateLimiter::clear($this->throttleKey());
-    }
-
-    /**
-     * Get the validated user (without actually logging them in)
-     */
-    public function getValidatedUser()
-    {
-        return $this->user ?? null;
     }
 
     /**
