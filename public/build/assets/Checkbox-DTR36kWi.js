@@ -1,1 +1,0 @@
-import{j as r}from"./app-DAKRhxGg.js";function c({className:e="",...o}){return r.jsx("input",{...o,type:"checkbox",className:"rounded border-gray-border text-gold-accent focus:ring-gold-accent h-4 w-4 "+e})}export{c as C};
