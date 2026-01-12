@@ -1,0 +1,14 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="100" cy="100" r="100" fill="#FDFBF7"/>
+  
+  <!-- OFLEM Icon - Stylized Letter O with accent -->
+  <circle cx="100" cy="100" r="60" stroke="#C57B67" stroke-width="8" fill="none"/>
+  
+  <!-- Center dot accent -->
+  <circle cx="100" cy="100" r="12" fill="#C57B67"/>
+  
+  <!-- Subtle decorative elements -->
+  <path d="M100 40C127.614 40 150 62.3858 150 90" stroke="#C57B67" stroke-width="4" stroke-linecap="round" opacity="0.3"/>
+  <path d="M100 160C72.3858 160 50 137.614 50 110" stroke="#C57B67" stroke-width="4" stroke-linecap="round" opacity="0.3"/>
+</svg>

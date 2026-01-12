@@ -1,204 +1,62 @@
 import React from 'react';
-import useTranslation from '@/Hooks/useTranslation';
 import AuthSplitLayout from '@/Layouts/AuthSplitLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
-import TextInput from '@/Components/TextInput';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import Checkbox from '@/Components/Checkbox';
-import InputError from '@/Components/InputError';
-import BackButton from '@/Components/BackButton';
+import { Head, Link } from '@inertiajs/react';
+import SocialLoginButton from '@/Components/SocialLoginButton';
+import useTranslation from '@/Hooks/useTranslation';
 
 export default function Register() {
     const { t } = useTranslation();
-    const { data, setData, post, processing, errors, reset } = useForm({
-        name: '',
-        email: '',
-        phone: '',
-        password: '',
-        password_confirmation: '',
-    });
-
-    const submit = (e) => {
-        e.preventDefault();
-        post(route('register'), {
-            onFinish: () => reset('password', 'password_confirmation'),
-        });
-    };
 
     return (
         <AuthSplitLayout 
             heroImage="/register-page-hero.svg"
-            heroHeading={t("Feeling a bit lazy today?")}
-            heroSubtext={
-                <>
-                    <span className="hidden lg:inline">{t("Sign up, breathe... Oflem handles the rest.")}</span>
-                    <span className="lg:hidden">{t("Sign up, breathe... Oflem handles the rest.")}</span>
-                </>
-            }
+            heroHeading={t("Votre temps est une ressource.")}
+            heroSubtext={t("Gérez-la comme un pro.")}
             bgAccentClass="bg-cream-accent"
         >
-            <Head title="Sign Up" />
+            <Head title={t("S'inscrire")} />
 
-            <div className="mb-8 lg:mb-10 text-center lg:text-left relative">
-                <BackButton 
-                    href="/" 
-                    className="absolute -top-12 left-0" 
-                />
-
-                <h2 className="text-lg font-medium text-primary-black mb-1">{t('Welcome to Oflem')}</h2>
-                <h1 className="text-[32px] lg:text-[40px] font-black text-primary-black tracking-tight mb-2">{t("Feeling a bit lazy today?")}</h1>
-                <p className="text-gray-muted text-sm font-medium hidden lg:block">{t("Sign up, breathe... Oflem handles the rest.")}</p>
-                <p className="text-gray-muted text-sm font-medium lg:hidden">{t("Sign up, breathe... Oflem handles the rest.")}</p>
-            </div>
-
-            <form onSubmit={submit} className="space-y-6">
-                <div className="space-y-1.5">
-                    <InputLabel htmlFor="name" value="Full Name" />
-                    <TextInput
-                        id="name"
-                        type="text"
-                        value={data.name}
-                        onChange={(e) => setData('name', e.target.value)}
-                        placeholder="Enter your full name"
-                        autoComplete="name"
-                        required
-                    />
-                    <InputError message={errors.name} />
-                </div>
-
-                <div className="space-y-1.5">
-                    <InputLabel htmlFor="email" value="Email Address" />
-                    <TextInput
-                        id="email"
-                        type="email"
-                        value={data.email}
-                        onChange={(e) => setData('email', e.target.value)}
-                        placeholder="Enter your email"
-                        autoComplete="username"
-                        required
-                    />
-                    <InputError message={errors.email} />
-                </div>
-
-                <div className="space-y-1.5">
-                    <InputLabel htmlFor="phone" value="Phone Number" />
-                    <TextInput
-                        id="phone"
-                        type="tel"
-                        value={data.phone}
-                        onChange={(e) => setData('phone', e.target.value)}
-                        placeholder="Enter your phone number"
-                        autoComplete="tel"
-                        required
-                    />
-                    <InputError message={errors.phone} />
-                </div>
-
-                <div className="space-y-1.5">
-                    <InputLabel htmlFor="password" value="Password" />
-                    <TextInput
-                        id="password"
-                        type="password"
-                        value={data.password}
-                        onChange={(e) => setData('password', e.target.value)}
-                        placeholder="Enter your password"
-                        autoComplete="new-password"
-                        required
-                    />
-                    <InputError message={errors.password} />
-                </div>
-
-                <div className="space-y-1.5">
-                    <InputLabel htmlFor="password_confirmation" value="Confirm Password" />
-                    <TextInput
-                        id="password_confirmation"
-                        type="password"
-                        value={data.password_confirmation}
-                        onChange={(e) => setData('password_confirmation', e.target.value)}
-                        placeholder="Re-enter your password"
-                        autoComplete="new-password"
-                        required
-                    />
-                    <InputError message={errors.password_confirmation} />
-                </div>
-
-                <div className="flex items-center space-x-2 py-2 px-4">
-                    <Checkbox 
-                        id="terms"
-                        required 
-                    />
-                    <label htmlFor="terms" className="text-xs sm:text-sm text-gray-muted font-medium cursor-pointer">
-                        I agree to the <a href="#" className="text-primary-black underline font-black">Terms</a> and <a href="#" className="text-primary-black underline font-black">Privacy Policy</a>
-                    </label>
-                </div>
-
-                <PrimaryButton className="w-full mt-2" disabled={processing}>
-                    Sign Up
-                </PrimaryButton>
-            </form>
-
-            <div className="relative my-10 lg:my-12">
-                <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-gray-border/50"></div>
-                </div>
-                <div className="relative flex justify-center text-sm">
-                    <span className="bg-off-white-bg px-6 text-gray-muted font-bold uppercase tracking-wider text-xs">Or Sign Up with</span>
-                </div>
-            </div>
-
-            <div className="flex justify-center gap-4">
-                <SocialLink provider="google" type="register" />
-                <SocialLink provider="facebook" type="register" />
-                <SocialLink provider="apple" type="register" />
-            </div>
-
-            <div className="mt-8 flex flex-col items-center gap-4">
-                <p className="text-sm text-gray-muted font-medium">
-                    Already have an account? <Link href={route('login')} className="text-primary-black font-black hover:underline">Sign in</Link>
+            <div className="text-center lg:text-left">
+                <h1 className="text-[36px] lg:text-[44px] font-serif font-bold text-primary-black tracking-tight mb-3 leading-tight">
+                    {t("Votre temps est une ressource.")}
+                </h1>
+                <h2 className="text-lg lg:text-xl text-primary-black font-serif italic mb-6">
+                    {t("Gérez-la comme un pro.")}
+                </h2>
+                <p className="text-gray-muted text-base font-medium mb-10 leading-relaxed">
+                    {t("Déléguez vos impératifs pour respirer, ou optimisez votre agenda pour encaisser.")}
                 </p>
-                <Link href={route('auth.select-role')} className="text-sm text-gray-muted font-bold flex items-center group">
-                    <svg className="w-4 h-4 mr-1 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
-                    </svg>
-                    Change role
+            </div>
+
+            {/* Social Login Buttons */}
+            <div className="space-y-4 mb-10">
+                <SocialLoginButton provider="apple" type="register" />
+                <SocialLoginButton provider="google" type="register" />
+                <SocialLoginButton provider="facebook" type="register" />
+            </div>
+
+            {/* Email Registration Link */}
+            <div className="text-center">
+                <Link 
+                    href={route('register.manual')}
+                    className="text-base font-bold text-primary-black hover:text-gold-accent transition-colors duration-200 underline underline-offset-4"
+                >
+                    {t("Ou s'inscrire par e-mail")}
                 </Link>
             </div>
-        </AuthSplitLayout>
-    );
-}
 
-function SocialLink({ provider, type }) {
-    const icons = {
-        google: (
-            <svg className="w-6 h-6" viewBox="0 0 48 48">
-                <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-                <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-                <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
-                <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
-            </svg>
-        ),
-        facebook: (
-            <svg className="w-6 h-6 text-[#1877F2]" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1V12h3l-.5 3H13v6.8c4.56-.93 8-4.96 8-9.8z" />
-            </svg>
-        ),
-        apple: (
-            <svg className="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M17.05 20.28c-.98.95-2.05.88-3.08.47-1.09-.42-2.09-.44-3.23.05-.83.39-1.79.4-2.82-.4-5.32-4.33-4.47-12.78 1.87-12.83 1.63-.03 2.76.71 3.65.73.95.03 2.52-1.03 4.14-.64 1.74.45 2.56 1.48 2.07 2.22-.57.85-2.07 2.09-2.05 4.35 0 2.63 2.06 3.64 2.15 3.73-1.89 4.39-3.72 4.79-2.7 2.32zm-3.08-15.17c1.32-1.6 2.09-3.5 1.83-5.11-1.68.17-3.75 1.13-4.8 2.37-1.06 1.15-1.92 2.92-1.62 4.54 1.77.16 3.49-1.04 4.59-1.8z" />
-            </svg>
-        ),
-    };
-
-    return (
-        <a 
-            href={route('social.redirect', { provider, type })} 
-            className="w-14 h-14 flex items-center justify-center bg-white border border-gray-border/50 rounded-full transition-all duration-300 hover:shadow-lg hover:border-gold-accent hover:-translate-y-1 group relative overflow-hidden"
-        >
-            <div className="absolute inset-0 bg-gold-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <div className="group-hover:scale-110 transition-transform duration-300 relative z-10">
-                {icons[provider]}
+            {/* Login Link */}
+            <div className="mt-12 text-center">
+                <p className="text-sm text-gray-muted font-medium">
+                    {t("Déjà membre ?")}{' '}
+                    <Link 
+                        href={route('login')} 
+                        className="text-primary-black font-black hover:underline"
+                    >
+                        {t("Se connecter")}
+                    </Link>
+                </p>
             </div>
-        </a>
+        </AuthSplitLayout>
     );
 }

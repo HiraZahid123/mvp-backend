@@ -10,17 +10,20 @@ use Inertia\Inertia;
 class RoleSelectionController extends Controller
 {
     /**
-     * Show the role selection form.
+     * Show the role selection form
      */
     public function create(Request $request)
     {
+        $user = Auth::user();
+
         return Inertia::render('Auth/SelectRole', [
+            'user' => $user,
             'intended' => $request->session()->get('url.intended'),
         ]);
     }
 
     /**
-     * Store the selected role and redirect to profile completion.
+     * Store the selected role and redirect to identity setup
      */
     public function store(Request $request)
     {
@@ -34,11 +37,13 @@ class RoleSelectionController extends Controller
             return redirect()->route('login');
         }
 
+        // Save to both role_type AND last_selected_role
         $user->update([
             'role_type' => $request->role,
+            'last_selected_role' => $request->role,
         ]);
 
-        // Redirect to profile completion
-        return redirect()->route('auth.complete-profile');
+        // Redirect to Identity & Profile setup instead of Complete Profile
+        return redirect()->route('auth.complete-identity');
     }
 }

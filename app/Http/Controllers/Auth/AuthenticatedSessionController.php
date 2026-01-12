@@ -4,27 +4,17 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
-use App\Models\User;
-use App\Services\OTPService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Session;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class AuthenticatedSessionController extends Controller
 {
-    protected OTPService $otpService;
-
-    public function __construct(OTPService $otpService)
-    {
-        $this->otpService = $otpService;
-    }
-
     /**
-     * Display the login view.
+     * Display the Login Gateway screen with social login options
      */
     public function create(Request $request): Response
     {
@@ -35,7 +25,19 @@ class AuthenticatedSessionController extends Controller
     }
 
     /**
-     * Handle an incoming authentication request.
+     * Display the manual email login form
+     */
+    public function createManual(Request $request): Response
+    {
+        return Inertia::render('Auth/LoginManual', [
+            'canResetPassword' => Route::has('password.request'),
+            'status' => session('status'),
+        ]);
+    }
+
+    /**
+     * Handle an incoming authentication request
+     * Redirects to "Mood of the Day" screen after successful login
      */
     public function store(LoginRequest $request): RedirectResponse
     {
@@ -45,16 +47,26 @@ class AuthenticatedSessionController extends Controller
 
         $user = Auth::user();
 
-        // Check if user has completed profile setup (required for dashboard)
-        if (!$user->location_lat || !$user->location_lng) {
-            return redirect()->route('auth.complete-profile');
+        // Check if user has completed role selection
+        if (!$user->role_type) {
+            return redirect()->route('auth.select-role');
         }
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        // Check if user has completed profile setup (identity & location)
+        if (!$user->username || !$user->location_lat || !$user->location_lng) {
+            // Determine which step to redirect to
+            if (!$user->username) {
+                return redirect()->route('auth.complete-identity');
+            }
+            return redirect()->route('auth.complete-location');
+        }
+
+        // All setup complete - redirect to "Mood of the Day" selector
+        return redirect()->route('auth.mood-of-the-day');
     }
 
     /**
-     * Destroy an authenticated session.
+     * Destroy an authenticated session
      */
     public function destroy(Request $request): RedirectResponse
     {

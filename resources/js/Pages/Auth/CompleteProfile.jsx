@@ -110,11 +110,11 @@ export default function CompleteProfile() {
     return (
         <AuthSplitLayout
             heroImage="/basic-profile.svg"
-            heroHeading="Welcome"
-            heroSubtext="Oflem makes life easy by connecting people to hire help or earn money by completing tasks quickly and reliably."
+            heroHeading={t("Welcome")}
+            heroSubtext={t("Oflem makes life easy by connecting people to hire help or earn money by completing tasks quickly and reliably.")}
             bgAccentClass="bg-cream-accent"
         >
-            <Head title="Complete Profile" />
+            <Head title={t("Complete Profile")} />
             
             <div className="mb-8 lg:mb-10 text-center lg:text-left relative">
                  <BackButton 
@@ -181,7 +181,7 @@ export default function CompleteProfile() {
                         type="text"
                         value={data.zip_code}
                         onChange={(e) => setData('zip_code', e.target.value)}
-                        placeholder="e.g. 10001"
+                        placeholder={t("e.g. 10001")}
                         required
                     />
                     <InputError message={errors.zip_code} />
@@ -194,7 +194,7 @@ export default function CompleteProfile() {
                         type="text"
                         value={data.location_address}
                         onChange={(e) => setData('location_address', e.target.value)}
-                        placeholder="New York City, USA"
+                        placeholder={t("New York City, USA")}
                         required
                     />
                     <InputError message={errors.location_address} />

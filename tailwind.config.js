@@ -14,6 +14,7 @@ export default {
         extend: {
             fontFamily: {
                 sans: ['Inter', ...defaultTheme.fontFamily.sans],
+                serif: ['Playfair Display', 'Georgia', ...defaultTheme.fontFamily.serif],
             },
             colors: {
                 'primary-dark': '#001F3F',
@@ -22,12 +23,12 @@ export default {
                 'surface': '#FFFFFF',
                 'border-light': '#F5F5F5',
                 'beige-bg': '#EAE2D1',
-                'off-white-bg': '#F3F3F1',
+                'off-white-bg': '#FDFBF7',
                 'charcoal': '#1A1A1A',
                 'gray-border': '#D1D1D1',
                 'primary-black': '#000000',
                 'gray-muted': '#A1A1A1',
-                'gold-accent': '#D4B062',
+                'gold-accent': '#C57B67',
                 'input-bg': '#F9F9F9',
                 'cream-accent': '#EEE9D5',
             },

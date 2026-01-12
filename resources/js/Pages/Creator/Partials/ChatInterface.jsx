@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useForm, router, Link } from '@inertiajs/react';
 import Dropdown from '@/Components/Dropdown';
+import useTranslation from '@/Hooks/useTranslation';
 
 export default function ChatInterface({ initialTasks = [], user }) {
+    const { t } = useTranslation();
     const [messages, setMessages] = useState([]);
     const [isProcessing, setIsProcessing] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
@@ -31,7 +33,7 @@ export default function ChatInterface({ initialTasks = [], user }) {
                 msgs.push({
                     id: `ai-${task.id}`,
                     type: 'ai',
-                    content: task.metadata?.summary || 'Task received.',
+                    content: task.metadata?.summary || t('Task received.'),
                     metadata: task.metadata,
                     createdAt: new Date(task.created_at),
                 });
@@ -81,7 +83,7 @@ export default function ChatInterface({ initialTasks = [], user }) {
             onSuccess: () => setIsProcessing(false),
             onError: () => {
                 setIsProcessing(false);
-                setMessages(prev => [...prev, { id: Date.now(), type: 'error', content: 'Failed. Please try again.', createdAt: new Date() }]);
+                setMessages(prev => [...prev, { id: Date.now(), type: 'error', content: t('Failed. Please try again.'), createdAt: new Date() }]);
             }
         });
     };
@@ -121,14 +123,14 @@ export default function ChatInterface({ initialTasks = [], user }) {
                                 <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-off-white-bg rounded-full"></div>
                             </div>
                             <div>
-                                <h1 className="text-lg font-black text-primary-black tracking-tight leading-none group-hover:text-gold-accent transition-colors">Task Assistant</h1>
-                                <p className="text-[10px] font-bold text-gray-muted mt-1 uppercase tracking-wider">Powered by Oflem</p>
+                                <h1 className="text-lg font-black text-primary-black tracking-tight leading-none group-hover:text-gold-accent transition-colors">{t('Task Assistant')}</h1>
+                                <p className="text-[10px] font-bold text-gray-muted mt-1 uppercase tracking-wider">{t('Powered by Oflem')}</p>
                             </div>
                         </Link>
                     </div>
                     
                     <div className="flex items-center gap-4">
-                        <span className="hidden md:inline-flex px-3 py-1 bg-cream-accent rounded-full text-[10px] font-black text-primary-black uppercase tracking-widest">Beta</span>
+                        <span className="hidden md:inline-flex px-3 py-1 bg-cream-accent rounded-full text-[10px] font-black text-primary-black uppercase tracking-widest">{t('Beta')}</span>
                         
                         {/* User Menu */}
                         <div className="relative">
@@ -151,15 +153,15 @@ export default function ChatInterface({ initialTasks = [], user }) {
 
                                 <Dropdown.Content>
                                     <div className="px-4 py-3 border-b border-gray-100">
-                                        <p className="text-xs font-bold text-gray-muted uppercase tracking-wider">Account</p>
+                                        <p className="text-xs font-bold text-gray-muted uppercase tracking-wider">{t('Account')}</p>
                                         <p className="text-sm font-black text-primary-black truncate">{user.email}</p>
                                     </div>
                                     <Dropdown.Link href={route('profile.edit')}>
-                                        Profile Settings
+                                        {t('Profile Settings')}
                                     </Dropdown.Link>
                                     <div className="border-t border-gray-100"></div>
                                     <Dropdown.Link href={route('logout')} method="post" as="button" className="text-red-500 hover:text-red-600 hover:bg-red-50">
-                                        Log Out
+                                        {t('Log Out')}
                                     </Dropdown.Link>
                                 </Dropdown.Content>
                             </Dropdown>
@@ -179,15 +181,15 @@ export default function ChatInterface({ initialTasks = [], user }) {
                                 <span className="text-4xl">✨</span>
                             </div>
                             <h2 className="text-3xl font-black text-primary-black tracking-tight mb-3">
-                                What can I help you with?
+                                {t('What can I help you with?')}
                             </h2>
                             <p className="text-gray-muted font-bold text-base max-w-sm leading-relaxed">
-                                Describe your task in detail and I'll analyze it, estimate costs, and help you get started.
+                                {t("Describe your task in detail and I'll analyze it, estimate costs, and help you get started.")}
                             </p>
                             
                             {/* Suggestion Pills */}
                             <div className="flex flex-wrap justify-center gap-3 mt-10">
-                                {['Need a photographer', 'Home renovation', 'Event planning', 'Tech support'].map((suggestion, i) => (
+                                {[t('Need a photographer'), t('Home renovation'), t('Event planning'), t('Tech support')].map((suggestion, i) => (
                                     <button 
                                         key={i}
                                         type="button"
@@ -219,7 +221,7 @@ export default function ChatInterface({ initialTasks = [], user }) {
                                         <div className="w-6 h-6 rounded-lg bg-gold-accent flex items-center justify-center">
                                             <span className="text-[10px] font-black text-primary-black">AI</span>
                                         </div>
-                                        <span className="text-[10px] font-black text-gray-muted uppercase tracking-widest">Assistant</span>
+                                        <span className="text-[10px] font-black text-gray-muted uppercase tracking-widest">{t('Assistant')}</span>
                                     </div>
                                 )}
 
@@ -342,8 +344,8 @@ export default function ChatInterface({ initialTasks = [], user }) {
 
                     {/* Input Label */}
                     <div className="mb-4">
-                        <h3 className="text-lg font-black text-primary-black">Enter your mission</h3>
-                        <p className="text-sm font-bold text-gray-muted mt-1">Tell us what you need done — be as specific as possible</p>
+                        <h3 className="text-lg font-black text-primary-black">{t('Enter your mission')}</h3>
+                        <p className="text-sm font-bold text-gray-muted mt-1">{t('Tell us what you need done — be as specific as possible')}</p>
                     </div>
 
                     {/* Main Input Container */}
@@ -358,7 +360,7 @@ export default function ChatInterface({ initialTasks = [], user }) {
                                     onChange={(e) => setData('content', e.target.value)}
                                     onFocus={() => setIsFocused(true)}
                                     onBlur={() => setIsFocused(false)}
-                                    placeholder="e.g. I need a professional photographer for my wedding on March 15th in Paris..."
+                                    placeholder={t('e.g. I need a professional photographer for my wedding on March 15th in Paris...')}
                                     rows={3}
                                     className="w-full bg-transparent text-primary-black text-base font-medium placeholder:text-gray-muted/70 placeholder:font-medium focus:outline-none resize-none leading-relaxed"
                                     style={{ maxHeight: '200px' }}
@@ -381,7 +383,7 @@ export default function ChatInterface({ initialTasks = [], user }) {
                                         className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold text-gray-muted hover:text-primary-black hover:bg-white border border-transparent hover:border-gray-border transition-all duration-200"
                                     >
                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
-                                        <span className="hidden sm:inline">Attach</span>
+                                        <span className="hidden sm:inline">{t('Attach')}</span>
                                     </button>
                                     <input type="file" multiple ref={fileInputRef} className="hidden" onChange={handleFileChange} accept="image/*,.pdf,.doc,.docx" />
                                 </div>
@@ -399,11 +401,11 @@ export default function ChatInterface({ initialTasks = [], user }) {
                                     {isProcessing ? (
                                         <>
                                             <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                                            <span>Sending...</span>
+                                            <span>{t('Sending...')}</span>
                                         </>
                                     ) : (
                                         <>
-                                            <span>Submit Mission</span>
+                                            <span>{t('Submit Mission')}</span>
                                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                                         </>
                                     )}
@@ -413,7 +415,7 @@ export default function ChatInterface({ initialTasks = [], user }) {
                         
                         {/* Helper Text */}
                         <p className="text-center text-[10px] font-bold text-gray-muted/40 mt-4">
-                            Press Enter to submit • Shift+Enter for new line
+                            {t('Press Enter to submit • Shift+Enter for new line')}
                         </p>
                     </form>
                 </div>

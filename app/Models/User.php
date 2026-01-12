@@ -37,6 +37,10 @@ class User extends Authenticatable
         'provider_token',
         'provider_refresh_token',
         'provider_token_expires_at',
+        'username',
+        'profile_photo',
+        'zip_code',
+        'last_selected_role',
     ];
 
     /**
@@ -192,5 +196,34 @@ class User extends Authenticatable
             'provider_refresh_token' => $refreshToken,
             'provider_token_expires_at' => $expiresIn ? now()->addSeconds($expiresIn) : null,
         ]);
+    }
+
+    /**
+     * Get profile photo URL with OFLEM placeholder fallback
+     */
+    public function getProfilePhotoUrlAttribute(): string
+    {
+        if ($this->profile_photo) {
+            return asset('storage/' . $this->profile_photo);
+        }
+        
+        // Return OFLEM custom placeholder icon
+        return asset('images/oflem-placeholder.svg');
+    }
+
+    /**
+     * Get last selected role with fallback to role_type
+     */
+    public function getLastSelectedRole(): string
+    {
+        return $this->last_selected_role ?? $this->role_type ?? 'customer';
+    }
+
+    /**
+     * Get display name (username or name)
+     */
+    public function getDisplayNameAttribute(): string
+    {
+        return $this->username ?? $this->name;
     }
 }

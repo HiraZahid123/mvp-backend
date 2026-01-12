@@ -50,8 +50,22 @@ use App\Http\Controllers\Auth\RoleSelectionController;
 use App\Http\Controllers\Auth\OTPVerificationController;
 use App\Http\Controllers\Auth\ProfileCompletionController;
 use App\Http\Controllers\Auth\LoginOTPVerificationController;
+use App\Http\Controllers\Auth\EmailVerificationController;
+use App\Http\Controllers\Auth\MoodSelectionController;
 
 Route::middleware('guest')->group(function () {
+    // Email Verification Routes (for manual registration)
+    Route::get('/verify-email-code', [EmailVerificationController::class, 'create'])->name('auth.verify-email-code');
+    Route::post('/verify-email-code', [EmailVerificationController::class, 'verify'])->name('auth.verify-email-code.store');
+    Route::post('/verify-email-code/resend', [EmailVerificationController::class, 'resend'])->name('auth.verify-email-code.resend');
+
+    // Manual Registration Routes
+    Route::get('/register/manual', [App\Http\Controllers\Auth\RegisteredUserController::class, 'createManual'])->name('register.manual');
+    
+    // Manual Login Routes
+    Route::get('/login/manual', [App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'createManual'])->name('login.manual');
+    
+    // OTP Verification (legacy - keeping for backward compatibility)
     Route::get('/verify-otp', [OTPVerificationController::class, 'create'])->name('auth.verify-otp');
     Route::post('/verify-otp/send', [OTPVerificationController::class, 'sendOTP'])->name('auth.verify-otp.send');
     Route::post('/verify-otp', [OTPVerificationController::class, 'store'])->name('auth.verify-otp.store')->middleware('throttle:6,1');
@@ -85,11 +99,31 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
+    // Role Selection
     Route::get('/select-role', [RoleSelectionController::class, 'create'])->name('auth.select-role');
     Route::post('/select-role', [RoleSelectionController::class, 'store'])->name('auth.select-role.store');
 
+    // Identity & Profile Setup (Split into two steps)
+    Route::get('/complete-identity', [ProfileCompletionController::class, 'createIdentity'])->name('auth.complete-identity');
+    Route::post('/complete-identity', [ProfileCompletionController::class, 'storeIdentity'])->name('auth.complete-identity.store');
+    
+    Route::get('/complete-location', [ProfileCompletionController::class, 'createLocation'])->name('auth.complete-location');
+    Route::post('/complete-location', [ProfileCompletionController::class, 'storeLocation'])->name('auth.complete-location.store');
+
+    // Legacy Complete Profile (backward compatibility)
     Route::get('/complete-profile', [ProfileCompletionController::class, 'create'])->name('auth.complete-profile');
     Route::post('/complete-profile', [ProfileCompletionController::class, 'store'])->name('auth.complete-profile.store');
+
+    // Registration Success Screen
+    Route::get('/registration-success', function () {
+        return Inertia::render('Auth/RegistrationSuccess', [
+            'user' => Auth::user(),
+        ]);
+    })->name('auth.registration-success');
+
+    // Mood of the Day (appears after every login)
+    Route::get('/mood-of-the-day', [MoodSelectionController::class, 'create'])->name('auth.mood-of-the-day');
+    Route::post('/mood-of-the-day', [MoodSelectionController::class, 'store'])->name('auth.mood-of-the-day.store');
 });
 
 require __DIR__.'/auth.php';
