@@ -34,9 +34,7 @@ export default function CompleteLocation({ user, role }) {
 
     return (
         <AuthSplitLayout 
-            heroImage="/register-page-hero.svg"
-            heroHeading={t("Définissez votre zone")}
-            heroSubtext={t("Où souhaitez-vous agir ?")}
+            heroImage="/login-page-hero.svg"
             bgAccentClass="bg-cream-accent"
         >
             <Head title={t("Localisation")} />

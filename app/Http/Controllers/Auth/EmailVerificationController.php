@@ -113,6 +113,11 @@ class EmailVerificationController extends Controller
         $user = \App\Models\User::where('email', $request->email)->first();
         \Illuminate\Support\Facades\Auth::login($user);
 
+        // Check for pending mission
+        if (session()->has('pending_mission')) {
+            return redirect()->route('missions.pending');
+        }
+
         // Redirect to role selection
         return redirect()->route('auth.select-role');
     }

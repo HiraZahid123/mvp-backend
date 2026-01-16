@@ -9,8 +9,7 @@ export default function Login({ canResetPassword, status }) {
 
     return (
         <AuthSplitLayout
-            heroHeading={t("Ravi de vous revoir.")}
-            heroSubtext={t("Le temps est une ressource. Gérez la vôtre comme un pro.")}
+            heroImage="/login-screen.svg"
             bgAccentClass="bg-cream-accent"
         >
             <Head title={t("Se connecter")} />

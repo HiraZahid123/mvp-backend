@@ -68,4 +68,8 @@ return [
         'redirect' => env('FACEBOOK_REDIRECT_URI', '/auth/facebook/callback'),
     ],
 
+    'gemini' => [
+        'key' => env('VITE_GEMINI_API_KEY'),
+    ],
+
 ];

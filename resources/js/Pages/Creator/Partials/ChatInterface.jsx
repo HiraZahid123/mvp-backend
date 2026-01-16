@@ -3,7 +3,7 @@ import { useForm, router, Link } from '@inertiajs/react';
 import Dropdown from '@/Components/Dropdown';
 import useTranslation from '@/Hooks/useTranslation';
 
-export default function ChatInterface({ initialTasks = [], user }) {
+export default function ChatInterface({ initialTasks = [], user, chatWith, helperName, missionId, missionTitle }) {
     const { t } = useTranslation();
     const [messages, setMessages] = useState([]);
     const [isProcessing, setIsProcessing] = useState(false);
@@ -16,6 +16,12 @@ export default function ChatInterface({ initialTasks = [], user }) {
         content: '',
         attachments: [],
     });
+
+    useEffect(() => {
+        if (chatWith && missionTitle) {
+            setData('content', `${t('Hi')} ${helperName}, ${t('I would like to book you for')}: "${missionTitle}". ${t('Let\'s discuss the details.')}`);
+        }
+    }, [chatWith, missionTitle, helperName]);
 
     useEffect(() => {
         const history = initialTasks.flatMap(task => {
@@ -115,21 +121,40 @@ export default function ChatInterface({ initialTasks = [], user }) {
             <header className="relative z-50 flex-shrink-0 bg-off-white-bg/80 backdrop-blur-xl border-b border-gray-border/50">
                 <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <Link href={route('dashboard')} className="flex items-center gap-4 group">
-                            <div className="relative cursor-pointer">
-                                <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-gold-accent to-yellow-500 flex items-center justify-center shadow-lg shadow-gold-accent/20 transition-transform group-hover:scale-105">
-                                    <span className="text-primary-black font-black text-xs">AI</span>
+                        {chatWith ? (
+                            <div className="flex items-center gap-4">
+                                <Link href={route('dashboard')} className="w-10 h-10 rounded-full bg-gold-accent flex items-center justify-center font-black text-primary-black">
+                                    {helperName?.charAt(0)}
+                                </Link>
+                                <div>
+                                    <h1 className="text-lg font-black text-primary-black leading-none">{helperName}</h1>
+                                    <p className="text-[10px] font-bold text-gray-muted mt-1 uppercase tracking-wider">
+                                        {t('Negotiating')}: <span className="text-primary-black">{missionTitle}</span>
+                                    </p>
                                 </div>
-                                <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-off-white-bg rounded-full"></div>
                             </div>
-                            <div>
-                                <h1 className="text-lg font-black text-primary-black tracking-tight leading-none group-hover:text-gold-accent transition-colors">{t('Task Assistant')}</h1>
-                                <p className="text-[10px] font-bold text-gray-muted mt-1 uppercase tracking-wider">{t('Powered by Oflem')}</p>
-                            </div>
-                        </Link>
+                        ) : (
+                            <Link href={route('dashboard')} className="flex items-center gap-4 group">
+                                <div className="relative cursor-pointer">
+                                    <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-gold-accent to-yellow-500 flex items-center justify-center shadow-lg shadow-gold-accent/20 transition-transform group-hover:scale-105">
+                                        <span className="text-primary-black font-black text-xs">AI</span>
+                                    </div>
+                                    <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-off-white-bg rounded-full"></div>
+                                </div>
+                                <div>
+                                    <h1 className="text-lg font-black text-primary-black tracking-tight leading-none group-hover:text-gold-accent transition-colors">{t('Task Assistant')}</h1>
+                                    <p className="text-[10px] font-bold text-gray-muted mt-1 uppercase tracking-wider">{t('Powered by Oflem')}</p>
+                                </div>
+                            </Link>
+                        )}
                     </div>
                     
                     <div className="flex items-center gap-4">
+                        {chatWith && (
+                            <button className="bg-primary-black text-white px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-gold-accent hover:text-primary-black transition-all shadow-md">
+                                {t('Book & Pay')}
+                            </button>
+                        )}
                         <span className="hidden md:inline-flex px-3 py-1 bg-cream-accent rounded-full text-[10px] font-black text-primary-black uppercase tracking-widest">{t('Beta')}</span>
                         
                         {/* User Menu */}

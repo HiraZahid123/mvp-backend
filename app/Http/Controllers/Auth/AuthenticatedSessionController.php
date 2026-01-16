@@ -61,7 +61,12 @@ class AuthenticatedSessionController extends Controller
             return redirect()->route('auth.complete-location');
         }
 
-        // All setup complete - redirect to "Mood of the Day" selector
+        // All setup complete - check if there is a pending mission to process
+        if ($request->session()->has('pending_mission')) {
+            return redirect()->route('missions.pending');
+        }
+
+        // Redirect to "Mood of the Day" selector
         return redirect()->route('auth.mood-of-the-day');
     }
 

@@ -26,8 +26,7 @@ export default function LoginManual({ canResetPassword, status }) {
 
     return (
         <AuthSplitLayout
-            heroHeading={t("On connaît la chanson.")}
-            heroSubtext={t("Vos accès, en toute sécurité.")}
+            heroImage="/login-screen.svg"
             bgAccentClass="bg-cream-accent"
         >
             <Head title={t("Se connecter")} />

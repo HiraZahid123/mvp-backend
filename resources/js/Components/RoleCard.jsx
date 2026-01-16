@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function RoleCard({ emoji, title, description, selected, onClick }) {
+export default function RoleCard({ icon, emoji, title, description, selected, onClick }) {
     return (
         <button
             type="button"
@@ -16,7 +16,13 @@ export default function RoleCard({ emoji, title, description, selected, onClick 
             `}
         >
             <div className="flex items-start gap-4">
-                <div className="text-4xl flex-shrink-0">{emoji}</div>
+                <div className="flex-shrink-0">
+                    {icon ? (
+                        <img src={icon} alt="" className="w-12 h-12 object-contain" />
+                    ) : (
+                        <span className="text-4xl">{emoji}</span>
+                    )}
+                </div>
                 <div className="flex-1">
                     <h3 className="text-xl font-black text-primary-black mb-2">
                         {title}

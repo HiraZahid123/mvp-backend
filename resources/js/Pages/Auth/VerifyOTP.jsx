@@ -84,27 +84,6 @@ export default function VerifyOTP() {
     return (
         <AuthSplitLayout 
             heroImage={!otpSent ? "/otp-verification-slection.svg" : "/otp-verify-code.svg"}
-            heroHeading={
-                !otpSent ? t("One small code to go") : (
-                    <>
-                        <span className="hidden lg:inline">{t("Almost done")}</span>
-                        <span className="lg:hidden">{t("Almost done")}</span>
-                    </>
-                )
-            }
-            heroSubtext={
-                !otpSent ? (
-                    <>
-                        <span className="hidden lg:inline">{t("We'll send you a code by email to continue.")}</span>
-                        <span className="lg:hidden">{t("We'll send you a code by email to continue.")}</span>
-                    </>
-                ) : (
-                    <>
-                        <span className="hidden lg:inline">{t("6 digits, and Oflem takes over.")}</span>
-                        <span className="lg:hidden">{t("6 digits, and Oflem takes over.")}</span>
-                    </>
-                )
-            }
             bgAccentClass="bg-cream-accent"
         >
             <Head title={t('Verify OTP')} />

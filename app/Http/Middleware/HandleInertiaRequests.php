@@ -52,6 +52,11 @@ class HandleInertiaRequests extends Middleware
                 json_decode(file_get_contents(base_path("lang/en.json")), true) ?: [],
                 json_decode(file_get_contents(base_path("lang/{$locale}.json")), true) ?: []
             ),
+            'flash' => [
+                'requires_auth' => fn () => $request->session()->get('requires_auth'),
+                'success' => fn () => $request->session()->get('success'),
+                'error' => fn () => $request->session()->get('error'),
+            ],
         ];
     }
 }

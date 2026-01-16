@@ -26,19 +26,19 @@ export default function SelectRole({ user }) {
     const roles = [
         {
             key: 'customer',
-            emoji: '🦥',
+            icon: '/lowBattery.svg',
             title: t('FLEMMARD'),
             description: t('Je délègue. Mon temps est précieux.'),
         },
         {
             key: 'performer',
-            emoji: '💪',
+            icon: '/highBattery.svg',
             title: t('MOTIVÉ'),
             description: t('Je gère. Prêt à rentabiliser ma disponibilité.'),
         },
         {
             key: 'both',
-            emoji: '⚡',
+            icon: '/mediumBattery.svg',
             title: t('LES DEUX'),
             description: t('Les deux ! Parce que je suis multitâche.'),
         },
@@ -46,9 +46,7 @@ export default function SelectRole({ user }) {
 
     return (
         <AuthSplitLayout 
-            heroImage="/register-page-hero.svg"
-            heroHeading={t("Choisissez votre rôle")}
-            heroSubtext={t("Flemmard, Motivé, ou les deux ?")}
+            heroImage="/role-selection.svg"
             bgAccentClass="bg-cream-accent"
         >
             <Head title={t("Choisir un rôle")} />
@@ -68,7 +66,7 @@ export default function SelectRole({ user }) {
                     {roles.map((role) => (
                         <RoleCard
                             key={role.key}
-                            emoji={role.emoji}
+                            icon={role.icon}
                             title={role.title}
                             description={role.description}
                             selected={selectedRole === role.key}

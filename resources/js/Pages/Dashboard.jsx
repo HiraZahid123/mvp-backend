@@ -3,21 +3,27 @@ import MinimalAuthenticatedLayout from '@/Layouts/MinimalAuthenticatedLayout';
 import { Head, usePage, Link } from '@inertiajs/react';
 import React from 'react';
 import useTranslation from '@/Hooks/useTranslation';
-import ChatInterface from '@/Pages/Creator/Partials/ChatInterface'; // Build path check
 
 export default function Dashboard({ tasks }) { // Receive tasks prop
     const { t } = useTranslation();
-    const { auth } = usePage().props;
+    const { auth, ziggy } = usePage().props;
     const user = auth.user;
+    const urlParams = new URLSearchParams(window.location.search);
+    const chatWith = urlParams.get('chat_with');
+    const helperName = urlParams.get('helper_name');
+    const missionId = urlParams.get('mission_id');
+    const missionTitle = urlParams.get('mission_title');
 
     const getDashboardContent = () => {
         switch (user.role_type) {
             case 'customer':
                 return (
-                    <MinimalAuthenticatedLayout>
-                         <Head title={t('Task AI')} />
-                        <ChatInterface initialTasks={tasks} user={user} />
-                    </MinimalAuthenticatedLayout>
+                    <AuthenticatedLayout header={t('Dashboard')}>
+                        <Head title={t('Dashboard')} />
+                        <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+                             <CustomerDashboard user={user} tasks={tasks} t={t} />
+                        </div>
+                    </AuthenticatedLayout>
                 );
             case 'performer':
                 return (
@@ -52,8 +58,93 @@ export default function Dashboard({ tasks }) { // Receive tasks prop
     return getDashboardContent();
 }
 
-// Removed old CustomerDashboard function as it is replaced by ChatInterface
+function CustomerDashboard({ user, tasks, t }) {
+    return (
+        <div className="space-y-10">
+            {/* Welcome Section */}
+            <div className="bg-gold-accent rounded-[32px] p-8 lg:p-12 text-primary-black relative overflow-hidden group">
+                <div className="relative z-10 max-w-2xl">
+                    <h3 className="text-3xl lg:text-4xl font-black mb-4 leading-tight">
+                        {t('Need a hand')}, {user.name.split(' ')[0]}? 🤝
+                    </h3>
+                    <p className="text-primary-black/70 text-lg font-bold">
+                        {t('Describe your mission and let our smart matching find the perfect helper for you.')}
+                    </p>
+                    <Link href={route('missions.search')} className="mt-8 bg-primary-black text-white font-black py-4 px-10 rounded-full hover:opacity-90 transition-all shadow-xl inline-block text-lg">
+                        🚀 {t('Post a Mission')}
+                    </Link>
+                </div>
+                {/* Decorative element */}
+                <div className="absolute top-0 right-0 -mr-10 -mt-10 w-64 h-64 bg-white opacity-20 rounded-full group-hover:scale-110 transition-transform duration-1000"></div>
+            </div>
 
+            {/* Recent Missions Section */}
+            <div className="space-y-6">
+                <div className="flex items-center justify-between px-2">
+                    <h4 className="text-xl font-black text-primary-black uppercase tracking-tight">{t('Your Recent Missions')}</h4>
+                    <Link href="/" className="text-xs font-black text-gold-accent uppercase tracking-widest hover:underline">{t('See all')}</Link>
+                </div>
+                
+                {tasks && tasks.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {tasks.slice(0, 3).map((task) => (
+                            <div key={task.id} className="bg-white border border-gray-border rounded-[28px] p-6 hover:shadow-lg transition-all border-b-4 border-b-gold-accent/30 group">
+                                <div className="flex justify-between items-start mb-4">
+                                    <div className="w-10 h-10 bg-cream-accent rounded-xl flex items-center justify-center text-xl">
+                                        ✨
+                                    </div>
+                                    <span className="text-[10px] font-black uppercase tracking-widest bg-off-white-bg px-3 py-1 rounded-full text-gray-muted">
+                                        {task.status || 'open'}
+                                    </span>
+                                </div>
+                                <h5 className="font-black text-primary-black mb-2 line-clamp-1">{task.content}</h5>
+                                <p className="text-sm text-gray-muted font-bold line-clamp-2 mb-6">
+                                    {task.metadata?.summary || t('Awaiting AI analysis...')}
+                                </p>
+                                <div className="flex items-center justify-between pt-4 border-t border-gray-border/50">
+                                    <span className="text-[10px] font-black text-gray-muted/50 uppercase">
+                                        {new Date(task.created_at).toLocaleDateString()}
+                                    </span>
+                                    <button className="text-gold-accent font-black text-xs group-hover:translate-x-1 transition-transform">
+                                        {t('View Details')} →
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="bg-white border border-dashed border-gray-border rounded-[32px] p-16 text-center">
+                        <div className="w-16 h-16 bg-off-white-bg rounded-full flex items-center justify-center mx-auto mb-6">
+                            <span className="text-2xl">📝</span>
+                        </div>
+                        <p className="text-gray-muted font-bold mb-6">{t('You haven\'t posted any missions yet.')}</p>
+                        <Link href={route('missions.create')} className="text-sm font-black text-primary-black underline hover:text-gold-accent transition-colors">
+                            {t('Start by posting your first mission')}
+                        </Link>
+                    </div>
+                )}
+            </div>
+
+            {/* Quick Tips */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-white border border-gray-border rounded-[32px] p-8 flex items-center gap-6 group hover:border-gold-accent transition-all">
+                    <div className="w-16 h-16 bg-cream-accent rounded-2xl flex items-center justify-center text-2xl group-hover:bg-gold-accent transition-colors">🔍</div>
+                    <div>
+                        <h5 className="font-black text-primary-black mb-1">{t('How it works')}</h5>
+                        <p className="text-sm text-gray-muted font-bold">{t('Learn how to get the most out of Oflem')}</p>
+                    </div>
+                </div>
+                <div className="bg-white border border-gray-border rounded-[32px] p-8 flex items-center gap-6 group hover:border-gold-accent transition-all">
+                    <div className="w-16 h-16 bg-cream-accent rounded-2xl flex items-center justify-center text-2xl group-hover:bg-gold-accent transition-colors">🛡️</div>
+                    <div>
+                        <h5 className="font-black text-primary-black mb-1">{t('Trust & Safety')}</h5>
+                        <p className="text-sm text-gray-muted font-bold">{t('Your security is our top priority')}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
 
 function PerformerDashboard({ user, t }) {
     return (
@@ -115,7 +206,7 @@ function BothDashboard({ user, t }) {
                         </p>
                     </div>
                     <div className="flex gap-4">
-                        <button className="bg-primary-black text-white font-black py-3 px-6 rounded-full hover:opacity-90 transition-all text-sm shadow-md">{t('Post Task')}</button>
+                        <Link href={route('missions.search')} className="bg-primary-black text-white font-black py-3 px-6 rounded-full hover:opacity-90 transition-all text-sm shadow-md">{t('Post Task')}</Link>
                         <button className="bg-gold-accent text-primary-black font-black py-3 px-8 rounded-full hover:opacity-90 transition-all text-sm shadow-md">{t('Available Tasks')}</button>
                     </div>
                 </div>

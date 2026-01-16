@@ -13,22 +13,22 @@ export default function RegistrationSuccess({ user }) {
             title: t("It's ready. Your freedom starts here."),
             description: t("You can now post your requests and enjoy OFLEM to delegate your tasks."),
             cta: t("Post my first request"),
-            route: 'dashboard',
-            emoji: '🦥',
+            route: 'missions.search',
+            emoji: '',
         },
         performer: {
             title: t("Welcome. Ready to heat up the meter?"),
             description: t("Explore opportunities around you and start earning by monetizing your time."),
             cta: t("Browse opportunities"),
-            route: 'dashboard',
-            emoji: '💪',
+            route: 'missions.search',
+            emoji: '',
         },
         both: {
             title: t("The winning combo. Everything is active!"),
             description: t("You have access to all OFLEM features. Post, browse, and manage like a pro."),
             cta: t("Access dashboard"),
-            route: 'dashboard',
-            emoji: '⚡',
+            route: 'missions.search',
+            emoji: '',
         },
     };
 
@@ -36,9 +36,7 @@ export default function RegistrationSuccess({ user }) {
 
     return (
         <AuthSplitLayout 
-            heroImage="/register-page-hero.svg"
-            heroHeading={selectedContent.emoji + " " + selectedContent.title}
-            heroSubtext={t("Welcome to the OFLEM community")}
+            heroImage="/welcome-page-illustration.svg"
             bgAccentClass="bg-cream-accent"
         >
             <Head title={t("Welcome!")} />

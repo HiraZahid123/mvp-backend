@@ -130,7 +130,7 @@ class ProfileCompletionController extends Controller
 
         try {
             $response = Http::get('https://maps.googleapis.com/maps/api/geocode/json', [
-                'address' => $zipCode . ', France',
+                'address' => $zipCode . ', Switzerland',
                 'key' => $apiKey,
             ]);
 

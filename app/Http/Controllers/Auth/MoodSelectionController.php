@@ -40,6 +40,11 @@ class MoodSelectionController extends Controller
             'last_selected_role' => $request->role,
         ]);
 
+        // Check for pending mission
+        if ($request->session()->has('pending_mission')) {
+            return redirect()->route('missions.pending');
+        }
+
         // Redirect based on selected role
         return $this->redirectBasedOnRole($request->role, $user);
     }
@@ -51,13 +56,12 @@ class MoodSelectionController extends Controller
     {
         switch ($role) {
             case 'customer':
-                // FLEMMARD - Post/Hire Dashboard
-                return redirect()->route('dashboard')->with('mood', 'customer');
+                // FLEMMARD - Redirect to Home Page
+                return redirect('/');
                 
             case 'performer':
-                // MOTIVÉ - Task Map / Jobs Dashboard
-                // TODO: Update this route when task map is implemented
-                return redirect()->route('dashboard')->with('mood', 'performer');
+                // MOTIVÉ - Redirect to AI Onboarding
+                return redirect()->route('onboarding.index');
                 
             case 'both':
                 // LES DEUX - Last used dashboard or global overview

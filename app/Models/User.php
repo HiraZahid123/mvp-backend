@@ -31,7 +31,6 @@ class User extends Authenticatable
         'location_lng',
         'location_address',
         'discovery_radius_km',
-        'is_admin',
         'provider',
         'provider_id',
         'provider_token',
@@ -225,5 +224,22 @@ class User extends Authenticatable
     public function getDisplayNameAttribute(): string
     {
         return $this->username ?? $this->name;
+    }
+
+    /**
+     * Get the provider's extended profile.
+     */
+    public function providerProfile()
+    {
+        return $this->hasOne(ProviderProfile::class);
+    }
+
+    /**
+     * Get the skills associated with the provider.
+     */
+    public function skills()
+    {
+        return $this->belongsToMany(Skill::class, 'provider_skills')
+                    ->withPivot('proficiency_level', 'verified');
     }
 }

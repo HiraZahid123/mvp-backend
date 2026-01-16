@@ -29,9 +29,7 @@ export default function CompleteIdentity({ user }) {
 
     return (
         <AuthSplitLayout 
-            heroImage="/register-page-hero.svg"
-            heroHeading="Enchanté !"
-            heroSubtext="Comment doit-on vous appeler ?"
+            heroImage="/verify-email-code.svg"
             bgAccentClass="bg-cream-accent"
         >
             <Head title="Profil" />

@@ -82,9 +82,7 @@ export default function VerifyEmailCode({ email }) {
 
     return (
         <AuthSplitLayout 
-            heroImage="/register-page-hero.svg"
-            heroHeading="Vérifiez votre email"
-            heroSubtext="Un code à 6 chiffres pour sécuriser votre compte."
+            heroImage="/verify-email-code.svg"
             bgAccentClass="bg-cream-accent"
         >
             <Head title="Vérifier l'email" />

@@ -29,10 +29,20 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Task Creator Routes
+    // Mission Routes
     Route::get('/api/tasks', [\App\Http\Controllers\TaskController::class, 'index'])->name('tasks.index');
     Route::post('/api/tasks', [\App\Http\Controllers\TaskController::class, 'store'])->name('tasks.store');
+
+    Route::get('/missions/pending', [\App\Http\Controllers\MissionController::class, 'handlePendingMission'])->name('missions.pending');
+    Route::get('/missions/{mission}/matchmaking', [\App\Http\Controllers\MissionController::class, 'showMatchmaking'])->name('missions.matchmaking');
+    Route::post('/missions/{mission}/contact/{helper}', [\App\Http\Controllers\MissionController::class, 'contactHelper'])->name('missions.contact');
+    Route::get('/missions/search', [\App\Http\Controllers\MissionController::class, 'search'])->name('missions.search');
 });
+
+Route::get('/missions/create', [\App\Http\Controllers\MissionController::class, 'create'])->name('missions.create');
+Route::post('/api/missions', [\App\Http\Controllers\MissionController::class, 'store'])->name('missions.store');
+Route::post('/api/moderation/check', [\App\Http\Controllers\MissionController::class, 'checkModeration'])->name('moderation.check');
+Route::post('/api/missions/ai-rewrite', [\App\Http\Controllers\MissionController::class, 'aiRewrite'])->name('missions.ai-rewrite');
 
 Route::post('/language-switch', function (Request $request) {
     $request->validate([
@@ -124,6 +134,11 @@ Route::middleware('auth')->group(function () {
     // Mood of the Day (appears after every login)
     Route::get('/mood-of-the-day', [MoodSelectionController::class, 'create'])->name('auth.mood-of-the-day');
     Route::post('/mood-of-the-day', [MoodSelectionController::class, 'store'])->name('auth.mood-of-the-day.store');
+
+    // Provider Onboarding (AI Powered)
+    Route::get('/onboarding', [\App\Http\Controllers\OnboardingController::class, 'index'])->name('onboarding.index');
+    Route::post('/onboarding/analyze', [\App\Http\Controllers\OnboardingController::class, 'analyze'])->name('onboarding.analyze');
+    Route::post('/onboarding/submit', [\App\Http\Controllers\OnboardingController::class, 'store'])->name('onboarding.store');
 });
 
 require __DIR__.'/auth.php';

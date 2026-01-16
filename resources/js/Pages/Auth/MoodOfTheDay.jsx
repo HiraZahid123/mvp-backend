@@ -26,19 +26,19 @@ export default function MoodOfTheDay({ user, currentRole }) {
     const roles = [
         {
             key: 'customer',
-            emoji: '🦥',
+            icon: '/lowBattery.svg',
             title: t('FLEMMARD'),
             description: t('Je veux déléguer et me reposer aujourd\'hui.'),
         },
         {
             key: 'performer',
-            emoji: '💪',
+            icon: '/highBattery.svg',
             title: t('MOTIVÉ'),
             description: t('Je suis prêt à saisir des opportunités.'),
         },
         {
             key: 'both',
-            emoji: '⚡',
+            icon: '/mediumBattery.svg',
             title: t('LES DEUX'),
             description: t('Les deux ! Mode multitâche activé.'),
         },
@@ -46,9 +46,7 @@ export default function MoodOfTheDay({ user, currentRole }) {
 
     return (
         <AuthSplitLayout 
-            heroImage="/login-page-hero.svg"
-            heroHeading={t("Quelle est l'humeur du jour ?")}
-            heroSubtext={t("Choisissez votre mode")}
+            heroImage="/mood-of-the-day.svg"
             bgAccentClass="bg-cream-accent"
         >
             <Head title={t("Mood of the Day")} />
@@ -68,7 +66,7 @@ export default function MoodOfTheDay({ user, currentRole }) {
                     {roles.map((role) => (
                         <RoleCard
                             key={role.key}
-                            emoji={role.emoji}
+                            icon={role.icon}
                             title={role.title}
                             description={role.description}
                             selected={selectedRole === role.key}
