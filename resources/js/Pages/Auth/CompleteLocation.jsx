@@ -34,7 +34,7 @@ export default function CompleteLocation({ user, role }) {
 
     return (
         <AuthSplitLayout 
-            heroImage="/login-page-hero.svg"
+            heroImage="/images/illustrations/login-hero.svg"
             bgAccentClass="bg-cream-accent"
         >
             <Head title={t("Localisation")} />

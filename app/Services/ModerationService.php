@@ -44,15 +44,19 @@ class ModerationService
     /**
      * Deep check using AI. Handles double-meanings, sentences, and context.
      */
-    public function isCleanAI(string $content): bool
+    public function isCleanAI(string $content): array
     {
-        if (empty($content)) return true;
+        if (empty($content)) return ['is_clean' => true, 'improved_title' => null];
 
-        $prompt = "You are a content moderator for Oflem, a premium Swiss platform.
-        Analyze this text for any violations including: 
-        drugs, illegal services, adult content, violence, fraud, or hidden double meanings.
+        $prompt = "You are a content moderator and professional editor for Oflem, a premium Swiss platform.
+        Analyze this mission text for any violations (drugs, illegal services, adult content, violence, fraud, or hidden double meanings).
         
-        Text: \"{$content}\"
+        Mission Text: \"{$content}\"
+        
+        Task:
+        1. Check if the content is safe and professional.
+        2. If (and ONLY if) the content is clean, generate a more comprehensive, professional, and clear version of this title (max 5-8 words).
+        3. Suggest a high-level category (e.g., Cleaning, Moving, DIY, IT, Admin, Delivery, Pets, Gardening, Events, Education, Wellness, Other).
         
         CRITICAL: Watch for bypass attempts (e.g., symbols, spaces, or numbers used to hide prohibited words).
         
@@ -60,18 +64,26 @@ class ModerationService
         {
           \"is_clean\": boolean,
           \"reason\": \"Brief reason if not clean, else null\",
-          \"risk_level\": \"high|medium|low\"
+          \"risk_level\": \"high|medium|low\",
+          \"improved_title\": \"The polished, professional title (only if clean)\",
+          \"category\": \"The suggested category\"
         }";
 
         try {
             $result = $this->taskService->generateContent($prompt);
             
-            Log::debug('AI Moderation Deep Check Raw:', ['result' => $result]);
+            Log::debug('AI Moderation & Title Gen Raw:', ['result' => $result]);
             
-            return (bool) ($result['is_clean'] ?? false); 
+            return [
+                'is_clean' => (bool) ($result['is_clean'] ?? false),
+                'improved_title' => $result['improved_title'] ?? null,
+                'category' => $result['category'] ?? 'Other',
+                'reason' => $result['reason'] ?? null,
+                'risk_level' => $result['risk_level'] ?? 'low'
+            ];
         } catch (\Exception $e) {
-            Log::error("AI Moderation failed: " . $e->getMessage());
-            return false; // Fail-closed: Reject if AI service fails
+            Log::error("AI Moderation/Title Gen failed: " . $e->getMessage());
+            return ['is_clean' => false, 'improved_title' => null]; // Fail-closed
         }
     }
 

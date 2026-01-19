@@ -29,7 +29,7 @@ export default function CompleteIdentity({ user }) {
 
     return (
         <AuthSplitLayout 
-            heroImage="/verify-email-code.svg"
+            heroImage="/images/illustrations/verify-email.svg"
             bgAccentClass="bg-cream-accent"
         >
             <Head title="Profil" />

@@ -78,7 +78,7 @@ export default function VerifyLoginOTP() {
 
     return (
         <AuthSplitLayout 
-            heroImage="/otp-verify-code.svg"
+            heroImage="/images/illustrations/otp-verify.svg"
             bgAccentClass="bg-cream-accent"
         >
             <Head title={t('Verify Login')} />

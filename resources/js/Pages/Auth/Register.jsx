@@ -9,7 +9,7 @@ export default function Register() {
 
     return (
         <AuthSplitLayout 
-            heroImage="/register-page-hero.svg"
+            heroImage="/images/illustrations/register-hero.svg"
             heroHeading={t("Votre temps est une ressource.")}
             heroSubtext={t("Gérez-la comme un pro.")}
             bgAccentClass="bg-cream-accent"

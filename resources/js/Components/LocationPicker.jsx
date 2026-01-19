@@ -177,16 +177,7 @@ export default function LocationPicker({
         marginTop: '1rem'
     };
 
-    const circleOptions = {
-        strokeColor: '#D4AF37',
-        strokeOpacity: 0.8,
-        strokeWeight: 2,
-        fillColor: '#D4AF37',
-        fillOpacity: 0.1,
-        clickable: false,
-        radius: radius * 1000,
-        center: selectedLocation || mapCenter,
-    };
+
 
     return (
         <div className="space-y-6">
@@ -339,8 +330,19 @@ export default function LocationPicker({
                                             onDragEnd={handleMapClick}
                                         />
                                         <Circle
+                                            key={`circle-${radius}`}
                                             center={selectedLocation}
-                                            options={circleOptions}
+                                            radius={radius * 1000}
+                                            options={{
+                                                strokeColor: '#C57B67',
+                                                strokeOpacity: 1,
+                                                strokeWeight: 3,
+                                                fillColor: '#C57B67',
+                                                fillOpacity: 0.2,
+                                                clickable: false,
+                                                editable: false,
+                                                draggable: false,
+                                            }}
                                         />
                                     </>
                                 )}

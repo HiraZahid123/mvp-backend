@@ -82,6 +82,10 @@ class OnboardingController extends Controller
             $user->skills()->sync($skillIds);
         });
 
+        if (Auth::user()->isPerformer()) {
+            return redirect()->route('missions.active')->with('success', 'Profile setup complete! Welcome to active missions.');
+        }
+
         return redirect()->route('dashboard')->with('success', 'Profile setup complete!');
     }
 }

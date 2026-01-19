@@ -26,7 +26,7 @@ export default function LoginManual({ canResetPassword, status }) {
 
     return (
         <AuthSplitLayout
-            heroImage="/login-screen.svg"
+            heroImage="/images/illustrations/login-screen.svg"
             bgAccentClass="bg-cream-accent"
         >
             <Head title={t("Se connecter")} />

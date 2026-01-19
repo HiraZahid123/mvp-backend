@@ -13,21 +13,21 @@ export default function RegistrationSuccess({ user }) {
             title: t("It's ready. Your freedom starts here."),
             description: t("You can now post your requests and enjoy OFLEM to delegate your tasks."),
             cta: t("Post my first request"),
-            route: 'missions.search',
+            route: '/',
             emoji: '',
         },
         performer: {
             title: t("Welcome. Ready to heat up the meter?"),
             description: t("Explore opportunities around you and start earning by monetizing your time."),
             cta: t("Browse opportunities"),
-            route: 'missions.search',
+            route: '/',
             emoji: '',
         },
         both: {
             title: t("The winning combo. Everything is active!"),
             description: t("You have access to all OFLEM features. Post, browse, and manage like a pro."),
             cta: t("Access dashboard"),
-            route: 'missions.search',
+            route: '/',
             emoji: '',
         },
     };
@@ -36,7 +36,7 @@ export default function RegistrationSuccess({ user }) {
 
     return (
         <AuthSplitLayout 
-            heroImage="/welcome-page-illustration.svg"
+            heroImage="/images/illustrations/welcome-hero.svg"
             bgAccentClass="bg-cream-accent"
         >
             <Head title={t("Welcome!")} />
@@ -63,7 +63,7 @@ export default function RegistrationSuccess({ user }) {
                 </div>
 
                 {/* CTA Button */}
-                <Link href={route(selectedContent.route)}>
+                <Link href={selectedContent.route}>
                     <PrimaryButton className="w-full">
                         {selectedContent.cta}
                     </PrimaryButton>

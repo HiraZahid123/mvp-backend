@@ -15,7 +15,7 @@ export default function AuthSplitLayout({ children, heroImage, heroHeading, hero
                     )}
                     <div className="mb-0 w-full text-center">
                         <img 
-                            src={heroImage || "/login-page-hero.svg"} 
+                            src={heroImage || "/images/illustrations/login-hero.svg"} 
                             alt="Oflem Hero" 
                             className="w-full h-auto max-w-none mx-auto" 
                         />

@@ -26,19 +26,19 @@ export default function SelectRole({ user }) {
     const roles = [
         {
             key: 'customer',
-            icon: '/lowBattery.svg',
+            icon: '/images/icons/battery-low.svg',
             title: t('FLEMMARD'),
             description: t('Je délègue. Mon temps est précieux.'),
         },
         {
             key: 'performer',
-            icon: '/highBattery.svg',
+            icon: '/images/icons/battery-high.svg',
             title: t('MOTIVÉ'),
             description: t('Je gère. Prêt à rentabiliser ma disponibilité.'),
         },
         {
             key: 'both',
-            icon: '/mediumBattery.svg',
+            icon: '/images/icons/battery-medium.svg',
             title: t('LES DEUX'),
             description: t('Les deux ! Parce que je suis multitâche.'),
         },
@@ -46,7 +46,7 @@ export default function SelectRole({ user }) {
 
     return (
         <AuthSplitLayout 
-            heroImage="/role-selection.svg"
+            heroImage="/images/illustrations/role-selection.svg"
             bgAccentClass="bg-cream-accent"
         >
             <Head title={t("Choisir un rôle")} />

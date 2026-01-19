@@ -12,7 +12,7 @@ class MatchmakingService
     /**
      * Find best providers for a given mission based on extracted skills.
      */
-    public function findMatches(array $missionRequirements, int $limit = 10): Collection
+    public function findMatches(array $missionRequirements, int $limit = 10, ?array $location = null): Collection
     {
         $requiredSkills = collect($missionRequirements['required_skills'] ?? []);
         $category = $missionRequirements['category'] ?? null;
@@ -35,19 +35,23 @@ class MatchmakingService
         $creator = auth()->user();
         $query = User::where('role_type', '!=', 'customer');
 
-        if ($creator && $creator->location_lat && $creator->location_lng) {
-            $radius = $creator->discovery_radius_km ?? 20;
+        // Priority: Passed location > Creator's profile location
+        $lat = $location['lat'] ?? $creator->location_lat ?? null;
+        $lng = $location['lng'] ?? $creator->location_lng ?? null;
+
+        if ($lat && $lng) {
+            $radius = $location['radius'] ?? $creator->discovery_radius_km ?? 20;
             // Rough approximation: 1 degree latitude = 111km
             $latRange = $radius / 111;
             // Rough approximation for longitude at Swiss latitudes (~46N): 1 deg = ~77km
             $lngRange = $radius / 77; 
 
             $query->whereBetween('location_lat', [
-                $creator->location_lat - $latRange,
-                $creator->location_lat + $latRange
+                $lat - $latRange,
+                $lat + $latRange
             ])->whereBetween('location_lng', [
-                $creator->location_lng - $lngRange,
-                $creator->location_lng + $lngRange
+                $lng - $lngRange,
+                $lng + $lngRange
             ]);
         }
         

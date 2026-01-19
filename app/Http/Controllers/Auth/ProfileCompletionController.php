@@ -42,8 +42,12 @@ class ProfileCompletionController extends Controller
             return redirect()->route('auth.select-role');
         }
 
-        $photoPath = null;
+        $photoPath = $user->profile_photo;
         if ($request->hasFile('profile_photo')) {
+            // Delete old photo if it exists
+            if ($user->profile_photo) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->profile_photo);
+            }
             $photoPath = $request->file('profile_photo')->store('profile-photos', 'public');
         }
 
@@ -75,7 +79,7 @@ class ProfileCompletionController extends Controller
     /**
      * Store location information
      */
-    public function storeLocation(Request $request)
+    public function storeLocation(Request $request, \App\Services\GeocodingService $geocodingService)
     {
         $request->validate([
             'method' => 'required|in:gps,zipcode',
@@ -98,7 +102,7 @@ class ProfileCompletionController extends Controller
 
         // If using zip code, geocode it
         if ($request->method === 'zipcode' && $request->zip_code) {
-            $geocoded = $this->geocodeZipCode($request->zip_code);
+            $geocoded = $geocodingService->geocode($request->zip_code);
             if ($geocoded) {
                 $lat = $geocoded['lat'];
                 $lng = $geocoded['lng'];
@@ -114,41 +118,11 @@ class ProfileCompletionController extends Controller
             'discovery_radius_km' => $request->discovery_radius_km,
         ]);
 
+        if ($request->session()->has('pending_mission')) {
+            return redirect()->route('missions.pending');
+        }
+
         return redirect()->route('auth.registration-success');
-    }
-
-    /**
-     * Geocode zip code to lat/lng using Google Maps API
-     */
-    private function geocodeZipCode(string $zipCode): ?array
-    {
-        $apiKey = config('services.google.maps_api_key');
-        
-        if (!$apiKey) {
-            return null;
-        }
-
-        try {
-            $response = Http::get('https://maps.googleapis.com/maps/api/geocode/json', [
-                'address' => $zipCode . ', Switzerland',
-                'key' => $apiKey,
-            ]);
-
-            $data = $response->json();
-
-            if ($data['status'] === 'OK' && isset($data['results'][0])) {
-                $location = $data['results'][0]['geometry']['location'];
-                return [
-                    'lat' => $location['lat'],
-                    'lng' => $location['lng'],
-                    'address' => $data['results'][0]['formatted_address'],
-                ];
-            }
-        } catch (\Exception $e) {
-            logger()->error('Geocoding failed: ' . $e->getMessage());
-        }
-
-        return null;
     }
 
     /**

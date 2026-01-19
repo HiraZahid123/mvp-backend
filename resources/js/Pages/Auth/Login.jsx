@@ -9,7 +9,7 @@ export default function Login({ canResetPassword, status }) {
 
     return (
         <AuthSplitLayout
-            heroImage="/login-screen.svg"
+            heroImage="/images/illustrations/login-screen.svg"
             bgAccentClass="bg-cream-accent"
         >
             <Head title={t("Se connecter")} />

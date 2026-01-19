@@ -24,6 +24,13 @@ Route::get('/dashboard', function () {
     ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+// Public Mission Routes (Must come before {mission} wildcard)
+Route::post('/api/missions', [\App\Http\Controllers\MissionController::class, 'store'])->name('missions.store');
+Route::get('/missions/create', [\App\Http\Controllers\MissionController::class, 'create'])->name('missions.create');
+Route::get('/missions/matchmaking-preview', [\App\Http\Controllers\MissionController::class, 'guestMatchmakingPreview'])->name('missions.matchmaking-preview');
+Route::post('/api/moderation/check', [\App\Http\Controllers\MissionController::class, 'checkModeration'])->name('moderation.check');
+Route::post('/api/missions/ai-rewrite', [\App\Http\Controllers\MissionController::class, 'aiRewrite'])->name('missions.ai-rewrite');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -34,15 +41,18 @@ Route::middleware('auth')->group(function () {
     Route::post('/api/tasks', [\App\Http\Controllers\TaskController::class, 'store'])->name('tasks.store');
 
     Route::get('/missions/pending', [\App\Http\Controllers\MissionController::class, 'handlePendingMission'])->name('missions.pending');
+    Route::get('/missions/active', [\App\Http\Controllers\MissionController::class, 'active'])->name('missions.active');
+    Route::get('/missions/search', [\App\Http\Controllers\MissionController::class, 'search'])->name('missions.search');
+    Route::get('/missions/{mission}', [\App\Http\Controllers\MissionController::class, 'show'])->name('missions.show');
+    Route::post('/missions/{mission}/offer', [\App\Http\Controllers\MissionController::class, 'submitOffer'])->name('missions.submit-offer');
+    Route::post('/missions/{mission}/question', [\App\Http\Controllers\MissionController::class, 'askQuestion'])->name('missions.ask-question');
+    Route::post('/missions/{mission}/accept', [\App\Http\Controllers\MissionController::class, 'acceptFixedPrice'])->name('missions.accept');
+    Route::post('/missions/{mission}/offers/{offer}/select', [\App\Http\Controllers\MissionController::class, 'selectOffer'])->name('missions.select-offer');
+    Route::post('/missions/{mission}/questions/{question}/answer', [\App\Http\Controllers\MissionController::class, 'answerQuestion'])->name('missions.answer-question');
     Route::get('/missions/{mission}/matchmaking', [\App\Http\Controllers\MissionController::class, 'showMatchmaking'])->name('missions.matchmaking');
     Route::post('/missions/{mission}/contact/{helper}', [\App\Http\Controllers\MissionController::class, 'contactHelper'])->name('missions.contact');
-    Route::get('/missions/search', [\App\Http\Controllers\MissionController::class, 'search'])->name('missions.search');
 });
 
-Route::get('/missions/create', [\App\Http\Controllers\MissionController::class, 'create'])->name('missions.create');
-Route::post('/api/missions', [\App\Http\Controllers\MissionController::class, 'store'])->name('missions.store');
-Route::post('/api/moderation/check', [\App\Http\Controllers\MissionController::class, 'checkModeration'])->name('moderation.check');
-Route::post('/api/missions/ai-rewrite', [\App\Http\Controllers\MissionController::class, 'aiRewrite'])->name('missions.ai-rewrite');
 
 Route::post('/language-switch', function (Request $request) {
     $request->validate([

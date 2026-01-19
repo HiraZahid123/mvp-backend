@@ -41,7 +41,7 @@ export default function PhotoUploader({ value, onChange, previewUrl }) {
                 ) : (
                     <div className="w-full h-full bg-gradient-to-br from-gold-accent/20 to-gold-accent/5 flex items-center justify-center">
                         <img 
-                            src="/images/oflem-placeholder.svg" 
+                            src="/images/branding/oflem-placeholder.svg" 
                             alt="OFLEM placeholder" 
                             className="w-16 h-16 opacity-40 group-hover:opacity-60 transition-opacity duration-300"
                             onError={(e) => {

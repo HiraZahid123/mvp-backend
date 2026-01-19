@@ -8,8 +8,9 @@ import TextInput from '@/Components/TextInput';
 import InputLabel from '@/Components/InputLabel';
 import InputError from '@/Components/InputError';
 import axios from 'axios';
+import MissionLocationPicker from '@/Components/MissionLocationPicker';
 
-export default function Create({ prefillTitle = '' }) {
+export default function Create({ prefillTitle = '', aiTitle = null }) {
     const { t } = useTranslation();
     const { auth } = usePage().props;
     const [showAuthModal, setShowAuthModal] = useState(false);
@@ -17,12 +18,15 @@ export default function Create({ prefillTitle = '' }) {
     const [moderationError, setModerationError] = useState('');
 
     const { data, setData, post, processing, errors, reset } = useForm({
-        title: prefillTitle,
+        title: aiTitle || prefillTitle,
         description: '',
         location: '',
+        lat: '',
+        lng: '',
+        exact_address: '',
         date_time: '',
         budget: '',
-        category: 'general',
+        price_type: 'fixed', // Default price type
         additional_details: '',
     });
 
@@ -73,16 +77,8 @@ export default function Create({ prefillTitle = '' }) {
         if (!isClean) return;
 
         if (!auth.user) {
-            // Store pending mission in session via backend
-            router.post(route('missions.store'), data, {
-                onSuccess: (page) => {
-                    // Check flash message from backend
-                    if (page.props.flash?.requires_auth) {
-                        setShowAuthModal(true);
-                    }
-                },
-                onError: () => {} 
-            });
+            // Store pending mission in session and redirect to preview (handled by backend)
+            router.post(route('missions.store'), data);
             return;
         }
 
@@ -106,7 +102,14 @@ export default function Create({ prefillTitle = '' }) {
                     <form onSubmit={handleSubmit} className="space-y-8">
                         {/* Title */}
                         <div>
-                            <InputLabel htmlFor="title" value={t('Mission title')} className="text-xs uppercase tracking-widest font-black mb-3" />
+                            <div className="flex justify-between items-center mb-3">
+                                <InputLabel htmlFor="title" value={t('Mission title')} className="text-xs uppercase tracking-widest font-black" />
+                                {aiTitle && data.title === aiTitle && (
+                                    <span className="text-[10px] font-black text-green-500 uppercase tracking-widest flex items-center gap-1 animate-pulse">
+                                        ✨ {t('AI Comprehensive Title')}
+                                    </span>
+                                )}
+                            </div>
                             <TextInput
                                 id="title"
                                 type="text"
@@ -144,22 +147,32 @@ export default function Create({ prefillTitle = '' }) {
                         </div>
 
                         <div className="grid md:grid-cols-2 gap-8">
-                            {/* Location */}
-                            <div>
-                                <InputLabel htmlFor="location" value={t('Location')} className="text-xs uppercase tracking-widest font-black mb-3" />
-                                <TextInput
-                                    id="location"
-                                    type="text"
-                                    value={data.location}
-                                    className="w-full"
-                                    onChange={(e) => setData('location', e.target.value)}
-                                    placeholder={t('City or ZIP code')}
+                            {/* Location (City/General) */}
+                            <div className="col-span-2">
+                                <div className="flex items-center gap-2 mb-3">
+                                    <InputLabel value={t('Where will this happen ?')} className="text-xs uppercase tracking-widest font-black" />
+                                    <span className="px-2 py-0.5 bg-cream-accent text-[9px] font-black uppercase tracking-tighter rounded-full">{t('Publicly Visible')}</span>
+                                </div>
+                                <MissionLocationPicker 
+                                    onLocationSelect={(loc) => {
+                                        setData(prev => ({
+                                            ...prev,
+                                            location: loc.city,
+                                            lat: loc.lat,
+                                            lng: loc.lng,
+                                            exact_address: loc.address
+                                        }));
+                                    }}
+                                    initialAddress={data.exact_address || data.location}
                                 />
-                                <InputError message={errors.location} className="mt-2" />
+                                <InputError message={errors.location || errors.lat || errors.lng} className="mt-2" />
+                                <p className="mt-2 text-[10px] text-gray-muted font-bold">
+                                    📍 {t('Pick the exact spot on the map or search for an address.')}
+                                </p>
                             </div>
 
                             {/* Date & Time */}
-                            <div>
+                            <div className="col-span-2 md:col-span-1">
                                 <InputLabel htmlFor="date_time" value={t('Date & Time')} className="text-xs uppercase tracking-widest font-black mb-3" />
                                 <TextInput
                                     id="date_time"
@@ -171,57 +184,106 @@ export default function Create({ prefillTitle = '' }) {
                                 <InputError message={errors.date_time} className="mt-2" />
                             </div>
                         </div>
+                        <div className="bg-off-white-bg p-8 rounded-[32px] border border-gray-border">
+                            <div className="text-center mb-8">
+                                <InputLabel value={t('Pricing & Budget')} className="text-xs uppercase tracking-widest font-black mb-2" />
+                                <p className="text-[10px] text-gray-muted font-bold uppercase tracking-wider">{t('Choose how you want to pay for this mission')}</p>
+                            </div>
 
-                        <div className="grid md:grid-cols-2 gap-8">
-                            {/* Budget */}
-                            <div>
-                                <InputLabel htmlFor="budget" value={t('Budget')} className="text-xs uppercase tracking-widest font-black mb-3" />
-                                <div className="relative">
-                                    <TextInput
+                            <div className="grid md:grid-cols-2 gap-4 mb-8">
+                                <button
+                                    type="button"
+                                    onClick={() => setData('price_type', 'fixed')}
+                                    className={`p-6 rounded-[24px] border-2 transition-all text-left relative overflow-hidden group ${data.price_type === 'fixed' ? 'border-primary-black bg-white shadow-md' : 'border-transparent bg-gray-100/50 opacity-60 hover:opacity-100'}`}
+                                >
+                                    <div className="flex items-center justify-between mb-3">
+                                        <div className="text-2xl">⚡</div>
+                                        {data.price_type === 'fixed' && <div className="w-2 h-2 bg-primary-black rounded-full"></div>}
+                                    </div>
+                                    <p className="font-black text-primary-black mb-1">{t('Fixed Price')}</p>
+                                    <p className="text-[10px] text-gray-muted font-bold leading-tight">{t('Set your budget. Performers will accept it instantly.')}</p>
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setData('price_type', 'open')}
+                                    className={`p-6 rounded-[24px] border-2 transition-all text-left relative overflow-hidden group ${data.price_type === 'open' ? 'border-primary-black bg-white shadow-md' : 'border-transparent bg-gray-100/50 opacity-60 hover:opacity-100'}`}
+                                >
+                                    <div className="flex items-center justify-between mb-3">
+                                        <div className="text-2xl">🏷️</div>
+                                        {data.price_type === 'open' && <div className="w-2 h-2 bg-primary-black rounded-full"></div>}
+                                    </div>
+                                    <p className="font-black text-primary-black mb-1">{t('Request Quotes')}</p>
+                                    <p className="text-[10px] text-gray-muted font-bold leading-tight">{t('Receive offers from performers and negotiate the price.')}</p>
+                                </button>
+                            </div>
+
+                            <div className="max-w-xs mx-auto text-center">
+                                <InputLabel 
+                                    htmlFor="budget" 
+                                    value={data.price_type === 'fixed' ? t('Your Price') : t('Expected Budget (Optional)')} 
+                                    className="text-[10px] uppercase tracking-widest font-black mb-4" 
+                                />
+                                <div className="relative mb-6">
+                                    <input
                                         id="budget"
                                         type="number"
                                         value={data.budget}
-                                        className="w-full pl-12"
+                                        className="w-full bg-white border-2 border-gray-border rounded-[20px] py-4 pl-16 pr-6 text-xl font-black text-primary-black focus:border-gold-accent focus:ring-0 transition-all text-center"
                                         onChange={(e) => setData('budget', e.target.value)}
-                                        placeholder="0.00"
+                                        placeholder="0"
+                                        required={data.price_type === 'fixed'}
                                     />
-                                    <span className="absolute left-5 top-1/2 -translate-y-1/2 font-black text-gray-muted">CHF</span>
+                                    <span className="absolute left-6 top-1/2 -translate-y-1/2 font-black text-gray-muted text-sm">CHF</span>
                                 </div>
-                                <InputError message={errors.budget} className="mt-2" />
-                            </div>
 
-                            {/* Category */}
-                            <div>
-                                <InputLabel htmlFor="category" value={t('Category')} className="text-xs uppercase tracking-widest font-black mb-3" />
-                                <select
-                                    id="category"
-                                    value={data.category}
-                                    className="w-full bg-off-white-bg border-gray-border rounded-full px-6 py-3.5 text-sm font-bold text-primary-black focus:border-gold-accent focus:ring-0 appearance-none"
-                                    onChange={(e) => setData('category', e.target.value)}
-                                >
-                                    <option value="general">{t('General Help')}</option>
-                                    <option value="home_improvement">{t('Home Improvement & DIY')}</option>
-                                    <option value="cleaning">{t('Cleaning & Organization')}</option>
-                                    <option value="moving">{t('Moving & Lifting')}</option>
-                                    <option value="gardening">{t('Gardening & Outdoor')}</option>
-                                    <option value="pets">{t('Pet Care')}</option>
-                                    <option value="tech">{t('Tech & IT Support')}</option>
-                                    <option value="education">{t('Education & Tutoring')}</option>
-                                    <option value="events">{t('Events & Photography')}</option>
-                                    <option value="wellness">{t('Wellness & Beauty')}</option>
-                                    <option value="admin">{t('Admin & Business')}</option>
-                                    <option value="delivery">{t('Delivery & Errands')}</option>
-                                </select>
-                                <InputError message={errors.category} className="mt-2" />
+                                {data.price_type === 'fixed' && (
+                                    <div className="flex flex-wrap justify-center gap-2">
+                                        {[20, 50, 100, 200].map((amount) => (
+                                            <button
+                                                key={amount}
+                                                type="button"
+                                                onClick={() => setData('budget', amount.toString())}
+                                                className={`px-4 py-2 rounded-full text-[10px] font-black transition-all border-2 ${data.budget === amount.toString() ? 'border-gold-accent bg-gold-accent text-white' : 'border-gray-border bg-white text-gray-muted hover:border-gold-accent/50'}`}
+                                            >
+                                                {amount} CHF
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+                                <InputError message={errors.budget} className="mt-4" />
                             </div>
+                        </div>
+
+                        {/* Exact Address (Strictly confidential) - Simplified as it matches map selection */}
+                        <div className="pt-4">
+                            <div className="flex items-center gap-2 mb-3">
+                                <InputLabel htmlFor="exact_address" value={t('Refine Exact Address')} className="text-xs uppercase tracking-widest font-black" />
+                                <span className="px-2 py-0.5 bg-gold-accent text-[9px] font-black uppercase tracking-tighter rounded-full">{t('Private')}</span>
+                            </div>
+                            <TextInput
+                                id="exact_address"
+                                type="text"
+                                value={data.exact_address}
+                                className="w-full"
+                                onChange={(e) => setData('exact_address', e.target.value)}
+                                placeholder={t('Street name, house number, apartment...')}
+                            />
+                            <p className="mt-2 text-[10px] text-gray-muted font-bold flex items-center gap-1">
+                                🔒 {t('Automatically filled from map. You can add details like room or floor.')}
+                            </p>
+                            <InputError message={errors.exact_address} className="mt-2" />
                         </div>
 
                         {/* Submit */}
                         <div className="pt-6">
                             <button
                                 type="submit"
-                                disabled={processing || isModerating}
-                                className="w-full py-5 bg-primary-black text-white font-black rounded-full hover:bg-black transition-all shadow-xl text-lg flex items-center justify-center gap-3 active:scale-[0.98]"
+                                disabled={processing || isModerating || !data.title.trim()}
+                                className={`w-full py-5 font-black rounded-full transition-all shadow-xl text-lg flex items-center justify-center gap-3 active:scale-[0.98] ${
+                                    !data.title.trim() || processing || isModerating
+                                        ? 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none'
+                                        : 'bg-primary-black text-white hover:bg-black'
+                                }`}
                             >
                                 {processing || isModerating ? (
                                     <span className="w-6 h-6 border-4 border-gold-accent border-t-white rounded-full animate-spin"></span>
@@ -238,38 +300,6 @@ export default function Create({ prefillTitle = '' }) {
 
             <Footer />
 
-            {/* Auth Modal */}
-            <Modal show={showAuthModal} onClose={() => setShowAuthModal(false)}>
-                <div className="p-10 text-center">
-                    <div className="w-20 h-20 bg-cream-accent rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-lg">
-                        <span className="text-4xl">🔐</span>
-                    </div>
-                    <h2 className="text-2xl font-black text-primary-black mb-4">{t('One last step')}</h2>
-                    <p className="text-gray-muted font-bold mb-10 leading-relaxed">
-                        {t('Please log in or sign up to finalize your mission. We have saved your progress!')}
-                    </p>
-                    <div className="flex flex-col gap-4">
-                        <Link 
-                            href={route('login')} 
-                            className="w-full py-4 bg-gold-accent text-primary-black font-black rounded-full hover:opacity-90 transition-all shadow-md"
-                        >
-                            {t('Log in')}
-                        </Link>
-                        <Link 
-                            href={route('register')} 
-                            className="w-full py-4 bg-white border-2 border-gray-border text-primary-black font-black rounded-full hover:bg-off-white-bg transition-all"
-                        >
-                            {t('Sign up for free')}
-                        </Link>
-                    </div>
-                    <button 
-                        onClick={() => setShowAuthModal(false)}
-                        className="mt-8 text-xs font-black text-gray-muted uppercase tracking-widest hover:text-primary-black transition-colors"
-                    >
-                        {t('Close')}
-                    </button>
-                </div>
-            </Modal>
         </div>
     );
 }

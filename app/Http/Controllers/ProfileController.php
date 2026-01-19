@@ -39,6 +39,12 @@ class ProfileController extends Controller
              $request->validate([
                 'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
+
+            // Delete old avatar if it exists
+            if ($request->user()->avatar) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($request->user()->avatar);
+            }
+
             $path = $request->file('avatar')->store('avatars', 'public');
             $request->user()->avatar = $path;
         }

@@ -17,11 +17,16 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->string('location')->nullable();
+            $table->decimal('lat', 10, 8)->nullable();
+            $table->decimal('lng', 11, 8)->nullable();
             $table->dateTime('date_time')->nullable();
             $table->decimal('budget', 10, 2)->nullable();
+            $table->enum('price_type', ['fixed', 'open'])->default('fixed');
             $table->string('category')->nullable();
             $table->text('additional_details')->nullable();
-            $table->string('status')->default('open'); // open, booked, completed, cancelled
+            $table->enum('status', ['open', 'assigned', 'completed', 'cancelled'])->default('open');
+            $table->foreignId('assigned_user_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->string('exact_address')->nullable();
             $table->timestamps();
         });
     }

@@ -4,7 +4,7 @@ import useTranslation from '@/Hooks/useTranslation';
 import Header from '@/Components/Header';
 import Footer from '@/Components/Footer';
 
-export default function Matchmaking({ mission, helpers }) {
+export default function Matchmaking({ mission, helpers, isGuest = false }) {
     const { t } = useTranslation();
 
     return (
@@ -18,13 +18,31 @@ export default function Matchmaking({ mission, helpers }) {
                         {t('Help found for')}: <span className="text-gold-accent">{mission.title}</span>
                     </h1>
                     <p className="text-gray-muted font-bold">
-                        {t('Choose a helper to start negotiating and finalize your mission.')}
+                        {isGuest 
+                            ? t('Sign up to contact these local experts and secure your mission.')
+                            : t('Choose a helper to start negotiating and finalize your mission.')
+                        }
                     </p>
                 </div>
 
+                {isGuest && (
+                    <div className="mb-12 p-8 bg-cream-accent rounded-[32px] border border-gold-accent flex flex-col md:flex-row items-center justify-between gap-6">
+                        <div>
+                            <h3 className="text-xl font-black text-primary-black mb-2">{t('Almost there!')}</h3>
+                            <p className="text-gray-muted font-bold">{t('Register now to post your mission and start chatting with these helpers.')}</p>
+                        </div>
+                        <Link 
+                            href={route('register.manual')} 
+                            className="px-8 py-4 bg-primary-black text-white font-black rounded-full hover:bg-black transition-all whitespace-nowrap"
+                        >
+                            {t('Create Free Account')}
+                        </Link>
+                    </div>
+                )}
+
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {helpers.map((helper) => (
-                        <HelperCard key={helper.id} helper={helper} missionId={mission.id} t={t} />
+                        <HelperCard key={helper.id} helper={helper} missionId={mission.id} t={t} isGuest={isGuest} />
                     ))}
                 </div>
 
@@ -42,10 +60,15 @@ export default function Matchmaking({ mission, helpers }) {
     );
 }
 
-function HelperCard({ helper, missionId, t }) {
+function HelperCard({ helper, missionId, t, isGuest }) {
     const { post, processing } = useForm();
 
     const handleContact = () => {
+        if (isGuest) {
+            // Redirect to login with intended redirect back to the pending mission handler
+            window.location.href = route('login', { redirect: route('missions.pending') });
+            return;
+        }
         post(route('missions.contact', { mission: missionId, helper: helper.id }));
     };
 

@@ -40,7 +40,10 @@ export default function Welcome() {
             setHasChecked(true);
 
             if (clean) {
-                router.get(route('missions.create'), { title: searchTerm });
+                router.get(route('missions.create'), { 
+                    title: searchTerm,
+                    improved_title: response.data.improved_title 
+                });
             }
         } catch (error) {
             console.error("Moderation check failed", error);
@@ -84,11 +87,11 @@ export default function Welcome() {
                         </div>
                         <button 
                             type="submit"
-                            disabled={!searchTerm || isChecking}
-                            className={`absolute right-3 top-1/2 -translate-y-1/2 px-8 py-3 rounded-full font-black transition-all shadow-md active:scale-95 ${
-                                searchTerm && !isChecking
-                                    ? 'bg-gold-accent text-primary-black hover:opacity-90'
-                                    : 'bg-gray-200 text-gray-400 cursor-not-allowed opacity-50'
+                            disabled={!searchTerm.trim() || isChecking}
+                            className={`absolute right-3 top-1/2 -translate-y-1/2 px-8 py-3 rounded-full font-black transition-all duration-300 shadow-md active:scale-95 ${
+                                searchTerm.trim() && !isChecking
+                                    ? 'bg-gold-accent text-primary-black hover:opacity-90 opacity-100 translate-x-0'
+                                    : 'bg-gray-200 text-gray-400 cursor-not-allowed opacity-0 translate-x-4 pointer-events-none'
                             }`}
                         >
                             {isChecking ? t('Checking...') : `🚀 ${t('Start the search')}`}

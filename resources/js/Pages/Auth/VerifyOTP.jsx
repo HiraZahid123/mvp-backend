@@ -83,7 +83,7 @@ export default function VerifyOTP() {
 
     return (
         <AuthSplitLayout 
-            heroImage={!otpSent ? "/otp-verification-slection.svg" : "/otp-verify-code.svg"}
+            heroImage={!otpSent ? "/images/illustrations/otp-selection.svg" : "/images/illustrations/otp-verify.svg"}
             bgAccentClass="bg-cream-accent"
         >
             <Head title={t('Verify OTP')} />

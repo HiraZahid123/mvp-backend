@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
 
 class TaskProcessingService
 {
@@ -22,48 +23,50 @@ class TaskProcessingService
             return [];
         }
 
-        try {
-            $response = Http::withHeaders([
-                'Content-Type' => 'application/json',
-            ])->timeout(10)->post("{$this->baseUrl}?key={$this->apiKey}", [
-                'contents' => [
-                    [
-                        'parts' => [
-                            ['text' => $prompt]
+        $cacheKey = 'gemini_' . md5($prompt);
+
+        return Cache::remember($cacheKey, now()->addHours(24), function () use ($prompt) {
+            try {
+                $response = Http::withHeaders([
+                    'Content-Type' => 'application/json',
+                ])->timeout(10)->post("{$this->baseUrl}?key={$this->apiKey}", [
+                    'contents' => [
+                        [
+                            'parts' => [
+                                ['text' => $prompt]
+                            ]
                         ]
                     ]
-                ]
-            ]);
+                ]);
 
-            if ($response->successful()) {
-                $data = $response->json();
-                $textValues = $data['candidates'][0]['content']['parts'][0]['text'] ?? '{}';
-                
-                // Log raw response for debugging
-                Log::info('Raw Gemini Response: ' . $textValues);
+                if ($response->successful()) {
+                    $data = $response->json();
+                    $textValues = $data['candidates'][0]['content']['parts'][0]['text'] ?? '{}';
+                    
+                    // Log raw response for debugging
+                    Log::info('Raw Gemini Response: ' . $textValues);
 
-                // Robust JSON Extraction: 
-                // Sometimes AI returns conversational text before/after JSON.
-                // We use regex to find the first '{' and last '}'
-                if (preg_match('/\{(?:[^{}]|(?R))*\}/s', $textValues, $matches)) {
-                    $jsonContent = $matches[0];
-                    return json_decode(trim($jsonContent), true);
+                    // Robust JSON Extraction: 
+                    if (preg_match('/\{(?:[^{}]|(?R))*\}/s', $textValues, $matches)) {
+                        $jsonContent = $matches[0];
+                        return json_decode(trim($jsonContent), true);
+                    }
+
+                    // Fallback for simple string replacement if regex fails
+                    $textValues = str_replace(['```json', '```'], '', $textValues);
+                    return json_decode(trim($textValues), true);
+                } else {
+                    Log::error('Gemini API Error (' . $response->status() . '): ' . $response->body());
+                    return [];
                 }
-
-                // Fallback for simple string replacement if regex fails
-                $textValues = str_replace(['```json', '```'], '', $textValues);
-                return json_decode(trim($textValues), true);
-            } else {
-                Log::error('Gemini API Error (' . $response->status() . '): ' . $response->body());
+            } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                Log::error('Gemini Timeout/Connection Exception: ' . $e->getMessage());
+                return [];
+            } catch (\Exception $e) {
+                Log::error('Gemini General Exception: ' . $e->getMessage());
                 return [];
             }
-        } catch (\Illuminate\Http\Client\ConnectionException $e) {
-            Log::error('Gemini Timeout/Connection Exception: ' . $e->getMessage());
-            return [];
-        } catch (\Exception $e) {
-            Log::error('Gemini General Exception: ' . $e->getMessage());
-            return [];
-        }
+        });
     }
 
     public function analyzeTask(string $taskContent)

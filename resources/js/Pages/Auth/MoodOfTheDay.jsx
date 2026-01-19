@@ -26,19 +26,19 @@ export default function MoodOfTheDay({ user, currentRole }) {
     const roles = [
         {
             key: 'customer',
-            icon: '/lowBattery.svg',
+            icon: '/images/icons/battery-low.svg',
             title: t('FLEMMARD'),
             description: t('Je veux déléguer et me reposer aujourd\'hui.'),
         },
         {
             key: 'performer',
-            icon: '/highBattery.svg',
+            icon: '/images/icons/battery-high.svg',
             title: t('MOTIVÉ'),
             description: t('Je suis prêt à saisir des opportunités.'),
         },
         {
             key: 'both',
-            icon: '/mediumBattery.svg',
+            icon: '/images/icons/battery-medium.svg',
             title: t('LES DEUX'),
             description: t('Les deux ! Mode multitâche activé.'),
         },
@@ -46,7 +46,7 @@ export default function MoodOfTheDay({ user, currentRole }) {
 
     return (
         <AuthSplitLayout 
-            heroImage="/mood-of-the-day.svg"
+            heroImage="/images/illustrations/mood-of-the-day.svg"
             bgAccentClass="bg-cream-accent"
         >
             <Head title={t("Mood of the Day")} />

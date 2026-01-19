@@ -27,7 +27,7 @@ export default function RegisterManual() {
 
     return (
         <AuthSplitLayout 
-            heroImage="/register-page-hero.svg"
+            heroImage="/images/illustrations/register-hero.svg"
             heroHeading={t("Une inscription,")}
             heroSubtext={t("sans l'interrogatoire.")}
             bgAccentClass="bg-cream-accent"

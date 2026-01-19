@@ -15,7 +15,7 @@ export default function CompleteProfile() {
     const { user } = usePage().props;
     const { t } = useTranslation();
     const fileInputRef = useRef(null);
-    const [preview, setPreview] = useState(user?.avatar || "/default-avatar.svg");
+    const [preview, setPreview] = useState(user?.avatar || "/images/avatars/default-avatar.svg");
     const [mapCenter, setMapCenter] = useState({ lat: 40.7128, lng: -74.0060 });
     const [selectedLocation, setSelectedLocation] = useState(null);
     const [radius, setRadius] = useState(10);
@@ -109,7 +109,7 @@ export default function CompleteProfile() {
 
     return (
         <AuthSplitLayout
-            heroImage="/basic-profile.svg"
+            heroImage="/images/illustrations/basic-profile.svg"
             heroHeading={t("Welcome")}
             heroSubtext={t("Oflem makes life easy by connecting people to hire help or earn money by completing tasks quickly and reliably.")}
             bgAccentClass="bg-cream-accent"
