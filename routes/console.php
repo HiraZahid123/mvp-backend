@@ -11,3 +11,6 @@ Artisan::command('inspire', function () {
 
 // Schedule cleanup command
 Schedule::command(CleanupExpiredOTPs::class)->daily();
+
+// Schedule mission auto-completion (72-hour validation window)
+Schedule::command(\App\Console\Commands\AutoCompleteMissions::class)->hourly();

@@ -1,178 +1,256 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminLoginController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\EmailVerificationController;
+use App\Http\Controllers\Auth\LoginOTPVerificationController;
+use App\Http\Controllers\Auth\MoodSelectionController;
+use App\Http\Controllers\Auth\OTPVerificationController;
+use App\Http\Controllers\Auth\ProfileCompletionController;
+use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\Auth\RoleSelectionController;
 use App\Http\Controllers\Auth\SocialAuthController;
+use App\Http\Controllers\MissionController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+
+/*
+|--------------------------------------------------------------------------
+| Public & Utility Routes
+|--------------------------------------------------------------------------
+*/
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
 });
 
-Route::get('/dashboard', function () {
-    $tasks = \App\Models\Task::with('attachments')
-        ->where('user_id', auth()->id())
-        ->latest() // Default sort
-        ->get();
-        // ->sortBy('created_at'); // We can sort in frontend or here. Frontend expects old to new for chat, usually.
-        // Let's pass latest and sort in JS as implemented in ChatInterface.
-
-    return Inertia::render('Dashboard', [
-        'tasks' => $tasks
-    ]);
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-// Public Mission Routes (Must come before {mission} wildcard)
-Route::post('/api/missions', [\App\Http\Controllers\MissionController::class, 'store'])->name('missions.store');
-Route::get('/missions/create', [\App\Http\Controllers\MissionController::class, 'create'])->name('missions.create');
-Route::get('/missions/matchmaking-preview', [\App\Http\Controllers\MissionController::class, 'guestMatchmakingPreview'])->name('missions.matchmaking-preview');
-Route::post('/api/moderation/check', [\App\Http\Controllers\MissionController::class, 'checkModeration'])->name('moderation.check');
-Route::post('/api/missions/ai-rewrite', [\App\Http\Controllers\MissionController::class, 'aiRewrite'])->name('missions.ai-rewrite');
-
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-    // Mission Routes
-    Route::get('/api/tasks', [\App\Http\Controllers\TaskController::class, 'index'])->name('tasks.index');
-    Route::post('/api/tasks', [\App\Http\Controllers\TaskController::class, 'store'])->name('tasks.store');
-
-    Route::get('/missions/pending', [\App\Http\Controllers\MissionController::class, 'handlePendingMission'])->name('missions.pending');
-    Route::get('/missions/active', [\App\Http\Controllers\MissionController::class, 'active'])->name('missions.active');
-    Route::get('/missions/search', [\App\Http\Controllers\MissionController::class, 'search'])->name('missions.search');
-    Route::get('/missions/{mission}', [\App\Http\Controllers\MissionController::class, 'show'])->name('missions.show');
-    Route::post('/missions/{mission}/offer', [\App\Http\Controllers\MissionController::class, 'submitOffer'])->name('missions.submit-offer');
-    Route::post('/missions/{mission}/question', [\App\Http\Controllers\MissionController::class, 'askQuestion'])->name('missions.ask-question');
-    Route::post('/missions/{mission}/accept', [\App\Http\Controllers\MissionController::class, 'acceptFixedPrice'])->name('missions.accept');
-    Route::post('/missions/{mission}/offers/{offer}/select', [\App\Http\Controllers\MissionController::class, 'selectOffer'])->name('missions.select-offer');
-    Route::post('/missions/{mission}/questions/{question}/answer', [\App\Http\Controllers\MissionController::class, 'answerQuestion'])->name('missions.answer-question');
-    Route::get('/missions/{mission}/matchmaking', [\App\Http\Controllers\MissionController::class, 'showMatchmaking'])->name('missions.matchmaking');
-    Route::post('/missions/{mission}/contact/{helper}', [\App\Http\Controllers\MissionController::class, 'contactHelper'])->name('missions.contact');
-});
-
+// Public Profile Route
+Route::get('/profile/{id}', [ProfileController::class, 'show'])->name('profile.show');
 
 Route::post('/language-switch', function (Request $request) {
     $request->validate([
-        'locale' => ['required', 'string', 'in:en,fr'],
+        'locale' => ['required', 'string', 'in:en,fr,de,it'],
     ]);
-
     session(['locale' => $request->locale]);
     app()->setLocale($request->locale);
-
     return back();
 })->name('language.switch');
 
-// Custom Auth Routes
-use App\Http\Controllers\Auth\RoleSelectionController;
-use App\Http\Controllers\Auth\OTPVerificationController;
-use App\Http\Controllers\Auth\ProfileCompletionController;
-use App\Http\Controllers\Auth\LoginOTPVerificationController;
-use App\Http\Controllers\Auth\EmailVerificationController;
-use App\Http\Controllers\Auth\MoodSelectionController;
+Route::get('/optimize-system', function () {
+    try {
+        Artisan::call('optimize:clear');
+        return "System Optimization & Cache Clearing Successful!<br><br><pre>" . Artisan::output() . "</pre>";
+    } catch (\Exception $e) {
+        return "Error occurred while clearing cache: " . $e->getMessage();
+    }
+})->name('system.optimize');
 
+/*
+|--------------------------------------------------------------------------
+| Guest Mission Routes (Publicly accessible)
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('api')->name('api.')->group(function () {
+    Route::post('/missions', [MissionController::class, 'store'])->name('missions.store');
+    Route::post('/moderation/check', [MissionController::class, 'checkModeration'])->name('moderation.check');
+    Route::post('/missions/ai-rewrite', [MissionController::class, 'aiRewrite'])->name('missions.ai-rewrite');
+});
+
+Route::get('/missions/create', [MissionController::class, 'create'])->name('missions.create');
+Route::get('/missions/matchmaking-preview', [MissionController::class, 'guestMatchmakingPreview'])->name('missions.matchmaking-preview');
+
+/*
+|--------------------------------------------------------------------------
+| Authentication & Onboarding
+|--------------------------------------------------------------------------
+*/
+
+// Guest Only
 Route::middleware('guest')->group(function () {
-    // Email Verification Routes (for manual registration)
+    // Manual Registration & Login
+    Route::get('/register/manual', [RegisteredUserController::class, 'createManual'])->name('register.manual');
+    Route::get('/login/manual', [AuthenticatedSessionController::class, 'createManual'])->name('login.manual');
+
+    // Email Verification (for manual registration)
     Route::get('/verify-email-code', [EmailVerificationController::class, 'create'])->name('auth.verify-email-code');
     Route::post('/verify-email-code', [EmailVerificationController::class, 'verify'])->name('auth.verify-email-code.store');
     Route::post('/verify-email-code/resend', [EmailVerificationController::class, 'resend'])->name('auth.verify-email-code.resend');
 
-    // Manual Registration Routes
-    Route::get('/register/manual', [App\Http\Controllers\Auth\RegisteredUserController::class, 'createManual'])->name('register.manual');
-    
-    // Manual Login Routes
-    Route::get('/login/manual', [App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'createManual'])->name('login.manual');
-    
-    // OTP Verification (legacy - keeping for backward compatibility)
+    // OTP Verification (Legacy)
     Route::get('/verify-otp', [OTPVerificationController::class, 'create'])->name('auth.verify-otp');
     Route::post('/verify-otp/send', [OTPVerificationController::class, 'sendOTP'])->name('auth.verify-otp.send');
     Route::post('/verify-otp', [OTPVerificationController::class, 'store'])->name('auth.verify-otp.store')->middleware('throttle:6,1');
 
-    // Social Authentication Routes
+/*
+    // Login OTP Verification
+    Route::get('/login/verify-otp', [LoginOTPVerificationController::class, 'create'])->name('login.verify-otp');
+    Route::post('/login/verify-otp', [LoginOTPVerificationController::class, 'store'])->name('login.verify-otp.store');
+    Route::post('/login/verify-otp/resend', [LoginOTPVerificationController::class, 'sendOTP'])->name('login.verify-otp.resend');
+*/
+
+    // Social Authentication
     Route::get('/auth/{provider}', [SocialAuthController::class, 'redirect'])->name('social.redirect');
     Route::get('/auth/{provider}/callback', [SocialAuthController::class, 'callback'])->name('social.callback');
-
-    // SMS Testing Route (development only)
-    if (app()->environment('local')) {
-        Route::get('/test-sms', function () {
-            return view('test-sms');
-        })->name('test.sms');
-        Route::post('/test-sms', function (Request $request) {
-            $phone = $request->input('phone');
-            $otp = \App\Services\OTPService::generateOTP();
-
-            try {
-                $otpService = app(\App\Services\OTPService::class);
-                $reflection = new \ReflectionClass($otpService);
-                $method = $reflection->getMethod('sendSMSOTP');
-                $method->setAccessible(true);
-                $method->invoke($otpService, $phone, $otp);
-
-                return back()->with('success', "Test SMS sent! OTP: {$otp}");
-            } catch (\Exception $e) {
-                return back()->with('error', 'SMS failed: ' . $e->getMessage());
-            }
-        })->name('test.sms.send');
-    }
 });
 
+// Auth Required for Onboarding
 Route::middleware('auth')->group(function () {
     // Role Selection
     Route::get('/select-role', [RoleSelectionController::class, 'create'])->name('auth.select-role');
     Route::post('/select-role', [RoleSelectionController::class, 'store'])->name('auth.select-role.store');
 
-    // Identity & Profile Setup (Split into two steps)
+    // Profile Setup
     Route::get('/complete-identity', [ProfileCompletionController::class, 'createIdentity'])->name('auth.complete-identity');
     Route::post('/complete-identity', [ProfileCompletionController::class, 'storeIdentity'])->name('auth.complete-identity.store');
-    
     Route::get('/complete-location', [ProfileCompletionController::class, 'createLocation'])->name('auth.complete-location');
     Route::post('/complete-location', [ProfileCompletionController::class, 'storeLocation'])->name('auth.complete-location.store');
 
-    // Legacy Complete Profile (backward compatibility)
+    // Legacy Profile Setup
     Route::get('/complete-profile', [ProfileCompletionController::class, 'create'])->name('auth.complete-profile');
     Route::post('/complete-profile', [ProfileCompletionController::class, 'store'])->name('auth.complete-profile.store');
 
-    // Registration Success Screen
+    // Finalization
     Route::get('/registration-success', function () {
-        return Inertia::render('Auth/RegistrationSuccess', [
-            'user' => Auth::user(),
-        ]);
+        return Inertia::render('Auth/RegistrationSuccess', ['user' => Auth::user()]);
     })->name('auth.registration-success');
 
-    // Mood of the Day (appears after every login)
     Route::get('/mood-of-the-day', [MoodSelectionController::class, 'create'])->name('auth.mood-of-the-day');
     Route::post('/mood-of-the-day', [MoodSelectionController::class, 'store'])->name('auth.mood-of-the-day.store');
 
     // Provider Onboarding (AI Powered)
-    Route::get('/onboarding', [\App\Http\Controllers\OnboardingController::class, 'index'])->name('onboarding.index');
-    Route::post('/onboarding/analyze', [\App\Http\Controllers\OnboardingController::class, 'analyze'])->name('onboarding.analyze');
-    Route::post('/onboarding/submit', [\App\Http\Controllers\OnboardingController::class, 'store'])->name('onboarding.store');
+    Route::get('/onboarding', [OnboardingController::class, 'index'])->name('onboarding.index');
+    Route::post('/onboarding/analyze', [OnboardingController::class, 'analyze'])->name('onboarding.analyze');
+    Route::post('/onboarding/submit', [OnboardingController::class, 'store'])->name('onboarding.store');
 });
+
+/*
+|--------------------------------------------------------------------------
+| Authenticated User Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    // Dashboard
+    Route::get('/dashboard', function () {
+        $missions = \App\Models\Mission::with(['user', 'offers'])
+            ->where('user_id', auth()->id())
+            ->latest()
+            ->get();
+        return Inertia::render('Dashboard', ['missions' => $missions]);
+    })->name('dashboard');
+    // Profile Management
+    Route::prefix('profile')->name('profile.')->group(function () {
+        Route::get('/', [ProfileController::class, 'edit'])->name('edit');
+        Route::patch('/', [ProfileController::class, 'update'])->name('update');
+        Route::delete('/', [ProfileController::class, 'destroy'])->name('destroy');
+        
+        // Notification Preferences
+        Route::get('/notifications', [ProfileController::class, 'notificationPreferences'])->name('notifications');
+        Route::patch('/notifications', [ProfileController::class, 'updateNotificationPreferences'])->name('notifications.update');
+    });
+
+    // Notifications
+    Route::prefix('notifications')->name('notifications.')->group(function () {
+        Route::get('/', [NotificationController::class, 'index'])->name('index');
+        Route::post('/{id}/read', [NotificationController::class, 'markAsRead'])->name('mark-read');
+        Route::post('/mark-all-read', [NotificationController::class, 'markAllRead'])->name('mark-all-read');
+    });
+
+    // Chat System (Internal API)
+    Route::get('/messages', [\App\Http\Controllers\ChatController::class, 'messages'])->name('messages');
+    Route::get('/chats', [\App\Http\Controllers\ChatController::class, 'index'])->name('api.chats.index');
+    Route::get('/chats/{chat}', [\App\Http\Controllers\ChatController::class, 'show'])->name('api.chats.show');
+    Route::get('/chats/{chat}/messages', [\App\Http\Controllers\ChatController::class, 'show'])->name('api.chats.messages');
+    Route::post('/chats/{chat}/messages', [\App\Http\Controllers\ChatController::class, 'store'])->name('api.chats.messages.store');
+    Route::post('/chats/{chat}/typing', [\App\Http\Controllers\ChatController::class, 'typing'])->name('api.chats.typing');
+    Route::get('/missions/{mission}/chat', [\App\Http\Controllers\ChatController::class, 'getMissionChat'])->name('api.missions.chat');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Authenticated Mission Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('auth')->group(function () {
+    Route::prefix('missions')->name('missions.')->group(function () {
+        Route::get('/pending', [MissionController::class, 'handlePendingMission'])->name('pending');
+        Route::get('/active', [MissionController::class, 'active'])->name('active');
+        Route::get('/search', [MissionController::class, 'search'])->name('search');
+        Route::get('/{mission}', [MissionController::class, 'show'])->name('show');
+        Route::get('/{mission}/matchmaking', [MissionController::class, 'showMatchmaking'])->name('matchmaking');
+        
+        // Mission Actions
+        Route::post('/{mission}/hire/{performer}', [MissionController::class, 'hire'])->name('hire');
+        Route::post('/{mission}/offer', [MissionController::class, 'submitOffer'])->name('submit-offer');
+        Route::post('/{mission}/question', [MissionController::class, 'askQuestion'])->name('ask-question');
+        Route::post('/{mission}/accept', [MissionController::class, 'acceptFixedPrice'])->name('accept');
+        Route::post('/{mission}/confirm-assignment', [MissionController::class, 'confirmAssignment'])->name('confirm-assignment');
+        Route::post('/{mission}/offers/{offer}/select', [MissionController::class, 'selectOffer'])->name('select-offer');
+        Route::post('/{mission}/questions/{question}/answer', [MissionController::class, 'answerQuestion'])->name('answer-question');
+        Route::post('/{mission}/start', [MissionController::class, 'startWork'])->name('start-work');
+        Route::post('/{mission}/submit-validation', [MissionController::class, 'submitForValidation'])->name('submit-validation');
+        Route::post('/{mission}/validate', [MissionController::class, 'validateCompletion'])->name('validate');
+        Route::post('/{mission}/dispute', [MissionController::class, 'initiateDispute'])->name('dispute');
+        Route::post('/{mission}/cancel', [MissionController::class, 'cancel'])->name('cancel');
+        Route::post('/{mission}/contact/{helper}', [MissionController::class, 'contactHelper'])->name('contact');
+    });
+});
+
+/*
+|--------------------------------------------------------------------------
+| Admin Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::middleware('guest')->group(function () {
+        Route::get('/login', [AdminLoginController::class, 'create'])->name('login');
+        Route::post('/login', [AdminLoginController::class, 'store'])->name('login.store');
+    });
+
+    Route::middleware('admin')->group(function () {
+/*
+        // 2FA Routes (Excluded from 2FA check in middleware)
+        Route::get('/2fa', [AdminLoginController::class, 'show2FA'])->name('2fa.create');
+        Route::post('/2fa', [AdminLoginController::class, 'verify2FA'])->name('2fa.verify');
+        Route::get('/2fa/resend', [AdminLoginController::class, 'resend2FA'])->name('2fa.resend');
+*/
+
+        Route::get('/dashboard', AdminDashboardController::class)->name('dashboard');
+        Route::post('/logout', [AdminLoginController::class, 'destroy'])->name('logout');
+
+        // Phase 5: Enhanced Admin Controls
+        Route::resource('users', \App\Http\Controllers\Admin\AdminUserController::class);
+        Route::post('users/{user}/ban', [\App\Http\Controllers\Admin\AdminUserController::class, 'ban'])->name('users.ban');
+        Route::post('users/{user}/suspend', [\App\Http\Controllers\Admin\AdminUserController::class, 'suspend'])->name('users.suspend');
+        
+        Route::resource('missions', \App\Http\Controllers\Admin\AdminMissionController::class)->only(['index', 'show']);
+        Route::post('missions/{mission}/resolve-dispute', [\App\Http\Controllers\Admin\AdminMissionController::class, 'resolveDispute'])->name('missions.resolve-dispute');
+        
+        Route::get('chat/flagged', [\App\Http\Controllers\Admin\AdminChatController::class, 'flaggedMessages'])->name('chat.flagged');
+        Route::get('chat/strikes', [\App\Http\Controllers\Admin\AdminChatController::class, 'userStrikes'])->name('chat.strikes');
+        Route::post('chat/users/{user}/clear-strikes', [\App\Http\Controllers\Admin\AdminChatController::class, 'clearStrikes'])->name('chat.clear-strikes');
+        
+        Route::resource('payments', \App\Http\Controllers\Admin\AdminPaymentController::class)->only(['index', 'show']);
+        Route::post('payments/{payment}/refund', [\App\Http\Controllers\Admin\AdminPaymentController::class, 'issueRefund'])->name('payments.refund');
+    });
+});
+
+/*
+|--------------------------------------------------------------------------
+| Breeze Authentication Routes
+|--------------------------------------------------------------------------
+*/
 
 require __DIR__.'/auth.php';
 
-// Admin Routes
-use App\Http\Controllers\Admin\AdminLoginController;
-use App\Http\Controllers\Admin\AdminDashboardController;
-
-Route::middleware('guest')->group(function () {
-    Route::get('/admin/login', [AdminLoginController::class, 'create'])->name('admin.login');
-    Route::post('/admin/login', [AdminLoginController::class, 'store'])->name('admin.login.store');
-});
-
-Route::middleware('admin')->group(function () {
-    Route::get('/admin/dashboard', AdminDashboardController::class)->name('admin.dashboard');
-    Route::post('/admin/logout', [AdminLoginController::class, 'destroy'])->name('admin.logout');
-});
-
-// Optimization & Cache Clearing Route
-Route::get('/optimize-system', function () {
-    try {
-        \Illuminate\Support\Facades\Artisan::call('optimize:clear');
-        return "System Optimization & Cache Clearing Successful!<br><br><pre>" . \Illuminate\Support\Facades\Artisan::output() . "</pre>";
-    } catch (\Exception $e) {
-        return "Error occurred while clearing cache: " . $e->getMessage();
-    }
-})->name('system.optimize');

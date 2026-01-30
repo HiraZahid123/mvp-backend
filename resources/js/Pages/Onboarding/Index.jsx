@@ -68,7 +68,7 @@ export default function Index({ existingProfile = null }) {
     };
 
     return (
-        <div className="min-h-screen bg-off-white-bg font-sans">
+        <div className="min-h-screen bg-oflem-cream font-sans">
             <Head title={t('Provider Onboarding')} />
             <Header />
 
@@ -93,7 +93,7 @@ export default function Index({ existingProfile = null }) {
                                     id="description"
                                     value={data.description}
                                     onChange={(e) => setData('description', e.target.value)}
-                                    className="w-full bg-off-white-bg border-gray-border rounded-[24px] p-5 text-sm font-medium focus:border-gold-accent focus:ring-0 min-h-[200px] transition-all"
+                                    className="w-full bg-oflem-cream border-gray-border rounded-[24px] p-5 text-sm font-medium focus:border-gold-accent focus:ring-0 min-h-[200px] transition-all"
                                     placeholder={t('Example: I have been a carpenter for 10 years, specializing in custom furniture and repairs. I also have experience with painting and drywall...')}
                                 />
                                 <InputError message={analysisError} className="mt-2" />
@@ -127,7 +127,7 @@ export default function Index({ existingProfile = null }) {
                                     id="bio"
                                     value={data.bio}
                                     onChange={(e) => setData('bio', e.target.value)}
-                                    className="w-full bg-off-white-bg border-gray-border rounded-[24px] p-5 text-sm font-medium focus:border-gold-accent focus:ring-0 min-h-[100px]"
+                                    className="w-full bg-oflem-cream border-gray-border rounded-[24px] p-5 text-sm font-medium focus:border-gold-accent focus:ring-0 min-h-[100px]"
                                 />
                                 <InputError message={errors.bio} className="mt-2" />
                             </div>
@@ -141,7 +141,7 @@ export default function Index({ existingProfile = null }) {
                                         id="years"
                                         value={data.years_experience}
                                         onChange={(e) => setData('years_experience', e.target.value)}
-                                        className="w-full bg-off-white-bg border-gray-border rounded-full px-6 py-4 text-sm font-bold focus:border-gold-accent focus:ring-0"
+                                        className="w-full bg-oflem-cream border-gray-border rounded-full px-6 py-4 text-sm font-bold focus:border-gold-accent focus:ring-0"
                                     />
                                     <InputError message={errors.years_experience} className="mt-2" />
                                 </div>
@@ -154,7 +154,7 @@ export default function Index({ existingProfile = null }) {
                                         id="category"
                                         value={data.main_category}
                                         onChange={(e) => setData('main_category', e.target.value)}
-                                        className="w-full bg-off-white-bg border-gray-border rounded-full px-6 py-4 text-sm font-bold focus:border-gold-accent focus:ring-0"
+                                        className="w-full bg-oflem-cream border-gray-border rounded-full px-6 py-4 text-sm font-bold focus:border-gold-accent focus:ring-0"
                                     />
                                     <InputError message={errors.main_category} className="mt-2" />
                                 </div>
@@ -163,7 +163,7 @@ export default function Index({ existingProfile = null }) {
                             {/* Skills Tag Cloud */}
                             <div>
                                 <InputLabel value={t('Extracted Skills')} className="text-xs uppercase tracking-widest font-black mb-3" />
-                                <div className="bg-off-white-bg rounded-[24px] p-6 border border-gray-border min-h-[100px] flex flex-wrap gap-3">
+                                <div className="bg-oflem-cream rounded-[24px] p-6 border border-gray-border min-h-[100px] flex flex-wrap gap-3">
                                     {data.skills.map((skill, index) => (
                                         <div key={index} className="bg-white border border-gray-border px-4 py-2 rounded-full flex items-center gap-2 shadow-sm">
                                             <span className="font-bold text-sm text-primary-black">{skill.name}</span>
@@ -192,7 +192,7 @@ export default function Index({ existingProfile = null }) {
                                 <button
                                     type="button"
                                     onClick={() => setStep(1)}
-                                    className="flex-1 py-4 bg-white border-2 border-gray-border text-primary-black font-black rounded-full hover:bg-off-white-bg transition-all"
+                                    className="flex-1 py-4 bg-white border-2 border-gray-border text-primary-black font-black rounded-full hover:bg-oflem-cream transition-all"
                                 >
                                     {t('Back')}
                                 </button>

@@ -3,7 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Mission;
+use App\Models\User;
 use App\Services\ModerationService;
+use App\Notifications\NearbyMissionNotification;
+use App\Notifications\OfferRejectedNotification;
+use App\Events\QuestionPosted;
+use App\Events\AnswerPosted;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
@@ -31,9 +36,7 @@ class MissionController extends Controller
 
     public function create(Request $request)
     {
-        $prefillTitle = $request->query('title', '');
-        $aiTitle = null;
-
+        $prefillTitle = $request->query('title') ?? $request->query('search', '');
         $aiTitle = $request->query('improved_title'); 
         
         if (!$aiTitle && !empty($prefillTitle)) {
@@ -119,7 +122,7 @@ class MissionController extends Controller
             'lng' => 'nullable|numeric|between:-180,180',
             'exact_address' => 'nullable|string|max:500',
             'date_time' => 'nullable|date',
-            'budget' => 'nullable|numeric',
+            'budget' => 'nullable|numeric|min:10',
             'price_type' => 'required|in:fixed,open',
             'additional_details' => 'nullable|string',
         ]);
@@ -157,8 +160,19 @@ class MissionController extends Controller
 
         $mission = Mission::create(array_merge($validated, [
             'user_id' => Auth::id(),
-            'status' => 'open',
+            'status' => Mission::STATUS_OUVERTE,
         ]));
+
+        // Trigger nearby notifications for performers
+        if ($mission->lat && $mission->lng) {
+            $nearbyUsers = User::nearby($mission->lat, $mission->lng)
+                ->where('id', '!=', Auth::id()) // Don't notify the owner
+                ->get();
+
+            foreach ($nearbyUsers as $nearbyUser) {
+                $nearbyUser->notify(new NearbyMissionNotification($mission));
+            }
+        }
 
         return redirect()->route('missions.matchmaking', $mission->id)->with('success', 'Mission created successfully!');
     }
@@ -230,7 +244,7 @@ class MissionController extends Controller
 
             $mission = Mission::create(array_merge($data, [
                 'user_id' => Auth::id(),
-                'status' => 'open',
+                'status' => Mission::STATUS_OUVERTE,
             ]));
             return redirect()->route('missions.matchmaking', $mission->id);
         }
@@ -258,10 +272,10 @@ class MissionController extends Controller
              return [
                 'id' => $user->id,
                 'name' => $user->name,
-                'avatar' => $user->avatar,
-                'rating' => $user->rating ?? 5.0,
-                'price' => $user->hourly_rate ?? 0, 
-                'reviews_count' => $user->reviews_count ?? 0,
+                'profile_photo' => $user->profile_photo_url,
+                'rating' => $user->average_rating,
+                'price' => $user->providerProfile?->hourly_rate ?? 0,
+                'reviews_count' => $user->total_reviews,
                 'verified' => $user->email_verified_at ? true : false,
                 'match_score' => $user->match_score ?? 0,
                 'matched_skills' => $user->matched_skills ?? []
@@ -299,10 +313,10 @@ class MissionController extends Controller
              return [
                 'id' => $user->id,
                 'name' => $user->name,
-                'avatar' => $user->avatar,
-                'rating' => $user->rating ?? 5.0,
-                'price' => $user->hourly_rate ?? 0, 
-                'reviews_count' => $user->reviews_count ?? 0,
+                'profile_photo' => $user->profile_photo_url,
+                'rating' => $user->average_rating,
+                'price' => $user->providerProfile?->hourly_rate ?? 0,
+                'reviews_count' => $user->total_reviews,
                 'verified' => $user->email_verified_at ? true : false,
                 'match_score' => $user->match_score ?? 0,
                 'matched_skills' => $user->matched_skills ?? []
@@ -321,32 +335,51 @@ class MissionController extends Controller
         $user = Auth::user();
         $lat = $user->location_lat;
         $lng = $user->location_lng;
-        $radius = $user->discovery_radius_km ?? 50; // Default 50km
+        
+        // Get filter inputs
+        $radius = $request->query('radius', $user->discovery_radius_km ?? 10);
+        $filters = $request->only(['search', 'budget_min', 'budget_max', 'start_date', 'end_date', 'categories']);
+        $sortBy = $request->query('sort_by', 'distance');
 
-        $query = Mission::where('status', 'open');
+        $query = Mission::where('status', Mission::STATUS_OUVERTE)
+            ->filter($filters);
 
+        // Geolocation filtering
         if ($lat && $lng) {
-            // Optimization: Add a bounding box WHERE clause to use indexes before Haversine
-            $latRange = $radius / 111;
-            $lngRange = $radius / (111 * cos(radians($lat)));
-
-            $query->whereBetween('lat', [$lat - $latRange, $lat + $latRange])
-                  ->whereBetween('lng', [$lng - $lngRange, $lng + $lngRange]);
-
-            // Haversine formula to find missions within precise radius
-            $query->selectRaw("*, ( 6371 * acos( cos( radians(?) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians(?) ) + sin( radians(?) ) * sin( radians( lat ) ) ) ) AS distance", [$lat, $lng, $lat])
-                  ->having("distance", "<=", $radius)
-                  ->orderBy("distance");
-        } else {
-            $query->latest();
+            // Precise radius filtering with Haversine
+            $query->withinDistance($lat, $lng, $radius);
         }
 
-        $missions = $query->paginate(10);
+        // Sorting
+        switch ($sortBy) {
+            case 'newest':
+                $query->latest();
+                break;
+            case 'budget':
+                $query->orderBy('budget', 'desc');
+                break;
+            case 'deadline':
+                $query->orderBy('date_time', 'asc');
+                break;
+            case 'distance':
+            default:
+                if ($lat && $lng) {
+                    $query->orderBy('distance', 'asc');
+                } else {
+                    $query->latest();
+                }
+                break;
+        }
+
+        $missions = $query->paginate(12)->withQueryString();
 
         return Inertia::render('Missions/ActiveMissions', [
             'missions' => $missions,
             'userLocation' => ['lat' => $lat, 'lng' => $lng],
-            'radius' => $radius
+            'currentFilters' => array_merge($filters, [
+                'radius' => $radius,
+                'sort_by' => $sortBy
+            ]),
         ]);
     }
 
@@ -355,7 +388,7 @@ class MissionController extends Controller
         $mission->load(['user', 'offers.user', 'questions.user']);
         
         // Hide exact address if not assigned or not owner
-        $canSeeAddress = Auth::id() === $mission->user_id || Auth::id() === $mission->assigned_user_id;
+        $canSeeAddress = $mission->canSeeFullAddress(Auth::user());
         
         return Inertia::render('Missions/Details', [
             'mission' => $mission,
@@ -372,6 +405,21 @@ class MissionController extends Controller
 
         if ($mission->price_type !== 'open') {
             return back()->withErrors(['mission' => 'This mission has a fixed price.']);
+        }
+        
+        // Prevent mission owner from submitting offers on their own mission
+        if ($mission->user_id === Auth::id()) {
+            return back()->withErrors(['mission' => 'You cannot submit an offer on your own mission.']);
+        }
+        
+        // Prevent duplicate offers from the same user
+        $existingOffer = $mission->offers()
+            ->where('user_id', Auth::id())
+            ->where('status', '!=', 'rejected')
+            ->first();
+            
+        if ($existingOffer) {
+            return back()->withErrors(['mission' => 'You have already submitted an offer for this mission.']);
         }
 
         $offer = $mission->offers()->create([
@@ -399,6 +447,9 @@ class MissionController extends Controller
 
         // Notify Mission Owner
         $mission->user->notify(new \App\Notifications\NewQuestionNotification($question));
+        
+        // Dispatch Real-time Event
+        event(new \App\Events\QuestionPosted($question));
 
         return back()->with('success', 'Question posted successfully!');
     }
@@ -409,24 +460,84 @@ class MissionController extends Controller
             return back()->withErrors(['mission' => 'This mission requires an offer.']);
         }
 
-        if ($mission->status !== 'open') {
+        // Prevent self-acceptance
+        if ($mission->user_id === Auth::id()) {
+            return back()->withErrors(['mission' => 'You cannot accept your own mission.']);
+        }
+
+        if (!$mission->canTransitionTo(Mission::STATUS_EN_NEGOCIATION)) {
             return back()->withErrors(['mission' => 'This mission is no longer available.']);
         }
 
-        $mission->update([
-            'status' => 'assigned',
-            'assigned_user_id' => Auth::id(),
-        ]);
+        try {
+            \Illuminate\Support\Facades\DB::transaction(function () use ($mission, &$pi) {
+                $mission->transitionTo(Mission::STATUS_EN_NEGOCIATION);
+                $mission->assigned_user_id = Auth::id();
+                $mission->save();
 
-        // Notify Mission Owner (Optional, but let's notify the performer as well or just status change)
-        // Actually, performer is the one who accepted, so notify the host?
-        // Let's notify the host that someone accepted their fixed price.
-        // Wait, performers accept fixed price. So notify host.
-        // But the Notification class I made is "MissionAssigned" which is usually for the performer.
-        // Let's create a generic notification or use the assigned one for the performer.
-        Auth::user()->notify(new \App\Notifications\MissionAssignedNotification($mission));
+                // Create Stripe payment intent
+                $pi = app(\App\Services\StripeService::class)->createHold($mission);
+            });
 
-        return redirect()->route('missions.show', $mission->id)->with('success', 'Mission accepted! You can now see the exact address.');
+            // Notify Mission Owner
+            $mission->user->notify(new \App\Notifications\MissionAssignedNotification($mission));
+
+            return redirect()->route('missions.show', $mission->id)
+                ->with('success', 'Mission accepted! Please complete the payment hold.')
+                ->with('stripe_client_secret', $pi->client_secret);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Accept Mission Failed: ' . $e->getMessage());
+            return back()->withErrors(['mission' => 'Failed to accept mission. Please try again.']);
+        }
+    }
+
+
+    public function hire(Request $request, Mission $mission, User $performer)
+    {
+        if (Auth::id() !== $mission->user_id) {
+            abort(403);
+        }
+
+        // Prevent self-hiring
+        if ($mission->user_id === $performer->id) {
+            return response()->json(['message' => 'You cannot hire yourself for your own mission.'], 422);
+        }
+
+        if ($mission->status !== Mission::STATUS_OUVERTE) {
+            return response()->json(['message' => 'Mission is no longer open for hiring.'], 422);
+        }
+
+        try {
+            \Illuminate\Support\Facades\DB::transaction(function () use ($mission, $performer, &$pi) {
+                $mission->transitionTo(Mission::STATUS_EN_NEGOCIATION);
+                $mission->assigned_user_id = $performer->id;
+                $mission->save();
+
+                // Create Stripe payment intent (Escrow Hold)
+                $pi = app(\App\Services\StripeService::class)->createHold($mission);
+                
+                // Check if there's an offer from this user before updating
+                $existingOffer = $mission->offers()->where('user_id', $performer->id)->first();
+                if ($existingOffer) {
+                    $existingOffer->update(['status' => 'accepted']);
+                }
+                
+                // Reject other offers
+                $mission->offers()->where('user_id', '!=', $performer->id)->update(['status' => 'rejected']);
+            });
+
+            // Notify Performer
+            $performer->notify(new \App\Notifications\MissionAssignedNotification($mission));
+
+            return response()->json([
+                'message' => 'Performer hired successfully! Please complete the payment hold.',
+                'mission' => $mission->load(['assignedUser', 'user']),
+                'stripe_client_secret' => $pi->client_secret
+            ]);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Direct Hire Failed: ' . $e->getMessage());
+            return response()->json(['message' => 'Failed to hire performer. ' . $e->getMessage()], 500);
+        }
     }
 
     public function selectOffer(Request $request, Mission $mission, \App\Models\MissionOffer $offer)
@@ -435,19 +546,115 @@ class MissionController extends Controller
             abort(403);
         }
 
-        $mission->update([
-            'status' => 'assigned',
-            'assigned_user_id' => $offer->user_id,
-            'budget' => $offer->amount, // Finalize budget based on offer
+        try {
+            \Illuminate\Support\Facades\DB::transaction(function () use ($mission, $offer, &$pi) {
+                $mission->transitionTo(Mission::STATUS_EN_NEGOCIATION);
+                $mission->assigned_user_id = $offer->user_id;
+                $mission->budget = $offer->amount; // Finalize budget based on offer
+                $mission->save();
+
+                // Create Stripe payment intent
+                $pi = app(\App\Services\StripeService::class)->createHold($mission);
+                
+                // Update offer statuses inside transaction
+                $offer->update(['status' => 'accepted']);
+                $mission->offers()->where('id', '!=', $offer->id)->update(['status' => 'rejected']);
+            });
+
+            // Notify Performer
+            $offer->user->notify(new \App\Notifications\MissionAssignedNotification($mission));
+
+            // Notify Rejected Performers
+            $mission->offers()
+                ->where('id', '!=', $offer->id)
+                ->whereNotNull('user_id')
+                ->get()
+                ->each(function($o) use ($mission) {
+                    $o->user->notify(new \App\Notifications\OfferRejectedNotification($mission));
+                });
+
+            return back()
+                ->with('success', 'Performer selected! Please complete the payment hold.')
+                ->with('stripe_client_secret', $pi->client_secret);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Select Offer Failed: ' . $e->getMessage());
+            return back()->withErrors(['mission' => 'Failed to select offer. Please try again.']);
+        }
+    }
+
+    public function confirmAssignment(Mission $mission)
+    {
+        if (Auth::id() !== $mission->user_id) {
+            abort(403);
+        }
+
+        if (!$mission->canTransitionTo(Mission::STATUS_VERROUILLEE)) {
+            return back()->withErrors(['mission' => 'Cannot confirm assignment in current state.']);
+        }
+
+        // Wrap operations in transaction to ensure atomicity
+        try {
+            \Illuminate\Support\Facades\DB::transaction(function () use ($mission) {
+                $mission->transitionTo(Mission::STATUS_VERROUILLEE);
+                $mission->revealAddress();
+            });
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Confirm Assignment Failed: ' . $e->getMessage());
+            return back()->withErrors(['mission' => 'Failed to confirm assignment. Please try again.']);
+        }
+
+        return back()->with('success', 'Assignment confirmed! The performer can now start work and see your address.');
+    }
+
+    public function startWork(Mission $mission)
+    {
+        // Add null check for assigned_user_id to prevent unauthorized access
+        if (!$mission->assigned_user_id || Auth::id() !== $mission->assigned_user_id) {
+            abort(403);
+        }
+
+        if (!$mission->canTransitionTo(Mission::STATUS_EN_COURS)) {
+            return back()->withErrors(['mission' => 'Cannot start work in current state.']);
+        }
+
+        $mission->transitionTo(Mission::STATUS_EN_COURS);
+
+        return back()->with('success', 'Work started!');
+    }
+
+    public function submitForValidation(Request $request, Mission $mission)
+    {
+        // Add null check for assigned_user_id to prevent unauthorized access
+        if (!$mission->assigned_user_id || Auth::id() !== $mission->assigned_user_id) {
+            abort(403);
+        }
+
+        if (!$mission->canTransitionTo(Mission::STATUS_EN_VALIDATION)) {
+            return back()->withErrors(['mission' => 'Cannot submit for validation in current state.']);
+        }
+
+        // Validate proof of completion
+        $validated = $request->validate([
+            'completion_proof' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120', // 5MB max
+            'completion_notes' => 'nullable|string|max:1000',
         ]);
 
-        $offer->update(['status' => 'accepted']);
-        $mission->offers()->where('id', '!=', $offer->id)->update(['status' => 'rejected']);
+        // Handle file upload
+        if ($request->hasFile('completion_proof')) {
+            $path = $request->file('completion_proof')->store('mission_proofs', 'public');
+            $mission->completion_proof_path = $path;
+        }
 
-        // Notify Performer
-        $offer->user->notify(new \App\Notifications\MissionAssignedNotification($mission));
+        if ($request->filled('completion_notes')) {
+            $mission->completion_notes = $request->completion_notes;
+        }
 
-        return back()->with('success', 'Performer selected and mission assigned!');
+        $mission->transitionTo(Mission::STATUS_EN_VALIDATION);
+
+        // Notify customer
+        $mission->user->notify(new \App\Notifications\MissionReadyForValidationNotification($mission));
+
+        return back()->with('success', 'Mission submitted for validation! The host has 72 hours to validate.');
     }
 
     public function answerQuestion(Request $request, Mission $mission, \App\Models\MissionQuestion $question)
@@ -464,22 +671,103 @@ class MissionController extends Controller
             'answer' => $request->answer,
         ]);
 
+        // Dispatch Real-time Event
+        event(new \App\Events\AnswerPosted($question));
+
         return back()->with('success', 'Answer posted successfully!');
     }
 
-    public function finish(Mission $mission)
+    public function validateCompletion(Mission $mission)
     {
         if (Auth::id() !== $mission->user_id) {
+            abort(403, 'Only the mission owner can validate completion.');
+        }
+
+        if (!$mission->canTransitionTo(Mission::STATUS_TERMINEE)) {
+            return back()->withErrors(['mission' => 'This mission cannot be validated in its current state.']);
+        }
+
+        $mission->transitionTo(Mission::STATUS_TERMINEE);
+        
+        // Release funds to performer
+        app(\App\Services\StripeService::class)->releaseFunds($mission);
+
+        // Notify performer
+        if ($mission->assignedUser) {
+            $mission->assignedUser->notify(new \App\Notifications\MissionCompletedNotification($mission));
+        }
+
+        return back()->with('success', 'Mission validated! Payment has been released to the performer.');
+    }
+
+    public function initiateDispute(Request $request, Mission $mission)
+    {
+        if (Auth::id() !== $mission->user_id) {
+            abort(403, 'Only the mission owner can initiate a dispute.');
+        }
+
+        $request->validate([
+            'reason' => 'required|string|max:1000',
+        ]);
+
+        if (!$mission->canTransitionTo(Mission::STATUS_EN_LITIGE)) {
+            return back()->withErrors(['mission' => 'Cannot initiate dispute in current state.']);
+        }
+
+        $mission->update(['dispute_reason' => $request->reason]);
+        $mission->transitionTo(Mission::STATUS_EN_LITIGE);
+
+        // Notify admin about dispute
+        $admins = User::where('is_admin', true)->get();
+        foreach ($admins as $admin) {
+            $admin->notify(new \App\Notifications\DisputeInitiatedNotification($mission));
+        }
+
+        // Notify performer
+        if ($mission->assignedUser) {
+            $mission->assignedUser->notify(new \App\Notifications\MissionDisputedNotification($mission));
+        }
+
+        return back()->with('success', 'Dispute initiated. An admin will review your case.');
+    }
+
+
+    public function cancel(Mission $mission)
+    {
+        // Add explicit null checks for assigned_user_id
+        $isOwner = Auth::id() === $mission->user_id;
+        $isAssigned = $mission->assigned_user_id && Auth::id() === $mission->assigned_user_id;
+        
+        if (!$isOwner && !$isAssigned) {
             abort(403);
         }
 
-        if ($mission->status !== 'assigned') {
-            return back()->withErrors(['mission' => 'Only assigned missions can be marked as finished.']);
+        if (!$mission->canTransitionTo(Mission::STATUS_ANNULEE)) {
+            return back()->withErrors(['mission' => 'Cannot cancel mission in current state.']);
         }
 
-        $mission->update(['status' => 'finished']);
+        // Check if payment was already made and needs refund
+        $needsRefund = in_array($mission->status, [
+            Mission::STATUS_VERROUILLEE,
+            Mission::STATUS_EN_COURS,
+            Mission::STATUS_EN_VALIDATION
+        ]);
 
-        return back()->with('success', 'Mission marked as finished! You can now leave a review.');
+        try {
+            \Illuminate\Support\Facades\DB::transaction(function () use ($mission, $needsRefund) {
+                if ($needsRefund && $mission->payment_intent_id) {
+                    // Issue refund to customer
+                    app(\App\Services\StripeService::class)->refund($mission, 'Mission cancelled');
+                }
+
+                $mission->transitionTo(Mission::STATUS_ANNULEE);
+            });
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Mission Cancellation Failed: ' . $e->getMessage());
+            return back()->withErrors(['mission' => 'Failed to cancel mission. Please contact support.']);
+        }
+
+        return back()->with('success', 'Mission cancelled.' . ($needsRefund ? ' Refund has been processed.' : ''));
     }
 
     public function submitReview(Request $request, Mission $mission)
@@ -498,7 +786,7 @@ class MissionController extends Controller
             abort(403);
         }
 
-        if ($mission->status !== 'finished') {
+        if ($mission->status !== Mission::STATUS_TERMINEE) {
             return back()->withErrors(['mission' => 'Reviews can only be submitted for finished missions.']);
         }
 

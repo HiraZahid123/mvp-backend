@@ -49,7 +49,7 @@ export default function Dashboard({ stats, recentUsers }) {
                     </div>
                     <div className="overflow-x-auto">
                         <table className="min-w-full divide-y divide-gray-100">
-                            <thead className="bg-off-white-bg">
+                            <thead className="bg-oflem-cream">
                                 <tr>
                                     <th className="px-8 py-4 text-left text-xs font-black text-gray-muted uppercase tracking-[0.2em]">{t('Name & Email')}</th>
                                     <th className="px-8 py-4 text-left text-xs font-black text-gray-muted uppercase tracking-[0.2em]">{t('Role Type')}</th>

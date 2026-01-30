@@ -11,6 +11,7 @@ class ProviderProfile extends Model
         'bio',
         'years_experience',
         'main_category',
+        'hourly_rate',
         'raw_ai_analysis',
     ];
 

@@ -82,12 +82,12 @@ class ProfileCompletionController extends Controller
     public function storeLocation(Request $request, \App\Services\GeocodingService $geocodingService)
     {
         $request->validate([
-            'method' => 'required|in:gps,zipcode',
-            'location_lat' => 'required_if:method,gps|nullable|numeric|between:-90,90',
-            'location_lng' => 'required_if:method,gps|nullable|numeric|between:-180,180',
+            'method' => 'required|in:gps,zipcode,address',
+            'location_lat' => 'required_if:method,gps,address|nullable|numeric|between:-90,90',
+            'location_lng' => 'required_if:method,gps,address|nullable|numeric|between:-180,180',
             'zip_code' => 'required_if:method,zipcode|nullable|string|max:10',
             'location_address' => 'nullable|string|max:500',
-            'discovery_radius_km' => 'required|integer|min:5|max:20',
+            'discovery_radius_km' => 'required|integer|min:5|max:50', // Updated max to match slider
         ]);
 
         $user = Auth::user();
@@ -118,8 +118,8 @@ class ProfileCompletionController extends Controller
             'discovery_radius_km' => $request->discovery_radius_km,
         ]);
 
-        if ($request->session()->has('pending_mission')) {
-            return redirect()->route('missions.pending');
+        if ($user->isPerformer()) {
+            return redirect()->route('onboarding.index');
         }
 
         return redirect()->route('auth.registration-success');

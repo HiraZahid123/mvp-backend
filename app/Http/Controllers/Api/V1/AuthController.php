@@ -79,26 +79,14 @@ class AuthController extends Controller
             ], 200);
         }
 
-        // Auto-send OTP to email (matching web behavior)
-        try {
-            $otp = $this->otpService->sendOTP($user->email, 'email', $user);
+        // Generate auth token and login
+        $token = $user->createToken('mobile-app')->plainTextToken;
 
-            return response()->json([
-                'message' => 'OTP sent to your email',
-                'otp_required' => true,
-                'user' => [
-                    'id' => $user->id,
-                    'email' => $user->email,
-                    'phone' => $user->phone,
-                ],
-                'otp_token' => $otp->token,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Login successful but failed to send OTP',
-                'error' => $e->getMessage(),
-            ], 200);
-        }
+        return response()->json([
+            'message' => 'Login successful',
+            'user' => $user,
+            'token' => $token,
+        ]);
     }
 
     /**

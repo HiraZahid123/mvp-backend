@@ -36,11 +36,11 @@ class MatchmakingService
         $query = User::where('role_type', '!=', 'customer');
 
         // Priority: Passed location > Creator's profile location
-        $lat = $location['lat'] ?? $creator->location_lat ?? null;
-        $lng = $location['lng'] ?? $creator->location_lng ?? null;
+        $lat = $location['lat'] ?? ($creator?->location_lat) ?? null;
+        $lng = $location['lng'] ?? ($creator?->location_lng) ?? null;
 
         if ($lat && $lng) {
-            $radius = $location['radius'] ?? $creator->discovery_radius_km ?? 20;
+            $radius = $location['radius'] ?? ($creator?->discovery_radius_km) ?? 20;
             // Rough approximation: 1 degree latitude = 111km
             $latRange = $radius / 111;
             // Rough approximation for longitude at Swiss latitudes (~46N): 1 deg = ~77km

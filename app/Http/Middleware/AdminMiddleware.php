@@ -14,13 +14,23 @@ class AdminMiddleware
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next, ?string $role = null): Response
     {
         if (!Auth::check() || !Auth::user()->isAdmin()) {
             if ($request->expectsJson()) {
                 return response()->json(['message' => 'Unauthorized'], 403);
             }
-            return redirect()->route('admin.login');
+            return redirect()->route('login');
+        }
+
+        // 2FA Verification Check removed as per request
+
+
+        if ($role && Auth::user()->admin_role !== $role && !Auth::user()->isSuperAdmin()) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Unauthorized role'], 403);
+            }
+            abort(403);
         }
 
         return $next($request);

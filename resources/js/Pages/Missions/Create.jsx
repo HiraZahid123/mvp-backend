@@ -34,7 +34,7 @@ export default function Create({ prefillTitle = '', aiTitle = null }) {
         setIsModerating(true);
         setModerationError('');
         try {
-            const response = await axios.post(route('moderation.check'), { content });
+            const response = await axios.post(route('api.moderation.check'), { content });
             if (!response.data.is_clean) {
                 setModerationError(t('Content violates moderation rules.'));
                 return false;
@@ -54,17 +54,17 @@ export default function Create({ prefillTitle = '', aiTitle = null }) {
         if (!data.title) return;
         setIsWriting(true);
         try {
-            const response = await axios.post(route('missions.ai-rewrite'), { 
+            const response = await axios.post(route('api.missions.ai-rewrite'), { 
                 title: data.title, 
                 description: data.description 
             });
             setData(prev => ({ 
                 ...prev, 
-                title: response.data.improved_title, // AI-refined title
-                description: response.data.improved_description 
+                title: response.data.improved_title || prev.title, 
+                description: response.data.improved_description || prev.description
             }));
         } catch (error) {
-            // Fail silently
+            console.error('AI Rewrite Error:', error);
         } finally {
             setIsWriting(false);
         }
@@ -78,17 +78,17 @@ export default function Create({ prefillTitle = '', aiTitle = null }) {
 
         if (!auth.user) {
             // Store pending mission in session and redirect to preview (handled by backend)
-            router.post(route('missions.store'), data);
+            router.post(route('api.missions.store'), data);
             return;
         }
 
-        post(route('missions.store'), {
+        post(route('api.missions.store'), {
             onSuccess: () => reset(),
         });
     };
 
     return (
-        <div className="min-h-screen bg-off-white-bg font-sans">
+        <div className="min-h-screen bg-oflem-cream font-sans">
             <Head title={t('Create Mission')} />
             <Header />
 
@@ -123,26 +123,39 @@ export default function Create({ prefillTitle = '', aiTitle = null }) {
                         </div>
 
                         {/* Description */}
-                        <div>
+                        <div className="relative group/desc">
                             <div className="flex justify-between items-center mb-3">
                                 <InputLabel htmlFor="description" value={t('Description')} className="text-xs uppercase tracking-widest font-black" />
-                                <button 
-                                    type="button" 
-                                    onClick={handleHelpMeWrite}
-                                    disabled={isWriting}
-                                    className="text-[10px] font-black text-gold-accent uppercase tracking-widest hover:underline disabled:opacity-50 flex items-center gap-2"
-                                >
-                                    {isWriting && <span className="w-3 h-3 border-2 border-gold-accent border-t-transparent rounded-full animate-spin"></span>}
-                                    ✨ {isWriting ? t('Writing...') : t('Help me write')}
-                                </button>
+                                {data.description.length > 5 && (
+                                    <button 
+                                        type="button" 
+                                        onClick={handleHelpMeWrite}
+                                        disabled={isWriting}
+                                        className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-gold-accent to-[#D4AF37] text-white text-[11px] font-black uppercase tracking-widest rounded-full shadow-[0_4px_15px_rgba(212,175,55,0.3)] hover:shadow-[0_6px_20px_rgba(212,175,55,0.4)] hover:scale-105 active:scale-95 transition-all duration-300 animate-in fade-in zoom-in slide-in-from-right-4"
+                                    >
+                                        {isWriting ? (
+                                            <span className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                                        ) : (
+                                            <span className="text-sm">✨</span>
+                                        )}
+                                        {isWriting ? t('Polishing...') : t('Help me write')}
+                                    </button>
+                                )}
                             </div>
-                            <textarea
-                                id="description"
-                                value={data.description}
-                                className="w-full bg-off-white-bg border-gray-border rounded-[24px] p-5 text-sm font-medium focus:border-gold-accent focus:ring-0 min-h-[150px] transition-all"
-                                onChange={(e) => setData('description', e.target.value)}
-                                placeholder={t('Provide more details about your mission...')}
-                            />
+                            <div className="relative">
+                                <textarea
+                                    id="description"
+                                    value={data.description}
+                                    className="w-full bg-oflem-cream border-gray-border rounded-[24px] p-6 text-sm font-medium focus:border-gold-accent focus:ring-0 min-h-[180px] transition-all placeholder:text-gray-300 group-hover/desc:border-gray-300 shadow-inner"
+                                    onChange={(e) => setData('description', e.target.value)}
+                                    placeholder={t('Provide more details about your mission...')}
+                                />
+                                {!data.description && (
+                                    <div className="absolute top-24 left-1/2 -translate-x-1/2 pointer-events-none opacity-20">
+                                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">{t('Hint: The better you describe, the better the matches')}</p>
+                                    </div>
+                                )}
+                            </div>
                             <InputError message={errors.description} className="mt-2" />
                         </div>
 
@@ -184,7 +197,7 @@ export default function Create({ prefillTitle = '', aiTitle = null }) {
                                 <InputError message={errors.date_time} className="mt-2" />
                             </div>
                         </div>
-                        <div className="bg-off-white-bg p-8 rounded-[32px] border border-gray-border">
+                        <div className="bg-oflem-cream p-8 rounded-[32px] border border-gray-border">
                             <div className="text-center mb-8">
                                 <InputLabel value={t('Pricing & Budget')} className="text-xs uppercase tracking-widest font-black mb-2" />
                                 <p className="text-[10px] text-gray-muted font-bold uppercase tracking-wider">{t('Choose how you want to pay for this mission')}</p>

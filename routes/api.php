@@ -22,6 +22,9 @@ Route::prefix('v1')->group(function () {
 
     // Social Authentication
     Route::post('/auth/social', [SocialAuthController::class, 'apiCallback']);
+
+    // Stripe Webhook
+    Route::post('/stripe/webhook', [\App\Http\Controllers\StripeWebhookController::class, 'handle']);
 });
 
 // Protected API routes

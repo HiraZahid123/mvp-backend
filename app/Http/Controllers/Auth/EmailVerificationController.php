@@ -4,14 +4,21 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
+use App\Services\OTPService;
+use App\Models\User;
+use App\Models\OTPVerification;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class EmailVerificationController extends Controller
 {
+    protected OTPService $otpService;
+
+    public function __construct(OTPService $otpService)
+    {
+        $this->otpService = $otpService;
+    }
     /**
      * Show the email verification page
      */
@@ -37,28 +44,15 @@ class EmailVerificationController extends Controller
             'email' => 'required|email',
         ]);
 
-        // Generate 6-digit code
-        $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-        
-        // Delete old codes for this email
-        DB::table('email_verification_codes')
-            ->where('email', $request->email)
-            ->delete();
+        $user = User::where('email', $request->email)->first();
 
-        // Store new code with 10-minute expiration
-        DB::table('email_verification_codes')->insert([
-            'email' => $request->email,
-            'code' => $code,
-            'expires_at' => now()->addMinutes(10),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        // Send email
-        Mail::send('emails.verification-code', ['code' => $code], function ($message) use ($request) {
-            $message->to($request->email)
-                    ->subject('OFLEM - Code de vérification');
-        });
+        try {
+            $otpVerification = $this->otpService->sendOTP($request->email, 'email', $user);
+            session(['verification_token' => $otpVerification->token]);
+            session(['verification_email' => $request->email]);
+        } catch (\Exception $e) {
+            return back()->withErrors(['email' => $e->getMessage()]);
+        }
 
         return back()->with('status', 'Code de vérification envoyé !');
     }
@@ -73,45 +67,33 @@ class EmailVerificationController extends Controller
             'code' => 'required|digits:6',
         ]);
 
-        // Find the code
-        $verification = DB::table('email_verification_codes')
-            ->where('email', $request->email)
-            ->where('code', $request->code)
-            ->first();
+        $token = session('verification_token');
 
-        if (!$verification) {
-            throw ValidationException::withMessages([
-                'code' => 'Code de vérification invalide.',
-            ]);
+        if (!$token) {
+            // Fallback: search for active token for this email
+            $otp = OTPVerification::where('identifier', $request->email)
+                ->where('type', 'email')
+                ->whereNull('verified_at')
+                ->latest()
+                ->first();
+            $token = $otp?->token;
         }
 
-        // Check if expired
-        if (now()->isAfter($verification->expires_at)) {
-            DB::table('email_verification_codes')
-                ->where('email', $request->email)
-                ->delete();
-                
+        if (!$token || !$this->otpService->verifyOTP($token, $request->code)) {
             throw ValidationException::withMessages([
-                'code' => 'Le code de vérification a expiré.',
+                'code' => 'Code de vérification invalide ou expiré.',
             ]);
         }
 
         // Mark email as verified
-        DB::table('users')
-            ->where('email', $request->email)
-            ->update(['email_verified_at' => now()]);
-
-        // Delete the code
-        DB::table('email_verification_codes')
-            ->where('email', $request->email)
-            ->delete();
+        $user = User::where('email', $request->email)->first();
+        if ($user) {
+            $user->update(['email_verified_at' => now()]);
+            \Illuminate\Support\Facades\Auth::login($user);
+        }
 
         // Clear session
-        session()->forget('verification_email');
-
-        // Log the user in
-        $user = \App\Models\User::where('email', $request->email)->first();
-        \Illuminate\Support\Facades\Auth::login($user);
+        session()->forget(['verification_email', 'verification_token']);
 
         // Check for pending mission
         if (session()->has('pending_mission')) {

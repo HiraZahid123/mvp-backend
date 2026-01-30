@@ -15,14 +15,33 @@ class ModerationService
 
     /**
      * Common forbidden patterns for moderation.
+     * Updated to be more specific and avoid blocking legitimate everyday tasks.
      */
     protected array $forbiddenPatterns = [
-        '/\b(d[ru\-\. ]*g|cannabis|w[e3]{2}d|coca[i1]ne|hero[i1]ne|ecstasy|pillen|stupéfiants|drogue)\b/i',
-        '/\b(s[e3]x|p[o0]rn|escort|hooker|slut|sexy|prostitution|érotique)\b/i',
-        '/\b(alcoh[o0]l|vodka|whisky|beer|booze|alcool|bière)\b/i',
-        '/\b(violence|kill|murder|bomb|weapon|gun|knife|tuer|meurtre|arme)\b/i',
-        '/\b(illegal|stolen|theft|fraud|hack|volé|fraude|piratage)\b/i',
-        '/\b(fuck|shit|assh[o0]le|bitch|bastard|dick|pussy|merde|connard|salope|putain|bordel|cul|pute)\b/i',
+        // Drugs - more specific patterns
+        '/\b(cannabis|w[e3]{2}d|coca[i1]ne|hero[i1]ne|ecstasy|mdma|lsd|meth|crack|stupéfiants)\b/i',
+        // Adult content - specific terms only
+        '/\b(p[o0]rn|escort|hooker|prostitution|érotique|xxx|adult\s*content)\b/i',
+        // Violence - specific threats only (removed generic "violence", "weapon", "knife")
+        '/\b(kill|murder|bomb|terrorist|assassin|tuer|meurtre|terroriste)\b/i',
+        // Illegal activities - specific crimes only
+        '/\b(stolen|theft|fraud|hack|scam|counterfeit|volé|fraude|piratage|arnaque)\b/i',
+        // Extreme profanity only (removed mild words like "shit", "merde")
+        '/\b(fuck|assh[o0]le|bitch|bastard|dick|pussy|connard|salope|pute)\b/i',
+    ];
+
+    /**
+     * Whitelist of legitimate terms that might trigger false positives.
+     */
+    protected array $whitelistedPhrases = [
+        'promener mon chien',
+        'walk my dog',
+        'sortir le chien',
+        'dog walking',
+        'pet sitting',
+        'garde d\'animaux',
+        'nourrir mon chat',
+        'feed my cat',
     ];
 
     /**
@@ -32,8 +51,16 @@ class ModerationService
     {
         if (empty($content)) return true;
         
-        // Normalize content for better regex matching (strip spaces/dots between letters)
-        $normalized = preg_replace('/(\w)\s+(\w)/', '$1$2', $content);
+        // Check whitelist first - if it matches a known legitimate phrase, allow it
+        $contentLower = strtolower($content);
+        foreach ($this->whitelistedPhrases as $phrase) {
+            if (stripos($contentLower, strtolower($phrase)) !== false) {
+                return true;
+            }
+        }
+        
+        // Normalize content for better regex matching (strip spaces/dots/dashes between letters)
+        $normalized = preg_replace('/(?<=\w)[\s\.\-\_]+(?=\w)/', '', $content);
         
         foreach ($this->forbiddenPatterns as $pattern) {
             if (preg_match($pattern, $content) || preg_match($pattern, $normalized)) return false;
@@ -58,7 +85,12 @@ class ModerationService
         2. If (and ONLY if) the content is clean, generate a more comprehensive, professional, and clear version of this title (max 5-8 words).
         3. Suggest a high-level category (e.g., Cleaning, Moving, DIY, IT, Admin, Delivery, Pets, Gardening, Events, Education, Wellness, Other).
         
-        CRITICAL: Watch for bypass attempts (e.g., symbols, spaces, or numbers used to hide prohibited words).
+        IMPORTANT GUIDELINES:
+        - ALLOW everyday tasks like dog walking, pet sitting, grocery shopping, cleaning, moving, gardening, etc.
+        - ALLOW tasks involving alcohol delivery or purchase (e.g., buying wine, beer delivery) as these are legal services
+        - BLOCK only genuinely harmful content: hard drugs, illegal weapons, adult services, violence, fraud
+        - Be LENIENT with common everyday requests - err on the side of allowing legitimate tasks
+        - Watch for bypass attempts (e.g., symbols, spaces, or numbers used to hide prohibited words)
         
         Return ONLY a JSON object with:
         {
@@ -83,7 +115,15 @@ class ModerationService
             ];
         } catch (\Exception $e) {
             Log::error("AI Moderation/Title Gen failed: " . $e->getMessage());
-            return ['is_clean' => false, 'improved_title' => null]; // Fail-closed
+            
+            // Fail-open strategy: Allow content but flag for manual review
+            // This prevents service outages from blocking legitimate users
+            return [
+                'is_clean' => true, 
+                'improved_title' => null,
+                'needs_manual_review' => true,
+                'ai_error' => true
+            ];
         }
     }
 

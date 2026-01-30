@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import AuthSplitLayout from '@/Layouts/AuthSplitLayout';
 import { Head, useForm } from '@inertiajs/react';
 import LocationPicker from '@/Components/LocationPicker';
@@ -19,13 +19,13 @@ export default function CompleteLocation({ user, role }) {
         discovery_radius_km: 10,
     });
 
-    const handleLocationSelect = (locData) => {
+    const handleLocationSelect = useCallback((locData) => {
         setLocationData(locData);
-        setData({
-            ...data,
+        setData(prevData => ({
+            ...prevData,
             ...locData,
-        });
-    };
+        }));
+    }, [setData]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -52,6 +52,7 @@ export default function CompleteLocation({ user, role }) {
 
                 {/* Submit Button */}
                 <PrimaryButton 
+                    type="submit"
                     className="w-full" 
                     disabled={processing || !locationData}
                 >

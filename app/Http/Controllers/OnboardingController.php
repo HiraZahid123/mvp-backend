@@ -22,8 +22,8 @@ class OnboardingController extends Controller
 
     public function index()
     {
-        $user = Auth::user();
-        $profile = $user->providerProfile()->with('skills')->first();
+        $user = Auth::user()->load(['providerProfile', 'skills']);
+        $profile = $user->providerProfile;
 
         return Inertia::render('Onboarding/Index', [
             'existingProfile' => $profile
@@ -82,10 +82,15 @@ class OnboardingController extends Controller
             $user->skills()->sync($skillIds);
         });
 
-        if (Auth::user()->isPerformer()) {
-            return redirect()->route('missions.active')->with('success', 'Profile setup complete! Welcome to active missions.');
+        // Determine redirection based on context
+        // If user was recently created (within last 30 minutes), they are in first-time registration flow
+        $user = Auth::user();
+        $isFirstTimeOnboarding = $user->created_at->diffInMinutes(now()) < 30;
+        
+        if ($isFirstTimeOnboarding) {
+            return redirect()->route('auth.registration-success');
         }
 
-        return redirect()->route('dashboard')->with('success', 'Profile setup complete!');
+        return redirect()->route('dashboard')->with('success', 'Expertise updated successfully!');
     }
 }

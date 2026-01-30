@@ -72,4 +72,12 @@ return [
         'key' => env('VITE_GEMINI_API_KEY'),
     ],
 
+    'stripe' => [
+        'key' => env('STRIPE_KEY'),
+        'secret' => env('STRIPE_SECRET'),
+        'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
+        'commission_percent' => env('PLATFORM_COMMISSION_PERCENT', 15),
+        'currency' => env('STRIPE_CURRENCY', 'chf'),
+    ],
+
 ];

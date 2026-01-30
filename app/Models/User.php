@@ -40,6 +40,10 @@ class User extends Authenticatable
         'profile_photo',
         'zip_code',
         'last_selected_role',
+        'chat_suspended_until',
+        'admin_role',
+        'rating_cache',
+        'reviews_count_cache',
     ];
 
     /**
@@ -68,6 +72,8 @@ class User extends Authenticatable
             'location_lng' => 'decimal:7',
             'discovery_radius_km' => 'integer',
             'is_admin' => 'boolean',
+            'chat_suspended_until' => 'datetime',
+            'admin_role' => 'string',
         ];
     }
 
@@ -85,6 +91,13 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return $this->is_admin;
+    }
+    /**
+     * Check if user is super admin.
+     */
+    public function isSuperAdmin(): bool
+    {
+        return $this->is_admin && $this->admin_role === 'super_admin';
     }
 
     /**
@@ -235,11 +248,109 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the skills associated with the provider.
+     * Get the skills associated with the user.
      */
     public function skills()
     {
         return $this->belongsToMany(Skill::class, 'provider_skills')
                     ->withPivot('proficiency_level', 'verified');
+    }
+
+    /**
+     * Get the user's notification preferences.
+     */
+    public function notificationPreference()
+    {
+        return $this->hasOne(NotificationPreference::class);
+    }
+
+    /**
+     * Get the user's chat strikes.
+     */
+    public function chatStrikes()
+    {
+        return $this->hasMany(ChatStrike::class);
+    }
+
+    /**
+     * Get reviews received by this user (as the reviewed person).
+     */
+    public function reviewsReceived()
+    {
+        return $this->hasMany(Review::class, 'user_id');
+    }
+
+    /**
+     * Get reviews given by this user (as the reviewer).
+     */
+    public function reviewsGiven()
+    {
+        return $this->hasMany(Review::class, 'reviewer_id');
+    }
+
+    /**
+     * Get average rating for this user from cache.
+     */
+    public function getAverageRatingAttribute(): float
+    {
+        return round($this->rating_cache ?? 0, 1);
+    }
+
+    /**
+     * Get total number of reviews received from cache.
+     */
+    public function getTotalReviewsAttribute(): int
+    {
+        return $this->reviews_count_cache ?? 0;
+    }
+
+    /**
+     * Get rating distribution (count per star rating).
+     */
+    public function getRatingDistribution(): array
+    {
+        $distribution = [
+            5 => 0,
+            4 => 0,
+            3 => 0,
+            2 => 0,
+            1 => 0,
+        ];
+
+        $reviews = $this->reviewsReceived()
+            ->selectRaw('rating, COUNT(*) as count')
+            ->groupBy('rating')
+            ->pluck('count', 'rating')
+            ->toArray();
+
+        foreach ($reviews as $rating => $count) {
+            $distribution[$rating] = $count;
+        }
+
+        return $distribution;
+    }
+
+    /**
+     * Scope to find users whose discovery radius covers a specific point.
+     * Includes bounding box optimization.
+     */
+    public function scopeNearby($query, $lat, $lng)
+    {
+        if (!$lat || !$lng) return $query;
+
+        // Bounding Box Optimization: 
+        // We use a 100km box as a pre-filter (generous enough for any discovery radius)
+        $maxRadius = 100;
+        $latDelta = $maxRadius / 111.045;
+        $lngDelta = $maxRadius / (111.045 * cos(deg2rad($lat)));
+
+        $query->whereBetween('location_lat', [$lat - $latDelta, $lat + $latDelta])
+              ->whereBetween('location_lng', [$lng - $lngDelta, $lng + $lngDelta]);
+
+        $haversine = "(6371 * acos(cos(radians(?)) * cos(radians(location_lat)) * cos(radians(location_lng) - radians(?)) + sin(radians(?)) * sin(radians(location_lat))))";
+
+        return $query->selectRaw("*, $haversine AS distance_to_point", [$lat, $lng, $lat])
+            ->where('role_type', '!=', 'customer') // Only performers or both
+            ->havingRaw("distance_to_point <= discovery_radius_km");
     }
 }

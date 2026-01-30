@@ -33,13 +33,16 @@ export default function Search() {
         setIsChecking(true);
         setHasChecked(false);
         try {
-            const response = await axios.post(route('moderation.check'), { content: searchTerm });
+            const response = await axios.post(route('api.moderation.check'), { content: searchTerm });
             const clean = response.data.is_clean;
             setIsClean(clean);
             setHasChecked(true);
 
             if (clean) {
-                router.get(route('missions.create'), { title: searchTerm });
+                router.get(route('missions.create'), { 
+                    title: searchTerm,
+                    improved_title: response.data.improved_title
+                });
             }
         } catch (error) {
             console.error("Moderation check failed", error);

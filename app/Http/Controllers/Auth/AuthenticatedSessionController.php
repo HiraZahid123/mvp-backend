@@ -41,33 +41,31 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        $request->authenticate();
+        $request->ensureIsNotRateLimited();
 
+        $credentials = $request->only('email', 'password');
+        $loginField = filter_var($credentials['email'], FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
+
+        // Try to find user by email or phone
+        $user = null;
+        if ($loginField === 'email') {
+            $user = \App\Models\User::where('email', $credentials['email'])->first();
+        } else {
+            $user = \App\Models\User::where('phone', $credentials['email'])->first();
+        }
+
+        if (!$user || !\Illuminate\Support\Facades\Hash::check($credentials['password'], $user->password)) {
+            \Illuminate\Support\Facades\RateLimiter::hit($request->throttleKey());
+
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'email' => trans('auth.failed'),
+            ]);
+        }
+
+        Auth::login($user);
         $request->session()->regenerate();
 
-        $user = Auth::user();
-
-        // Check if user has completed role selection
-        if (!$user->role_type) {
-            return redirect()->route('auth.select-role');
-        }
-
-        // Check if user has completed profile setup (identity & location)
-        if (!$user->username || !$user->location_lat || !$user->location_lng) {
-            // Determine which step to redirect to
-            if (!$user->username) {
-                return redirect()->route('auth.complete-identity');
-            }
-            return redirect()->route('auth.complete-location');
-        }
-
-        // All setup complete - check if there is a pending mission to process
-        if ($request->session()->has('pending_mission')) {
-            return redirect()->route('missions.pending');
-        }
-
-        // Redirect to "Mood of the Day" selector
-        return redirect()->route('auth.mood-of-the-day');
+        return redirect()->route('auth.select-role');
     }
 
     /**

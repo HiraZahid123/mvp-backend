@@ -1,10 +1,12 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import MinimalAuthenticatedLayout from '@/Layouts/MinimalAuthenticatedLayout';
 import { Head, usePage, Link } from '@inertiajs/react';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import useTranslation from '@/Hooks/useTranslation';
+import ChatWindow from '@/Components/ChatWindow';
+import axios from 'axios';
 
-export default function Dashboard({ tasks }) { // Receive tasks prop
+export default function Dashboard({ missions }) { // Receive missions prop
     const { t } = useTranslation();
     const { auth, ziggy } = usePage().props;
     const user = auth.user;
@@ -14,6 +16,16 @@ export default function Dashboard({ tasks }) { // Receive tasks prop
     const missionId = urlParams.get('mission_id');
     const missionTitle = urlParams.get('mission_title');
 
+    const [activeChat, setActiveChat] = useState(null);
+
+    useEffect(() => {
+        if (chatWith && missionId) {
+            axios.get(route('api.missions.chat', missionId)).then(response => {
+                setActiveChat(response.data);
+            });
+        }
+    }, [chatWith, missionId]);
+
     const getDashboardContent = () => {
         switch (user.role_type) {
             case 'customer':
@@ -21,7 +33,7 @@ export default function Dashboard({ tasks }) { // Receive tasks prop
                     <AuthenticatedLayout header={t('Dashboard')}>
                         <Head title={t('Dashboard')} />
                         <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-                             <CustomerDashboard user={user} tasks={tasks} t={t} />
+                             <CustomerDashboard user={user} missions={missions} t={t} />
                         </div>
                     </AuthenticatedLayout>
                 );
@@ -55,10 +67,20 @@ export default function Dashboard({ tasks }) { // Receive tasks prop
         }
     };
 
-    return getDashboardContent();
+    return (
+        <>
+            {getDashboardContent()}
+            {activeChat && (
+                <ChatWindow 
+                    chat={activeChat} 
+                    onClose={() => setActiveChat(null)} 
+                />
+            )}
+        </>
+    );
 }
 
-function CustomerDashboard({ user, tasks, t }) {
+function CustomerDashboard({ user, missions, t }) {
     return (
         <div className="space-y-10">
             {/* Welcome Section */}
@@ -85,36 +107,36 @@ function CustomerDashboard({ user, tasks, t }) {
                     <Link href="/" className="text-xs font-black text-gold-accent uppercase tracking-widest hover:underline">{t('See all')}</Link>
                 </div>
                 
-                {tasks && tasks.length > 0 ? (
+                {missions && missions.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {tasks.slice(0, 3).map((task) => (
-                            <div key={task.id} className="bg-white border border-gray-border rounded-[28px] p-6 hover:shadow-lg transition-all border-b-4 border-b-gold-accent/30 group">
+                        {missions.slice(0, 3).map((mission) => (
+                            <div key={mission.id} className="bg-white border border-gray-border rounded-[28px] p-6 hover:shadow-lg transition-all border-b-4 border-b-gold-accent/30 group">
                                 <div className="flex justify-between items-start mb-4">
                                     <div className="w-10 h-10 bg-cream-accent rounded-xl flex items-center justify-center text-xl">
                                         ✨
                                     </div>
-                                    <span className="text-[10px] font-black uppercase tracking-widest bg-off-white-bg px-3 py-1 rounded-full text-gray-muted">
-                                        {task.status || 'open'}
+                                    <span className="text-[10px] font-black uppercase tracking-widest bg-oflem-cream px-3 py-1 rounded-full text-gray-muted">
+                                        {mission.status || 'OUVERTE'}
                                     </span>
                                 </div>
-                                <h5 className="font-black text-primary-black mb-2 line-clamp-1">{task.content}</h5>
+                                <h5 className="font-black text-primary-black mb-2 line-clamp-1">{mission.title}</h5>
                                 <p className="text-sm text-gray-muted font-bold line-clamp-2 mb-6">
-                                    {task.metadata?.summary || t('Awaiting AI analysis...')}
+                                    {mission.description || t('No description provided.')}
                                 </p>
                                 <div className="flex items-center justify-between pt-4 border-t border-gray-border/50">
                                     <span className="text-[10px] font-black text-gray-muted/50 uppercase">
-                                        {new Date(task.created_at).toLocaleDateString()}
+                                        {new Date(mission.created_at).toLocaleDateString()}
                                     </span>
-                                    <button className="text-gold-accent font-black text-xs group-hover:translate-x-1 transition-transform">
+                                    <Link href={route('missions.show', mission.id)} className="text-gold-accent font-black text-xs group-hover:translate-x-1 transition-transform">
                                         {t('View Details')} →
-                                    </button>
+                                    </Link>
                                 </div>
                             </div>
                         ))}
                     </div>
                 ) : (
                     <div className="bg-white border border-dashed border-gray-border rounded-[32px] p-16 text-center">
-                        <div className="w-16 h-16 bg-off-white-bg rounded-full flex items-center justify-center mx-auto mb-6">
+                        <div className="w-16 h-16 bg-oflem-cream rounded-full flex items-center justify-center mx-auto mb-6">
                             <span className="text-2xl">📝</span>
                         </div>
                         <p className="text-gray-muted font-bold mb-6">{t('You haven\'t posted any missions yet.')}</p>
@@ -158,9 +180,11 @@ function PerformerDashboard({ user, t }) {
                     <p className="text-gray-muted text-lg font-bold">
                         {t('Ready to showcase your talent and get more bookings? Your skills are in demand.')}
                     </p>
-                    <button className="mt-8 bg-gold-accent text-primary-black font-black py-3 px-8 rounded-full hover:opacity-90 transition-all shadow-md">
-                        {t('Check Requests')}
-                    </button>
+                    <Link href={route('missions.active')} className="inline-block">
+                        <button className="mt-8 bg-gold-accent text-primary-black font-black py-3 px-8 rounded-full hover:opacity-90 transition-all shadow-md">
+                            {t('Check Requests')}
+                        </button>
+                    </Link>
                 </div>
                 <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-white opacity-5 rounded-full group-hover:scale-110 transition-transform duration-1000"></div>
             </div>
@@ -183,7 +207,9 @@ function PerformerDashboard({ user, t }) {
 
             {/* Quick Actions Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <DashboardCard title={t('Update Profile')} subtitle={t('Showcase your skills')} icon={<LogoIcon />} />
+                <Link href={route('onboarding.index')} className="block group cursor-pointer">
+                    <DashboardCard title={t('Update Expertise')} subtitle={t('Showcase your skills')} icon={<LogoIcon />} />
+                </Link>
                 <DashboardCard title={t('Manage Schedule')} subtitle={t('View and edit bookings')} icon={<ScheduleIcon />} />
                 <DashboardCard title={t('Payment Settings')} subtitle={t('Setup your payouts')} icon={<EarningsIcon />} />
             </div>
@@ -219,11 +245,11 @@ function BothDashboard({ user, t }) {
                         {t('As a Customer')}
                     </h4>
                     <div className="space-y-4">
-                        <div className="p-4 bg-off-white-bg rounded-[20px] font-black text-sm text-primary-black flex justify-between items-center hover:bg-cream-accent cursor-pointer transition-colors border border-transparent hover:border-gold-accent/20">
+                        <div className="p-4 bg-oflem-cream rounded-[20px] font-black text-sm text-primary-black flex justify-between items-center hover:bg-cream-accent cursor-pointer transition-colors border border-transparent hover:border-gold-accent/20">
                             <span>{t('Find Performers')}</span>
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
                         </div>
-                        <div className="p-4 bg-off-white-bg rounded-[20px] font-black text-sm text-primary-black flex justify-between items-center hover:bg-cream-accent cursor-pointer transition-colors border border-transparent hover:border-gold-accent/20">
+                        <div className="p-4 bg-oflem-cream rounded-[20px] font-black text-sm text-primary-black flex justify-between items-center hover:bg-cream-accent cursor-pointer transition-colors border border-transparent hover:border-gold-accent/20">
                             <span>{t('Manage My Tasks')}</span>
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
                         </div>
@@ -236,14 +262,18 @@ function BothDashboard({ user, t }) {
                         {t('As a Performer')}
                     </h4>
                     <div className="space-y-4">
-                        <div className="p-4 bg-off-white-bg rounded-[20px] font-black text-sm text-primary-black flex justify-between items-center hover:bg-cream-accent cursor-pointer transition-colors border border-transparent hover:border-gold-accent/20">
+                        <Link href={route('missions.active')} className="p-4 bg-oflem-cream rounded-[20px] font-black text-sm text-primary-black flex justify-between items-center hover:bg-cream-accent cursor-pointer transition-colors border border-transparent hover:border-gold-accent/20">
                             <span>{t('Available Tasks')}</span>
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
-                        </div>
-                        <div className="p-4 bg-off-white-bg rounded-[20px] font-black text-sm text-primary-black flex justify-between items-center hover:bg-cream-accent cursor-pointer transition-colors border border-transparent hover:border-gold-accent/20">
+                        </Link>
+                        <div className="p-4 bg-oflem-cream rounded-[20px] font-black text-sm text-primary-black flex justify-between items-center hover:bg-cream-accent cursor-pointer transition-colors border border-transparent hover:border-gold-accent/20">
                             <span>{t('My Earning Overview')}</span>
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
                         </div>
+                        <Link href={route('onboarding.index')} className="p-4 bg-oflem-cream rounded-[20px] font-black text-sm text-primary-black flex justify-between items-center hover:bg-cream-accent cursor-pointer transition-colors border border-transparent hover:border-gold-accent/20">
+                            <span>{t('Update My Expertise')}</span>
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
+                        </Link>
                     </div>
                 </div>
             </div>

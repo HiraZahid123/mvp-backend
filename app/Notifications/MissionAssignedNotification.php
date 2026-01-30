@@ -53,6 +53,7 @@ class MissionAssignedNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
+            'type' => 'mission_assigned',
             'mission_id' => $this->mission->id,
             'mission_title' => $this->mission->title,
             'message' => 'You have been assigned to a mission',

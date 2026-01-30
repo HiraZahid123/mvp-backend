@@ -1,5 +1,5 @@
-import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
+
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link, usePage } from '@inertiajs/react';
@@ -11,16 +11,18 @@ export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth.user;
     const { t } = useTranslation();
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
+    
+    const userRole = user?.last_selected_role || user?.role_type || 'customer';
 
     return (
-        <div className="min-h-screen bg-off-white-bg font-sans">
-            <nav className="bg-white border-b border-gray-border sticky top-0 z-50 shadow-sm">
+        <div className="min-h-screen bg-oflem-cream font-sans">
+            <nav className="bg-white/80 backdrop-blur-md border-b border-gray-border/50 sticky top-0 z-50 shadow-sm">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div className="flex h-20 justify-between items-center">
+                    <div className="flex h-16 justify-between items-center">
                         <div className="flex items-center">
                             <div className="flex shrink-0 items-center">
                                 <Link href="/" className="flex items-center gap-2">
-                                    <span className="text-2xl font-black tracking-tight text-primary-black">OFLEM</span>
+                                    <span className="text-xl md:text-2xl font-black tracking-tight text-oflem-charcoal uppercase">OFLEM</span>
                                 </Link>
                             </div>
 
@@ -35,14 +37,40 @@ export default function AuthenticatedLayout({ header, children }) {
                                 >
                                     {t('Dashboard')}
                                 </Link>
+                                
+                                <Link
+                                    href={route('missions.search')}
+                                    className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-black transition-colors ${
+                                        route().current('missions.search')
+                                            ? 'border-gold-accent text-primary-black'
+                                            : 'border-transparent text-gray-muted hover:text-primary-black hover:border-gray-border'
+                                    }`}
+                                >
+                                    {t('Browse Missions')}
+                                </Link>
                             </div>
                         </div>
 
-                        <div className="hidden sm:flex sm:items-center sm:ms-6">
+                        <div className="hidden sm:flex sm:items-center sm:ms-6 gap-4">
                             <LanguageSwitcher />
-                        </div>
+                            
+                            {/* Role-Specific Primary Action */}
+                            {userRole === 'performer' ? (
+                                <Link 
+                                    href={route('missions.search')} 
+                                    className="bg-oflem-terracotta text-white px-6 py-2.5 rounded-full text-sm font-black hover:opacity-90 transition-all shadow-sm whitespace-nowrap"
+                                >
+                                    {t('Find Work')}
+                                </Link>
+                            ) : (
+                                <Link 
+                                    href={route('missions.create')} 
+                                    className="bg-oflem-terracotta text-white px-6 py-2.5 rounded-full text-sm font-black hover:opacity-90 transition-all shadow-sm whitespace-nowrap"
+                                >
+                                    {t('Post a Mission')}
+                                </Link>
+                            )}
 
-                        <div className="hidden sm:ms-6 sm:flex sm:items-center">
                             <div className="relative ms-3">
                                 <Dropdown>
                                     <Dropdown.Trigger>
@@ -65,15 +93,32 @@ export default function AuthenticatedLayout({ header, children }) {
                                     </Dropdown.Trigger>
 
                                     <Dropdown.Content contentClasses="py-2 bg-white rounded-[16px] shadow-lg ring-1 ring-black ring-opacity-5">
+                                        <div className="px-4 py-2 border-b border-gray-border mb-1">
+                                            <div className="text-[10px] font-black uppercase text-gray-muted mb-1">{t('Active Role')}</div>
+                                            <div className="text-xs font-black text-oflem-terracotta uppercase tracking-wider">
+                                                {userRole === 'performer' ? t('Provider') : t('Client')}
+                                            </div>
+                                        </div>
+                                        
                                         <Dropdown.Link href={route('profile.edit')} className="font-bold text-sm">
                                             {t('Profile Settings')}
                                         </Dropdown.Link>
+                                        
+                                        {user.role_type === 'both' && (
+                                            <Dropdown.Link 
+                                                href={route('auth.select-role')} 
+                                                className="font-bold text-sm text-oflem-charcoal"
+                                            >
+                                                {t('Switch Role')}
+                                            </Dropdown.Link>
+                                        )}
+
                                         <div className="border-t border-gray-border my-1"></div>
                                         <Dropdown.Link
                                             href={route('logout')}
                                             method="post"
                                             as="button"
-                                            className="font-bold text-sm text-red-600"
+                                            className="font-bold text-sm text-red-600 w-full text-left"
                                         >
                                             {t('Sign Out')}
                                         </Dropdown.Link>
@@ -97,11 +142,32 @@ export default function AuthenticatedLayout({ header, children }) {
                 </div>
 
                 <div className={(showingNavigationDropdown ? 'block' : 'hidden') + ' sm:hidden bg-white border-t border-gray-border'}>
-                    <div className="pt-2 pb-3 space-y-1">
-                        <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')} className="font-black">
+                    <div className="pt-2 pb-3 space-y-1 text-center px-4">
+                        {userRole === 'performer' ? (
+                            <Link 
+                                href={route('missions.search')} 
+                                className="block w-full bg-oflem-terracotta text-white px-6 py-3 rounded-full text-sm font-black hover:opacity-90 transition-all shadow-sm mb-4"
+                            >
+                                {t('Find Work')}
+                            </Link>
+                        ) : (
+                            <Link 
+                                href={route('missions.create')} 
+                                className="block w-full bg-oflem-terracotta text-white px-6 py-3 rounded-full text-sm font-black hover:opacity-90 transition-all shadow-sm mb-4"
+                            >
+                                {t('Post a Mission')}
+                            </Link>
+                        )}
+                        
+                        <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')} className="font-black text-center">
                             {t('Dashboard')}
                         </ResponsiveNavLink>
-                        <div className="px-4 py-2">
+                        
+                        <ResponsiveNavLink href={route('missions.search')} active={route().current('missions.search')} className="font-black text-center">
+                            {t('Browse Missions')}
+                        </ResponsiveNavLink>
+
+                        <div className="py-2 flex justify-center border-t border-gray-border mt-2">
                             <LanguageSwitcher />
                         </div>
                     </div>
@@ -117,13 +183,22 @@ export default function AuthenticatedLayout({ header, children }) {
                             </div>
                             <div>
                                 <div className="font-black text-base text-primary-black">{user.name}</div>
-                                <div className="font-bold text-sm text-gray-muted">{user.email}</div>
+                                <div className="font-bold text-sm text-gray-muted italic flex items-center gap-1">
+                                    {userRole === 'performer' ? t('Provider Mode') : t('Client Mode')}
+                                </div>
                             </div>
                         </div>
 
                         <div className="mt-3 space-y-1 pb-4">
                             <ResponsiveNavLink href={route('profile.edit')} className="font-bold">{t('Profile Settings')}</ResponsiveNavLink>
-                            <ResponsiveNavLink method="post" href={route('logout')} as="button" className="text-red-600 font-bold">
+                            
+                            {user.role_type === 'both' && (
+                                <ResponsiveNavLink href={route('auth.select-role')} className="font-bold text-oflem-terracotta">
+                                    {t('Switch Role')}
+                                </ResponsiveNavLink>
+                            )}
+
+                            <ResponsiveNavLink method="post" href={route('logout')} as="button" className="text-red-600 font-bold w-full text-left">
                                 {t('Sign Out')}
                             </ResponsiveNavLink>
                         </div>

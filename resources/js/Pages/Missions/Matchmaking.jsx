@@ -8,7 +8,7 @@ export default function Matchmaking({ mission, helpers, isGuest = false }) {
     const { t } = useTranslation();
 
     return (
-        <div className="min-h-screen bg-off-white-bg font-sans">
+        <div className="min-h-screen bg-oflem-cream font-sans">
             <Head title={t('Match Helpers')} />
             <Header />
 
@@ -99,7 +99,7 @@ function HelperCard({ helper, missionId, t, isGuest }) {
             </div>
 
             <div className="flex-1 space-y-4 mb-8">
-                <div className="flex justify-between items-center px-4 py-2 bg-off-white-bg rounded-xl">
+                <div className="flex justify-between items-center px-4 py-2 bg-oflem-cream rounded-xl">
                     <span className="text-xs font-black text-gray-muted uppercase tracking-widest">{t('Starting from')}</span>
                     <span className="text-sm font-black text-primary-black">{helper.price} CHF</span>
                 </div>

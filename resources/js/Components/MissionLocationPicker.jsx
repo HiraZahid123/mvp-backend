@@ -116,7 +116,7 @@ export default function MissionLocationPicker({
                     <input
                         type="text"
                         placeholder={t('Search for a location...')}
-                        className="w-full pl-14 pr-6 py-4 bg-off-white-bg border-gray-border rounded-full text-sm font-bold focus:border-gold-accent focus:ring-0 transition-all shadow-sm"
+                        className="w-full pl-14 pr-6 py-4 bg-oflem-cream border-gray-border rounded-full text-sm font-bold focus:border-gold-accent focus:ring-0 transition-all shadow-sm"
                         value={address}
                         onChange={(e) => setAddress(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}

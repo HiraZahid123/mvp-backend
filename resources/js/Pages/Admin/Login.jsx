@@ -24,7 +24,7 @@ export default function Login() {
         <>
             <Head title={t('Admin Login')} />
 
-            <div className="min-h-screen bg-off-white-bg flex items-center justify-center p-6">
+            <div className="min-h-screen bg-oflem-cream flex items-center justify-center p-6">
                 <div className="w-full max-w-md animate-in fade-in slide-in-from-bottom-8 duration-700">
                     {/* Brand Branding */}
                     <div className="text-center mb-10">

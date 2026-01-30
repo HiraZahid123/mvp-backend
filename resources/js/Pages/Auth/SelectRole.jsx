@@ -4,6 +4,8 @@ import { Head, useForm } from '@inertiajs/react';
 import RoleCard from '@/Components/RoleCard';
 import PrimaryButton from '@/Components/PrimaryButton';
 import useTranslation from '@/Hooks/useTranslation';
+import BackButton from '@/Components/BackButton';
+import ProgressIndicator from '@/Components/ProgressIndicator';
 
 export default function SelectRole({ user }) {
     const { t } = useTranslation();
@@ -36,12 +38,6 @@ export default function SelectRole({ user }) {
             title: t('MOTIVÉ'),
             description: t('Je gère. Prêt à rentabiliser ma disponibilité.'),
         },
-        {
-            key: 'both',
-            icon: '/images/icons/battery-medium.svg',
-            title: t('LES DEUX'),
-            description: t('Les deux ! Parce que je suis multitâche.'),
-        },
     ];
 
     return (
@@ -50,6 +46,14 @@ export default function SelectRole({ user }) {
             bgAccentClass="bg-cream-accent"
         >
             <Head title={t("Choisir un rôle")} />
+
+            {/* Back Button & Progress */}
+            <div className="flex items-center justify-between mb-8">
+                <BackButton href={route('register')} className="text-sm">
+                    {t('Back')}
+                </BackButton>
+                <ProgressIndicator currentStep={2} totalSteps={5} />
+            </div>
 
             <div className="text-center mb-8 lg:mb-10">
                 <h1 className="text-[32px] lg:text-[40px] font-serif font-bold text-primary-black tracking-tight mb-3 leading-tight">
@@ -86,7 +90,7 @@ export default function SelectRole({ user }) {
 
             <div className="mt-6 p-4 bg-gold-accent/5 rounded-[24px] border border-gold-accent/20">
                 <p className="text-xs text-gray-muted text-center">
-                    {t("Vous pourrez toujours changer votre rôle plus tard.")}
+                    {t("You can switch roles anytime. Motivés can also post missions as Flemmards.")}
                 </p>
             </div>
         </AuthSplitLayout>

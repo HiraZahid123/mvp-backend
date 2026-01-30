@@ -31,6 +31,9 @@ export default {
                 'gold-accent': '#C57B67',
                 'input-bg': '#F9F9F9',
                 'cream-accent': '#EEE9D5',
+                'oflem-cream': '#F9F8F3',
+                'oflem-terracotta': '#E07A5F',
+                'oflem-charcoal': '#1A1A1A',
             },
             boxShadow: {
                 'card': '0px 4px 10px 3px rgba(0, 0, 0, 0.11)',

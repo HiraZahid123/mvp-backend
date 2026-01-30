@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { MapPinIcon, MapIcon } from '@heroicons/react/24/outline';
+import { MapPinIcon, MapIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import useTranslation from '@/Hooks/useTranslation';
-import { GoogleMap, Marker, Circle, useLoadScript } from '@react-google-maps/api';
+import { GoogleMap, Marker, Circle, useLoadScript, Autocomplete } from '@react-google-maps/api';
 
 const libraries = ['places'];
 
@@ -22,6 +22,7 @@ export default function LocationPicker({
     const [error, setError] = useState(null);
     const [mapCenter, setMapCenter] = useState({ lat: 48.8566, lng: 2.3522 }); // Default Paris
     const [selectedLocation, setSelectedLocation] = useState(null);
+    const [autocomplete, setAutocomplete] = useState(null);
 
     const { isLoaded, loadError } = useLoadScript({
         googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
@@ -46,7 +47,7 @@ export default function LocationPicker({
                     const formattedAddress = results[0].formatted_address;
                     setAddress(formattedAddress);
                     
-                    // Also try to extract zip code for consistency if possible, though not strictly required if we have address
+                    // Also try to extract zip code for consistency if possible
                     const addressComponents = results[0].address_components;
                     let foundZip = '';
                     for (const component of addressComponents) {
@@ -55,15 +56,15 @@ export default function LocationPicker({
                             break;
                         }
                     }
-                    if (foundZip && method === 'gps') {
-                         // Optional: update zipCode state if displayed
+                    if (foundZip) {
+                         setZipCode(foundZip);
                     }
                     
                     return formattedAddress;
                 }
             });
         }
-    }, [method]);
+    }, []);
 
     const handleMapClick = useCallback((event) => {
         const lat = event.latLng.lat();
@@ -75,17 +76,7 @@ export default function LocationPicker({
         
         // Reverse geocode
         fetchAddress(lat, lng);
-
-        if (onLocationSelect) {
-            onLocationSelect({
-                method,
-                location_lat: lat,
-                location_lng: lng,
-                discovery_radius_km: radius,
-                location_address: address // Note: this might be stale due to closure, updated in useEffect or separate trigger
-            });
-        }
-    }, [method, radius, onLocationSelect, fetchAddress, address]);
+    }, [fetchAddress]);
 
     // Update parent when address changes to ensure latest is sent
     useEffect(() => {
@@ -99,7 +90,7 @@ export default function LocationPicker({
                 location_address: address
             });
         }
-    }, [address, location, radius, method, zipCode]); // Removed onLocationSelect from dependencies to avoid loop if unstable
+    }, [address, location, radius, method, zipCode, onLocationSelect]);
 
     const handleGPSLocation = () => {
         setLoading(true);
@@ -160,13 +151,31 @@ export default function LocationPicker({
                  }
              });
         } else {
-             setTimeout(() => {
-                const loc = { lat: 48.8566, lng: 2.3522 };
+            setLoading(false);
+            setError(t("Google Maps non chargé."));
+        }
+    };
+
+    const onAutocompleteLoad = (autocompleteInstance) => {
+        setAutocomplete(autocompleteInstance);
+    };
+
+    const onPlaceChanged = () => {
+        if (autocomplete !== null) {
+            const place = autocomplete.getPlace();
+            if (place.geometry) {
+                const loc = {
+                    lat: place.geometry.location.lat(),
+                    lng: place.geometry.location.lng()
+                };
                 setLocation(loc);
                 setSelectedLocation(loc);
-                setAddress("Paris, France (Simulated)");
-                setLoading(false);
-             }, 500);
+                setMapCenter(loc);
+                setAddress(place.formatted_address || '');
+                setError(null);
+            } else {
+                setError(t("Aucun détail disponible pour cette adresse."));
+            }
         }
     };
 
@@ -177,8 +186,6 @@ export default function LocationPicker({
         marginTop: '1rem'
     };
 
-
-
     return (
         <div className="space-y-6">
             {/* Title */}
@@ -187,35 +194,50 @@ export default function LocationPicker({
             </h2>
 
             {/* Method Selection */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-3 lg:gap-4">
                 <button
                     type="button"
                     onClick={() => setMethod('gps')}
                     className={`
-                        p-4 rounded-[24px] border-2 transition-all duration-300
+                        p-3 lg:p-4 rounded-[24px] border-2 transition-all duration-300
                         ${method === 'gps'
                             ? 'border-gold-accent bg-gold-accent/10'
                             : 'border-gray-border/50 bg-white hover:border-gold-accent/50'
                         }
                     `}
                 >
-                    <MapPinIcon className="w-8 h-8 mx-auto mb-2 text-gold-accent" />
-                    <p className="text-sm font-bold text-primary-black">{t('Me géolocaliser')}</p>
+                    <MapPinIcon className="w-6 h-6 lg:w-8 lg:h-8 mx-auto mb-2 text-gold-accent" />
+                    <p className="text-[10px] lg:text-sm font-bold text-primary-black">{t('GPS')}</p>
+                </button>
+
+                <button
+                    type="button"
+                    onClick={() => setMethod('address')}
+                    className={`
+                        p-3 lg:p-4 rounded-[24px] border-2 transition-all duration-300
+                        ${method === 'address'
+                            ? 'border-gold-accent bg-gold-accent/10'
+                            : 'border-gray-border/50 bg-white hover:border-gold-accent/50'
+                        }
+                    `}
+                >
+                    <MagnifyingGlassIcon className="w-6 h-6 lg:w-8 lg:h-8 mx-auto mb-2 text-gold-accent" />
+                    <p className="text-[10px] lg:text-sm font-bold text-primary-black">{t('Adresse')}</p>
                 </button>
 
                 <button
                     type="button"
                     onClick={() => setMethod('zipcode')}
                     className={`
-                        p-4 rounded-[24px] border-2 transition-all duration-300
+                        p-3 lg:p-4 rounded-[24px] border-2 transition-all duration-300
                         ${method === 'zipcode'
                             ? 'border-gold-accent bg-gold-accent/10'
                             : 'border-gray-border/50 bg-white hover:border-gold-accent/50'
                         }
                     `}
                 >
-                    <MapIcon className="w-8 h-8 mx-auto mb-2 text-gold-accent" />
-                    <p className="text-sm font-bold text-primary-black">{t('Code postal')}</p>
+                    <MapIcon className="w-6 h-6 lg:w-8 lg:h-8 mx-auto mb-2 text-gold-accent" />
+                    <p className="text-[10px] lg:text-sm font-bold text-primary-black">{t('Code postal')}</p>
                 </button>
             </div>
 
@@ -238,6 +260,36 @@ export default function LocationPicker({
                     >
                         {loading ? t('Localisation...') : t('Obtenir ma position')}
                     </button>
+                </div>
+            )}
+
+            {/* Address Method */}
+            {method === 'address' && (
+                <div className="space-y-4">
+                    {isLoaded ? (
+                        <Autocomplete
+                            onLoad={onAutocompleteLoad}
+                            onPlaceChanged={onPlaceChanged}
+                        >
+                            <input
+                                type="text"
+                                placeholder={t('Saisissez votre adresse...')}
+                                className="
+                                    w-full px-4 py-3
+                                    bg-input-bg border border-gray-border/50
+                                    rounded-[24px]
+                                    text-primary-black text-base
+                                    placeholder:text-gray-muted/60
+                                    focus:outline-none focus:ring-2 focus:ring-gold-accent/30 focus:border-gold-accent
+                                    transition-all duration-200
+                                "
+                            />
+                        </Autocomplete>
+                    ) : (
+                        <div className="w-full px-4 py-3 bg-gray-100 rounded-[24px] text-center italic text-gray-400">
+                             {t('Chargement de la recherche...')}
+                        </div>
+                    )}
                 </div>
             )}
 

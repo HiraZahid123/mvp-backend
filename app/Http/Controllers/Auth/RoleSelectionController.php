@@ -43,7 +43,10 @@ class RoleSelectionController extends Controller
             'last_selected_role' => $request->role,
         ]);
 
-        // Redirect to Identity & Profile setup instead of Complete Profile
-        return redirect()->route('auth.complete-identity');
+        if ($request->session()->has('pending_mission')) {
+            return redirect()->route('missions.pending');
+        }
+
+        return redirect()->route('dashboard');
     }
 }

@@ -53,6 +53,7 @@ class NewQuestionNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
+            'type' => 'new_question',
             'mission_id' => $this->question->mission_id,
             'mission_title' => $this->question->mission->title,
             'question_id' => $this->question->id,

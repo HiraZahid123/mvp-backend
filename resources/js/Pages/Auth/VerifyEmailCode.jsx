@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import AuthSplitLayout from '@/Layouts/AuthSplitLayout';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, router } from '@inertiajs/react';
 import InputError from '@/Components/InputError';
 import PrimaryButton from '@/Components/PrimaryButton';
 
@@ -9,7 +9,7 @@ export default function VerifyEmailCode({ email }) {
     const [timeLeft, setTimeLeft] = useState(30);
     const [canResend, setCanResend] = useState(false);
 
-    const { data, setData, post, processing, errors } = useForm({
+    const { setData, processing, errors } = useForm({
         email: email,
         code: '',
     });
@@ -63,11 +63,9 @@ export default function VerifyEmailCode({ email }) {
 
     const handleSubmit = (codeValue = null) => {
         const finalCode = codeValue || code.join('');
-        post(route('auth.verify-email-code.store'), {
-            data: {
-                email: email,
-                code: finalCode,
-            },
+        router.post(route('auth.verify-email-code.store'), {
+            email: email,
+            code: finalCode,
         });
     };
 
