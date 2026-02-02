@@ -134,8 +134,11 @@ class SocialAuthController extends Controller
 
         if ($authType === 'login') {
             // Check if profile setup is needed
-            if (is_null($user->location_lat) || is_null($user->location_lng)) {
-                return redirect('/complete-profile');
+            if (!$user->isProfileComplete()) {
+                if (!$user->hasSelectedRole()) {
+                    return redirect()->route('auth.select-role');
+                }
+                return redirect()->route('auth.complete-identity');
             }
             return redirect('/dashboard');
         } else {

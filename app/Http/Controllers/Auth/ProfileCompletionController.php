@@ -118,6 +118,10 @@ class ProfileCompletionController extends Controller
             'discovery_radius_km' => $request->discovery_radius_km,
         ]);
 
+        if ($request->session()->has('pending_mission')) {
+            return redirect()->route('missions.pending');
+        }
+
         if ($user->isPerformer()) {
             return redirect()->route('onboarding.index');
         }

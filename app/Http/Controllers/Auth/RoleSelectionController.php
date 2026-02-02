@@ -43,10 +43,6 @@ class RoleSelectionController extends Controller
             'last_selected_role' => $request->role,
         ]);
 
-        if ($request->session()->has('pending_mission')) {
-            return redirect()->route('missions.pending');
-        }
-
-        return redirect()->route('dashboard');
+        return redirect()->route('auth.complete-identity');
     }
 }

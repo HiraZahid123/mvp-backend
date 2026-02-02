@@ -353,4 +353,23 @@ class User extends Authenticatable
             ->where('role_type', '!=', 'customer') // Only performers or both
             ->havingRaw("distance_to_point <= discovery_radius_km");
     }
+
+    /**
+     * Check if user has selected a role.
+     */
+    public function hasSelectedRole(): bool
+    {
+        return !empty($this->role_type);
+    }
+
+    /**
+     * Check if user has completed basic profile setup (identity & location).
+     */
+    public function isProfileComplete(): bool
+    {
+        return $this->hasSelectedRole() && 
+               !empty($this->username) && 
+               !is_null($this->location_lat) && 
+               !is_null($this->location_lng);
+    }
 }
