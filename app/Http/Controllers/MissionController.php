@@ -255,6 +255,10 @@ class MissionController extends Controller
 
     public function showMatchmaking(Mission $mission)
     {
+        if (Auth::id() !== $mission->user_id && !Auth::user()->isAdmin()) {
+            abort(403);
+        }
+
         // 1. Extract requirements
         $requirements = [];
         if (preg_match('/\[REQUIREMENTS\](.*?)\[\/REQUIREMENTS\]/s', $mission->additional_details, $matches)) {
@@ -500,7 +504,7 @@ class MissionController extends Controller
 
     public function hire(Request $request, Mission $mission, User $performer)
     {
-        if (Auth::id() !== $mission->user_id) {
+        if (Auth::id() !== $mission->user_id && !Auth::user()->isAdmin()) {
             abort(403);
         }
 
@@ -548,7 +552,7 @@ class MissionController extends Controller
 
     public function selectOffer(Request $request, Mission $mission, \App\Models\MissionOffer $offer)
     {
-        if (Auth::id() !== $mission->user_id) {
+        if (Auth::id() !== $mission->user_id && !Auth::user()->isAdmin()) {
             abort(403);
         }
 
@@ -590,7 +594,7 @@ class MissionController extends Controller
 
     public function confirmAssignment(Mission $mission)
     {
-        if (Auth::id() !== $mission->user_id) {
+        if (Auth::id() !== $mission->user_id && !Auth::user()->isAdmin()) {
             abort(403);
         }
 
@@ -785,7 +789,7 @@ class MissionController extends Controller
 
     public function contactHelper(Mission $mission, User $helper)
     {
-        if (Auth::id() !== $mission->user_id) {
+        if (Auth::id() !== $mission->user_id && !Auth::user()->isAdmin()) {
             abort(403);
         }
 
