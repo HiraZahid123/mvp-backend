@@ -92,7 +92,7 @@ function CustomerDashboard({ user, missions, t }) {
                     <p className="text-primary-black/70 text-lg font-bold">
                         {t('Describe your mission and let our smart matching find the perfect helper for you.')}
                     </p>
-                    <Link href={route('missions.search')} className="mt-8 bg-primary-black text-white font-black py-4 px-10 rounded-full hover:opacity-90 transition-all shadow-xl inline-block text-lg">
+                    <Link href={route('providers.index')} className="mt-8 bg-primary-black text-white font-black py-4 px-10 rounded-full hover:opacity-90 transition-all shadow-xl inline-block text-lg">
                         🚀 {t('Post a Mission')}
                     </Link>
                 </div>
@@ -232,7 +232,7 @@ function BothDashboard({ user, t }) {
                         </p>
                     </div>
                     <div className="flex gap-4">
-                        <Link href={route('missions.search')} className="bg-primary-black text-white font-black py-3 px-6 rounded-full hover:opacity-90 transition-all text-sm shadow-md">{t('Post Task')}</Link>
+                        <Link href={route('providers.index')} className="bg-primary-black text-white font-black py-3 px-6 rounded-full hover:opacity-90 transition-all text-sm shadow-md">{t('Post Task')}</Link>
                         <button className="bg-gold-accent text-primary-black font-black py-3 px-8 rounded-full hover:opacity-90 transition-all text-sm shadow-md">{t('Available Tasks')}</button>
                     </div>
                 </div>
@@ -245,10 +245,10 @@ function BothDashboard({ user, t }) {
                         {t('As a Customer')}
                     </h4>
                     <div className="space-y-4">
-                        <div className="p-4 bg-oflem-cream rounded-[20px] font-black text-sm text-primary-black flex justify-between items-center hover:bg-cream-accent cursor-pointer transition-colors border border-transparent hover:border-gold-accent/20">
+                        <Link href={route('providers.index')} className="p-4 bg-oflem-cream rounded-[20px] font-black text-sm text-primary-black flex justify-between items-center hover:bg-cream-accent cursor-pointer transition-colors border border-transparent hover:border-gold-accent/20">
                             <span>{t('Find Performers')}</span>
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
-                        </div>
+                        </Link>
                         <div className="p-4 bg-oflem-cream rounded-[20px] font-black text-sm text-primary-black flex justify-between items-center hover:bg-cream-accent cursor-pointer transition-colors border border-transparent hover:border-gold-accent/20">
                             <span>{t('Manage My Tasks')}</span>
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>

@@ -192,10 +192,10 @@ export default function Wallet({ balance, availableBalance, pendingWithdrawal, t
                                     {t('Complete your first mission to start building your balance!')}
                                 </p>
                                 <Link 
-                                    href={route('missions.search')}
+                                    href={route('providers.index')}
                                     className="inline-block mt-8 px-8 py-3 bg-oflem-terracotta text-white font-black rounded-full hover:opacity-90 transition-all text-sm"
                                 >
-                                    {t('Browse Missions')}
+                                    {t('Find Helpers')}
                                 </Link>
                             </div>
                         )}

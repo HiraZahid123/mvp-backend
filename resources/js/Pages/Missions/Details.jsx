@@ -253,6 +253,18 @@ export default function Details({ mission, canSeeAddress }) {
                                     <DisputeButton missionId={mission.id} t={t} />
                                 </div>
 
+                                <div className="mt-4">
+                                    <button
+                                        onClick={async () => {
+                                            const response = await axios.get(route('api.missions.chat', mission.id));
+                                            router.visit(route('messages', { chat_id: response.data.id }));
+                                        }}
+                                        className="w-full py-4 bg-primary-black text-white font-black rounded-full hover:bg-oflem-charcoal transition-all flex items-center justify-center gap-2"
+                                    >
+                                        💬 {t('Message Performer')}
+                                    </button>
+                                </div>
+
                                 {/* Auto-complete countdown */}
                                 <div className="mt-6 text-center">
                                     <p className="text-xs text-gray-muted font-bold">
@@ -321,12 +333,23 @@ export default function Details({ mission, canSeeAddress }) {
                                             }
                                         </p>
                                         {isOwner && (
-                                            <button
-                                                onClick={() => router.post(route('missions.confirm-assignment', mission.id))}
-                                                className="w-full py-4 bg-gold-accent text-primary-black font-black rounded-full hover:opacity-90 transition-all shadow-xl"
-                                            >
-                                                ✅ {t('Confirm Assignment')}
-                                            </button>
+                                            <div className="space-y-4">
+                                                <button
+                                                    onClick={() => router.post(route('missions.confirm-assignment', mission.id))}
+                                                    className="w-full py-4 bg-gold-accent text-primary-black font-black rounded-full hover:opacity-90 transition-all shadow-xl"
+                                                >
+                                                    ✅ {t('Confirm Assignment')}
+                                                </button>
+                                                <button
+                                                    onClick={async () => {
+                                                        const response = await axios.get(route('api.missions.chat', mission.id));
+                                                        router.visit(route('messages', { chat_id: response.data.id }));
+                                                    }}
+                                                    className="w-full py-4 bg-primary-black text-white font-black rounded-full hover:bg-oflem-charcoal transition-all flex items-center justify-center gap-2"
+                                                >
+                                                    💬 {t('Message Performer')}
+                                                </button>
+                                            </div>
                                         )}
                                         {isAssigned && mission.assigned_user_id && (
                                             <button
@@ -365,11 +388,22 @@ export default function Details({ mission, canSeeAddress }) {
                                                         const response = await axios.get(route('api.missions.chat', mission.id));
                                                         router.visit(route('messages', { chat_id: response.data.id }));
                                                     }}
-                                                    className="w-full py-4 bg-primary-black text-white font-black rounded-full hover:bg-black transition-all flex items-center justify-center gap-2"
+                                                    className="w-full py-4 bg-primary-black text-white font-black rounded-full hover:bg-oflem-charcoal transition-all flex items-center justify-center gap-2"
                                                 >
                                                     💬 {t('Message Creator')}
                                                 </button>
                                             </div>
+                                        )}
+                                        {isOwner && (
+                                            <button
+                                                onClick={async () => {
+                                                    const response = await axios.get(route('api.missions.chat', mission.id));
+                                                    router.visit(route('messages', { chat_id: response.data.id }));
+                                                }}
+                                                className="w-full py-4 bg-primary-black text-white font-black rounded-full hover:bg-oflem-charcoal transition-all flex items-center justify-center gap-2"
+                                            >
+                                                💬 {t('Message Performer')}
+                                            </button>
                                         )}
                                     </div>
                                 ) : mission.status === 'EN_COURS' ? (
@@ -384,9 +418,9 @@ export default function Details({ mission, canSeeAddress }) {
                                                 const response = await axios.get(route('api.missions.chat', mission.id));
                                                 router.visit(route('messages', { chat_id: response.data.id }));
                                             }}
-                                            className="w-full py-4 bg-primary-black text-white font-black rounded-full hover:bg-black transition-all flex items-center justify-center gap-2"
+                                            className="w-full py-4 bg-primary-black text-white font-black rounded-full hover:bg-oflem-charcoal transition-all flex items-center justify-center gap-2"
                                         >
-                                            💬 {t('Message')}
+                                            💬 {isOwner ? t('Message Performer') : t('Message Creator')}
                                         </button>
                                     </div>
                                 ) : isOwner ? (

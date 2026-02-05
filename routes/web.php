@@ -15,6 +15,7 @@ use App\Http\Controllers\Auth\SocialAuthController;
 use App\Http\Controllers\MissionController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OnboardingController;
+use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
@@ -171,6 +172,9 @@ Route::get('/wallet', [\App\Http\Controllers\WalletController::class, 'index'])-
 Route::get('/wallet/client', [\App\Http\Controllers\WalletController::class, 'clientIndex'])->name('wallet.client');
 Route::post('/wallet/withdraw', [\App\Http\Controllers\WalletController::class, 'requestWithdrawal'])->name('wallet.withdraw');
 Route::delete('/wallet/withdraw/{withdrawal}', [\App\Http\Controllers\WalletController::class, 'cancelWithdrawal'])->name('wallet.cancel');
+
+// Provider Listing
+Route::get('/providers', [ProviderController::class, 'index'])->name('providers.index');
 });
 
 

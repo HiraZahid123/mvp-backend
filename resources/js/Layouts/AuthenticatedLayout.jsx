@@ -39,14 +39,14 @@ export default function AuthenticatedLayout({ header, children }) {
                                 </Link>
                                 
                                 <Link
-                                    href={route('missions.search')}
+                                    href={route('providers.index')}
                                     className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-black transition-colors ${
-                                        route().current('missions.search')
+                                        route().current('providers.index')
                                             ? 'border-gold-accent text-primary-black'
                                             : 'border-transparent text-gray-muted hover:text-primary-black hover:border-gray-border'
                                     }`}
                                 >
-                                    {t('Browse Missions')}
+                                    {t('Find Helpers')}
                                 </Link>
                             </div>
                         </div>
@@ -57,10 +57,10 @@ export default function AuthenticatedLayout({ header, children }) {
                             {/* Role-Specific Primary Action */}
                             {userRole === 'performer' ? (
                                 <Link 
-                                    href={route('missions.search')} 
+                                    href={route('providers.index')} 
                                     className="bg-oflem-terracotta text-white px-6 py-2.5 rounded-full text-sm font-black hover:opacity-90 transition-all shadow-sm whitespace-nowrap"
                                 >
-                                    {t('Find Work')}
+                                    {t('Find Helpers')}
                                 </Link>
                             ) : (
                                 <Link 
@@ -145,10 +145,10 @@ export default function AuthenticatedLayout({ header, children }) {
                     <div className="pt-2 pb-3 space-y-1 text-center px-4">
                         {userRole === 'performer' ? (
                             <Link 
-                                href={route('missions.search')} 
+                                href={route('providers.index')} 
                                 className="block w-full bg-oflem-terracotta text-white px-6 py-3 rounded-full text-sm font-black hover:opacity-90 transition-all shadow-sm mb-4"
                             >
-                                {t('Find Work')}
+                                {t('Find Helpers')}
                             </Link>
                         ) : (
                             <Link 
@@ -163,8 +163,8 @@ export default function AuthenticatedLayout({ header, children }) {
                             {t('Dashboard')}
                         </ResponsiveNavLink>
                         
-                        <ResponsiveNavLink href={route('missions.search')} active={route().current('missions.search')} className="font-black text-center">
-                            {t('Browse Missions')}
+                        <ResponsiveNavLink href={route('providers.index')} active={route().current('providers.index')} className="font-black text-center">
+                            {t('Find Helpers')}
                         </ResponsiveNavLink>
 
                         <div className="py-2 flex justify-center border-t border-gray-border mt-2">

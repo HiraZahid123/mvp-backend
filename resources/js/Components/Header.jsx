@@ -95,8 +95,8 @@ export default function Header() {
                     </div>
                 ) : (
                     <div className="hidden lg:flex items-center gap-8">
-                        <Link href={route('missions.search')} className="text-sm font-bold text-gray-muted hover:text-oflem-charcoal transition-colors">
-                            {t('Browse Missions')}
+                        <Link href={route('providers.index')} className="text-sm font-bold text-gray-muted hover:text-oflem-charcoal transition-colors">
+                            {t('Find Helpers')}
                         </Link>
                         <Link href="/#how-it-works" className="text-sm font-bold text-gray-muted hover:text-oflem-charcoal transition-colors">
                             {t('How it works')}
