@@ -22,7 +22,14 @@ class OnboardingController extends Controller
 
     public function index()
     {
-        $user = Auth::user()->load(['providerProfile', 'skills']);
+        $user = Auth::user();
+
+        // Admins bypass onboarding
+        if ($user && $user->isAdmin()) {
+            return redirect()->route('admin.dashboard');
+        }
+
+        $user->load(['providerProfile', 'skills']);
         $profile = $user->providerProfile;
 
         return Inertia::render('Onboarding/Index', [

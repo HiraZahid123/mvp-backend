@@ -16,6 +16,11 @@ class RoleSelectionController extends Controller
     {
         $user = Auth::user();
 
+        // Admins bypass role selection
+        if ($user && $user->isAdmin()) {
+            return redirect()->route('admin.dashboard');
+        }
+
         return Inertia::render('Auth/SelectRole', [
             'user' => $user,
             'intended' => $request->session()->get('url.intended'),
@@ -32,6 +37,11 @@ class RoleSelectionController extends Controller
         ]);
 
         $user = Auth::user();
+        
+        // Admins bypass role selection
+        if ($user && $user->isAdmin()) {
+            return redirect()->route('admin.dashboard');
+        }
         
         if (!$user) {
             return redirect()->route('login');

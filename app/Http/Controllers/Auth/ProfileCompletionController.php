@@ -19,7 +19,7 @@ class ProfileCompletionController extends Controller
 
         // Admins bypass role selection
         if ($user && $user->isAdmin()) {
-            return redirect()->route('dashboard');
+            return redirect()->route('admin.dashboard');
         }
 
         if (!$user || !$user->role_type) {
@@ -45,7 +45,7 @@ class ProfileCompletionController extends Controller
 
         // Admins bypass role selection
         if ($user && $user->isAdmin()) {
-            return redirect()->route('dashboard');
+            return redirect()->route('admin.dashboard');
         }
 
         if (!$user) {
@@ -78,7 +78,7 @@ class ProfileCompletionController extends Controller
 
         // Admins bypass role selection
         if ($user && $user->isAdmin()) {
-            return redirect()->route('dashboard');
+            return redirect()->route('admin.dashboard');
         }
 
         if (!$user || !$user->role_type || !$user->username) {
@@ -109,7 +109,7 @@ class ProfileCompletionController extends Controller
 
         // Admins bypass role selection
         if ($user && $user->isAdmin()) {
-            return redirect()->route('dashboard');
+            return redirect()->route('admin.dashboard');
         }
 
         if (!$user) {
