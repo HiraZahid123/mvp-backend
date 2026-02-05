@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Mission;
 use App\Models\User;
 use App\Models\Chat;
+use App\Models\Message;
 use App\Services\ModerationService;
 use App\Notifications\NearbyMissionNotification;
 use App\Notifications\OfferRejectedNotification;
@@ -480,16 +481,37 @@ class MissionController extends Controller
         }
 
         try {
-            \Illuminate\Support\Facades\DB::transaction(function () use ($mission, &$pi) {
+            \Illuminate\Support\Facades\DB::transaction(function () use ($mission, &$pi, &$message) {
                 $mission->transitionTo(Mission::STATUS_EN_NEGOCIATION);
                 $mission->assigned_user_id = Auth::id();
                 $mission->save();
 
                 // Create Stripe payment intent
                 $pi = app(\App\Services\StripeService::class)->createHold($mission);
+
+                // Create or get chat
+                $chat = Chat::firstOrCreate([
+                    'mission_id' => $mission->id,
+                ], [
+                    'participant_ids' => [$mission->user_id, Auth::id()],
+                ]);
+
+                // Send initial message from performer
+                $message = $chat->messages()->create([
+                    'user_id' => Auth::id(),
+                    'content' => "Hello! I've accepted your mission instantly. Looking forward to working together!",
+                ]);
+
+                $chat->touch('last_message_at');
             });
 
-            // Notify Mission Owner
+            // Notify and Broadcast after transaction
+            if (isset($message)) {
+                broadcast(new \App\Events\MessageSent($message->load('user:id,name,avatar')));
+                $mission->user->notify(new \App\Notifications\NewMessageNotification($message));
+            }
+
+            // Notify Mission Owner about assignment
             $mission->user->notify(new \App\Notifications\MissionAssignedNotification($mission));
 
             return redirect()->route('missions.show', $mission->id)
