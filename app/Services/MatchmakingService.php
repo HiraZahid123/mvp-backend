@@ -17,47 +17,32 @@ class MatchmakingService
         $requiredSkills = collect($missionRequirements['required_skills'] ?? []);
         $category = $missionRequirements['category'] ?? null;
         
-        if ($requiredSkills->isEmpty()) {
-            // Fallback: Return verified experts in the category or random top rated
-            return User::where('role_type', '!=', 'customer')
-                ->inRandomOrder()
-                ->take($limit)
-                ->get();
-        }
+        // 1. Get List of Skill Names (Normalized)
+        $skillNames = $requiredSkills->pluck('name')->map(fn($name) => strtolower($name))->toArray();
 
-        // 1. Get List of Skill Names
-        $skillNames = $requiredSkills->pluck('name')->map(function($name) {
-            return strtolower($name);
-        })->toArray();
-
-        // 2. Find Users who have these skills AND are within range
-        // We use a simple bounding box for the first pass (very fast with indexes)
+        // 2. Build Base Query
         $creator = auth()->user();
-        $query = User::where('role_type', '!=', 'customer');
-
-        // Priority: Passed location > Creator's profile location
         $lat = $location['lat'] ?? ($creator?->location_lat) ?? null;
         $lng = $location['lng'] ?? ($creator?->location_lng) ?? null;
+        $initialRadius = $location['radius'] ?? ($creator?->discovery_radius_km) ?? 20;
 
-        if ($lat && $lng) {
-            $radius = $location['radius'] ?? ($creator?->discovery_radius_km) ?? 20;
-            // Rough approximation: 1 degree latitude = 111km
-            $latRange = $radius / 111;
-            // Rough approximation for longitude at Swiss latitudes (~46N): 1 deg = ~77km
-            $lngRange = $radius / 77; 
+        // Try different levels of matching:
+        // Level A: Local + Skills
+        // Level B: Local + Category
+        // Level C: Global + Skills
+        // Level D: Global + Category (Fallback)
 
-            $query->whereBetween('location_lat', [
-                $lat - $latRange,
-                $lat + $latRange
-            ])->whereBetween('location_lng', [
-                $lng - $lngRange,
-                $lng + $lngRange
-            ]);
+        $candidates = $this->queryCandidates($skillNames, $category, $lat, $lng, $initialRadius, $limit);
+
+        // If no local matches, try broadening the search to 500km
+        if ($candidates->isEmpty() && $lat && $lng) {
+            $candidates = $this->queryCandidates($skillNames, $category, $lat, $lng, 500, $limit);
         }
-        
-        $candidates = $query->whereHas('skills', function($query) use ($skillNames) {
-            $query->whereIn('name', $skillNames);
-        })->with(['skills', 'providerProfile'])->get();
+
+        // If still no matches, try global (no location restriction)
+        if ($candidates->isEmpty()) {
+            $candidates = $this->queryCandidates($skillNames, $category, null, null, null, $limit);
+        }
 
         // 3. Score Candidates
         $scoredCandidates = $candidates->map(function ($user) use ($requiredSkills, $category) {
@@ -84,9 +69,9 @@ class MatchmakingService
                 }
             }
 
-            // Experience Bonus (1 point per year)
+            // Experience Bonus
             if ($user->providerProfile) {
-                $score += min($user->providerProfile->years_experience, 20); // Cap at 20 pts
+                $score += min($user->providerProfile->years_experience, 20);
                 
                 // Category Bonus
                 if ($category && $user->providerProfile->main_category === $category) {
@@ -108,4 +93,51 @@ class MatchmakingService
         // 4. Sort and Return
         return $scoredCandidates->sortByDesc('match_score')->take($limit)->values();
     }
+
+    /**
+     * Helper to query candidates with specific parameters.
+     */
+    protected function queryCandidates(array $skillNames, ?string $category, ?float $lat, ?float $lng, ?int $radius, int $limit): Collection
+    {
+        $query = User::where('role_type', '!=', 'customer')->with(['skills', 'providerProfile']);
+
+        // Location Filter
+        if ($lat && $lng && $radius) {
+            $latRange = $radius / 111;
+            $lngRange = $radius / (111 * cos(deg2rad($lat))); 
+
+            $query->whereBetween('location_lat', [$lat - $latRange, $lat + $latRange])
+                  ->whereBetween('location_lng', [$lng - $lngRange, $lng + $lngRange]);
+        }
+
+        // Skill or Category Filter
+        $query->where(function($q) use ($skillNames, $category) {
+            if (!empty($skillNames)) {
+                $q->whereHas('skills', function($sq) use ($skillNames) {
+                    $sq->whereIn(DB::raw('LOWER(name)'), $skillNames);
+                });
+            }
+            
+            if ($category) {
+                $q->orWhereHas('providerProfile', function($pq) use ($category) {
+                    $pq->where('main_category', $category);
+                });
+            }
+        });
+
+        $results = $query->take($limit)->get();
+
+        // Final Fallback: If absolutely no filtered results, return any top performers (Global Fallback)
+        if ($results->isEmpty()) {
+            return User::where('role_type', '!=', 'customer')
+                ->with(['skills', 'providerProfile'])
+                ->orderBy('rating_cache', 'desc')
+                ->take($limit)
+                ->get();
+        }
+
+        return $results;
+
+    }
+
 }

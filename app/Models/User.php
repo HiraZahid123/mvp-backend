@@ -44,7 +44,11 @@ class User extends Authenticatable
         'admin_role',
         'rating_cache',
         'reviews_count_cache',
+        'balance',
+        'pending_withdrawal',
+        'total_withdrawn',
     ];
+
 
     /**
      * The attributes that should be hidden for serialization.
@@ -74,7 +78,12 @@ class User extends Authenticatable
             'is_admin' => 'boolean',
             'chat_suspended_until' => 'datetime',
             'admin_role' => 'string',
+            'balance' => 'decimal:2',
+            'pending_withdrawal' => 'decimal:2',
+            'total_withdrawn' => 'decimal:2',
         ];
+
+
     }
 
     /**
@@ -273,14 +282,6 @@ class User extends Authenticatable
     }
 
     /**
-     * Get reviews received by this user (as the reviewed person).
-     */
-    public function reviewsReceived()
-    {
-        return $this->hasMany(Review::class, 'user_id');
-    }
-
-    /**
      * Get reviews given by this user (as the reviewer).
      */
     public function reviewsGiven()
@@ -289,11 +290,22 @@ class User extends Authenticatable
     }
 
     /**
-     * Get average rating for this user from cache.
+     * Get user's withdrawal requests
      */
-    public function getAverageRatingAttribute(): float
+    public function withdrawals()
     {
-        return round($this->rating_cache ?? 0, 1);
+        return $this->hasMany(\App\Models\Withdrawal::class);
+    }
+
+    /**
+     * Get available balance (total balance minus pending withdrawals)
+     */
+    public function getAvailableBalanceAttribute(): float
+    {
+        return max(0, $this->balance - $this->pending_withdrawal);
+    }
+
+    /**
     }
 
     /**

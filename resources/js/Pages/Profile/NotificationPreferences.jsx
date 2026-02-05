@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Head, useForm } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import useTranslation from '@/Hooks/useTranslation';
-import { Bell, Clock, Mail, Smartphone, Monitor, Save } from 'lucide-react';
+import { Bell, Clock, Mail, Smartphone, Monitor, Save, Volume2 } from 'lucide-react';
 
 export default function NotificationPreferences({ preferences }) {
     const { t } = useTranslation();
@@ -22,6 +22,7 @@ export default function NotificationPreferences({ preferences }) {
         email_enabled: preferences?.email_enabled ?? true,
         push_enabled: preferences?.push_enabled ?? true,
         in_app_enabled: preferences?.in_app_enabled ?? true,
+        sound_enabled: preferences?.sound_enabled ?? true,
         digest_enabled: preferences?.digest_enabled ?? false,
         digest_frequency: preferences?.digest_frequency ?? 'daily',
     });
@@ -206,11 +207,19 @@ export default function NotificationPreferences({ preferences }) {
                                     label={t('Push Notifications')}
                                 />
                             </div>
-                            <div className="flex items-center gap-3 py-4">
+                            <div className="flex items-center gap-3 py-4 border-b border-gray-100">
                                 <Monitor className="w-5 h-5 text-gray-400" />
                                 <ToggleSwitch
                                     name="in_app_enabled"
                                     label={t('In-App Notifications')}
+                                />
+                            </div>
+                            <div className="flex items-center gap-3 py-4">
+                                <Volume2 className="w-5 h-5 text-gray-400" />
+                                <ToggleSwitch
+                                    name="sound_enabled"
+                                    label={t('Sound Notifications')}
+                                    description={t('Play a sound when notifications arrive')}
                                 />
                             </div>
                         </div>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Mission;
 use App\Models\User;
+use App\Models\Chat;
 use App\Services\ModerationService;
 use App\Notifications\NearbyMissionNotification;
 use App\Notifications\OfferRejectedNotification;
@@ -403,7 +404,12 @@ class MissionController extends Controller
             'message' => 'nullable|string',
         ]);
 
-        if ($mission->price_type !== 'open') {
+        if ($mission->status !== Mission::STATUS_OUVERTE) {
+        return back()->withErrors(['mission' => 'This mission is no longer accepting offers.']);
+    }
+
+    if ($mission->price_type !== 'open') {
+
             return back()->withErrors(['mission' => 'This mission has a fixed price.']);
         }
         
@@ -689,13 +695,20 @@ class MissionController extends Controller
 
         $mission->transitionTo(Mission::STATUS_TERMINEE);
         
-        // Release funds to performer
+        // Release funds to performer (Stripe)
         app(\App\Services\StripeService::class)->releaseFunds($mission);
+
+        // Update Performer Virtual Balance
+        $payment = \App\Models\Payment::where('mission_id', $mission->id)->first();
+        if ($payment && $mission->assignedUser) {
+            $mission->assignedUser->increment('balance', $payment->performer_amount);
+        }
 
         // Notify performer
         if ($mission->assignedUser) {
             $mission->assignedUser->notify(new \App\Notifications\MissionCompletedNotification($mission));
         }
+
 
         return back()->with('success', 'Mission validated! Payment has been released to the performer.');
     }
@@ -768,6 +781,46 @@ class MissionController extends Controller
         }
 
         return back()->with('success', 'Mission cancelled.' . ($needsRefund ? ' Refund has been processed.' : ''));
+    }
+
+    public function contactHelper(Mission $mission, User $helper)
+    {
+        if (Auth::id() !== $mission->user_id) {
+            abort(403);
+        }
+
+        // Validate helper is actually a performer
+        if (!$helper->isPerformer()) {
+            return back()->withErrors(['helper' => 'This user is not a registered helper.']);
+        }
+
+        // Create or find a chat between the owner and the helper for this mission
+        $participantIds = [Auth::id(), $helper->id];
+        sort($participantIds); // Ensure consistent ordering
+
+        // We search for a chat with these specific participants for this mission
+        $chat = Chat::where('mission_id', $mission->id)
+            ->whereJsonContains('participant_ids', Auth::id())
+            ->whereJsonContains('participant_ids', $helper->id)
+            ->first();
+
+        if (!$chat) {
+            $chat = Chat::create([
+                'mission_id' => $mission->id,
+                'participant_ids' => $participantIds,
+                'status' => 'active',
+                'last_message_at' => now(),
+            ]);
+
+            // Add an initial system message
+            $chat->messages()->create([
+                'user_id' => null, // System
+                'content' => 'Conversation started regarding mission: ' . $mission->title,
+                'is_system_message' => true,
+            ]);
+        }
+
+        return redirect()->route('messages', ['chat_id' => $chat->id]);
     }
 
     public function submitReview(Request $request, Mission $mission)

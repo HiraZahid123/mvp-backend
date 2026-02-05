@@ -62,7 +62,7 @@ export default function Messages({ chats: initialChats, selectedChatId }) {
                 console.log('User left:', user);
                 setTypingUsers(prev => prev.filter(u => u.id !== user.id));
             })
-            .listen('MessageSent', (e) => {
+            .listen('.MessageSent', (e) => {
                 console.log('MessageSent event received:', e);
                 // Message is in e.message (like QuestionPosted uses e.question)
                 const message = e.message;
@@ -79,7 +79,7 @@ export default function Messages({ chats: initialChats, selectedChatId }) {
                     return [...prev, message];
                 });
             })
-            .listen('typing.indicator', (e) => {
+            .listen('.typing.indicator', (e) => {
                 console.log('Typing indicator:', e);
                 if (e.userId !== auth.user.id) {
                     if (e.isTyping) {

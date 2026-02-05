@@ -4,34 +4,65 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Mission;
+use App\Models\Withdrawal;
+use App\Models\Payment;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class AdminDashboardController extends Controller
 {
-    /**
-     * Show the admin dashboard.
-     */
-    public function __invoke()
+    public function index()
     {
-        $stats = [
-            'total_users' => User::count(),
-            'customers' => User::where('role_type', 'customer')->orWhere('role_type', 'both')->count(),
-            'performers' => User::where('role_type', 'performer')->orWhere('role_type', 'both')->count(),
-            'admins' => User::where('is_admin', true)->count(),
-            'total_missions' => \App\Models\Mission::count(),
-            'active_missions' => \App\Models\Mission::whereIn('status', ['OUVERTE', 'EN_NEGOCIATION', 'VERROUILLEE', 'EN_COURS', 'EN_VALIDATION'])->count(),
-            'disputed_missions' => \App\Models\Mission::where('status', 'EN_LITIGE')->count(),
-            'total_payments' => \App\Models\Payment::where('status', 'captured')->sum('amount'),
-        ];
+        // User statistics
+        $totalUsers = User::count();
+        $customers = User::whereIn('role_type', ['customer', 'both'])->count();
+        $performers = User::whereIn('role_type', ['performer', 'both'])->count();
+        $newUsersThisMonth = User::whereMonth('created_at', now()->month)->count();
 
-        $recentUsers = User::latest()->take(10)->get();
-        $recentActivity = \App\Models\AdminActivityLog::with('admin')->latest()->take(10)->get();
+        // Mission statistics
+        $totalMissions = Mission::count();
+        $openMissions = Mission::where('status', Mission::STATUS_OUVERTE)->count();
+        $inProgressMissions = Mission::where('status', Mission::STATUS_EN_COURS)->count();
+        $completedMissions = Mission::where('status', Mission::STATUS_TERMINEE)->count();
 
-        return Inertia::render('Admin/Dashboard', [
-            'stats' => $stats,
+        // Withdrawal statistics
+        $pendingWithdrawals = Withdrawal::where('status', Withdrawal::STATUS_PENDING)->count();
+        $pendingWithdrawalAmount = Withdrawal::where('status', Withdrawal::STATUS_PENDING)->sum('amount');
+        $totalWithdrawn = Withdrawal::where('status', Withdrawal::STATUS_COMPLETED)->sum('amount');
+
+        // Recent activity
+        $recentWithdrawals = Withdrawal::with('user:id,name,email')
+            ->orderByDesc('created_at')
+            ->limit(5)
+            ->get();
+
+        $recentUsers = User::orderByDesc('created_at')
+            ->limit(5)
+            ->get();
+
+        return Inertia::render('Admin/AdminDashboard', [
+            'stats' => [
+                'users' => [
+                    'total' => $totalUsers,
+                    'customers' => $customers,
+                    'performers' => $performers,
+                    'newThisMonth' => $newUsersThisMonth,
+                ],
+                'missions' => [
+                    'total' => $totalMissions,
+                    'open' => $openMissions,
+                    'inProgress' => $inProgressMissions,
+                    'completed' => $completedMissions,
+                ],
+                'withdrawals' => [
+                    'pending' => $pendingWithdrawals,
+                    'pendingAmount' => $pendingWithdrawalAmount,
+                    'totalWithdrawn' => $totalWithdrawn,
+                ],
+            ],
+            'recentWithdrawals' => $recentWithdrawals,
             'recentUsers' => $recentUsers,
-            'recentActivity' => $recentActivity,
         ]);
     }
 }

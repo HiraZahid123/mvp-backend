@@ -4,79 +4,87 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Models\AdminActivityLog;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class AdminUserController extends Controller
 {
+    /**
+     * Display all users
+     */
     public function index(Request $request)
     {
-        $query = User::query();
+        $search = $request->get('search');
+        $roleFilter = $request->get('role', 'all');
 
-        if ($request->has('role_type')) {
-            $query->where('role_type', $request->role_type);
-        }
+        $users = User::query()
+            ->when($search, function($query) use ($search) {
+                $query->where(function($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                      ->orWhere('email', 'like', "%{$search}%")
+                      ->orWhere('username', 'like', "%{$search}%")
+                      ->orWhere('phone', 'like', "%{$search}%");
+                });
+            })
+            ->when($roleFilter !== 'all', function($query) use ($roleFilter) {
+                $query->where('role_type', $roleFilter);
+            })
+            ->orderByDesc('created_at')
+            ->paginate(20);
 
-        if ($request->has('search')) {
-            $query->where(function($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->search . '%')
-                  ->orWhere('email', 'like', '%' . $request->search . '%');
-            });
-        }
+        $stats = [
+            'total' => User::count(),
+            'customers' => User::whereIn('role_type', ['customer', 'both'])->count(),
+            'performers' => User::whereIn('role_type', ['performer', 'both'])->count(),
+            'admins' => User::whereNotNull('admin_role')->count(),
+        ];
 
-        $users = $query->paginate(20);
-        
-        return \Inertia\Inertia::render('Admin/Users/Index', [
+        return Inertia::render('Admin/AdminUsers', [
             'users' => $users,
+            'stats' => $stats,
             'filters' => [
-                'search' => $request->search,
-                'role_type' => $request->role_type,
+                'search' => $search,
+                'role' => $roleFilter,
             ],
         ]);
     }
 
+    /**
+     * Display user details
+     */
     public function show(User $user)
     {
-        $user->load(['otpVerifications', 'providerProfile', 'skills']);
-        
-        return \Inertia\Inertia::render('Admin/Users/Show', [
+        $user->load([
+            'withdrawals' => function($query) {
+                $query->latest()->limit(10);
+            },
+        ]);
+
+        return Inertia::render('Admin/AdminUserDetails', [
             'user' => $user,
         ]);
     }
 
-    public function ban(User $user)
-    {
-        $user->update(['chat_suspended_until' => now()->parse('2038-01-01')]);
-        
-        AdminActivityLog::create([
-            'admin_id' => Auth::id(),
-            'action' => 'user_banned',
-            'subject_type' => User::class,
-            'subject_id' => $user->id,
-            'metadata' => ['reason' => 'Banned by admin'],
-        ]);
-
-        return response()->json(['message' => 'User banned successfully']);
-    }
-
+    /**
+     * Suspend or unsuspend a user
+     */
     public function suspend(Request $request, User $user)
     {
         $request->validate([
-            'until' => 'required|date|after:now',
-            'reason' => 'required|string',
+            'suspend' => 'required|boolean',
+            'reason' => 'required_if:suspend,true|string|max:500',
         ]);
 
-        $user->update(['chat_suspended_until' => $request->until]);
-
-        AdminActivityLog::create([
-            'admin_id' => Auth::id(),
-            'action' => 'user_suspended',
-            'subject_type' => User::class,
-            'subject_id' => $user->id,
-            'metadata' => ['reason' => $request->reason, 'until' => $request->until],
-        ]);
-
-        return response()->json(['message' => 'User suspended until ' . $request->until]);
+        if ($request->suspend) {
+            $user->update([
+                'chat_suspended_until' => now()->addYears(10), // Effectively permanent
+            ]);
+            return back()->with('success', 'User suspended successfully.');
+        } else {
+            $user->update([
+                'chat_suspended_until' => null,
+            ]);
+            return back()->with('success', 'User unsuspended successfully.');
+        }
     }
 }

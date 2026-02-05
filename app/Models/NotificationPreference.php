@@ -26,6 +26,7 @@ class NotificationPreference extends Model
         'email_enabled',
         'push_enabled',
         'in_app_enabled',
+        'sound_enabled',
         'digest_enabled',
         'digest_frequency',
     ];
@@ -44,6 +45,7 @@ class NotificationPreference extends Model
         'email_enabled' => 'boolean',
         'push_enabled' => 'boolean',
         'in_app_enabled' => 'boolean',
+        'sound_enabled' => 'boolean',
         'digest_enabled' => 'boolean',
     ];
 

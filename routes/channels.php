@@ -8,8 +8,12 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 
 Broadcast::channel('chat.{chatId}', function ($user, $chatId) {
     $chat = \App\Models\Chat::find($chatId);
-    return $chat && in_array($user->id, $chat->participant_ids);
+    if ($chat && in_array($user->id, $chat->participant_ids)) {
+        return ['id' => $user->id, 'name' => $user->name];
+    }
+    return false;
 });
+
 
 Broadcast::channel('mission.{missionId}', function ($user, $missionId) {
     $mission = \App\Models\Mission::find($missionId);

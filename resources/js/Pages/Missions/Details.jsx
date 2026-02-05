@@ -13,21 +13,22 @@ import PaymentModal from '@/Components/Payments/PaymentModal';
 
 export default function Details({ mission, canSeeAddress }) {
     const { t } = useTranslation();
-    const { auth } = usePage().props;
+    const { auth, flash } = usePage().props;
     const isOwner = auth.user.id === mission.user_id;
     const isAssigned = auth.user.id === mission.assigned_user_id;
 
     // Payment state
-    const [clientSecret, setClientSecret] = useState(usePage().props.flash?.stripe_client_secret || null);
+    const [clientSecret, setClientSecret] = useState(flash?.stripe_client_secret || null);
     const [showPaymentModal, setShowPaymentModal] = useState(!!clientSecret);
 
     // Watch for flashed client secret (from accept/select offer)
     useEffect(() => {
-        if (usePage().props.flash?.stripe_client_secret) {
-            setClientSecret(usePage().props.flash.stripe_client_secret);
+        if (flash?.stripe_client_secret) {
+            setClientSecret(flash.stripe_client_secret);
             setShowPaymentModal(true);
         }
-    }, [usePage().props.flash]);
+    }, [flash]);
+
 
     // Real-time updates
     useEffect(() => {
@@ -433,63 +434,65 @@ export default function Details({ mission, canSeeAddress }) {
                                     </>
                                 ) : (
                                     /* Performer/Guest Section for OUVERTE missions */
-                                    mission.price_type === 'fixed' ? (
-                                        <div className="space-y-6">
-                                            <div className="text-center pb-6 border-b border-gray-border">
-                                                <p className="text-xs font-black text-gray-muted uppercase tracking-widest mb-1">{t('Fixed Price')}</p>
-                                                <p className="text-4xl font-black text-primary-black">CHF {mission.budget}</p>
-                                            </div>
-                                            <button
-                                                onClick={acceptMission}
-                                                className="w-full py-5 bg-primary-black text-white font-black rounded-full hover:bg-black transition-all shadow-xl text-lg"
-                                            >
-                                                ⚡ {t('Accept Instantly')}
-                                            </button>
-                                            <p className="text-[10px] text-gray-muted font-bold text-center leading-relaxed">
-                                                {t('By accepting, you commit to completing this mission for the fixed price shown.')}
-                                            </p>
-                                        </div>
-                                    ) : (
-                                        <form onSubmit={submitOffer} className="space-y-6">
-                                            <h2 className="text-xl font-black text-primary-black mb-4">🏷️ {t('Submit an Offer')}</h2>
-                                            
-                                            <div>
-                                                <InputLabel htmlFor="amount" value={t('Your price')} className="text-xs uppercase tracking-widest font-black mb-3" />
-                                                <div className="relative">
-                                                    <TextInput
-                                                        id="amount"
-                                                        type="number"
-                                                        className="w-full pl-12"
-                                                        placeholder="0.00"
-                                                        value={offerForm.data.amount}
-                                                        onChange={e => offerForm.setData('amount', e.target.value)}
-                                                        required
-                                                    />
-                                                    <span className="absolute left-5 top-1/2 -translate-y-1/2 font-black text-gray-muted">CHF</span>
+                                    mission.status === 'OUVERTE' && (
+                                        mission.price_type === 'fixed' ? (
+                                            <div className="space-y-6">
+                                                <div className="text-center pb-6 border-b border-gray-border">
+                                                    <p className="text-xs font-black text-gray-muted uppercase tracking-widest mb-1">{t('Fixed Price')}</p>
+                                                    <p className="text-4xl font-black text-primary-black">CHF {mission.budget}</p>
                                                 </div>
-                                                <InputError message={offerForm.errors.amount} className="mt-2" />
+                                                <button
+                                                    onClick={acceptMission}
+                                                    className="w-full py-5 bg-primary-black text-white font-black rounded-full hover:bg-black transition-all shadow-xl text-lg"
+                                                >
+                                                    ⚡ {t('Accept Instantly')}
+                                                </button>
+                                                <p className="text-[10px] text-gray-muted font-bold text-center leading-relaxed">
+                                                    {t('By accepting, you commit to completing this mission for the fixed price shown.')}
+                                                </p>
                                             </div>
+                                        ) : (
+                                            <form onSubmit={submitOffer} className="space-y-6">
+                                                <h2 className="text-xl font-black text-primary-black mb-4">🏷️ {t('Submit an Offer')}</h2>
+                                                
+                                                <div>
+                                                    <InputLabel htmlFor="amount" value={t('Your price')} className="text-xs uppercase tracking-widest font-black mb-3" />
+                                                    <div className="relative">
+                                                        <TextInput
+                                                            id="amount"
+                                                            type="number"
+                                                            className="w-full pl-12"
+                                                            placeholder="0.00"
+                                                            value={offerForm.data.amount}
+                                                            onChange={e => offerForm.setData('amount', e.target.value)}
+                                                            required
+                                                        />
+                                                        <span className="absolute left-5 top-1/2 -translate-y-1/2 font-black text-gray-muted">CHF</span>
+                                                    </div>
+                                                    <InputError message={offerForm.errors.amount} className="mt-2" />
+                                                </div>
 
-                                            <div>
-                                                <InputLabel htmlFor="message" value={t('Message (Optional)')} className="text-xs uppercase tracking-widest font-black mb-3" />
-                                                <textarea
-                                                    id="message"
-                                                    className="w-full bg-oflem-cream border-gray-border rounded-[24px] p-5 text-sm font-medium focus:border-gold-accent focus:ring-0 min-h-[100px]"
-                                                    placeholder={t('Tell the creator why you are a good fit...')}
-                                                    value={offerForm.data.message}
-                                                    onChange={e => offerForm.setData('message', e.target.value)}
-                                                />
-                                                <InputError message={offerForm.errors.message} className="mt-2" />
-                                            </div>
+                                                <div>
+                                                    <InputLabel htmlFor="message" value={t('Message (Optional)')} className="text-xs uppercase tracking-widest font-black mb-3" />
+                                                    <textarea
+                                                        id="message"
+                                                        className="w-full bg-oflem-cream border-gray-border rounded-[24px] p-5 text-sm font-medium focus:border-gold-accent focus:ring-0 min-h-[100px]"
+                                                        placeholder={t('Tell the creator why you are a good fit...')}
+                                                        value={offerForm.data.message}
+                                                        onChange={e => offerForm.setData('message', e.target.value)}
+                                                    />
+                                                    <InputError message={offerForm.errors.message} className="mt-2" />
+                                                </div>
 
-                                            <button
-                                                type="submit"
-                                                disabled={offerForm.processing}
-                                                className="w-full py-5 bg-gold-accent text-primary-black font-black rounded-full hover:opacity-90 transition-all shadow-xl text-lg"
-                                            >
-                                                🚀 {t('Send Offer')}
-                                            </button>
-                                        </form>
+                                                <button
+                                                    type="submit"
+                                                    disabled={offerForm.processing}
+                                                    className="w-full py-5 bg-gold-accent text-primary-black font-black rounded-full hover:opacity-90 transition-all shadow-xl text-lg"
+                                                >
+                                                    🚀 {t('Send Offer')}
+                                                </button>
+                                            </form>
+                                        )
                                     )
                                 )}
                             </section>

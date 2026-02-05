@@ -132,6 +132,11 @@ class SocialAuthController extends Controller
         // Clear session data
         session()->forget(['social_auth_type', 'social_auth_role_type']);
 
+        // Admins bypass role selection
+        if ($user->isAdmin()) {
+            return redirect()->route('dashboard');
+        }
+
         if ($authType === 'login') {
             // Check if profile setup is needed
             if (!$user->isProfileComplete()) {
@@ -157,6 +162,11 @@ class SocialAuthController extends Controller
 
         // Clear session data
         session()->forget(['social_auth_type', 'social_auth_role_type']);
+
+        // Admins bypass role selection
+        if ($user->isAdmin()) {
+            return redirect()->route('dashboard');
+        }
 
         // New social users always need role selection
         return redirect()->route('auth.select-role');

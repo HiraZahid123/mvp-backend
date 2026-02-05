@@ -36,4 +36,10 @@ class MessageSent implements ShouldBroadcastNow
             new PresenceChannel('chat.' . $this->message->chat_id),
         ];
     }
+
+    public function broadcastAs(): string
+    {
+        return 'MessageSent';
+    }
 }
+

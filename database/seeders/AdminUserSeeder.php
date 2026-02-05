@@ -14,21 +14,25 @@ class AdminUserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::firstOrCreate(
+        User::updateOrCreate(
             ['email' => 'admin@oflem.com'],
             [
                 'name' => 'Admin User',
-                'phone' => '+1234567890',
-                'password' => Hash::make('password'),
-                'role_type' => 'customer', // Default role for admin
-                'is_admin' => true,
+                'username' => 'admin',
+                'phone' => '+41123456789',
+                'password' => Hash::make('admin123'),
+                'role_type' => 'admin', // Dedicated admin role - not performer or customer
+                'admin_role' => 'super_admin', // Super admin with full control
                 'email_verified_at' => now(),
                 'phone_verified_at' => now(),
-                'location_lat' => 40.7128,
-                'location_lng' => -74.0060,
-                'location_address' => 'New York, NY, USA',
-                'discovery_radius_km' => 10,
+                'location_lat' => 46.5197,
+                'location_lng' => 6.6323,
+                'location_address' => 'Lausanne, Switzerland',
+                'balance' => '0.00',
+                'pending_withdrawal' => '0.00',
+                'total_withdrawn' => '0.00',
             ]
         );
+
     }
 }

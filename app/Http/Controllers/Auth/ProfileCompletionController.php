@@ -17,6 +17,11 @@ class ProfileCompletionController extends Controller
     {
         $user = Auth::user();
 
+        // Admins bypass role selection
+        if ($user && $user->isAdmin()) {
+            return redirect()->route('dashboard');
+        }
+
         if (!$user || !$user->role_type) {
             return redirect()->route('auth.select-role');
         }
@@ -37,6 +42,11 @@ class ProfileCompletionController extends Controller
         ]);
 
         $user = Auth::user();
+
+        // Admins bypass role selection
+        if ($user && $user->isAdmin()) {
+            return redirect()->route('dashboard');
+        }
 
         if (!$user) {
             return redirect()->route('auth.select-role');
@@ -66,6 +76,11 @@ class ProfileCompletionController extends Controller
     {
         $user = Auth::user();
 
+        // Admins bypass role selection
+        if ($user && $user->isAdmin()) {
+            return redirect()->route('dashboard');
+        }
+
         if (!$user || !$user->role_type || !$user->username) {
             return redirect()->route('auth.select-role');
         }
@@ -91,6 +106,11 @@ class ProfileCompletionController extends Controller
         ]);
 
         $user = Auth::user();
+
+        // Admins bypass role selection
+        if ($user && $user->isAdmin()) {
+            return redirect()->route('dashboard');
+        }
 
         if (!$user) {
             return redirect()->route('auth.select-role');

@@ -79,6 +79,14 @@ export default function Index({ notifications }) {
                                                 {t('View Mission')}
                                             </Link>
                                         )}
+                                        {n.data.chat_id && (
+                                            <Link 
+                                                href={route('messages', { chat_id: n.data.chat_id })}
+                                                className="text-xs font-black text-oflem-terracotta hover:underline uppercase tracking-wider"
+                                            >
+                                                {t('Go to Chat')}
+                                            </Link>
+                                        )}
                                         {!n.read_at && (
                                             <button 
                                                 onClick={() => markAsRead(n.id)}

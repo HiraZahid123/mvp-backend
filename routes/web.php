@@ -173,7 +173,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/chats/{chat}/messages', [\App\Http\Controllers\ChatController::class, 'store'])->name('api.chats.messages.store');
     Route::post('/chats/{chat}/typing', [\App\Http\Controllers\ChatController::class, 'typing'])->name('api.chats.typing');
     Route::get('/missions/{mission}/chat', [\App\Http\Controllers\ChatController::class, 'getMissionChat'])->name('api.missions.chat');
+
+    // Wallet Routes
+Route::get('/wallet', [\App\Http\Controllers\WalletController::class, 'index'])->name('wallet.index');
+Route::get('/wallet/client', [\App\Http\Controllers\WalletController::class, 'clientIndex'])->name('wallet.client');
+Route::post('/wallet/withdraw', [\App\Http\Controllers\WalletController::class, 'requestWithdrawal'])->name('wallet.withdraw');
+Route::delete('/wallet/withdraw/{withdrawal}', [\App\Http\Controllers\WalletController::class, 'cancelWithdrawal'])->name('wallet.cancel');
 });
+
+
+/*
+|--------------------------------------------------------------------------
+    Route::get('/missions', [\App\Http\Controllers\Admin\AdminMissionController::class, 'index'])->name('missions.index');
+});
+
 
 /*
 |--------------------------------------------------------------------------
@@ -218,31 +231,39 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/login', [AdminLoginController::class, 'store'])->name('login.store');
     });
 
-    Route::middleware('admin')->group(function () {
-/*
-        // 2FA Routes (Excluded from 2FA check in middleware)
-        Route::get('/2fa', [AdminLoginController::class, 'show2FA'])->name('2fa.create');
-        Route::post('/2fa', [AdminLoginController::class, 'verify2FA'])->name('2fa.verify');
-        Route::get('/2fa/resend', [AdminLoginController::class, 'resend2FA'])->name('2fa.resend');
-*/
-
-        Route::get('/dashboard', AdminDashboardController::class)->name('dashboard');
+    Route::middleware('admin')->name('admin.')->group(function () {
+        // Dashboard
+        Route::get('/dashboard', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'index'])->name('dashboard');
+        
+        // User Management
+        Route::get('/users', [\App\Http\Controllers\Admin\AdminUserController::class, 'index'])->name('users.index');
+        Route::get('/users/{user}', [\App\Http\Controllers\Admin\AdminUserController::class, 'show'])->name('users.show');
+        Route::post('/users/{user}/suspend', [\App\Http\Controllers\Admin\AdminUserController::class, 'suspend'])->name('users.suspend');
+        Route::post('/users/{user}/ban', [\App\Http\Controllers\Admin\AdminUserController::class, 'ban'])->name('users.ban');
+        
+        // Withdrawal Management
+        Route::get('/withdrawals', [\App\Http\Controllers\Admin\AdminWithdrawalController::class, 'index'])->name('withdrawals.index');
+        Route::post('/withdrawals/{withdrawal}/approve', [\App\Http\Controllers\Admin\AdminWithdrawalController::class, 'approve'])->name('withdrawals.approve');
+        Route::post('/withdrawals/{withdrawal}/reject', [\App\Http\Controllers\Admin\AdminWithdrawalController::class, 'reject'])->name('withdrawals.reject');
+        Route::post('/withdrawals/{withdrawal}/complete', [\App\Http\Controllers\Admin\AdminWithdrawalController::class, 'complete'])->name('withdrawals.complete');
+        
+        // Mission Oversight
+        Route::get('/missions', [\App\Http\Controllers\Admin\AdminMissionController::class, 'index'])->name('missions.index');
+        Route::get('/missions/{mission}', [\App\Http\Controllers\Admin\AdminMissionController::class, 'show'])->name('missions.show');
+        Route::post('/missions/{mission}/resolve-dispute', [\App\Http\Controllers\Admin\AdminMissionController::class, 'resolveDispute'])->name('missions.resolve-dispute');
+        
+        // Chat Moderation
+        Route::get('/chat/flagged', [\App\Http\Controllers\Admin\AdminChatController::class, 'flaggedMessages'])->name('chat.flagged');
+        Route::get('/chat/strikes', [\App\Http\Controllers\Admin\AdminChatController::class, 'userStrikes'])->name('chat.strikes');
+        Route::post('/chat/users/{user}/clear-strikes', [\App\Http\Controllers\Admin\AdminChatController::class, 'clearStrikes'])->name('chat.clear-strikes');
+        
+        // Payment Management
+        Route::get('/payments', [\App\Http\Controllers\Admin\AdminPaymentController::class, 'index'])->name('payments.index');
+        Route::get('/payments/{payment}', [\App\Http\Controllers\Admin\AdminPaymentController::class, 'show'])->name('payments.show');
+        Route::post('/payments/{payment}/refund', [\App\Http\Controllers\Admin\AdminPaymentController::class, 'issueRefund'])->name('payments.refund');
+        
+        // Logout
         Route::post('/logout', [AdminLoginController::class, 'destroy'])->name('logout');
-
-        // Phase 5: Enhanced Admin Controls
-        Route::resource('users', \App\Http\Controllers\Admin\AdminUserController::class);
-        Route::post('users/{user}/ban', [\App\Http\Controllers\Admin\AdminUserController::class, 'ban'])->name('users.ban');
-        Route::post('users/{user}/suspend', [\App\Http\Controllers\Admin\AdminUserController::class, 'suspend'])->name('users.suspend');
-        
-        Route::resource('missions', \App\Http\Controllers\Admin\AdminMissionController::class)->only(['index', 'show']);
-        Route::post('missions/{mission}/resolve-dispute', [\App\Http\Controllers\Admin\AdminMissionController::class, 'resolveDispute'])->name('missions.resolve-dispute');
-        
-        Route::get('chat/flagged', [\App\Http\Controllers\Admin\AdminChatController::class, 'flaggedMessages'])->name('chat.flagged');
-        Route::get('chat/strikes', [\App\Http\Controllers\Admin\AdminChatController::class, 'userStrikes'])->name('chat.strikes');
-        Route::post('chat/users/{user}/clear-strikes', [\App\Http\Controllers\Admin\AdminChatController::class, 'clearStrikes'])->name('chat.clear-strikes');
-        
-        Route::resource('payments', \App\Http\Controllers\Admin\AdminPaymentController::class)->only(['index', 'show']);
-        Route::post('payments/{payment}/refund', [\App\Http\Controllers\Admin\AdminPaymentController::class, 'issueRefund'])->name('payments.refund');
     });
 });
 

@@ -104,7 +104,7 @@ export default function NotificationBell() {
                                         // Determine destination
                                         let href = route('notifications.index');
                                         if (n.data.mission_id) href = route('missions.show', n.data.mission_id);
-                                        if (n.data.chat_id) href = route('dashboard'); // Or chat route if exists
+                                        if (n.data.chat_id) href = route('messages', { chat_id: n.data.chat_id });
 
                                         return (
                                             <Link 
