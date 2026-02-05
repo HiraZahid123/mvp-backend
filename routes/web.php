@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminLoginController;
+use App\Http\Controllers\Admin\SystemController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\LoginOTPVerificationController;
@@ -43,15 +44,6 @@ Route::post('/language-switch', function (Request $request) {
     app()->setLocale($request->locale);
     return back();
 })->name('language.switch');
-
-Route::get('/optimize-system', function () {
-    try {
-        Artisan::call('optimize:clear');
-        return "System Optimization & Cache Clearing Successful!<br><br><pre>" . Artisan::output() . "</pre>";
-    } catch (\Exception $e) {
-        return "Error occurred while clearing cache: " . $e->getMessage();
-    }
-})->name('system.optimize');
 
 /*
 |--------------------------------------------------------------------------
@@ -264,6 +256,17 @@ Route::prefix('admin')->name('admin.')->group(function () {
         
         // Logout
         Route::post('/logout', [AdminLoginController::class, 'destroy'])->name('logout');
+
+        // System Maintenance
+        Route::prefix('system')->name('system.')->group(function () {
+            Route::get('/optimize', [SystemController::class, 'optimizeClear'])->name('optimize');
+            Route::get('/cache-clear', [SystemController::class, 'cacheClear'])->name('cache-clear');
+            Route::get('/config-cache', [SystemController::class, 'configCache'])->name('config-cache');
+            Route::get('/route-cache', [SystemController::class, 'routeCache'])->name('route-cache');
+            Route::get('/view-clear', [SystemController::class, 'viewClear'])->name('view-clear');
+            Route::get('/storage-link', [SystemController::class, 'storageLink'])->name('storage-link');
+            Route::get('/migrate', [SystemController::class, 'migrate'])->name('migrate');
+        });
     });
 });
 
