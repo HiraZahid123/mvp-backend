@@ -361,7 +361,7 @@ class User extends Authenticatable
 
         $haversine = "(6371 * acos(cos(radians(?)) * cos(radians(location_lat)) * cos(radians(location_lng) - radians(?)) + sin(radians(?)) * sin(radians(location_lat))))";
 
-        return $query->selectRaw("*, $haversine AS distance_to_point", [$lat, $lng, $lat])
+        return $query->selectRaw("users.*, $haversine AS distance_to_point, users.discovery_radius_km", [$lat, $lng, $lat])
             ->where('role_type', '!=', 'customer') // Only performers or both
             ->havingRaw("distance_to_point <= discovery_radius_km");
     }
