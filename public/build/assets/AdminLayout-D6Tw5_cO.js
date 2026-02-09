@@ -1,1 +1,0 @@
-import{j as s}from"./app-fvf1-USB.js";import{H as m}from"./Header-DhZlfYUr.js";function x({children:a}){return s.jsxs("div",{className:"min-h-screen bg-oflem-cream font-sans",children:[s.jsx(m,{}),s.jsx("main",{className:"py-10",children:s.jsx("div",{className:"mx-auto max-w-7xl px-4 sm:px-6 lg:px-8",children:a})})]})}export{x as A};

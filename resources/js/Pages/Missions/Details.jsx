@@ -29,6 +29,17 @@ export default function Details({ mission, canSeeAddress }) {
         }
     }, [flash]);
 
+    // Automatically redirect to chat if flashed (after acceptance or confirmation)
+    useEffect(() => {
+        if (flash?.chat_id && !flash?.stripe_client_secret) {
+            // We give it a tiny delay so the success message can be seen
+            const timer = setTimeout(() => {
+                router.visit(route('messages', { chat_id: flash.chat_id }));
+            }, 1000);
+            return () => clearTimeout(timer);
+        }
+    }, [flash?.chat_id, flash?.stripe_client_secret]);
+
 
     // Real-time updates
     useEffect(() => {
@@ -113,7 +124,7 @@ export default function Details({ mission, canSeeAddress }) {
                                     </span>
                                 ) : mission.status === 'EN_NEGOCIATION' ? (
                                     <span className="px-4 py-1.5 bg-blue-100 text-blue-700 text-[10px] font-black uppercase tracking-widest rounded-full">
-                                        🤝 {t('In Negotiation')}
+                                        {mission.assigned_user_id ? `🔒 ${t('Reserved')}` : `🤝 ${t('In Negotiation')}`}
                                     </span>
                                 ) : mission.status === 'VERROUILLEE' ? (
                                     <span className="px-4 py-1.5 bg-gold-accent text-primary-black text-[10px] font-black uppercase tracking-widest rounded-full">
@@ -529,29 +540,33 @@ export default function Details({ mission, canSeeAddress }) {
                                 ) : (
                                     /* Performer/Guest Section for OUVERTE missions - Only show to non-owners */
                                     !isOwner && mission.status === 'OUVERTE' && (
-                                        mission.price_type === 'fixed' ? (
-                                            <div className="space-y-6">
-                                                <div className="text-center pb-6 border-b border-gray-border">
-                                                    <p className="text-xs font-black text-gray-muted uppercase tracking-widest mb-1">{t('Fixed Price')}</p>
-                                                    <p className="text-4xl font-black text-primary-black">CHF {mission.budget}</p>
+                                        <div className="space-y-8">
+                                            {mission.price_type === 'fixed' && (
+                                                <div className="space-y-6 pb-6 border-b border-gray-border">
+                                                    <div className="text-center pb-6 border-b border-gray-border">
+                                                        <p className="text-xs font-black text-gray-muted uppercase tracking-widest mb-1">{t('Fixed Price')}</p>
+                                                        <p className="text-4xl font-black text-primary-black">CHF {mission.budget}</p>
+                                                    </div>
+                                                    <button
+                                                        onClick={() => {
+                                                            if (confirm(t('Are you sure you want to accept this mission? You will be committing to complete it for the fixed price shown.'))) {
+                                                                acceptMission();
+                                                            }
+                                                        }}
+                                                        className="w-full py-5 bg-primary-black text-white font-black rounded-full hover:bg-black transition-all shadow-xl text-lg"
+                                                    >
+                                                        ⚡ {t('Accept Instantly')}
+                                                    </button>
+                                                    <p className="text-[10px] text-gray-muted font-bold text-center leading-relaxed">
+                                                        {t('By accepting, you commit to completing this mission for the fixed price shown.')}
+                                                    </p>
                                                 </div>
-                                                <button
-                                                    onClick={() => {
-                                                        if (confirm(t('Are you sure you want to accept this mission? You will be committing to complete it for the fixed price shown.'))) {
-                                                            acceptMission();
-                                                        }
-                                                    }}
-                                                    className="w-full py-5 bg-primary-black text-white font-black rounded-full hover:bg-black transition-all shadow-xl text-lg"
-                                                >
-                                                    ⚡ {t('Accept Instantly')}
-                                                </button>
-                                                <p className="text-[10px] text-gray-muted font-bold text-center leading-relaxed">
-                                                    {t('By accepting, you commit to completing this mission for the fixed price shown.')}
-                                                </p>
-                                            </div>
-                                        ) : (
+                                            )}
+
                                             <form onSubmit={submitOffer} className="space-y-6">
-                                                <h2 className="text-xl font-black text-primary-black mb-4">🏷️ {t('Submit an Offer')}</h2>
+                                                <h2 className="text-xl font-black text-primary-black mb-4">
+                                                    {mission.price_type === 'fixed' ? t('Or Propose your Price') : `🏷️ ${t('Submit an Offer')}`}
+                                                </h2>
                                                 
                                                 <div>
                                                     <InputLabel htmlFor="amount" value={t('Your price')} className="text-xs uppercase tracking-widest font-black mb-3" />
@@ -590,7 +605,7 @@ export default function Details({ mission, canSeeAddress }) {
                                                     🚀 {t('Send Offer')}
                                                 </button>
                                             </form>
-                                        )
+                                        </div>
                                     )
                                 )}
                             </section>
@@ -611,7 +626,11 @@ export default function Details({ mission, canSeeAddress }) {
                 onClose={() => setShowPaymentModal(false)}
                 onSuccess={() => {
                     setShowPaymentModal(false);
-                    router.reload();
+                    if (flash?.chat_id) {
+                        router.visit(route('messages', { chat_id: flash.chat_id }));
+                    } else {
+                        router.reload();
+                    }
                 }}
             />
         </AuthenticatedLayout>

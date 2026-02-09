@@ -1,0 +1,6 @@
+import{j as e}from"./app-Be0iEcFh.js";function n({icon:a,emoji:s,title:t,description:r,selected:l,onClick:d}){return e.jsx("button",{type:"button",onClick:d,className:`
+                w-full p-6 rounded-[24px]
+                border-2 transition-all duration-300
+                text-left
+                ${l?"border-gold-accent bg-gold-accent/10 shadow-lg scale-[1.02]":"border-gray-border/50 bg-white hover:border-gold-accent/50 hover:shadow-md hover:-translate-y-1"}
+            `,children:e.jsxs("div",{className:"flex items-start gap-4",children:[e.jsx("div",{className:"flex-shrink-0",children:a?e.jsx("img",{src:a,alt:"",className:"w-12 h-12 object-contain"}):e.jsx("span",{className:"text-4xl",children:s})}),e.jsxs("div",{className:"flex-1",children:[e.jsx("h3",{className:"text-xl font-black text-primary-black mb-2",children:t}),e.jsx("p",{className:"text-sm text-gray-muted font-medium leading-relaxed",children:r})]}),l&&e.jsx("div",{className:"flex-shrink-0",children:e.jsx("svg",{className:"w-6 h-6 text-gold-accent",fill:"currentColor",viewBox:"0 0 20 20",children:e.jsx("path",{fillRule:"evenodd",d:"M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z",clipRule:"evenodd"})})})]})})}export{n as R};

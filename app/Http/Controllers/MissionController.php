@@ -517,10 +517,11 @@ class MissionController extends Controller
         return back()->withErrors(['mission' => 'This mission is no longer accepting offers.']);
     }
 
+    /* 
     if ($mission->price_type !== 'open') {
-
             return back()->withErrors(['mission' => 'This mission has a fixed price.']);
         }
+    */
         
         // Prevent mission owner from submitting offers on their own mission
         if ($mission->user_id == Auth::id()) {
@@ -630,7 +631,8 @@ class MissionController extends Controller
 
             return redirect()->route('missions.show', $mission->id)
                 ->with('success', 'Mission accepted! Please complete the payment hold.')
-                ->with('stripe_client_secret', $pi->client_secret);
+                ->with('stripe_client_secret', $pi->client_secret)
+                ->with('chat_id', $chat->id);
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('Accept Mission Failed: ' . $e->getMessage());
             return back()->withErrors(['mission' => 'Failed to accept mission. Please try again.']);
@@ -675,14 +677,20 @@ class MissionController extends Controller
             // Notify Performer
             $performer->notify(new \App\Notifications\MissionAssignedNotification($mission));
 
-            return response()->json([
-                'message' => 'Performer hired successfully! Please complete the payment hold.',
-                'mission' => $mission->load(['assignedUser', 'user']),
-                'stripe_client_secret' => $pi->client_secret
+            // Create or get chat for the redirect
+            $chat = \App\Models\Chat::firstOrCreate([
+                'mission_id' => $mission->id,
+            ], [
+                'participant_ids' => [$mission->user_id, $performer->id],
             ]);
+
+            return redirect()->route('missions.show', $mission->id)
+                ->with('success', 'Performer hired successfully! Please complete the payment hold.')
+                ->with('stripe_client_secret', $pi->client_secret)
+                ->with('chat_id', $chat->id);
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('Direct Hire Failed: ' . $e->getMessage());
-            return response()->json(['message' => 'Failed to hire performer. ' . $e->getMessage()], 500);
+            return back()->withErrors(['mission' => 'Failed to hire performer. ' . $e->getMessage()]);
         }
     }
 
@@ -719,9 +727,17 @@ class MissionController extends Controller
                     $o->user->notify(new \App\Notifications\OfferRejectedNotification($mission));
                 });
 
+            // Create or get chat for the success redirect
+            $chat = \App\Models\Chat::firstOrCreate([
+                'mission_id' => $mission->id,
+            ], [
+                'participant_ids' => [$mission->user_id, $offer->user_id],
+            ]);
+
             return back()
                 ->with('success', 'Performer selected! Please complete the payment hold.')
-                ->with('stripe_client_secret', $pi->client_secret);
+                ->with('stripe_client_secret', $pi->client_secret)
+                ->with('chat_id', $chat->id);
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('Select Offer Failed: ' . $e->getMessage());
             return back()->withErrors(['mission' => 'Failed to select offer. Please try again.']);
@@ -749,7 +765,15 @@ class MissionController extends Controller
             return back()->withErrors(['mission' => 'Failed to confirm assignment. Please try again.']);
         }
 
-        return back()->with('success', 'Assignment confirmed! The performer can now start work and see your address.');
+        $chat = \App\Models\Chat::firstOrCreate([
+            'mission_id' => $mission->id,
+        ], [
+            'participant_ids' => [$mission->user_id, $mission->assigned_user_id],
+        ]);
+
+        return back()
+            ->with('success', 'Assignment confirmed! The performer can now start work and see your address.')
+            ->with('chat_id', $chat->id);
     }
 
     public function startWork(Mission $mission)
