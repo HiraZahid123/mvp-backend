@@ -37,7 +37,7 @@ export default function CompleteIdentity({ user }) {
 
             <div className="flex items-center mb-8">
                 <BackButton href={route('auth.select-role')} className="text-sm">
-                    {t('Back')}
+                    Retour
                 </BackButton>
             </div>
 
@@ -83,7 +83,7 @@ export default function CompleteIdentity({ user }) {
                     disabled={processing || !data.username}
                     processing={processing}
                 >
-                    {t('Continuer')}
+                    Continuer
                 </PrimaryButton>
             </form>
 
