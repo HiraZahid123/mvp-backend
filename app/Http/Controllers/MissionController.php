@@ -256,7 +256,7 @@ class MissionController extends Controller
 
     public function showMatchmaking(Mission $mission)
     {
-        if (Auth::id() !== $mission->user_id && !Auth::user()->isAdmin()) {
+        if (Auth::id() != $mission->user_id && !Auth::user()->isAdmin()) {
             abort(403);
         }
 
@@ -405,7 +405,7 @@ class MissionController extends Controller
     public function edit(Mission $mission)
     {
         // Verify user is mission owner
-        if (Auth::id() !== $mission->user_id) {
+        if (Auth::id() != $mission->user_id) {
             abort(403, 'You can only edit your own missions.');
         }
 
@@ -423,7 +423,7 @@ class MissionController extends Controller
     public function update(Request $request, Mission $mission)
     {
         // Verify user is mission owner
-        if (Auth::id() !== $mission->user_id) {
+        if (Auth::id() != $mission->user_id) {
             abort(403, 'You can only edit your own missions.');
         }
 
@@ -460,7 +460,7 @@ class MissionController extends Controller
     public function updateStatus(Request $request, Mission $mission)
     {
         // Verify user is mission owner
-        if (Auth::id() !== $mission->user_id) {
+        if (Auth::id() != $mission->user_id) {
             abort(403, 'You can only update the status of your own missions.');
         }
 
@@ -523,7 +523,7 @@ class MissionController extends Controller
         }
         
         // Prevent mission owner from submitting offers on their own mission
-        if ($mission->user_id === Auth::id()) {
+        if ($mission->user_id == Auth::id()) {
             return back()->withErrors(['mission' => 'You cannot submit an offer on your own mission.']);
         }
         
@@ -552,7 +552,7 @@ class MissionController extends Controller
     public function askQuestion(Request $request, Mission $mission)
     {
         // Only Motivés (performers) can ask questions, not mission owners
-        if (Auth::id() === $mission->user_id) {
+        if (Auth::id() == $mission->user_id) {
             return back()->withErrors(['question' => 'Mission owners cannot ask questions on their own missions.']);
         }
 
@@ -586,7 +586,7 @@ class MissionController extends Controller
         }
 
         // Prevent self-acceptance
-        if ($mission->user_id === Auth::id()) {
+        if ($mission->user_id == Auth::id()) {
             return back()->withErrors(['mission' => 'You cannot accept your own mission.']);
         }
 
@@ -640,7 +640,7 @@ class MissionController extends Controller
 
     public function hire(Request $request, Mission $mission, User $performer)
     {
-        if (Auth::id() !== $mission->user_id && !Auth::user()->isAdmin()) {
+        if (Auth::id() != $mission->user_id && !Auth::user()->isAdmin()) {
             abort(403);
         }
 
@@ -688,7 +688,7 @@ class MissionController extends Controller
 
     public function selectOffer(Request $request, Mission $mission, \App\Models\MissionOffer $offer)
     {
-        if (Auth::id() !== $mission->user_id && !Auth::user()->isAdmin()) {
+        if (Auth::id() != $mission->user_id && !Auth::user()->isAdmin()) {
             abort(403);
         }
 
@@ -730,7 +730,7 @@ class MissionController extends Controller
 
     public function confirmAssignment(Mission $mission)
     {
-        if (Auth::id() !== $mission->user_id && !Auth::user()->isAdmin()) {
+        if (Auth::id() != $mission->user_id && !Auth::user()->isAdmin()) {
             abort(403);
         }
 
@@ -755,7 +755,7 @@ class MissionController extends Controller
     public function startWork(Mission $mission)
     {
         // Add null check for assigned_user_id to prevent unauthorized access
-        if (!$mission->assigned_user_id || Auth::id() !== $mission->assigned_user_id) {
+        if (!$mission->assigned_user_id || Auth::id() != $mission->assigned_user_id) {
             abort(403);
         }
 
@@ -771,7 +771,7 @@ class MissionController extends Controller
     public function submitForValidation(Request $request, Mission $mission)
     {
         // Add null check for assigned_user_id to prevent unauthorized access
-        if (!$mission->assigned_user_id || Auth::id() !== $mission->assigned_user_id) {
+        if (!$mission->assigned_user_id || Auth::id() != $mission->assigned_user_id) {
             abort(403);
         }
 
@@ -805,7 +805,7 @@ class MissionController extends Controller
 
     public function answerQuestion(Request $request, Mission $mission, \App\Models\MissionQuestion $question)
     {
-        if (Auth::id() !== $mission->user_id) {
+        if (Auth::id() != $mission->user_id) {
             abort(403);
         }
 
@@ -825,7 +825,7 @@ class MissionController extends Controller
 
     public function validateCompletion(Mission $mission)
     {
-        if (Auth::id() !== $mission->user_id) {
+        if (Auth::id() != $mission->user_id) {
             abort(403, 'Only the mission owner can validate completion.');
         }
 
@@ -855,7 +855,7 @@ class MissionController extends Controller
 
     public function initiateDispute(Request $request, Mission $mission)
     {
-        if (Auth::id() !== $mission->user_id) {
+        if (Auth::id() != $mission->user_id) {
             abort(403, 'Only the mission owner can initiate a dispute.');
         }
 
@@ -888,8 +888,8 @@ class MissionController extends Controller
     public function cancel(Mission $mission)
     {
         // Add explicit null checks for assigned_user_id
-        $isOwner = Auth::id() === $mission->user_id;
-        $isAssigned = $mission->assigned_user_id && Auth::id() === $mission->assigned_user_id;
+        $isOwner = Auth::id() == $mission->user_id;
+        $isAssigned = $mission->assigned_user_id && Auth::id() == $mission->assigned_user_id;
         
         if (!$isOwner && !$isAssigned) {
             abort(403);
@@ -925,7 +925,7 @@ class MissionController extends Controller
 
     public function contactHelper(Mission $mission, User $helper)
     {
-        if (Auth::id() !== $mission->user_id && !Auth::user()->isAdmin()) {
+        if (Auth::id() != $mission->user_id && !Auth::user()->isAdmin()) {
             abort(403);
         }
 
@@ -972,8 +972,8 @@ class MissionController extends Controller
 
         // Only host or performer can review (depending on mission status)
         $userId = Auth::id();
-        $isHost = $userId === $mission->user_id;
-        $isPerformer = $userId === $mission->assigned_user_id;
+        $isHost = $userId == $mission->user_id;
+        $isPerformer = $userId == $mission->assigned_user_id;
 
         if (!$isHost && !$isPerformer) {
             abort(403);

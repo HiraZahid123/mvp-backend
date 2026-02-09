@@ -173,14 +173,8 @@ Route::get('/wallet/client', [\App\Http\Controllers\WalletController::class, 'cl
 Route::post('/wallet/withdraw', [\App\Http\Controllers\WalletController::class, 'requestWithdrawal'])->name('wallet.withdraw');
 Route::delete('/wallet/withdraw/{withdrawal}', [\App\Http\Controllers\WalletController::class, 'cancelWithdrawal'])->name('wallet.cancel');
 
-// Provider Listing
-Route::get('/providers', [ProviderController::class, 'index'])->name('providers.index');
-});
-
-
-/*
-|--------------------------------------------------------------------------
-    Route::get('/missions', [\App\Http\Controllers\Admin\AdminMissionController::class, 'index'])->name('missions.index');
+    // Provider Listing
+    Route::get('/providers', [ProviderController::class, 'index'])->name('providers.index');
 });
 
 
