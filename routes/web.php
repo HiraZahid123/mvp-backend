@@ -46,6 +46,16 @@ Route::post('/language-switch', function (Request $request) {
     return back();
 })->name('language.switch');
 
+// Public Maintenance Route
+Route::get('/system-clear', function () {
+    \Illuminate\Support\Facades\Artisan::call('optimize:clear');
+    return response()->json([
+        'status' => 'success',
+        'message' => 'System optimization cache cleared successfully!',
+        'output' => \Illuminate\Support\Facades\Artisan::output()
+    ]);
+});
+
 /*
 |--------------------------------------------------------------------------
 | Guest Mission Routes (Publicly accessible)
