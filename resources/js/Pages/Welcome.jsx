@@ -1,4 +1,4 @@
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import React, { useState } from 'react';
 import useTranslation from '@/Hooks/useTranslation';
 import Header from '@/Components/Header';
@@ -59,10 +59,49 @@ const AnimatedSection = ({ children, className = "" }) => {
 
 export default function Welcome() {
     const { t } = useTranslation();
+    const { auth } = usePage().props;
     const [searchTerm, setSearchTerm] = useState('');
     const [isChecking, setIsChecking] = useState(false);
     const [isClean, setIsClean] = useState(true);
     const [hasChecked, setHasChecked] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+    
+    // Typewriter effect for mission examples
+    const examples = [
+        t('promener mon chien'),
+        t('réparer mon évier'),
+        t('monter un meuble IKEA'),
+        t('faire mes courses'),
+        t('nettoyer mon appartement'),
+        t('arroser mes plantes')
+    ];
+    const [currentExampleIndex, setCurrentExampleIndex] = useState(0);
+    const [placeholder, setPlaceholder] = useState('');
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [typingSpeed, setTypingSpeed] = useState(150);
+
+    React.useEffect(() => {
+        const handleTyping = () => {
+            const currentExample = examples[currentExampleIndex];
+            if (isDeleting) {
+                setPlaceholder(prev => prev.substring(0, prev.length - 1));
+                setTypingSpeed(50);
+            } else {
+                setPlaceholder(prev => currentExample.substring(0, prev.length + 1));
+                setTypingSpeed(150);
+            }
+
+            if (!isDeleting && placeholder === currentExample) {
+                setTimeout(() => setIsDeleting(true), 1500);
+            } else if (isDeleting && placeholder === '') {
+                setIsDeleting(false);
+                setCurrentExampleIndex((prev) => (prev + 1) % examples.length);
+            }
+        };
+
+        const timer = setTimeout(handleTyping, typingSpeed);
+        return () => clearTimeout(timer);
+    }, [placeholder, isDeleting, currentExampleIndex, examples, typingSpeed]);
 
     const steps = [
         { title: t('How it works steps.step1_title'), desc: t('How it works steps.step1_desc'), icon: "1" },
@@ -82,6 +121,7 @@ export default function Welcome() {
 
         setIsChecking(true);
         setHasChecked(false);
+        setErrorMessage('');
         try {
             const response = await axios.post(route('api.moderation.check'), { content: searchTerm });
             const clean = response.data.is_clean;
@@ -93,9 +133,12 @@ export default function Welcome() {
                     search: searchTerm,
                     improved_title: response.data.improved_title 
                 });
+            } else {
+                setErrorMessage(t('Votre description contient des mots non autorisés. Veuillez la modifier.'));
             }
         } catch (error) {
             console.error("Moderation check failed", error);
+            setErrorMessage(t('Une erreur est survenue lors de la vérification. Veuillez réessayer.'));
         } finally {
             setIsChecking(false);
         }
@@ -130,8 +173,19 @@ export default function Welcome() {
                 <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16 relative z-10">
                     <AnimatedSection className="flex-1 text-left">
                         <div className="inline-flex items-center gap-2 px-4 py-2 bg-oflem-terracotta/10 rounded-full mb-8">
-                            <span className="text-oflem-terracotta text-lg animate-pulse">🇨🇭</span>
-                            <span className="text-xs font-black uppercase tracking-widest text-oflem-terracotta">{t('Platform Swiss Quality')}</span>
+                            {auth.user ? (
+                                <>
+                                    <span className="text-oflem-terracotta text-lg group-hover:scale-110 transition-transform">👋</span>
+                                    <span className="text-xs font-black uppercase tracking-widest text-oflem-terracotta">
+                                        {t('Welcome back')}, {auth.user.name.split(' ')[0]}
+                                    </span>
+                                </>
+                            ) : (
+                                <>
+                                    <span className="text-oflem-terracotta text-lg animate-pulse">🇨🇭</span>
+                                    <span className="text-xs font-black uppercase tracking-widest text-oflem-terracotta">{t('Platform Swiss Quality')}</span>
+                                </>
+                            )}
                         </div>
                         
                         <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight leading-[0.95] mb-8">
@@ -145,23 +199,42 @@ export default function Welcome() {
 
                         <div className="max-w-xl mb-12">
                             <form onSubmit={handleSearchSubmit} className="relative group">
-                                <div className="flex items-center w-full px-6 py-4 md:px-8 md:py-6 rounded-[32px] bg-white shadow-[0_20px_60px_rgba(0,0,0,0.06)] border border-gray-border focus-within:border-oflem-terracotta/30 focus-within:ring-4 focus-within:ring-oflem-terracotta/5 transition-all">
-                                    <span className="text-lg font-black text-gray-muted hidden sm:inline whitespace-nowrap">J'ai la flemme de...</span>
-                                    <input
-                                        type="text"
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
-                                        placeholder={searchTerm ? '' : t('promener mon chien')}
-                                        className="flex-1 bg-transparent border-none text-lg font-black text-oflem-charcoal focus:ring-0 placeholder:text-gray-200 ml-2"
-                                    />
-                                    <button 
-                                        type="submit"
-                                        disabled={!searchTerm.trim() || isChecking}
-                                        className="hidden sm:flex items-center justify-center w-12 h-12 bg-oflem-terracotta text-white rounded-2xl hover:scale-110 transition-transform active:scale-95 disabled:opacity-50"
-                                    >
-                                        <ArrowRight className="w-6 h-6" />
-                                    </button>
+                                <div className="flex flex-col w-full p-4 md:p-6 rounded-[32px] bg-white shadow-[0_20px_60px_rgba(0,0,0,0.06)] border border-gray-border focus-within:border-oflem-terracotta/30 focus-within:ring-4 focus-within:ring-oflem-terracotta/5 transition-all">
+                                    <div className="flex items-center gap-2 mb-2 px-2">
+                                        <span className="text-sm font-black text-oflem-terracotta uppercase tracking-widest">
+                                            {t('Post a mission')}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-start">
+                                        <span className="text-lg font-black text-gray-muted hidden sm:inline whitespace-nowrap pt-2">J'ai la flemme de...</span>
+                                        <textarea
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter' && !e.shiftKey) {
+                                                    e.preventDefault();
+                                                    handleSearchSubmit(e);
+                                                }
+                                            }}
+                                            placeholder={searchTerm ? '' : placeholder}
+                                            rows={3}
+                                            className="flex-1 bg-transparent border-none text-lg font-black text-oflem-charcoal focus:ring-0 placeholder:text-gray-200 ml-2 resize-none pt-2"
+                                        />
+                                        <button 
+                                            type="submit"
+                                            disabled={!searchTerm.trim() || isChecking}
+                                            className="hidden sm:flex items-center justify-center w-12 h-12 bg-oflem-terracotta text-white rounded-2xl hover:scale-110 transition-transform active:scale-95 disabled:opacity-50 mt-1"
+                                        >
+                                            <ArrowRight className="w-6 h-6" />
+                                        </button>
+                                    </div>
                                 </div>
+                                {errorMessage && (
+                                    <div className="mt-4 px-6 py-3 bg-red-50 border border-red-200 text-red-600 rounded-2xl text-sm font-bold flex items-center gap-2 animate-in fade-in slide-in-from-top-2 duration-300">
+                                        <span className="text-lg">⚠️</span>
+                                        {errorMessage}
+                                    </div>
+                                )}
                                 <button 
                                     type="submit"
                                     className="sm:hidden w-full mt-4 py-4 bg-oflem-terracotta text-white rounded-2xl font-black text-lg"

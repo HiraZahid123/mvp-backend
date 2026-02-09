@@ -1,18 +1,20 @@
 import React from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import useTranslation from '@/Hooks/useTranslation';
-import Header from '@/Components/Header';
-import Footer from '@/Components/Footer';
 
 export default function Matchmaking({ mission, helpers, isGuest = false }) {
     const { t } = useTranslation();
 
     return (
-        <div className="min-h-screen bg-oflem-cream font-sans">
+        <AuthenticatedLayout 
+            header={t('Match Helpers')}
+            maxWidth="max-w-7xl"
+            showFooter={true}
+        >
             <Head title={t('Match Helpers')} />
-            <Header />
 
-            <main className="max-w-7xl mx-auto py-16 px-6">
+            <div className="py-16">
                 <div className="mb-12">
                     <h1 className="text-3xl font-black text-primary-black mb-3">
                         {t('Help found for')}: <span className="text-gold-accent">{mission.title}</span>
@@ -31,12 +33,20 @@ export default function Matchmaking({ mission, helpers, isGuest = false }) {
                             <h3 className="text-xl font-black text-primary-black mb-2">{t('Almost there!')}</h3>
                             <p className="text-gray-muted font-bold">{t('Register now to post your mission and start chatting with these helpers.')}</p>
                         </div>
-                        <Link 
-                            href={route('register.manual')} 
-                            className="px-8 py-4 bg-primary-black text-white font-black rounded-full hover:bg-black transition-all whitespace-nowrap"
-                        >
-                            {t('Create Free Account')}
-                        </Link>
+                        <div className="flex flex-col sm:flex-row gap-4 items-center">
+                            <Link 
+                                href={route('login')} 
+                                className="px-8 py-4 bg-white border-2 border-primary-black text-primary-black font-black rounded-full hover:bg-oflem-cream transition-all whitespace-nowrap"
+                            >
+                                {t('Log in')}
+                            </Link>
+                            <Link 
+                                href={route('register.manual')} 
+                                className="px-8 py-4 bg-primary-black text-white font-black rounded-full hover:bg-black transition-all whitespace-nowrap"
+                            >
+                                {t('Create Free Account')}
+                            </Link>
+                        </div>
                     </div>
                 )}
 
@@ -53,10 +63,8 @@ export default function Matchmaking({ mission, helpers, isGuest = false }) {
                         <p className="text-gray-muted font-bold">{t('Try adjusting your mission details or location.')}</p>
                     </div>
                 )}
-            </main>
-
-            <Footer />
-        </div>
+            </div>
+        </AuthenticatedLayout>
     );
 }
 

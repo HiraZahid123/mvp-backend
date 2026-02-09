@@ -6,6 +6,7 @@ import TextInput from '@/Components/TextInput';
 import PhotoUploader from '@/Components/PhotoUploader';
 import InputError from '@/Components/InputError';
 import PrimaryButton from '@/Components/PrimaryButton';
+import BackButton from '@/Components/BackButton';
 
 export default function CompleteIdentity({ user }) {
     const [photoFile, setPhotoFile] = useState(null);
@@ -33,6 +34,12 @@ export default function CompleteIdentity({ user }) {
             bgAccentClass="bg-cream-accent"
         >
             <Head title="Profil" />
+
+            <div className="flex items-center mb-8">
+                <BackButton href={route('auth.select-role')} className="text-sm">
+                    {t('Back')}
+                </BackButton>
+            </div>
 
             <div className="text-center mb-8">
                 <h1 className="text-[32px] lg:text-[40px] font-serif font-bold text-primary-black tracking-tight mb-3 leading-tight">
@@ -74,8 +81,9 @@ export default function CompleteIdentity({ user }) {
                 <PrimaryButton 
                     className="w-full" 
                     disabled={processing || !data.username}
+                    processing={processing}
                 >
-                    {processing ? 'Enregistrement...' : 'Continuer'}
+                    {t('Continuer')}
                 </PrimaryButton>
             </form>
 

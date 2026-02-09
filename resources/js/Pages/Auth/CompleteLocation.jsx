@@ -4,6 +4,7 @@ import { Head, useForm } from '@inertiajs/react';
 import LocationPicker from '@/Components/LocationPicker';
 import InputError from '@/Components/InputError';
 import PrimaryButton from '@/Components/PrimaryButton';
+import BackButton from '@/Components/BackButton';
 import useTranslation from '@/Hooks/useTranslation';
 
 export default function CompleteLocation({ user, role }) {
@@ -39,6 +40,12 @@ export default function CompleteLocation({ user, role }) {
         >
             <Head title={t("Localisation")} />
 
+            <div className="flex items-center mb-8">
+                <BackButton href={route('auth.select-role')} className="text-sm">
+                    {t('Back')}
+                </BackButton>
+            </div>
+
             <form onSubmit={handleSubmit} className="space-y-8">
                 {/* Location Picker */}
                 <LocationPicker
@@ -55,8 +62,9 @@ export default function CompleteLocation({ user, role }) {
                     type="submit"
                     className="w-full" 
                     disabled={processing || !locationData}
+                    processing={processing}
                 >
-                    {processing ? t('Enregistrement...') : t('Confirmer ma zone')}
+                    {t('Confirmer ma zone')}
                 </PrimaryButton>
             </form>
 

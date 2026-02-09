@@ -190,10 +190,14 @@ export default function Messages({ chats: initialChats, selectedChatId }) {
     };
 
     return (
-        <AuthenticatedLayout header={t('Messages')}>
+        <AuthenticatedLayout 
+            header={t('Messages')}
+            maxWidth="max-w-full"
+            paddingY="py-0"
+        >
             <Head title={t('Messages')} />
             
-            <div className="flex h-[calc(100vh-180px)] bg-oflem-cream">
+            <div className="flex h-[calc(100vh-144px)] bg-oflem-cream -mx-4 sm:-mx-6 lg:-mx-8">
                 {/* Left Sidebar - Conversations */}
                 <div className="w-1/4 bg-white border-r border-gray-border flex flex-col">
                     <div className="p-6 border-b border-gray-border">

@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Head, Link, usePage, router } from '@inertiajs/react';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import useTranslation from '@/Hooks/useTranslation';
-import Header from '@/Components/Header';
-import Footer from '@/Components/Footer';
 import FilterSidebar from '@/Components/Missions/FilterSidebar';
 import FilterChips from '@/Components/Missions/FilterChips';
 import FilterDrawer from '@/Components/Missions/FilterDrawer';
@@ -39,11 +38,14 @@ export default function ActiveMissions({ missions, userLocation, currentFilters 
     };
 
     return (
-        <div className="min-h-screen bg-oflem-cream font-sans">
+        <AuthenticatedLayout 
+            header={t('Active Missions')}
+            maxWidth="max-w-[1400px]"
+            showFooter={true}
+        >
             <Head title={t('Active Missions')} />
-            <Header />
 
-            <main className="max-w-[1400px] mx-auto py-16 px-6">
+            <div className="py-16">
                 <div className="flex flex-col lg:flex-row gap-12">
                     {/* Sidebar */}
                     <FilterSidebar 
@@ -55,7 +57,6 @@ export default function ActiveMissions({ missions, userLocation, currentFilters 
                     <div className="flex-1">
                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
                             <div>
-                                <h1 className="text-4xl font-black text-primary-black mb-3">{t('Active Missions')}</h1>
                                 <p className="text-gray-muted font-bold">
                                     {t('Showing missions within')} <span className="text-gold-accent">{filters.radius || 10}km</span> {t('of your location.')}
                                 </p>
@@ -166,7 +167,7 @@ export default function ActiveMissions({ missions, userLocation, currentFilters 
                                                     href={route('missions.show', mission.id)}
                                                     className="w-full md:w-auto px-10 py-5 bg-primary-black text-white font-black rounded-full hover:bg-black transition-all shadow-xl whitespace-nowrap"
                                                 >
-                                                    {mission.price_type === 'fixed' ? t('Accept Task') : t('View & Quote')}
+                                                    {mission.price_type === 'fixed' ? t('View missions') : t('View & Quote')}
                                                 </Link>
                                             </div>
                                         </div>
@@ -211,9 +212,7 @@ export default function ActiveMissions({ missions, userLocation, currentFilters 
                         )}
                     </div>
                 </div>
-            </main>
-
-            <Footer />
-        </div>
+            </div>
+        </AuthenticatedLayout>
     );
 }

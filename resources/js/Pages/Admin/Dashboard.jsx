@@ -5,7 +5,11 @@ import useTranslation from '@/Hooks/useTranslation';
 export default function Dashboard({ stats, recentUsers }) {
     const { t } = useTranslation();
     return (
-        <AuthenticatedLayout header={t('Admin Control Center')}>
+        <AuthenticatedLayout 
+            header={t('Admin Control Center')}
+            maxWidth="max-w-7xl"
+            showFooter={true}
+        >
             <Head title={t('Admin Dashboard')} />
 
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 space-y-10">

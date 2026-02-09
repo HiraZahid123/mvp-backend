@@ -5,9 +5,8 @@ export default function PrimaryButton({
     processing,
     ...props
 }) {
-    // If processing is explicitly provided, use it to determine loading state.
-    // Otherwise, fallback to the legacy behavior where disabled implies loading.
-    const isLoading = processing !== undefined ? processing : disabled;
+    // Only show loading state if processing is explicitly true.
+    const isLoading = !!processing;
 
     return (
         <button

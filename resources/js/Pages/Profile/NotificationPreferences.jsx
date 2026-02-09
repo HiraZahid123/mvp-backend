@@ -65,10 +65,14 @@ export default function NotificationPreferences({ preferences }) {
     );
 
     return (
-        <AuthenticatedLayout>
+        <AuthenticatedLayout
+            header={t('Notification Preferences')}
+            maxWidth="max-w-4xl"
+            showFooter={true}
+        >
             <Head title={t('Notification Preferences')} />
 
-            <div className="max-w-4xl mx-auto py-12 px-6">
+            <div className="py-12">
                 <div className="mb-10">
                     <h1 className="text-4xl font-black text-oflem-charcoal mb-2">
                         {t('Notification Preferences')}

@@ -282,6 +282,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get reviews received by this user (as the target).
+     */
+    public function reviewsReceived()
+    {
+        return $this->hasMany(Review::class, 'user_id');
+    }
+
+    /**
      * Get reviews given by this user (as the reviewer).
      */
     public function reviewsGiven()
@@ -298,14 +306,11 @@ class User extends Authenticatable
     }
 
     /**
-     * Get available balance (total balance minus pending withdrawals)
+     * Get average rating from cache.
      */
-    public function getAvailableBalanceAttribute(): float
+    public function getAverageRatingAttribute(): float
     {
-        return max(0, $this->balance - $this->pending_withdrawal);
-    }
-
-    /**
+        return (float) ($this->rating_cache ?? 0);
     }
 
     /**

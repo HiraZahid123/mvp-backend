@@ -196,6 +196,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/active', [MissionController::class, 'active'])->name('active');
         Route::get('/search', [MissionController::class, 'search'])->name('search');
         Route::get('/{mission}', [MissionController::class, 'show'])->name('show');
+        Route::get('/{mission}/edit', [MissionController::class, 'edit'])->name('edit');
+        Route::patch('/{mission}', [MissionController::class, 'update'])->name('update');
+        Route::post('/{mission}/update-status', [MissionController::class, 'updateStatus'])->name('update-status');
         Route::get('/{mission}/matchmaking', [MissionController::class, 'showMatchmaking'])->name('matchmaking');
         
         // Mission Actions
@@ -212,6 +215,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/{mission}/dispute', [MissionController::class, 'initiateDispute'])->name('dispute');
         Route::post('/{mission}/cancel', [MissionController::class, 'cancel'])->name('cancel');
         Route::post('/{mission}/contact/{helper}', [MissionController::class, 'contactHelper'])->name('contact');
+        Route::get('/{mission}/nearby-motives', [MissionController::class, 'getNearbyMotives'])->name('nearby-motives');
+        Route::post('/{mission}/send-to-motive/{motive}', [MissionController::class, 'sendMissionToMotive'])->name('send-to-motive');
     });
 });
 

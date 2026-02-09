@@ -10,10 +10,14 @@ export default function Edit({ mustVerifyEmail, status }) {
     const { t } = useTranslation();
 
     return (
-        <AuthenticatedLayout header={t('Profile Settings')}>
+        <AuthenticatedLayout
+            header={t('Profile Settings')}
+            maxWidth="max-w-4xl"
+            showFooter={true}
+        >
             <Head title={t('Profile')} />
 
-            <div className="mb-6">
+            <div className="py-12">
                 <BackButton href={route('dashboard')} />
             </div>
 

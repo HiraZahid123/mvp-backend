@@ -94,8 +94,8 @@ export default function LoginManual({ canResetPassword, status }) {
                 )}
 
                 {/* Submit Button */}
-                <PrimaryButton className="w-full mt-4" disabled={processing}>
-                    {processing ? t('Connexion...') : t('Se connecter')}
+                <PrimaryButton className="w-full mt-4" disabled={processing} processing={processing}>
+                    {t('Se connecter')}
                 </PrimaryButton>
             </form>
 

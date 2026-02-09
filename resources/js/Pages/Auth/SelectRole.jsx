@@ -83,8 +83,9 @@ export default function SelectRole({ user }) {
                 <PrimaryButton 
                     className="w-full mt-6" 
                     disabled={processing || !selectedRole}
+                    processing={processing}
                 >
-                    {processing ? t('Enregistrement...') : t('Continuer')}
+                    {t('Continuer')}
                 </PrimaryButton>
             </form>
 

@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import useTranslation from '@/Hooks/useTranslation';
-import Header from '@/Components/Header';
-import Footer from '@/Components/Footer';
 import lodash from 'lodash';
 
 export default function Index({ providers, filters: initialFilters }) {
@@ -34,13 +33,15 @@ export default function Index({ providers, filters: initialFilters }) {
     };
 
     return (
-        <div className="min-h-screen bg-oflem-cream font-sans">
-            <Head title={t('Find Helpers')} />
-            <Header />
+        <AuthenticatedLayout 
+            header={t('Find Helpers')}
+            maxWidth="max-w-7xl"
+            showFooter={true}
+        >
+            <Head title={t('Find Expert Help')} />
 
-            <main className="max-w-7xl mx-auto py-16 px-6">
+            <div className="py-16">
                 <div className="mb-12">
-                    <h1 className="text-4xl font-black text-primary-black mb-3">{t('Find Expert Help')}</h1>
                     <p className="text-gray-muted font-bold text-lg">
                         {t('Browse our community of talented local helpers and find the perfect match for your next mission.')}
                     </p>
@@ -101,10 +102,8 @@ export default function Index({ providers, filters: initialFilters }) {
                         ))}
                     </div>
                 )}
-            </main>
-
-            <Footer />
-        </div>
+            </div>
+        </AuthenticatedLayout>
     );
 }
 

@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Head, useForm, router } from '@inertiajs/react';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import useTranslation from '@/Hooks/useTranslation';
-import Header from '@/Components/Header';
-import Footer from '@/Components/Footer';
 import InputLabel from '@/Components/InputLabel';
 import InputError from '@/Components/InputError';
 import axios from 'axios';
 
 export default function Index({ existingProfile = null }) {
+    // ... rest of the logic ...
     const { t } = useTranslation();
     const [step, setStep] = useState(existingProfile ? 2 : 1); // Start at review if profile exists
     const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -68,16 +68,19 @@ export default function Index({ existingProfile = null }) {
     };
 
     return (
-        <div className="min-h-screen bg-oflem-cream font-sans">
+        <AuthenticatedLayout 
+            header={existingProfile ? t('Edit Provider Profile') : t('Provider Onboarding')}
+            maxWidth="max-w-3xl"
+            showFooter={true}
+        >
             <Head title={t('Provider Onboarding')} />
-            <Header />
 
-            <main className="max-w-3xl mx-auto py-16 px-6">
+            <div className="py-16">
                 <div className="bg-white rounded-[40px] p-8 md:p-12 shadow-sm border border-gray-border">
                     <div className="mb-10 text-center">
-                        <h1 className="text-3xl font-black text-primary-black mb-3">
+                        <h2 className="text-3xl font-black text-primary-black mb-3">
                             {step === 1 ? t('Tell us about your expertise') : t('Review your profile')}
-                        </h1>
+                        </h2>
                         <p className="text-gray-muted font-bold">
                             {step === 1 
                                 ? t('Our AI will analyze your skills to match you with the right missions.') 
@@ -207,9 +210,7 @@ export default function Index({ existingProfile = null }) {
                         </form>
                     )}
                 </div>
-            </main>
-
-            <Footer />
-        </div>
+            </div>
+        </AuthenticatedLayout>
     );
 }

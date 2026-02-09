@@ -1,7 +1,7 @@
 import React from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import useTranslation from '@/Hooks/useTranslation';
-import MinimalAuthenticatedLayout from '@/Layouts/MinimalAuthenticatedLayout';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import PrimaryButton from '@/Components/PrimaryButton';
 import SecondaryButton from '@/Components/SecondaryButton';
 import { MapPin, Calendar, DollarSign, FileText, ArrowLeft, CheckCircle2 } from 'lucide-react';
@@ -21,10 +21,14 @@ export default function MissionRecap({ mission }) {
     };
 
     return (
-        <MinimalAuthenticatedLayout>
+        <AuthenticatedLayout 
+            header={t('Mission Recap')}
+            maxWidth="max-w-4xl"
+            showFooter={true}
+        >
             <Head title={t('Mission Recap')} />
 
-            <div className="max-w-4xl mx-auto py-12 px-6">
+            <div className="py-12">
                 {/* Header */}
                 <div className="mb-12">
                     <Link
@@ -35,9 +39,6 @@ export default function MissionRecap({ mission }) {
                         {t('Back to edit')}
                     </Link>
 
-                    <h1 className="text-4xl md:text-5xl font-black text-oflem-charcoal mb-4 tracking-tight">
-                        {t('Mission Recap')}
-                    </h1>
                     <p className="text-lg font-bold text-gray-muted max-w-2xl">
                         {t('Review the details below. You can edit before confirming.')}
                     </p>
@@ -186,6 +187,6 @@ export default function MissionRecap({ mission }) {
                     </p>
                 </div>
             </div>
-        </MinimalAuthenticatedLayout>
+        </AuthenticatedLayout>
     );
 }

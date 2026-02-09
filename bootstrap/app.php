@@ -24,6 +24,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'rate-limit-otp' => \App\Http\Middleware\RateLimitOTPRequests::class,
         ]);
 
+        $middleware->trustProxies(at: '*');
+
         $middleware->validateCsrfTokens(except: [
             'api/v1/stripe/webhook',
             'v1/stripe/webhook',

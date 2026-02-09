@@ -1,5 +1,4 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import MinimalAuthenticatedLayout from '@/Layouts/MinimalAuthenticatedLayout';
 import { Head, usePage, Link } from '@inertiajs/react';
 import React, { useState, useEffect } from 'react';
 import useTranslation from '@/Hooks/useTranslation';
@@ -8,13 +7,11 @@ import axios from 'axios';
 
 export default function Dashboard({ missions }) { // Receive missions prop
     const { t } = useTranslation();
-    const { auth, ziggy } = usePage().props;
+    const { auth } = usePage().props;
     const user = auth.user;
     const urlParams = new URLSearchParams(window.location.search);
     const chatWith = urlParams.get('chat_with');
-    const helperName = urlParams.get('helper_name');
     const missionId = urlParams.get('mission_id');
-    const missionTitle = urlParams.get('mission_title');
 
     const [activeChat, setActiveChat] = useState(null);
 
@@ -26,57 +23,38 @@ export default function Dashboard({ missions }) { // Receive missions prop
         }
     }, [chatWith, missionId]);
 
-    const getDashboardContent = () => {
+    const renderDashboardContent = () => {
         switch (user.role_type) {
             case 'customer':
-                return (
-                    <AuthenticatedLayout header={t('Dashboard')}>
-                        <Head title={t('Dashboard')} />
-                        <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-                             <CustomerDashboard user={user} missions={missions} t={t} />
-                        </div>
-                    </AuthenticatedLayout>
-                );
+                return <CustomerDashboard user={user} missions={missions} t={t} />;
             case 'performer':
-                return (
-                    <AuthenticatedLayout header={t('Dashboard')}>
-                        <Head title={t('Dashboard')} />
-                        <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-                             <PerformerDashboard user={user} t={t} />
-                        </div>
-                    </AuthenticatedLayout>
-                );
+                return <PerformerDashboard user={user} t={t} />;
             case 'both':
-                return (
-                     <AuthenticatedLayout header={t('Dashboard')}>
-                        <Head title={t('Dashboard')} />
-                        <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-                             <BothDashboard user={user} t={t} />
-                        </div>
-                    </AuthenticatedLayout>
-                );
+                return <BothDashboard user={user} t={t} />;
             default:
-                return (
-                     <AuthenticatedLayout header={t('Dashboard')}>
-                        <Head title={t('Dashboard')} />
-                         <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-                            <DefaultDashboard user={user} t={t} />
-                        </div>
-                    </AuthenticatedLayout>
-                );
+                return <DefaultDashboard user={user} t={t} />;
         }
     };
 
     return (
-        <>
-            {getDashboardContent()}
+        <AuthenticatedLayout 
+            header={t('Dashboard')}
+            maxWidth="max-w-7xl"
+            showFooter={true}
+        >
+            <Head title={t('Dashboard')} />
+            
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+                {renderDashboardContent()}
+            </div>
+
             {activeChat && (
                 <ChatWindow 
                     chat={activeChat} 
                     onClose={() => setActiveChat(null)} 
                 />
             )}
-        </>
+        </AuthenticatedLayout>
     );
 }
 
@@ -92,7 +70,7 @@ function CustomerDashboard({ user, missions, t }) {
                     <p className="text-primary-black/70 text-lg font-bold">
                         {t('Describe your mission and let our smart matching find the perfect helper for you.')}
                     </p>
-                    <Link href={route('providers.index')} className="mt-8 bg-primary-black text-white font-black py-4 px-10 rounded-full hover:opacity-90 transition-all shadow-xl inline-block text-lg">
+                    <Link href={route('missions.create')} className="mt-8 bg-primary-black text-white font-black py-4 px-10 rounded-full hover:opacity-90 transition-all shadow-xl inline-block text-lg">
                         🚀 {t('Post a Mission')}
                     </Link>
                 </div>
@@ -232,7 +210,7 @@ function BothDashboard({ user, t }) {
                         </p>
                     </div>
                     <div className="flex gap-4">
-                        <Link href={route('providers.index')} className="bg-primary-black text-white font-black py-3 px-6 rounded-full hover:opacity-90 transition-all text-sm shadow-md">{t('Post Task')}</Link>
+                        <Link href={route('missions.create')} className="bg-primary-black text-white font-black py-3 px-6 rounded-full hover:opacity-90 transition-all text-sm shadow-md">{t('Post Task')}</Link>
                         <button className="bg-gold-accent text-primary-black font-black py-3 px-8 rounded-full hover:opacity-90 transition-all text-sm shadow-md">{t('Available Tasks')}</button>
                     </div>
                 </div>

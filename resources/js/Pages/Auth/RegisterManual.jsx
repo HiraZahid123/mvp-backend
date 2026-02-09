@@ -108,8 +108,8 @@ export default function RegisterManual() {
                 </div>
 
                 {/* Submit Button */}
-                <PrimaryButton className="w-full mt-4" disabled={processing}>
-                    {processing ? t('Inscription...') : t("S'inscrire")}
+                <PrimaryButton className="w-full mt-4" disabled={processing} processing={processing}>
+                    {t("S'inscrire")}
                 </PrimaryButton>
             </form>
 

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Head, Link, router } from '@inertiajs/react';
-import Header from '@/Components/Header';
-import Footer from '@/Components/Footer';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import useTranslation from '@/Hooks/useTranslation';
 import { motion } from 'framer-motion';
 
@@ -21,14 +20,17 @@ export default function Index({ notifications }) {
     };
 
     return (
-        <div className="min-h-screen bg-oflem-cream font-sans">
+        <AuthenticatedLayout
+            header={t('Notifications')}
+            maxWidth="max-w-4xl"
+            showFooter={true}
+        >
             <Head title={t('Notifications')} />
-            <Header />
 
-            <main className="max-w-4xl mx-auto py-16 px-6">
+            <div className="py-16">
                 <div className="flex items-center justify-between mb-12">
                     <div>
-                        <h1 className="text-4xl font-black text-oflem-charcoal mb-2">{t('Notifications')}</h1>
+                        <h2 className="text-3xl font-black text-oflem-charcoal mb-2">{t('Notifications')}</h2>
                         <p className="text-gray-muted font-bold">{t('Stay updated on your missions and offers.')}</p>
                     </div>
                     
@@ -127,9 +129,7 @@ export default function Index({ notifications }) {
                         ))}
                     </div>
                 )}
-            </main>
-
-            <Footer />
-        </div>
+            </div>
+        </AuthenticatedLayout>
     );
 }

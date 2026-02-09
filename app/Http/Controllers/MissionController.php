@@ -123,7 +123,7 @@ class MissionController extends Controller
             'lat' => 'nullable|numeric|between:-90,90',
             'lng' => 'nullable|numeric|between:-180,180',
             'exact_address' => 'nullable|string|max:500',
-            'date_time' => 'nullable|date',
+            'date_time' => 'nullable|date|after_or_equal:now',
             'budget' => 'nullable|numeric|min:10',
             'price_type' => 'required|in:fixed,open',
             'additional_details' => 'nullable|string',
@@ -402,6 +402,110 @@ class MissionController extends Controller
         ]);
     }
 
+    public function edit(Mission $mission)
+    {
+        // Verify user is mission owner
+        if (Auth::id() !== $mission->user_id) {
+            abort(403, 'You can only edit your own missions.');
+        }
+
+        // Only allow editing if mission is still open
+        if ($mission->status !== Mission::STATUS_OUVERTE) {
+            return redirect()->route('missions.show', $mission->id)
+                ->withErrors(['mission' => 'You can only edit missions that are still open.']);
+        }
+
+        return Inertia::render('Missions/Edit', [
+            'mission' => $mission,
+        ]);
+    }
+
+    public function update(Request $request, Mission $mission)
+    {
+        // Verify user is mission owner
+        if (Auth::id() !== $mission->user_id) {
+            abort(403, 'You can only edit your own missions.');
+        }
+
+        // Only allow editing if mission is still open
+        if ($mission->status !== Mission::STATUS_OUVERTE) {
+            return back()->withErrors(['mission' => 'You can only edit missions that are still open.']);
+        }
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'budget' => 'nullable|numeric|min:10',
+            'date_time' => 'nullable|date|after_or_equal:now',
+            'category' => 'nullable|string|max:100',
+        ]);
+
+        // Run moderation checks on updated content
+        $content = $validated['title'] . ' ' . ($validated['description'] ?? '');
+        
+        if (!$this->moderationService->isCleanFast($content)) {
+            return back()->withErrors(['title' => 'Content violates keyword moderation rules.']);
+        }
+
+        if (!$this->moderationService->isCleanAI($content)['is_clean']) {
+            return back()->withErrors(['title' => 'Content violates our professional standards.']);
+        }
+
+        $mission->update($validated);
+
+        return redirect()->route('missions.show', $mission->id)
+            ->with('success', 'Mission updated successfully!');
+    }
+
+    public function updateStatus(Request $request, Mission $mission)
+    {
+        // Verify user is mission owner
+        if (Auth::id() !== $mission->user_id) {
+            abort(403, 'You can only update the status of your own missions.');
+        }
+
+        $request->validate([
+            'status' => 'required|string|in:OUVERTE,ANNULEE',
+        ]);
+
+        $newStatus = $request->status;
+        $currentStatus = $mission->status;
+
+        // Define allowed status transitions for mission owners
+        $allowedTransitions = [
+            Mission::STATUS_OUVERTE => [Mission::STATUS_ANNULEE],
+            Mission::STATUS_EN_NEGOCIATION => [Mission::STATUS_OUVERTE, Mission::STATUS_ANNULEE],
+            Mission::STATUS_VERROUILLEE => [Mission::STATUS_OUVERTE, Mission::STATUS_ANNULEE],
+        ];
+
+        // Check if transition is allowed
+        if (!isset($allowedTransitions[$currentStatus]) || 
+            !in_array($newStatus, $allowedTransitions[$currentStatus])) {
+            return back()->withErrors([
+                'status' => 'Cannot change status from ' . $currentStatus . ' to ' . $newStatus
+            ]);
+        }
+
+        // Special handling for reopening missions
+        if ($newStatus === Mission::STATUS_OUVERTE && $currentStatus !== Mission::STATUS_OUVERTE) {
+            // Clear assignment when reopening
+            $mission->assigned_user_id = null;
+            
+            // Reject all pending offers
+            $mission->offers()->where('status', 'pending')->update(['status' => 'rejected']);
+        }
+
+        // Store old status before transition
+        $oldStatus = $mission->status;
+        
+        $mission->transitionTo($newStatus);
+
+        // Broadcast status update event with both mission and old status
+        event(new \App\Events\MissionStatusUpdated($mission, $oldStatus));
+
+        return back()->with('success', 'Mission status updated successfully!');
+    }
+
     public function submitOffer(Request $request, Mission $mission)
     {
         $request->validate([
@@ -447,6 +551,16 @@ class MissionController extends Controller
 
     public function askQuestion(Request $request, Mission $mission)
     {
+        // Only Motivés (performers) can ask questions, not mission owners
+        if (Auth::id() === $mission->user_id) {
+            return back()->withErrors(['question' => 'Mission owners cannot ask questions on their own missions.']);
+        }
+
+        // Ensure user is a performer
+        if (!Auth::user()->isPerformer()) {
+            return back()->withErrors(['question' => 'Only performers can ask questions about missions.']);
+        }
+
         $request->validate([
             'question' => 'required|string',
         ]);
@@ -824,21 +938,21 @@ class MissionController extends Controller
         $participantIds = [Auth::id(), $helper->id];
         sort($participantIds); // Ensure consistent ordering
 
-        // We search for a chat with these specific participants for this mission
-        $chat = Chat::where('mission_id', $mission->id)
-            ->whereJsonContains('participant_ids', Auth::id())
-            ->whereJsonContains('participant_ids', $helper->id)
-            ->first();
-
-        if (!$chat) {
-            $chat = Chat::create([
+        // Use firstOrCreate to avoid duplicate chat creation
+        // The unique constraint is on mission_id, so we use that as the search criteria
+        $chat = Chat::firstOrCreate(
+            [
                 'mission_id' => $mission->id,
+            ],
+            [
                 'participant_ids' => $participantIds,
                 'status' => 'active',
                 'last_message_at' => now(),
-            ]);
+            ]
+        );
 
-            // Add an initial system message
+        // Add an initial system message only if chat was just created
+        if ($chat->wasRecentlyCreated) {
             $chat->messages()->create([
                 'user_id' => null, // System
                 'content' => 'Conversation started regarding mission: ' . $mission->title,
@@ -889,5 +1003,121 @@ class MissionController extends Controller
         );
 
         return back()->with('success', 'Review submitted successfully!');
+    }
+
+    public function getNearbyMotives(Mission $mission)
+    {
+        // Only mission owner can view nearby Motivés
+        if (Auth::id() !== $mission->user_id) {
+            abort(403, 'Only the mission owner can view nearby helpers.');
+        }
+
+        // Extract mission requirements for matching
+        $requirements = [];
+        if ($mission->additional_details) {
+            // Try to extract [REQUIREMENTS] from additional_details
+            if (preg_match('/\[REQUIREMENTS\](.*?)\[\/REQUIREMENTS\]/s', $mission->additional_details, $matches)) {
+                $requirements = json_decode($matches[1], true) ?? [];
+            }
+        }
+
+        // Get nearby Motivés using matchmaking service
+        $nearbyMotives = $this->matchmakingService->findMatches(
+            $requirements,
+            20, // Get up to 20 nearby helpers
+            [
+                'lat' => $mission->lat,
+                'lng' => $mission->lng,
+                'radius' => 50 // 50km radius
+            ]
+        );
+
+        // Filter out mission owner and load additional data
+        $nearbyMotives = $nearbyMotives->filter(function($user) use ($mission) {
+            return $user->id !== $mission->user_id;
+        })->map(function($user) use ($mission) {
+            // Calculate distance
+            if ($mission->lat && $mission->lng && $user->location_lat && $user->location_lng) {
+                $user->distance_km = $this->calculateDistance(
+                    $mission->lat,
+                    $mission->lng,
+                    $user->location_lat,
+                    $user->location_lng
+                );
+            } else {
+                $user->distance_km = null;
+            }
+            
+            // Fix profile photo URL
+            if ($user->profile_photo) {
+                $user->profile_photo_url = '/storage/' . $user->profile_photo;
+            } else {
+                $user->profile_photo_url = null;
+            }
+            
+            return $user;
+        })->values();
+
+        return response()->json([
+            'nearby_motives' => $nearbyMotives
+        ]);
+    }
+
+    public function sendMissionToMotive(Mission $mission, User $motive)
+    {
+        // Only mission owner can send mission
+        if (Auth::id() !== $mission->user_id) {
+            abort(403, 'Only the mission owner can send this mission.');
+        }
+
+        // Validate motive is a performer
+        if (!$motive->isPerformer()) {
+            return back()->withErrors(['motive' => 'This user is not a registered helper.']);
+        }
+
+        // Create notification for the Motivé
+        $motive->notify(new \App\Notifications\MissionInvitationNotification($mission, Auth::user()));
+
+        // Create or get chat
+        $participantIds = [Auth::id(), $motive->id];
+        sort($participantIds);
+
+        $chat = Chat::firstOrCreate(
+            ['mission_id' => $mission->id],
+            [
+                'participant_ids' => $participantIds,
+                'status' => 'active',
+                'last_message_at' => now(),
+            ]
+        );
+
+        // Add system message if chat was just created
+        if ($chat->wasRecentlyCreated) {
+            $chat->messages()->create([
+                'user_id' => null,
+                'content' => Auth::user()->name . ' has invited you to this mission: ' . $mission->title,
+                'is_system_message' => true,
+            ]);
+        }
+
+        return back()->with('success', 'Mission sent to ' . $motive->name . ' successfully!');
+    }
+
+    // Helper function to calculate distance between two coordinates
+    private function calculateDistance($lat1, $lon1, $lat2, $lon2)
+    {
+        $earthRadius = 6371; // km
+
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLon = deg2rad($lon2 - $lon1);
+
+        $a = sin($dLat/2) * sin($dLat/2) +
+             cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
+             sin($dLon/2) * sin($dLon/2);
+
+        $c = 2 * atan2(sqrt($a), sqrt(1-$a));
+        $distance = $earthRadius * $c;
+
+        return round($distance, 1);
     }
 }

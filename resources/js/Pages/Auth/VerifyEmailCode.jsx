@@ -3,11 +3,13 @@ import AuthSplitLayout from '@/Layouts/AuthSplitLayout';
 import { Head, useForm, router } from '@inertiajs/react';
 import InputError from '@/Components/InputError';
 import PrimaryButton from '@/Components/PrimaryButton';
+import useTranslation from '@/Hooks/useTranslation';
 
 export default function VerifyEmailCode({ email }) {
     const [code, setCode] = useState(['', '', '', '', '', '']);
     const [timeLeft, setTimeLeft] = useState(30);
     const [canResend, setCanResend] = useState(false);
+    const { t } = useTranslation();
 
     const { setData, processing, errors } = useForm({
         email: email,
@@ -61,6 +63,32 @@ export default function VerifyEmailCode({ email }) {
         }
     };
 
+    const handlePaste = (e) => {
+        e.preventDefault();
+        const pastedData = e.clipboardData.getData('text').slice(0, 6);
+        if (!/^\d+$/.test(pastedData)) return;
+
+        const newCode = [...code];
+        pastedData.split('').forEach((char, index) => {
+            if (index < 6) newCode[index] = char;
+        });
+        setCode(newCode);
+
+        // Auto-submit if we have 6 digits
+        if (pastedData.length === 6) {
+            setData('code', pastedData);
+            setTimeout(() => {
+                handleSubmit(pastedData);
+            }, 100);
+        } else {
+            // Focus the next empty input
+            const nextIndex = pastedData.length;
+            if (nextIndex < 6) {
+                document.getElementById(`code-${nextIndex}`)?.focus();
+            }
+        }
+    };
+
     const handleSubmit = (codeValue = null) => {
         const finalCode = codeValue || code.join('');
         router.post(route('auth.verify-email-code.store'), {
@@ -83,14 +111,14 @@ export default function VerifyEmailCode({ email }) {
             heroImage="/images/illustrations/verify-email.svg"
             bgAccentClass="bg-cream-accent"
         >
-            <Head title="Vérifier l'email" />
+            <Head title={t("Vérifier l'email")} />
 
             <div className="text-center mb-8">
                 <h1 className="text-[32px] lg:text-[40px] font-serif font-bold text-primary-black tracking-tight mb-3 leading-tight">
-                    Vérifiez votre email
+                    {t("Vérifiez votre email")}
                 </h1>
                 <p className="text-gray-muted text-base font-medium">
-                    Nous avons envoyé un code à <span className="font-bold text-primary-black">{email}</span>
+                    {t("Nous avons envoyé un code à ")}<span className="font-bold text-primary-black">{email}</span>
                 </p>
             </div>
 
@@ -108,6 +136,7 @@ export default function VerifyEmailCode({ email }) {
                                 value={digit}
                                 onChange={(e) => handleCodeChange(index, e.target.value)}
                                 onKeyDown={(e) => handleKeyDown(index, e)}
+                                onPaste={handlePaste}
                                 className="
                                     w-12 h-14 lg:w-14 lg:h-16
                                     text-center text-2xl font-bold
@@ -132,11 +161,11 @@ export default function VerifyEmailCode({ email }) {
                             disabled={resending}
                             className="text-sm font-bold text-gold-accent hover:underline disabled:opacity-50"
                         >
-                            {resending ? 'Envoi...' : 'Renvoyer le code'}
+                            {resending ? t('Envoi...') : t('Renvoyer le code')}
                         </button>
                     ) : (
                         <p className="text-sm text-gray-muted font-medium">
-                            Renvoyer le code dans <span className="font-bold text-primary-black">{timeLeft}s</span>
+                            {t("Renvoyer le code dans ")}<span className="font-bold text-primary-black">{timeLeft}s</span>
                         </p>
                     )}
                 </div>
@@ -145,14 +174,15 @@ export default function VerifyEmailCode({ email }) {
                 <PrimaryButton 
                     className="w-full" 
                     disabled={processing || code.join('').length !== 6}
+                    processing={processing}
                 >
-                    {processing ? 'Vérification...' : 'Vérifier'}
+                    {t('Vérifier')}
                 </PrimaryButton>
             </form>
 
             <div className="mt-6 p-4 bg-gold-accent/5 rounded-[24px] border border-gold-accent/20">
                 <p className="text-xs text-gray-muted text-center">
-                    Le code expirera dans <span className="font-bold text-primary-black">10 minutes</span>
+                    {t("Le code expirera dans ")}<span className="font-bold text-primary-black">{t("10 minutes")}</span>
                 </p>
             </div>
         </AuthSplitLayout>

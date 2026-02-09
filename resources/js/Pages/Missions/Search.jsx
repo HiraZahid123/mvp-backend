@@ -52,10 +52,14 @@ export default function Search() {
     };
 
     return (
-        <AuthenticatedLayout header={t('Post a Mission')}>
+        <AuthenticatedLayout 
+            header={t('Post a Mission')}
+            maxWidth="max-w-4xl"
+            showFooter={true}
+        >
             <Head title={t('Search Mission')} />
 
-            <div className="max-w-4xl mx-auto py-20 px-6 text-center">
+            <div className="py-20 text-center">
                 <h1 className="text-4xl md:text-5xl font-black text-primary-black tracking-tight leading-tight mb-6">
                     {t('What can we')} <span className="text-gold-accent">{t('do for you?')}</span>
                 </h1>

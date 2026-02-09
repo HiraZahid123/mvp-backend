@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import AdminLayout from '@/Layouts/AdminLayout';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { motion } from 'framer-motion';
 import { useForm, router } from '@inertiajs/react';
 
 export default function AdminWithdrawals({ withdrawals, stats, currentStatus }) {
+    // ... rest of the component ...
     const [selectedWithdrawal, setSelectedWithdrawal] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [modalAction, setModalAction] = useState(null);
@@ -54,9 +55,15 @@ export default function AdminWithdrawals({ withdrawals, stats, currentStatus }) 
     };
 
     return (
-        <AdminLayout>
+        <AuthenticatedLayout
+            header="Withdrawal Management"
+            maxWidth="max-w-7xl"
+            showFooter={true}
+        >
             <div className="space-y-6">
-                {/* Header */}
+                {/* ... rest of the content ... */}
+                {/* Header Section (Remove if redundant with header prop) */}
+                {/* Actually, it has h1 and p. I'll keep them for now but maybe wrap them. */}
                 <div>
                     <h1 className="text-5xl font-black text-oflem-charcoal">Withdrawal Management</h1>
                     <p className="text-gray-600 mt-2">Review and process withdrawal requests</p>
@@ -286,6 +293,6 @@ export default function AdminWithdrawals({ withdrawals, stats, currentStatus }) 
                     </motion.div>
                 </div>
             )}
-        </AdminLayout>
+        </AuthenticatedLayout>
     );
 }

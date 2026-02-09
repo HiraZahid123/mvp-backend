@@ -3,6 +3,7 @@ import AuthSplitLayout from '@/Layouts/AuthSplitLayout';
 import { Head, useForm } from '@inertiajs/react';
 import RoleCard from '@/Components/RoleCard';
 import PrimaryButton from '@/Components/PrimaryButton';
+import BackButton from '@/Components/BackButton';
 import useTranslation from '@/Hooks/useTranslation';
 
 export default function MoodOfTheDay({ user, currentRole }) {
@@ -50,6 +51,12 @@ export default function MoodOfTheDay({ user, currentRole }) {
             bgAccentClass="bg-cream-accent"
         >
             <Head title={t("Mood of the Day")} />
+            
+            <div className="flex items-center mb-8">
+                <BackButton href="/" className="text-sm">
+                    {t('Back')}
+                </BackButton>
+            </div>
 
             <div className="text-center mb-8">
                 <h1 className="text-[32px] lg:text-[40px] font-serif font-bold text-primary-black tracking-tight mb-3 leading-tight">
@@ -79,8 +86,9 @@ export default function MoodOfTheDay({ user, currentRole }) {
                 <PrimaryButton 
                     className="w-full mt-6" 
                     disabled={processing || !selectedRole}
+                    processing={processing}
                 >
-                    {processing ? t('Chargement...') : t('C\'est parti !')}
+                    {t('C\'est parti !')}
                 </PrimaryButton>
             </form>
 

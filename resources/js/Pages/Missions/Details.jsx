@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Head, useForm, usePage, Link, router } from '@inertiajs/react';
 import useTranslation from '@/Hooks/useTranslation';
-import Header from '@/Components/Header';
-import Footer from '@/Components/Footer';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import TextInput from '@/Components/TextInput';
 import InputLabel from '@/Components/InputLabel';
 import InputError from '@/Components/InputError';
@@ -10,6 +9,7 @@ import Modal from '@/Components/Modal';
 import DisputeButton from '@/Components/DisputeButton';
 import axios from 'axios';
 import PaymentModal from '@/Components/Payments/PaymentModal';
+import NearbyMotivesSection from '@/Components/NearbyMotivesSection';
 
 export default function Details({ mission, canSeeAddress }) {
     const { t } = useTranslation();
@@ -91,11 +91,14 @@ export default function Details({ mission, canSeeAddress }) {
     };
 
     return (
-        <div className="min-h-screen bg-oflem-cream font-sans">
-            <Head title={mission.title} />
-            <Header />
+        <AuthenticatedLayout
+            header={mission.title}
+            maxWidth="max-w-6xl"
+            showFooter={true}
+        >
+            <Head title={`${mission.title} - Oflem`} />
 
-            <main className="max-w-6xl mx-auto py-16 px-6">
+            <div className="py-16 px-6">
                 <div className="grid lg:grid-cols-3 gap-12">
                     {/* Left Column: Mission Info */}
                     <div className="lg:col-span-2 space-y-8">
@@ -108,7 +111,11 @@ export default function Details({ mission, canSeeAddress }) {
                                     <span className="px-4 py-1.5 bg-green-100 text-green-700 text-[10px] font-black uppercase tracking-widest rounded-full">
                                         🟢 {t('Open')}
                                     </span>
-                                ) : mission.status === 'EN_NEGOCIATION' || mission.status === 'VERROUILLEE' ? (
+                                ) : mission.status === 'EN_NEGOCIATION' ? (
+                                    <span className="px-4 py-1.5 bg-blue-100 text-blue-700 text-[10px] font-black uppercase tracking-widest rounded-full">
+                                        🤝 {t('In Negotiation')}
+                                    </span>
+                                ) : mission.status === 'VERROUILLEE' ? (
                                     <span className="px-4 py-1.5 bg-gold-accent text-primary-black text-[10px] font-black uppercase tracking-widest rounded-full">
                                         ✅ {t('Assigned')}
                                     </span>
@@ -320,6 +327,59 @@ export default function Details({ mission, canSeeAddress }) {
                         <div className="space-y-8">
                             {/* Mission Status / Specific Actions Section */}
                             <section className="bg-white rounded-[40px] p-8 shadow-sm border border-gray-border sticky top-8">
+                                {/* Owner Controls - Edit and Status Management */}
+                                {isOwner && mission.status === 'OUVERTE' && (
+                                    <div className="space-y-4 mb-6 pb-6 border-b border-gray-border">
+                                        <Link
+                                            href={route('missions.edit', mission.id)}
+                                            className="w-full py-4 bg-gold-accent text-primary-black font-black rounded-full hover:opacity-90 transition-all shadow-xl flex items-center justify-center gap-2"
+                                        >
+                                            ✏️ {t('Edit Mission')}
+                                        </Link>
+                                        <button
+                                            onClick={() => {
+                                                if (confirm(t('Are you sure you want to cancel this mission?'))) {
+                                                    router.post(route('missions.update-status', mission.id), { status: 'ANNULEE' });
+                                                }
+                                            }}
+                                            className="w-full py-3 bg-red-100 text-red-700 font-black rounded-full hover:bg-red-200 transition-all text-sm"
+                                        >
+                                            ❌ {t('Cancel Mission')}
+                                        </button>
+                                    </div>
+                                )}
+
+                                {/* Owner Controls - Status Management for Non-Open Missions */}
+                                {isOwner && mission.status !== 'OUVERTE' && mission.status !== 'TERMINEE' && mission.status !== 'ANNULEE' && (
+                                    <div className="space-y-4 mb-6 pb-6 border-b border-gray-border">
+                                        <p className="text-xs font-black text-gray-muted uppercase tracking-widest mb-3">{t('Mission Management')}</p>
+                                        {(mission.status === 'EN_NEGOCIATION' || mission.status === 'VERROUILLEE') && (
+                                            <>
+                                                <button
+                                                    onClick={() => {
+                                                        if (confirm(t('Reopen this mission? This will clear the current assignment.'))) {
+                                                            router.post(route('missions.update-status', mission.id), { status: 'OUVERTE' });
+                                                        }
+                                                    }}
+                                                    className="w-full py-3 bg-blue-100 text-blue-700 font-black rounded-full hover:bg-blue-200 transition-all text-sm"
+                                                >
+                                                    🔄 {t('Reopen Mission')}
+                                                </button>
+                                                <button
+                                                    onClick={() => {
+                                                        if (confirm(t('Are you sure you want to cancel this mission?'))) {
+                                                            router.post(route('missions.update-status', mission.id), { status: 'ANNULEE' });
+                                                        }
+                                                    }}
+                                                    className="w-full py-3 bg-red-100 text-red-700 font-black rounded-full hover:bg-red-200 transition-all text-sm"
+                                                >
+                                                    ❌ {t('Cancel Mission')}
+                                                </button>
+                                            </>
+                                        )}
+                                    </div>
+                                )}
+
                                 {mission.status === 'EN_NEGOCIATION' ? (
                                     <div className="text-center">
                                         <div className="text-4xl mb-4">🤝</div>
@@ -467,8 +527,8 @@ export default function Details({ mission, canSeeAddress }) {
                                         </div>
                                     </>
                                 ) : (
-                                    /* Performer/Guest Section for OUVERTE missions */
-                                    mission.status === 'OUVERTE' && (
+                                    /* Performer/Guest Section for OUVERTE missions - Only show to non-owners */
+                                    !isOwner && mission.status === 'OUVERTE' && (
                                         mission.price_type === 'fixed' ? (
                                             <div className="space-y-6">
                                                 <div className="text-center pb-6 border-b border-gray-border">
@@ -476,7 +536,11 @@ export default function Details({ mission, canSeeAddress }) {
                                                     <p className="text-4xl font-black text-primary-black">CHF {mission.budget}</p>
                                                 </div>
                                                 <button
-                                                    onClick={acceptMission}
+                                                    onClick={() => {
+                                                        if (confirm(t('Are you sure you want to accept this mission? You will be committing to complete it for the fixed price shown.'))) {
+                                                            acceptMission();
+                                                        }
+                                                    }}
                                                     className="w-full py-5 bg-primary-black text-white font-black rounded-full hover:bg-black transition-all shadow-xl text-lg"
                                                 >
                                                     ⚡ {t('Accept Instantly')}
@@ -532,9 +596,14 @@ export default function Details({ mission, canSeeAddress }) {
                             </section>
                         </div>
                 </div>
-            </main>
 
-            <Footer />
+                {/* Nearby Motivés Section - Only for Mission Owners with Open Missions */}
+                {isOwner && mission.status === 'OUVERTE' && (
+                    <div className="mt-8">
+                        <NearbyMotivesSection mission={mission} t={t} />
+                    </div>
+                )}
+            </div>
 
             <PaymentModal 
                 show={showPaymentModal}
@@ -545,7 +614,7 @@ export default function Details({ mission, canSeeAddress }) {
                     router.reload();
                 }}
             />
-        </div>
+        </AuthenticatedLayout>
     );
 }
 

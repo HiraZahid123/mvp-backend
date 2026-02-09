@@ -1,5 +1,5 @@
 import React from 'react';
-import AdminLayout from '@/Layouts/AdminLayout';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { motion } from 'framer-motion';
 import { router } from '@inertiajs/react';
 
@@ -12,7 +12,11 @@ export default function AdminMissions({ missions, stats, currentStatus }) {
     ];
 
     return (
-        <AdminLayout>
+        <AuthenticatedLayout
+            header="Mission Oversight"
+            maxWidth="max-w-7xl"
+            showFooter={true}
+        >
             <div className="space-y-6">
                 {/* Header */}
                 <div>
@@ -129,6 +133,6 @@ export default function AdminMissions({ missions, stats, currentStatus }) {
                     )}
                 </motion.div>
             </div>
-        </AdminLayout>
+        </AuthenticatedLayout>
     );
 }

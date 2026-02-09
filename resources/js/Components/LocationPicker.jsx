@@ -8,7 +8,7 @@ const libraries = ['places'];
 export default function LocationPicker({ 
     role, 
     onLocationSelect,
-    defaultMethod = 'gps',
+    defaultMethod = 'zipcode',
     defaultZipCode = '',
     defaultRadius = 10 
 }) {
@@ -133,8 +133,10 @@ export default function LocationPicker({
         setError(null);
 
         if (window.google && window.google.maps) {
-             const geocoder = new window.google.maps.Geocoder();
-             geocoder.geocode({ address: zipCode }, (results, status) => {
+             geocoder.geocode({ 
+                 address: zipCode,
+                 componentRestrictions: { country: 'FR' }
+             }, (results, status) => {
                  if (status === 'OK' && results[0]) {
                      const loc = {
                          lat: results[0].geometry.location.lat(),
@@ -194,7 +196,7 @@ export default function LocationPicker({
             </h2>
 
             {/* Method Selection */}
-            <div className="grid grid-cols-3 gap-3 lg:gap-4">
+            <div className="grid grid-cols-2 gap-3 lg:gap-4">
                 <button
                     type="button"
                     onClick={() => setMethod('gps')}
@@ -208,21 +210,6 @@ export default function LocationPicker({
                 >
                     <MapPinIcon className="w-6 h-6 lg:w-8 lg:h-8 mx-auto mb-2 text-gold-accent" />
                     <p className="text-[10px] lg:text-sm font-bold text-primary-black">{t('GPS')}</p>
-                </button>
-
-                <button
-                    type="button"
-                    onClick={() => setMethod('address')}
-                    className={`
-                        p-3 lg:p-4 rounded-[24px] border-2 transition-all duration-300
-                        ${method === 'address'
-                            ? 'border-gold-accent bg-gold-accent/10'
-                            : 'border-gray-border/50 bg-white hover:border-gold-accent/50'
-                        }
-                    `}
-                >
-                    <MagnifyingGlassIcon className="w-6 h-6 lg:w-8 lg:h-8 mx-auto mb-2 text-gold-accent" />
-                    <p className="text-[10px] lg:text-sm font-bold text-primary-black">{t('Adresse')}</p>
                 </button>
 
                 <button
@@ -263,35 +250,6 @@ export default function LocationPicker({
                 </div>
             )}
 
-            {/* Address Method */}
-            {method === 'address' && (
-                <div className="space-y-4">
-                    {isLoaded ? (
-                        <Autocomplete
-                            onLoad={onAutocompleteLoad}
-                            onPlaceChanged={onPlaceChanged}
-                        >
-                            <input
-                                type="text"
-                                placeholder={t('Saisissez votre adresse...')}
-                                className="
-                                    w-full px-4 py-3
-                                    bg-input-bg border border-gray-border/50
-                                    rounded-[24px]
-                                    text-primary-black text-base
-                                    placeholder:text-gray-muted/60
-                                    focus:outline-none focus:ring-2 focus:ring-gold-accent/30 focus:border-gold-accent
-                                    transition-all duration-200
-                                "
-                            />
-                        </Autocomplete>
-                    ) : (
-                        <div className="w-full px-4 py-3 bg-gray-100 rounded-[24px] text-center italic text-gray-400">
-                             {t('Chargement de la recherche...')}
-                        </div>
-                    )}
-                </div>
-            )}
 
             {/* Zip Code Method */}
             {method === 'zipcode' && (
@@ -300,6 +258,7 @@ export default function LocationPicker({
                         type="text"
                         value={zipCode}
                         onChange={(e) => setZipCode(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleZipCodeSubmit(e)}
                         placeholder={t('Ex: 75001')}
                         className="
                             w-full px-4 py-3

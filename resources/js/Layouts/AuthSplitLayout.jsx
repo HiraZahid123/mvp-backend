@@ -1,5 +1,5 @@
 import React from 'react';
-import LanguageSwitcher from '@/Components/LanguageSwitcher';
+
 
 export default function AuthSplitLayout({ children, heroImage, heroHeading, heroSubtext, bgAccentClass = 'bg-cream-accent' }) {
     return (
@@ -25,9 +25,7 @@ export default function AuthSplitLayout({ children, heroImage, heroHeading, hero
 
             {/* Right Side - Content (Bottom on Mobile) */}
             <div className="w-full lg:w-1/2 flex flex-col justify-center px-8 sm:px-16 lg:px-32 py-16 bg-oflem-cream relative">
-                <div className="absolute top-6 right-6">
-                    <LanguageSwitcher />
-                </div>
+
                 <div className="w-full max-w-[440px] mx-auto">
                     {children}
                 </div>

@@ -70,7 +70,7 @@ class AuthenticatedSessionController extends Controller
             return redirect()->route('admin.dashboard');
         }
 
-        return redirect()->route('auth.select-role');
+        return redirect()->intended(route('dashboard'));
     }
 
     /**

@@ -138,14 +138,7 @@ class SocialAuthController extends Controller
         }
 
         if ($authType === 'login') {
-            // Check if profile setup is needed
-            if (!$user->isProfileComplete()) {
-                if (!$user->hasSelectedRole()) {
-                    return redirect()->route('auth.select-role');
-                }
-                return redirect()->route('auth.complete-identity');
-            }
-            return redirect('/dashboard');
+            return redirect()->intended(route('dashboard'));
         } else {
             // Registration flow - go to Select Role
             return redirect()->route('auth.select-role');
