@@ -133,6 +133,7 @@ export default function LocationPicker({
         setError(null);
 
         if (window.google && window.google.maps) {
+             const geocoder = new window.google.maps.Geocoder();
              geocoder.geocode({ 
                  address: zipCode,
                  componentRestrictions: { country: 'FR' }

@@ -1,0 +1,1 @@
+import{j as l}from"./app-fvf1-USB.js";function o({value:t,className:e="",children:r,...s}){return l.jsx("label",{...s,className:"block text-sm font-semibold text-primary-black ml-4 "+e,children:t||r})}export{o as I};
