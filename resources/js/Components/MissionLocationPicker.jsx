@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { MapPinIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import useTranslation from '@/Hooks/useTranslation';
-import { GoogleMap, Marker, useLoadScript, Autocomplete } from '@react-google-maps/api';
+import { GoogleMap, useLoadScript, Autocomplete } from '@react-google-maps/api';
+import AdvancedMarker from '@/Components/AdvancedMarker';
 
 const libraries = ['places'];
 
@@ -124,6 +125,8 @@ export default function MissionLocationPicker({
                 </Autocomplete>
             </div>
 
+
+
             <div className="rounded-[24px] overflow-hidden border border-gray-border shadow-sm">
                 <GoogleMap
                     mapContainerStyle={mapContainerStyle}
@@ -133,6 +136,7 @@ export default function MissionLocationPicker({
                     options={{
                         disableDefaultUI: true,
                         zoomControl: true,
+                        mapId: import.meta.env.VITE_GOOGLE_MAPS_MAP_ID || "DEMO_MAP_ID",
                         styles: [
                             {
                                 featureType: "all",
@@ -147,7 +151,7 @@ export default function MissionLocationPicker({
                         ]
                     }}
                 >
-                    {location && <Marker position={location} animation={window.google.maps.Animation.DROP} />}
+                    {location && <AdvancedMarker position={location} />}
                 </GoogleMap>
             </div>
 

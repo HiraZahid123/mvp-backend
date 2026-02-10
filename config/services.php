@@ -69,7 +69,7 @@ return [
     ],
 
     'gemini' => [
-        'key' => env('VITE_GEMINI_API_KEY'),
+        'keys' => explode(',', env('GEMINI_API_KEYS', env('VITE_GEMINI_API_KEY', ''))),
     ],
 
     'stripe' => [

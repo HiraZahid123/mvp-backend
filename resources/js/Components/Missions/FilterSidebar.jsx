@@ -59,13 +59,13 @@ export default function FilterSidebar({ filters, onFilterChange }) {
                     {/* Radius */}
                     <div>
                         <label className="text-xs font-black uppercase tracking-widest text-gray-muted mb-3 block">
-                            Distance: {filters.radius || 10}km
+                            Distance: {filters.radius || 5}km
                         </label>
                         <input
                             type="range"
                             min="1"
                             max="50"
-                            value={filters.radius || 10}
+                            value={filters.radius || 5}
                             onChange={(e) => onFilterChange({ ...filters, radius: e.target.value })}
                             className="w-full h-2 bg-oflem-cream rounded-lg appearance-none cursor-pointer accent-oflem-terracotta"
                         />
@@ -104,7 +104,7 @@ export default function FilterSidebar({ filters, onFilterChange }) {
 
                     {/* Reset Button */}
                     <button
-                        onClick={() => onFilterChange({ radius: 10, sort_by: filters.sort_by || 'distance' })}
+                        onClick={() => onFilterChange({ radius: 5, sort_by: filters.sort_by || 'distance' })}
                         className="w-full px-6 py-3 bg-gray-100 text-oflem-charcoal rounded-2xl font-black hover:bg-gray-200 transition-colors"
                     >
                         Reset Filters

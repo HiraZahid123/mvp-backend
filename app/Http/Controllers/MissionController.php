@@ -11,6 +11,7 @@ use App\Notifications\NearbyMissionNotification;
 use App\Notifications\OfferRejectedNotification;
 use App\Events\QuestionPosted;
 use App\Events\AnswerPosted;
+use App\Jobs\ProcessMissionEnrichment;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
@@ -42,14 +43,18 @@ class MissionController extends Controller
         $aiTitle = $request->query('improved_title'); 
         
         if (!$aiTitle && !empty($prefillTitle)) {
-            $prompt = "You are an AI for Oflem, a premium Swiss help platform.
+            $prompt = "You are an AI for Oflem, a friendly Swiss help platform.
             The user has provided a raw mission title: \"{$prefillTitle}\".
             
-            Your goal is to create a more comprehensive, professional, and clear version of this title while keeping it short (max 5-8 words).
+            Your goal is to create a simple, clear, and human version of this title. Keep it very short (max 3-5 words).
+            Use casual, friendly language. NO corporate or professional jargon.
             
             Example:
             Input: \"clean my room\"
-            Output: \"Professional Room Cleaning & Tidying Service\"
+            Output: \"Help me clean my room\"
+            
+            Input: \"descendre mes ordures\"
+            Output: \"Take out my trash\"
 
             Return ONLY the improved title as a raw string.";
 
@@ -77,26 +82,34 @@ class MissionController extends Controller
 
         $draftDescription = $request->description ?? 'None';
         
-        $prompt = "You are an AI for Oflem, a premium Swiss help platform.
+        $prompt = "You are an AI for Oflem, a friendly Swiss help platform.
         
         The user has provided a mission title and potentially a draft description.
-        Your goal is to REPHRASE, EXPAND, and PROFESSIONALIZE their input into a high-quality mission description.
+        Your goal is to create a SIMPLE, HUMAN, and FRIENDLY description.
         
         Input Context:
         Title: \"{$request->title}\"
         Draft Description: \"{$draftDescription}\"
 
         Instructions:
-        1. If a draft description exists, fix its grammar, make it polite, and add necessary professional details while keeping the core intent.
-        2. If no description exists, generate a creative one based solely on the title.
-        3. The tone should be helpful, clear, and Swiss-quality professional.
-        4. For the title: Create a very short, punchy summary (Max 3-6 words).
+        1. Write 1-2 sentences MAX. Keep it super short and casual.
+        2. Use friendly, conversational tone. NO corporate or professional jargon.
+        3. Add a touch of humor if it fits naturally (optional).
+        4. Make it sound like a real person asking for help, not a business request.
+        5. For the title: Keep it very simple (Max 3-5 words).
+
+        Examples:
+        Input: \"descendre mes ordures\"
+        Output: {\"improved_title\": \"Take out my trash\", \"improved_description\": \"Need help taking my trash downstairs. The bags are more motivated than me today.\"}
+        
+        Input: \"help moving furniture\"
+        Output: {\"improved_title\": \"Move my furniture\", \"improved_description\": \"Got a couch that needs to go upstairs. It's heavy and I'm not.\"}
 
         CRITICAL INSTRUCTION: Return ONLY a raw JSON object (no markdown, no backticks).
         The JSON must strictly follow this structure:
         {
-            \"improved_title\": \"Short & Punchy Title (3-6 words)\",
-            \"improved_description\": \"The polished, professional description.\"
+            \"improved_title\": \"Short & Simple Title (3-5 words)\",
+            \"improved_description\": \"Friendly 1-2 sentence description.\"
         }";
 
         // We'll use a raw prompt call if TaskProcessingService supports it, 
@@ -131,28 +144,19 @@ class MissionController extends Controller
 
         $content = $validated['title'] . ' ' . ($validated['description'] ?? '');
 
-        // Tier 1: Fast Regex Check
+        // Tier 1: Fast Regex Check (keeps synchronous - it's fast)
         if (!$this->moderationService->isCleanFast($content)) {
             return back()->withErrors(['title' => 'Content violates keyword moderation rules.']);
         }
 
-        // Tier 2: Deep AI Check (Contextual/Semantic)
-        if (!$this->moderationService->isCleanAI($content)['is_clean']) {
-            return back()->withErrors(['title' => 'Content violates our professional standards (Contextual Check).']);
-        }
+        // Note: Removed slow AI moderation check - will be handled in background
+        // Mission creation should be fast (<2s)
 
-        $validated = $this->enrichMissionData($validated);
+        // Set default values (AI enrichment will happen in background)
+        $validated['category'] = $validated['category'] ?? 'Other';
 
-        if (empty($validated['lat']) || empty($validated['lng'])) {
-            if (!empty($validated['location'])) {
-                $geocoded = $this->geocodingService->geocode($validated['location']);
-                if ($geocoded) {
-                    $validated['lat'] = $geocoded['lat'];
-                    $validated['lng'] = $geocoded['lng'];
-                    $validated['location'] = $geocoded['address'] ?? $validated['location'];
-                }
-            }
-        }
+        // Note: Geocoding moved to background job to avoid API delays
+        // If lat/lng not provided, they'll be geocoded in background
 
         if (!Auth::check()) {
             // Save to session and signal need for auth
@@ -165,37 +169,25 @@ class MissionController extends Controller
             'status' => Mission::STATUS_OUVERTE,
         ]));
 
-        // Trigger nearby notifications for performers
-        if ($mission->lat && $mission->lng) {
-            $nearbyUsers = User::nearby($mission->lat, $mission->lng)
-                ->where('id', '!=', Auth::id()) // Don't notify the owner
-                ->get();
+        // Dispatch background job for AI enrichment, geocoding, and notifications (async)
+        ProcessMissionEnrichment::dispatch($mission);
 
-            foreach ($nearbyUsers as $nearbyUser) {
-                $nearbyUser->notify(new NearbyMissionNotification($mission));
-            }
-        }
-
-        return redirect()->route('missions.matchmaking', $mission->id)->with('success', 'Mission created successfully!');
+        return redirect()->route('missions.matchmaking', $mission->id)
+            ->with('success', 'Mission created successfully! AI analysis is processing in the background.');
     }
 
     /**
-     * Reusable logic to enrich mission data with AI analysis and requirements.
+     * Legacy method - kept for backward compatibility.
+     * AI enrichment now happens in background via ProcessMissionEnrichment job.
+     * This method is only used for guest pending missions that need immediate processing.
      */
     protected function enrichMissionData(array $data): array
     {
-        // Add AI analysis
-        $aiAnalysis = $this->taskService->analyzeTask($data['title'] . ' ' . ($data['description'] ?? ''));
-        $data['category'] = $aiAnalysis['category'] ?? 'Other';
+        // For guest users, we still need some basic enrichment
+        // Set default category if not provided
+        $data['category'] = $data['category'] ?? 'Other';
         
-        // Extract Requirements (Skills)
-        $requirements = $this->taskService->extractMissionRequirements($data['title'], $data['description'] ?? '');
-        $requirementsJson = json_encode($requirements);
-        
-        $data['additional_details'] = ($data['additional_details'] ?? '') . 
-            "\n\nAI Summary: " . ($aiAnalysis['summary'] ?? '') . 
-            "\n\n[REQUIREMENTS]{$requirementsJson}[/REQUIREMENTS]";
-
+        // Note: Full AI enrichment will happen in background after mission creation
         return $data;
     }
 
@@ -239,16 +231,40 @@ class MissionController extends Controller
         if (Auth::check() && session()->has('pending_mission')) {
             $data = session()->pull('pending_mission');
             
-            // Ensure data is enriched if it wasn't already (e.g., if logic changed)
-            if (empty($data['category']) || !str_contains($data['additional_details'] ?? '', '[REQUIREMENTS]')) {
-                $data = $this->enrichMissionData($data);
+            // Set default category if not provided
+            $data['category'] = $data['category'] ?? 'Other';
+
+            $user = Auth::user();
+
+            // Auto-set Role to Customer if missing (Mission-First Flow)
+            if (empty($user->role_type)) {
+                $user->role_type = 'customer';
+                $user->last_selected_role = 'customer';
             }
 
+            // Sync Location from Mission to Profile if Profile Location is missing
+            if (empty($user->location_lat) || empty($user->location_lng)) {
+                if (!empty($data['lat']) && !empty($data['lng'])) {
+                    $user->location_lat = $data['lat'];
+                    $user->location_lng = $data['lng'];
+                    $user->location_address = $data['location'] ?? $data['exact_address'] ?? null;
+                    // Default radius for customers
+                    $user->discovery_radius_km = 30; 
+                }
+            }
+
+            $user->save();
+
             $mission = Mission::create(array_merge($data, [
-                'user_id' => Auth::id(),
+                'user_id' => $user->id,
                 'status' => Mission::STATUS_OUVERTE,
             ]));
-            return redirect()->route('missions.matchmaking', $mission->id);
+            
+            // Dispatch background job for AI enrichment
+            ProcessMissionEnrichment::dispatch($mission);
+            
+            return redirect()->route('missions.matchmaking', $mission->id)
+                ->with('success', 'Mission created successfully! AI analysis is processing in the background.');
         }
         
         return redirect()->route('dashboard');
@@ -348,6 +364,7 @@ class MissionController extends Controller
         $sortBy = $request->query('sort_by', 'distance');
 
         $query = Mission::where('status', Mission::STATUS_OUVERTE)
+            ->where('user_id', '!=', auth()->id())
             ->filter($filters);
 
         // Geolocation filtering
@@ -395,10 +412,25 @@ class MissionController extends Controller
         
         // Hide exact address if not assigned or not owner
         $canSeeAddress = $mission->canSeeFullAddress(Auth::user());
+
+        $clientSecret = null;
+        
+        // If mission is waiting for payment confirmation from owner
+        if (Auth::id() === $mission->user_id && $mission->status === Mission::STATUS_EN_NEGOCIATION && $mission->payment_intent_id) {
+            try {
+                $pi = app(\App\Services\StripeService::class)->getPaymentIntent($mission->payment_intent_id);
+                if ($pi->status === 'requires_payment_method') {
+                    $clientSecret = $pi->client_secret;
+                }
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::warning("Could not retrieve Stripe PI for mission {$mission->id}: " . $e->getMessage());
+            }
+        }
         
         return Inertia::render('Missions/Details', [
             'mission' => $mission,
             'canSeeAddress' => $canSeeAddress,
+            'stripe_client_secret' => $clientSecret,
         ]);
     }
 
@@ -700,6 +732,11 @@ class MissionController extends Controller
             abort(403);
         }
 
+        // Prevent self-hiring via offer selection
+        if ($offer->user_id === $mission->user_id) {
+            return back()->withErrors(['mission' => 'You cannot select your own offer.']);
+        }
+
         try {
             \Illuminate\Support\Facades\DB::transaction(function () use ($mission, $offer, &$pi) {
                 $mission->transitionTo(Mission::STATUS_EN_NEGOCIATION);
@@ -756,6 +793,14 @@ class MissionController extends Controller
 
         // Wrap operations in transaction to ensure atomicity
         try {
+            // Verify payment hold is successful before confirming assignment
+            if ($mission->payment_intent_id) {
+                $isAuthorized = app(\App\Services\StripeService::class)->isAuthorized($mission->payment_intent_id);
+                if (!$isAuthorized) {
+                    return back()->withErrors(['mission' => 'Payment hold is not confirmed. Please complete the payment first.']);
+                }
+            }
+
             \Illuminate\Support\Facades\DB::transaction(function () use ($mission) {
                 $mission->transitionTo(Mission::STATUS_VERROUILLEE);
                 $mission->revealAddress();
@@ -857,11 +902,18 @@ class MissionController extends Controller
             return back()->withErrors(['mission' => 'This mission cannot be validated in its current state.']);
         }
 
+        // Release funds to performer (Stripe)
+        try {
+            app(\App\Services\StripeService::class)->releaseFunds($mission);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error("Capture failed during validation for mission {$mission->id}: " . $e->getMessage());
+            // We transition back to handle this manually or retry if needed? 
+            // For now, let's just abort validation if capture fails
+            return back()->withErrors(['mission' => 'Funds capture failed. ' . $e->getMessage()]);
+        }
+
         $mission->transitionTo(Mission::STATUS_TERMINEE);
         
-        // Release funds to performer (Stripe)
-        app(\App\Services\StripeService::class)->releaseFunds($mission);
-
         // Update Performer Virtual Balance
         $payment = \App\Models\Payment::where('mission_id', $mission->id)->first();
         if ($payment && $mission->assignedUser) {
@@ -951,6 +1003,11 @@ class MissionController extends Controller
     {
         if (Auth::id() != $mission->user_id && !Auth::user()->isAdmin()) {
             abort(403);
+        }
+
+        // Prevent self-contact
+        if ($helper->id === Auth::id()) {
+            return back()->withErrors(['helper' => 'You cannot contact yourself.']);
         }
 
         // Validate helper is actually a performer
@@ -1092,6 +1149,11 @@ class MissionController extends Controller
         // Only mission owner can send mission
         if (Auth::id() !== $mission->user_id) {
             abort(403, 'Only the mission owner can send this mission.');
+        }
+
+        // Prevent self-invitation
+        if ($motive->id === Auth::id()) {
+            return back()->withErrors(['motive' => 'You cannot send a mission invitation to yourself.']);
         }
 
         // Validate motive is a performer

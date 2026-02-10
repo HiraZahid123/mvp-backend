@@ -74,7 +74,7 @@ export default function RegistrationSuccess({ user }) {
                         </div>
                         <div className="flex gap-4">
                             <div className="w-8 h-8 rounded-full bg-oflem-cream flex items-center justify-center text-xs font-black">2</div>
-                            <p className="text-sm font-bold text-oflem-charcoal">{userRole === 'performer' ? t('Configure your discovery radius (currently 10km).') : t('Wait for the "Motivés" to send you their offers.')}</p>
+                            <p className="text-sm font-bold text-oflem-charcoal">{userRole === 'performer' ? t('Configure your discovery radius (currently 5km).') : t('Wait for the "Motivés" to send you their offers.')}</p>
                         </div>
                     </div>
                 </div>

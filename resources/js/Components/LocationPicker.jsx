@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { MapPinIcon, MapIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import useTranslation from '@/Hooks/useTranslation';
-import { GoogleMap, Marker, Circle, useLoadScript, Autocomplete } from '@react-google-maps/api';
+import { GoogleMap, Circle, useLoadScript, Autocomplete } from '@react-google-maps/api';
+import AdvancedMarker from '@/Components/AdvancedMarker';
 
 const libraries = ['places'];
 
@@ -10,7 +11,7 @@ export default function LocationPicker({
     onLocationSelect,
     defaultMethod = 'zipcode',
     defaultZipCode = '',
-    defaultRadius = 10 
+    defaultRadius = 5 
 }) {
     const { t } = useTranslation();
     const [method, setMethod] = useState(defaultMethod);
@@ -325,6 +326,7 @@ export default function LocationPicker({
                                 options={{
                                     disableDefaultUI: true,
                                     zoomControl: false,
+                                    mapId: import.meta.env.VITE_GOOGLE_MAPS_MAP_ID || "DEMO_MAP_ID", // Required for AdvancedMarker
                                     styles: [
                                         {
                                             featureType: "all",
@@ -336,7 +338,7 @@ export default function LocationPicker({
                             >
                                 {selectedLocation && (
                                     <>
-                                        <Marker 
+                                        <AdvancedMarker 
                                             position={selectedLocation} 
                                             draggable={true}
                                             onDragEnd={handleMapClick}

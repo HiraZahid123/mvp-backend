@@ -24,6 +24,16 @@ export default function Dashboard({ missions }) { // Receive missions prop
     }, [chatWith, missionId]);
 
     const renderDashboardContent = () => {
+        const activeRole = user.last_selected_role || user.role_type;
+        
+        // If the active role is specifically set, use that dashboard
+        if (activeRole === 'customer') {
+            return <CustomerDashboard user={user} missions={missions} t={t} />;
+        } else if (activeRole === 'performer') {
+            return <PerformerDashboard user={user} t={t} />;
+        }
+
+        // Fallback to BothDashboard if role_type is both and no last_selected_role is set
         switch (user.role_type) {
             case 'customer':
                 return <CustomerDashboard user={user} missions={missions} t={t} />;

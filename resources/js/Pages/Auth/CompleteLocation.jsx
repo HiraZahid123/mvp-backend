@@ -17,7 +17,7 @@ export default function CompleteLocation({ user, role }) {
         location_lng: null,
         zip_code: null,
         location_address: null,
-        discovery_radius_km: 10,
+        discovery_radius_km: 5,
     });
 
     const handleLocationSelect = useCallback((locData) => {
@@ -51,7 +51,7 @@ export default function CompleteLocation({ user, role }) {
                 <LocationPicker
                     role={role || user?.role_type}
                     onLocationSelect={handleLocationSelect}
-                    defaultRadius={10}
+                    defaultRadius={5}
                 />
 
                 {errors.location_lat && <InputError message={errors.location_lat} />}

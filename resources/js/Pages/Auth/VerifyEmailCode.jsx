@@ -11,7 +11,7 @@ export default function VerifyEmailCode({ email }) {
     const [canResend, setCanResend] = useState(false);
     const { t } = useTranslation();
 
-    const { setData, processing, errors } = useForm({
+    const { data: formData, setData, post, processing, errors } = useForm({
         email: email,
         code: '',
     });
@@ -51,9 +51,8 @@ export default function VerifyEmailCode({ email }) {
         const fullCode = newCode.join('');
         if (fullCode.length === 6) {
             setData('code', fullCode);
-            setTimeout(() => {
-                handleSubmit(fullCode);
-            }, 100);
+            // Submit immediately when 6 digits are reached
+            handleSubmit(fullCode);
         }
     };
 
@@ -77,9 +76,7 @@ export default function VerifyEmailCode({ email }) {
         // Auto-submit if we have 6 digits
         if (pastedData.length === 6) {
             setData('code', pastedData);
-            setTimeout(() => {
-                handleSubmit(pastedData);
-            }, 100);
+            handleSubmit(pastedData);
         } else {
             // Focus the next empty input
             const nextIndex = pastedData.length;
@@ -91,9 +88,20 @@ export default function VerifyEmailCode({ email }) {
 
     const handleSubmit = (codeValue = null) => {
         const finalCode = codeValue || code.join('');
+        if (finalCode.length !== 6) return;
+
+        // Use router.post directly to avoid async state issues
         router.post(route('auth.verify-email-code.store'), {
             email: email,
             code: finalCode,
+        }, {
+            preserveState: false,
+            onSuccess: () => {
+                // Success redirect handled by Inertia
+            },
+            onError: (errors) => {
+                console.error('Verification failed:', errors);
+            },
         });
     };
 

@@ -85,13 +85,13 @@ export default function FilterDrawer({ filters, onFilterChange, isOpen, onClose 
                     {/* Radius */}
                     <div>
                         <label className="text-xs font-black uppercase tracking-widest text-gray-muted mb-3 block">
-                            Distance: {localFilters.radius || 10}km
+                            Distance: {localFilters.radius || 5}km
                         </label>
                         <input
                             type="range"
                             min="1"
                             max="50"
-                            value={localFilters.radius || 10}
+                            value={localFilters.radius || 5}
                             onChange={(e) => setLocalFilters({ ...localFilters, radius: e.target.value })}
                             className="w-full h-2 bg-oflem-cream rounded-lg appearance-none cursor-pointer accent-oflem-terracotta"
                         />
@@ -133,8 +133,8 @@ export default function FilterDrawer({ filters, onFilterChange, isOpen, onClose 
                 <div className="sticky bottom-0 bg-white border-t border-gray-100 p-6 flex gap-4">
                     <button
                         onClick={() => {
-                            setLocalFilters({ radius: 10, sort_by: 'distance' });
-                            onFilterChange({ radius: 10, sort_by: 'distance' });
+                            setLocalFilters({ radius: 5, sort_by: 'distance' });
+                            onFilterChange({ radius: 5, sort_by: 'distance' });
                             onClose();
                         }}
                         className="flex-1 px-6 py-4 bg-gray-100 text-oflem-charcoal rounded-2xl font-black hover:bg-gray-200 transition-colors"

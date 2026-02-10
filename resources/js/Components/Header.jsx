@@ -169,9 +169,25 @@ export default function Header() {
                                             </div>
                                         </div>
                                         <Dropdown.Link href={route('profile.edit')}>👤 {t('Profile Settings')}</Dropdown.Link>
-                                        {auth.user.role_type === 'both' && !isAdminRoute && (
-                                            <Dropdown.Link href={route('auth.select-role')} className="text-oflem-charcoal">🔄 {t('Switch Role')}</Dropdown.Link>
+                                        
+                                        {!isAdminRoute && (
+                                            userRole === 'performer' ? (
+                                                <button 
+                                                    onClick={() => router.post(route('role.switch'), { role: 'customer' })}
+                                                    className="block w-full px-4 py-2 text-left text-sm font-black text-oflem-charcoal hover:bg-oflem-cream transition-colors"
+                                                >
+                                                    🔄 {t('Switch to Flemmard')}
+                                                </button>
+                                            ) : (
+                                                <button 
+                                                    onClick={() => router.post(route('role.switch'), { role: 'performer' })}
+                                                    className="block w-full px-4 py-2 text-left text-sm font-black text-oflem-charcoal hover:bg-oflem-cream transition-colors"
+                                                >
+                                                    🔄 {t('Switch to Motivé')}
+                                                </button>
+                                            )
                                         )}
+
                                         <div className="border-t border-gray-border my-1"></div>
                                         <Dropdown.Link href={route('logout')} method="post" as="button" className="text-red-600">🚪 {t('Sign Out')}</Dropdown.Link>
                                     </Dropdown.Content>

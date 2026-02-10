@@ -8,64 +8,73 @@ use Illuminate\Support\Facades\Cache;
 
 class TaskProcessingService
 {
-    protected $apiKey;
+    protected $apiKeys = [];
     protected $baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent';
 
     public function __construct()
     {
-        $this->apiKey = config('services.gemini.key', env('VITE_GEMINI_API_KEY'));
+        $this->apiKeys = config('services.gemini.keys', []);
+        
+        // Remove empty keys
+        $this->apiKeys = array_filter($this->apiKeys);
+        
+        if (empty($this->apiKeys)) {
+            Log::warning('Gemini API keys are missing. Using VITE_GEMINI_API_KEY if available.');
+            $fallback = env('VITE_GEMINI_API_KEY');
+            if ($fallback) {
+                $this->apiKeys[] = $fallback;
+            }
+        }
     }
 
     public function generateContent(string $prompt)
     {
-        if (empty($this->apiKey)) {
-            Log::warning('Gemini API key is missing.');
+        if (empty($this->apiKeys)) {
+            Log::error('No Gemini API keys found.');
             return [];
         }
 
         $cacheKey = 'gemini_' . md5($prompt);
 
         return Cache::remember($cacheKey, now()->addHours(24), function () use ($prompt) {
-            try {
-                $response = Http::withHeaders([
-                    'Content-Type' => 'application/json',
-                ])->timeout(10)->post("{$this->baseUrl}?key={$this->apiKey}", [
-                    'contents' => [
-                        [
-                            'parts' => [
-                                ['text' => $prompt]
+            foreach ($this->apiKeys as $index => $key) {
+                try {
+                    $response = Http::withHeaders([
+                        'Content-Type' => 'application/json',
+                    ])->timeout(30)->post("{$this->baseUrl}?key={$key}", [
+                        'contents' => [
+                            [
+                                'parts' => [
+                                    ['text' => $prompt]
+                                ]
                             ]
                         ]
-                    ]
-                ]);
+                    ]);
 
-                if ($response->successful()) {
-                    $data = $response->json();
-                    $textValues = $data['candidates'][0]['content']['parts'][0]['text'] ?? '{}';
-                    
-                    // Log raw response for debugging
-                    Log::info('Raw Gemini Response: ' . $textValues);
+                    if ($response->successful()) {
+                        $data = $response->json();
+                        $textValues = $data['candidates'][0]['content']['parts'][0]['text'] ?? '{}';
+                        
+                        Log::info("Raw Gemini Response (Key #$index): " . $textValues);
 
-                    // Robust JSON Extraction: 
-                    if (preg_match('/\{(?:[^{}]|(?R))*\}/s', $textValues, $matches)) {
-                        $jsonContent = $matches[0];
-                        return json_decode(trim($jsonContent), true);
+                        if (preg_match('/\{(?:[^{}]|(?R))*\}/s', $textValues, $matches)) {
+                            return json_decode(trim($matches[0]), true);
+                        }
+
+                        $textValues = str_replace(['```json', '```'], '', $textValues);
+                        return json_decode(trim($textValues), true);
                     }
 
-                    // Fallback for simple string replacement if regex fails
-                    $textValues = str_replace(['```json', '```'], '', $textValues);
-                    return json_decode(trim($textValues), true);
-                } else {
-                    Log::error('Gemini API Error (' . $response->status() . '): ' . $response->body());
-                    return [];
+                    Log::warning("Gemini API Key #$index failed (" . $response->status() . "). Retrying with next key if available...");
+                    
+                } catch (\Exception $e) {
+                    Log::error("Gemini API Key #$index Exception: " . $e->getMessage());
+                    // Continue to next key
                 }
-            } catch (\Illuminate\Http\Client\ConnectionException $e) {
-                Log::error('Gemini Timeout/Connection Exception: ' . $e->getMessage());
-                return [];
-            } catch (\Exception $e) {
-                Log::error('Gemini General Exception: ' . $e->getMessage());
-                return [];
             }
+
+            Log::error('All Gemini API keys failed.');
+            return [];
         });
     }
 

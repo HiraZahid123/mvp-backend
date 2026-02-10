@@ -6,6 +6,7 @@ use App\Models\Mission;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Notification;
 
 class DisputeInitiatedNotification extends Notification
@@ -21,7 +22,7 @@ class DisputeInitiatedNotification extends Notification
 
     public function via($notifiable)
     {
-        return ['database', 'mail'];
+        return ['database', 'mail', 'broadcast'];
     }
 
     public function toMail($notifiable)
@@ -48,5 +49,15 @@ class DisputeInitiatedNotification extends Notification
             'type' => 'dispute_initiated',
             'message' => 'New dispute requires admin review.',
         ];
+    }
+
+    /**
+     * Get the broadcastable representation of the notification.
+     */
+    public function toBroadcast($notifiable): BroadcastMessage
+    {
+        return new BroadcastMessage([
+            'data' => $this->toArray($notifiable),
+        ]);
     }
 }

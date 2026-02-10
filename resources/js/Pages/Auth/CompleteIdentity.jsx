@@ -12,7 +12,7 @@ export default function CompleteIdentity({ user }) {
     const [photoFile, setPhotoFile] = useState(null);
 
     const { data, setData, post, processing, errors } = useForm({
-        username: user?.username || '',
+        username: user?.username || user?.name || '',
         profile_photo: null,
     });
 
@@ -43,11 +43,11 @@ export default function CompleteIdentity({ user }) {
 
             <div className="text-center mb-8">
                 <h1 className="text-[32px] lg:text-[40px] font-serif font-bold text-primary-black tracking-tight mb-3 leading-tight">
-                    Enchanté !<br />Comment doit-on vous appeler ?
+                    Enchanté !<br />Presque prêt...
                 </h1>
                 <p className="text-gray-muted text-base font-medium px-4">
-                    Pseudo autorisé pour les discrets.<br />
-                    Une photo multiplie les opportunités, mais c'est vous qui décidez.
+                    Ajoutez une photo et personnalisez votre pseudo si vous le souhaitez.<br />
+                    Sinon, on utilisera votre nom.
                 </p>
             </div>
 
@@ -64,15 +64,14 @@ export default function CompleteIdentity({ user }) {
 
                 {/* Username/Display Name */}
                 <div className="space-y-1.5">
-                    <InputLabel htmlFor="username" value="Nom d'affichage" className="text-center lg:text-left" />
+                    <InputLabel htmlFor="username" value="Nom d'affichage (optionnel)" className="text-center lg:text-left" />
                     <TextInput
                         id="username"
                         type="text"
                         value={data.username}
                         onChange={(e) => setData('username', e.target.value)}
-                        placeholder="Comment voulez-vous être appelé ?"
+                        placeholder="Laissez vide pour utiliser votre nom"
                         autoComplete="nickname"
-                        required
                     />
                     <InputError message={errors.username} />
                 </div>
@@ -80,7 +79,7 @@ export default function CompleteIdentity({ user }) {
                 {/* Submit Button */}
                 <PrimaryButton 
                     className="w-full" 
-                    disabled={processing || !data.username}
+                    disabled={processing}
                     processing={processing}
                 >
                     Continuer

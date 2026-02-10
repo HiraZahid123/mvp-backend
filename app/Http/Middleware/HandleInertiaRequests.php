@@ -57,6 +57,8 @@ class HandleInertiaRequests extends Middleware
                 'requires_auth' => fn () => $request->session()->get('requires_auth'),
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),
+                'chat_id' => fn () => $request->session()->get('chat_id'),
+                'stripe_client_secret' => fn () => $request->session()->get('stripe_client_secret'),
             ],
         ];
     }

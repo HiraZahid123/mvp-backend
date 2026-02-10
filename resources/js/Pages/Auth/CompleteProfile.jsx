@@ -1,6 +1,7 @@
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import React, { useState, useCallback, useRef } from 'react';
-import { GoogleMap, Marker, Circle, useLoadScript } from '@react-google-maps/api';
+import { GoogleMap, Circle, useLoadScript } from '@react-google-maps/api';
+import AdvancedMarker from '@/Components/AdvancedMarker';
 import useTranslation from '@/Hooks/useTranslation';
 import AuthSplitLayout from '@/Layouts/AuthSplitLayout';
 import TextInput from '@/Components/TextInput';
@@ -18,7 +19,7 @@ export default function CompleteProfile() {
     const [preview, setPreview] = useState(user?.avatar || "/images/avatars/default-avatar.svg");
     const [mapCenter, setMapCenter] = useState({ lat: 40.7128, lng: -74.0060 });
     const [selectedLocation, setSelectedLocation] = useState(null);
-    const [radius, setRadius] = useState(10);
+    const [radius, setRadius] = useState(5);
 
     const { isLoaded, loadError } = useLoadScript({
         googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
@@ -230,6 +231,7 @@ export default function CompleteProfile() {
                                 options={{
                                     disableDefaultUI: true,
                                     zoomControl: false,
+                                    mapId: import.meta.env.VITE_GOOGLE_MAPS_MAP_ID || "DEMO_MAP_ID",
                                     styles: [
                                         {
                                             featureType: "all",
@@ -241,7 +243,7 @@ export default function CompleteProfile() {
                             >
                                 {selectedLocation && (
                                     <>
-                                        <Marker 
+                                        <AdvancedMarker 
                                             position={selectedLocation} 
                                             draggable={true}
                                             onDragEnd={handleMapClick}

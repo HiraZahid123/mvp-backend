@@ -47,6 +47,7 @@ class User extends Authenticatable
         'balance',
         'pending_withdrawal',
         'total_withdrawn',
+        'is_admin',
     ];
 
 
@@ -368,6 +369,7 @@ class User extends Authenticatable
 
         return $query->selectRaw("users.*, $haversine AS distance_to_point", [$lat, $lng, $lat])
             ->where('role_type', '!=', 'customer') // Only performers or both
+            ->where('is_admin', false)
             ->whereRaw("$haversine <= users.discovery_radius_km", [$lat, $lng, $lat]);
     }
 

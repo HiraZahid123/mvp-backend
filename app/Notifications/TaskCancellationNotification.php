@@ -6,6 +6,7 @@ use App\Models\Mission;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Notification;
 
 class TaskCancellationNotification extends Notification
@@ -36,6 +37,7 @@ class TaskCancellationNotification extends Notification
         
         if ($prefs->in_app_enabled && $prefs->isNotificationEnabled('mission_cancelled')) {
             $channels[] = 'database';
+            $channels[] = 'broadcast';
         }
         
         if ($prefs->email_enabled && $prefs->isNotificationEnabled('mission_cancelled')) {
@@ -74,5 +76,15 @@ class TaskCancellationNotification extends Notification
             'type' => 'mission_cancelled',
             'message' => 'Mission "' . $this->mission->title . '" has been cancelled.',
         ];
+    }
+
+    /**
+     * Get the broadcastable representation of the notification.
+     */
+    public function toBroadcast($notifiable): BroadcastMessage
+    {
+        return new BroadcastMessage([
+            'data' => $this->toArray($notifiable),
+        ]);
     }
 }

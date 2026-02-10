@@ -11,6 +11,7 @@ use App\Http\Controllers\Auth\OTPVerificationController;
 use App\Http\Controllers\Auth\ProfileCompletionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\RoleSelectionController;
+use App\Http\Controllers\Auth\RoleSwitchController;
 use App\Http\Controllers\Auth\SocialAuthController;
 use App\Http\Controllers\MissionController;
 use App\Http\Controllers\NotificationController;
@@ -133,6 +134,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/onboarding', [OnboardingController::class, 'index'])->name('onboarding.index');
     Route::post('/onboarding/analyze', [OnboardingController::class, 'analyze'])->name('onboarding.analyze');
     Route::post('/onboarding/submit', [OnboardingController::class, 'store'])->name('onboarding.store');
+
+    // Role Switching
+    Route::post('/role/switch', [RoleSwitchController::class, 'switch'])->name('role.switch');
 });
 
 /*

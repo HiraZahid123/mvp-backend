@@ -57,6 +57,20 @@ class StripeService
         
         return $paymentIntent;
     }
+    public function getPaymentIntent(string $id): \Stripe\PaymentIntent
+    {
+        return $this->stripe->paymentIntents->retrieve($id);
+    }
+
+    public function isAuthorized(string $id): bool
+    {
+        try {
+            $pi = $this->getPaymentIntent($id);
+            return $pi->status === 'requires_capture';
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
     
     public function releaseFunds(Mission $mission): void
     {

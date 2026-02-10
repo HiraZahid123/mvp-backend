@@ -17,7 +17,7 @@ export default function FilterChips({ filters, onFilterChange }) {
     if (filters.max_budget) {
         activeFilters.push({ key: 'max_budget', label: `Max: CHF ${filters.max_budget}`, value: filters.max_budget });
     }
-    if (filters.radius && filters.radius !== 10) {
+    if (filters.radius && filters.radius !== 5) {
         activeFilters.push({ key: 'radius', label: `${filters.radius}km radius`, value: filters.radius });
     }
     if (filters.remote_only) {
@@ -34,7 +34,7 @@ export default function FilterChips({ filters, onFilterChange }) {
     };
 
     const clearAll = () => {
-        onFilterChange({ radius: 10, sort_by: filters.sort_by || 'distance' });
+        onFilterChange({ radius: 5, sort_by: filters.sort_by || 'distance' });
     };
 
     if (activeFilters.length === 0) return null;

@@ -6,6 +6,7 @@ use App\Models\Mission;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Notification;
 
 class TaskUpdatedNotification extends Notification
@@ -34,6 +35,7 @@ class TaskUpdatedNotification extends Notification
         
         if ($prefs->in_app_enabled && $prefs->isNotificationEnabled('mission_updated')) {
             $channels[] = 'database';
+            $channels[] = 'broadcast';
         }
         
         if ($prefs->email_enabled && $prefs->isNotificationEnabled('mission_updated')) {
@@ -70,5 +72,15 @@ class TaskUpdatedNotification extends Notification
             'type' => 'mission_updated',
             'message' => 'Mission "' . $this->mission->title . '" has been updated.',
         ];
+    }
+
+    /**
+     * Get the broadcastable representation of the notification.
+     */
+    public function toBroadcast($notifiable): BroadcastMessage
+    {
+        return new BroadcastMessage([
+            'data' => $this->toArray($notifiable),
+        ]);
     }
 }

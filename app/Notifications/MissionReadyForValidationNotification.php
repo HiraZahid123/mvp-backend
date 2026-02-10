@@ -6,6 +6,7 @@ use App\Models\Mission;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Notification;
 
 class MissionReadyForValidationNotification extends Notification implements ShouldQueue
@@ -30,10 +31,11 @@ class MissionReadyForValidationNotification extends Notification implements Shou
             }
             if ($preferences->in_app_enabled) {
                 $channels[] = 'database';
+                $channels[] = 'broadcast';
             }
         } else {
             // Default channels if no preferences set
-            $channels = ['mail', 'database'];
+            $channels = ['mail', 'database', 'broadcast'];
         }
 
         return $channels;
@@ -68,5 +70,15 @@ class MissionReadyForValidationNotification extends Notification implements Shou
             'mission_id' => $this->mission->id,
             'mission_title' => $this->mission->title,
         ];
+    }
+
+    /**
+     * Get the broadcastable representation of the notification.
+     */
+    public function toBroadcast($notifiable): BroadcastMessage
+    {
+        return new BroadcastMessage([
+            'data' => $this->toDatabase($notifiable),
+        ]);
     }
 }

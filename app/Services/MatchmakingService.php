@@ -127,12 +127,13 @@ class MatchmakingService
             }
         });
 
-        $results = $query->take($limit)->get();
+        $results = $query->where('id', '!=', auth()->id())->take($limit)->get();
 
         // Final Fallback: If absolutely no filtered results, return any top performers (Global Fallback)
         if ($results->isEmpty()) {
             return User::where('role_type', '!=', 'customer')
                 ->where('is_admin', false)
+                ->where('id', '!=', auth()->id())
                 ->with(['skills', 'providerProfile'])
                 ->orderBy('rating_cache', 'desc')
                 ->take($limit)

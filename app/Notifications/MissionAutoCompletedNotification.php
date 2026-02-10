@@ -5,6 +5,7 @@ namespace App\Notifications;
 use App\Models\Mission;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Notification;
 
 class MissionAutoCompletedNotification extends Notification
@@ -20,7 +21,7 @@ class MissionAutoCompletedNotification extends Notification
 
     public function via($notifiable)
     {
-        return ['mail', 'database'];
+        return ['mail', 'database', 'broadcast'];
     }
 
     public function toMail($notifiable)
@@ -40,5 +41,15 @@ class MissionAutoCompletedNotification extends Notification
             'mission_title' => $this->mission->title,
             'type' => 'mission_auto_completed',
         ];
+    }
+
+    /**
+     * Get the broadcastable representation of the notification.
+     */
+    public function toBroadcast($notifiable): BroadcastMessage
+    {
+        return new BroadcastMessage([
+            'data' => $this->toArray($notifiable),
+        ]);
     }
 }

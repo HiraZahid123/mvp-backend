@@ -31,6 +31,9 @@ class StripeWebhookController extends Controller
             case 'payment_intent.payment_failed':
                 $this->handlePaymentFailed($event->data->object);
                 break;
+            case 'payment_intent.amount_capturable_updated':
+                $this->handlePaymentAuthorized($event->data->object);
+                break;
             case 'charge.refunded':
                 $this->handleRefund($event->data->object);
                 break;
@@ -41,23 +44,33 @@ class StripeWebhookController extends Controller
     
     protected function handlePaymentSucceeded($paymentIntent)
     {
+        // payment_intent.succeeded is for immediate capture
+        // We use it as a fallback or for direct payments if we ever add them
+        $this->markAsHeld($paymentIntent);
+    }
+
+    protected function handlePaymentAuthorized($paymentIntent)
+    {
+        // This is specifically for manual capture (amount_capturable_updated)
+        // This is the status 'requires_capture'
+        $this->markAsHeld($paymentIntent);
+    }
+
+    protected function markAsHeld($paymentIntent)
+    {
         $payment = Payment::where('payment_intent_id', $paymentIntent->id)->first();
         
         if ($payment) {
             $payment->update([
-                'status' => 'held',
+                'status' => Payment::STATUS_HELD,
                 'held_at' => now(),
             ]);
             
             $mission = $payment->mission;
             
             // If mission was waiting for payment to be secured
-            if ($mission->status === Mission::STATUS_EN_NEGOCIATION || $mission->status === Mission::STATUS_OUVERTE) {
-                 $mission->transitionTo(Mission::STATUS_VERROUILLEE);
-            
-                 // Reveal address and notify via chat
-                 $mission->revealAddress();
-            }
+            // Note: We don't auto-confirm yet, we let the user click "Confirm Assignment"
+            // but we could notify them or update UI state.
         }
     }
     

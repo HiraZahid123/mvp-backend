@@ -120,11 +120,12 @@ class ModerationService
             'fr' => ['le', 'la', 'les', 'de', 'et', 'un', 'une', 'je', 'tu', 'il', 'elle', 'nous', 'vous'],
             'es' => ['el', 'la', 'los', 'las', 'de', 'y', 'un', 'una', 'yo', 'tú', 'él', 'ella'],
             'de' => ['der', 'die', 'das', 'und', 'ich', 'du', 'er', 'sie', 'wir', 'ihr', 'ein', 'eine'],
-            'it' => ['il', 'lo', 'la', 'i', 'gli', 'le', 'di', 'e', 'un', 'una', 'io', 'tu', 'lui', 'lei'],
+            'it' => ['il', 'lo', 'la', 'gli', 'le', 'di', 'e', 'un', 'una', 'io', 'tu', 'lui', 'lei'],
+            'en' => ['the', 'is', 'at', 'which', 'on', 'and', 'for', 'with', 'that', 'this', 'it', 'me', 'my'],
         ];
         
         $words = preg_split('/\s+/', strtolower($content));
-        $scores = ['fr' => 0, 'es' => 0, 'de' => 0, 'it' => 0];
+        $scores = ['fr' => 0, 'es' => 0, 'de' => 0, 'it' => 0, 'en' => 0];
         
         foreach ($words as $word) {
             foreach ($commonWords as $lang => $commonList) {
@@ -234,9 +235,21 @@ class ModerationService
                 'detected_lang' => $langName,
                 'result' => $result
             ]);
+
+            // Fail-open strategy: If result is empty or indicates a service error/timeout, allow but log
+            if (empty($result)) {
+                return [
+                    'is_clean' => true,
+                    'improved_title' => null,
+                    'category' => 'Other',
+                    'reason' => 'AI Service Timeout/Empty Response - Defaulting to Clean',
+                    'risk_level' => 'low',
+                    'detected_language' => $langName
+                ];
+            }
             
             return [
-                'is_clean' => (bool) ($result['is_clean'] ?? false),
+                'is_clean' => (bool) ($result['is_clean'] ?? true), // Changed default to true
                 'improved_title' => $result['improved_title'] ?? null,
                 'category' => $result['category'] ?? 'Other',
                 'reason' => $result['reason'] ?? null,

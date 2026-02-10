@@ -18,7 +18,7 @@ export default function Details({ mission, canSeeAddress }) {
     const isAssigned = auth.user.id === mission.assigned_user_id;
 
     // Payment state
-    const [clientSecret, setClientSecret] = useState(flash?.stripe_client_secret || null);
+    const [clientSecret, setClientSecret] = useState(flash?.stripe_client_secret || usePage().props.stripe_client_secret || null);
     const [showPaymentModal, setShowPaymentModal] = useState(!!clientSecret);
 
     // Watch for flashed client secret (from accept/select offer)
@@ -411,6 +411,14 @@ export default function Details({ mission, canSeeAddress }) {
                                                 >
                                                     ✅ {t('Confirm Assignment')}
                                                 </button>
+                                                {clientSecret && (
+                                                    <button
+                                                        onClick={() => setShowPaymentModal(true)}
+                                                        className="w-full py-4 bg-green-500 text-white font-black rounded-full hover:bg-green-600 transition-all shadow-xl flex items-center justify-center gap-2"
+                                                    >
+                                                        💳 {t('Complete Payment Hold')}
+                                                    </button>
+                                                )}
                                                 <button
                                                     onClick={async () => {
                                                         const response = await axios.get(route('api.missions.chat', mission.id));
