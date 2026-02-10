@@ -242,7 +242,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/login', [AdminLoginController::class, 'store'])->name('login.store');
     });
 
-    Route::middleware('admin')->name('admin.')->group(function () {
+    Route::middleware('admin')->group(function () {
         // Dashboard
         Route::get('/dashboard', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'index'])->name('dashboard');
         
