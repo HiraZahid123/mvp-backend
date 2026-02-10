@@ -628,13 +628,12 @@ class MissionController extends Controller
         }
 
         try {
-            \Illuminate\Support\Facades\DB::transaction(function () use ($mission, &$pi, &$message) {
+            \Illuminate\Support\Facades\DB::transaction(function () use ($mission, &$message) {
                 $mission->transitionTo(Mission::STATUS_EN_NEGOCIATION);
                 $mission->assigned_user_id = Auth::id();
                 $mission->save();
 
-                // Create Stripe payment intent
-                $pi = app(\App\Services\StripeService::class)->createHold($mission);
+
 
                 // Create or get chat
                 $chat = Chat::firstOrCreate([
@@ -662,8 +661,7 @@ class MissionController extends Controller
             $mission->user->notify(new \App\Notifications\MissionAssignedNotification($mission));
 
             return redirect()->route('missions.show', $mission->id)
-                ->with('success', 'Mission accepted! Please complete the payment hold.')
-                ->with('stripe_client_secret', $pi->client_secret)
+                ->with('success', 'Mission accepted! Waiting for owner confirmation to start.')
                 ->with('chat_id', $chat->id);
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('Accept Mission Failed: ' . $e->getMessage());
@@ -794,11 +792,28 @@ class MissionController extends Controller
         // Wrap operations in transaction to ensure atomicity
         try {
             // Verify payment hold is successful before confirming assignment
+            // Verify or Create payment hold
+            $pi = null;
             if ($mission->payment_intent_id) {
                 $isAuthorized = app(\App\Services\StripeService::class)->isAuthorized($mission->payment_intent_id);
                 if (!$isAuthorized) {
-                    return back()->withErrors(['mission' => 'Payment hold is not confirmed. Please complete the payment first.']);
+                    $pi = app(\App\Services\StripeService::class)->getPaymentIntent($mission->payment_intent_id);
+                     if ($pi->status !== 'requires_capture' && $pi->status !== 'succeeded') { 
+                         // Logic allows for specific statuses, but usually we want authorized
+                         // If not authorized, we might need to create a new one or return error
+                         // For now, if it exists but bad status, we might return error
+                         // Simplified: if not authorized, return current PI secret to finish it
+                         return back()
+                            ->withErrors(['mission' => 'Payment hold is not confirmed. Please complete the payment first.'])
+                            ->with('stripe_client_secret', $pi->client_secret);
+                    }
                 }
+            } else {
+                 // Create new payment hold if missing
+                 $pi = app(\App\Services\StripeService::class)->createHold($mission);
+                 return back()
+                    ->with('success', 'Please complete the payment hold to confirm the assignment.')
+                    ->with('stripe_client_secret', $pi->client_secret);
             }
 
             \Illuminate\Support\Facades\DB::transaction(function () use ($mission) {

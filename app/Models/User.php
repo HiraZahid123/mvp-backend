@@ -323,6 +323,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get available balance (Balance - Pending Withdrawals).
+     */
+    public function getAvailableBalanceAttribute(): float
+    {
+        return max(0, $this->balance - $this->pending_withdrawal);
+    }
+
+    /**
      * Get rating distribution (count per star rating).
      */
     public function getRatingDistribution(): array

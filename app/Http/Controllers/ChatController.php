@@ -136,7 +136,8 @@ class ChatController extends Controller
     // Create or get chat for a mission
     public function getMissionChat(Mission $mission)
     {
-        if (Auth::id() !== $mission->user_id && Auth::id() !== $mission->assigned_user_id) {
+        // Use loose comparison (==) to handle string/int types from different DB drivers
+        if (Auth::id() != $mission->user_id && Auth::id() != $mission->assigned_user_id) {
             abort(403);
         }
 
