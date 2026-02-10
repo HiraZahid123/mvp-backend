@@ -8,10 +8,11 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 
 Broadcast::channel('chat.{chatId}', function ($user, $chatId) {
     $chat = \App\Models\Chat::find($chatId);
-    if ($chat && in_array($user->id, $chat->participant_ids)) {
-        return ['id' => $user->id, 'name' => $user->name];
-    }
-    return false;
+    if (!$chat) return false;
+
+    // Check if user ID exists in the participants array (handling potential string/int types)
+    // We strictly compare casted integers to be safe, or use in_array with loose check if specific needed
+    return in_array((int)$user->id, array_map('intval', $chat->participant_ids));
 });
 
 
@@ -19,10 +20,10 @@ Broadcast::channel('mission.{missionId}', function ($user, $missionId) {
     $mission = \App\Models\Mission::find($missionId);
     if (!$mission) return false;
 
-    // If mission is open, any authenticated user can listen (to see Q&A real-time)
+    // If mission is open, any authenticated user can listen
     if ($mission->status === \App\Models\Mission::STATUS_OUVERTE) {
         return true;
     }
 
-    return $user->id === $mission->user_id || $user->id === $mission->assigned_user_id;
+    return (int)$user->id === (int)$mission->user_id || (int)$user->id === (int)$mission->assigned_user_id;
 });
