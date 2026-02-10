@@ -11,8 +11,11 @@ Broadcast::channel('chat.{chatId}', function ($user, $chatId) {
     if (!$chat) return false;
 
     // Check if user ID exists in the participants array (handling potential string/int types)
-    // We strictly compare casted integers to be safe, or use in_array with loose check if specific needed
-    return in_array((int)$user->id, array_map('intval', $chat->participant_ids));
+    // We strictly compare casted integers to be safe
+    if (in_array((int)$user->id, array_map('intval', $chat->participant_ids))) {
+        return ['id' => $user->id, 'name' => $user->name];
+    }
+    return false;
 });
 
 
