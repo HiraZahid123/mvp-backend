@@ -26,6 +26,9 @@ class StripeService
                 'amount' => $amount,
                 'currency' => config('services.stripe.currency', 'chf'),
                 'capture_method' => 'manual', // Hold funds, don't capture yet
+                'automatic_payment_methods' => [
+                    'enabled' => true,
+                ],
                 'metadata' => [
                     'mission_id' => $mission->id,
                     'customer_id' => $mission->user_id,

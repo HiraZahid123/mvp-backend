@@ -1154,6 +1154,8 @@ class MissionController extends Controller
             return $user;
         })->values();
 
+        \Illuminate\Support\Facades\Log::info("Found " . $nearbyMotives->count() . " nearby motives for mission {$mission->id}");
+
         return response()->json([
             'nearby_motives' => $nearbyMotives
         ]);

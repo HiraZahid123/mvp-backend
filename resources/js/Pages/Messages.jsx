@@ -3,6 +3,7 @@ import { Head, usePage, Link } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import useTranslation from '@/Hooks/useTranslation';
 import axios from 'axios';
+import useNotificationSound from '@/Hooks/useNotificationSound';
 import PaymentModal from '@/Components/Payments/PaymentModal';
 import { router } from '@inertiajs/react';
 
@@ -21,6 +22,7 @@ export default function Messages({ chats: initialChats, selectedChatId }) {
     // Payment state
     const [clientSecret, setClientSecret] = useState(null);
     const [showPaymentModal, setShowPaymentModal] = useState(false);
+    const { playSound } = useNotificationSound();
 
     // Load selected chat on mount
     useEffect(() => {
@@ -76,6 +78,10 @@ export default function Messages({ chats: initialChats, selectedChatId }) {
                         return prev;
                     }
                     console.log('Adding new message to UI');
+                    // Play sound if message is from others
+                    if (Number(message.user_id) !== Number(auth.user.id)) {
+                        playSound();
+                    }
                     return [...prev, message];
                 });
             })
