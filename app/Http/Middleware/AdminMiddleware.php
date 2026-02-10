@@ -16,7 +16,15 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next, ?string $role = null): Response
     {
+        \Illuminate\Support\Facades\Log::info('AdminMiddleware check', [
+            'auth_check' => Auth::check(),
+            'user_id' => Auth::id(),
+            'is_admin' => Auth::check() ? Auth::user()->isAdmin() : 'N/A',
+            'path' => $request->path()
+        ]);
+
         if (!Auth::check() || !Auth::user()->isAdmin()) {
+            \Illuminate\Support\Facades\Log::info('AdminMiddleware failed - redirecting to login');
             if ($request->expectsJson()) {
                 return response()->json(['message' => 'Unauthorized'], 403);
             }

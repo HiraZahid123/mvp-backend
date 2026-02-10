@@ -66,7 +66,16 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         // Admins bypass role selection and go directly to admin dashboard
+        \Illuminate\Support\Facades\Log::info('Login check', [
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'is_admin' => $user->is_admin,
+            'isAdmin_method' => $user->isAdmin(),
+            'role_type' => $user->role_type
+        ]);
+
         if ($user->isAdmin()) {
+            \Illuminate\Support\Facades\Log::info('Redirecting to admin dashboard');
             return redirect()->route('admin.dashboard');
         }
 
