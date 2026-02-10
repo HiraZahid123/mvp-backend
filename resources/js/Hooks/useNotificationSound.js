@@ -1,10 +1,3 @@
-import { useRef, useEffect } from 'react';
-import { usePage } from '@inertiajs/react';
-
-/**
- * Custom hook to manage notification sound playback
- * Respects user preferences and handles browser autoplay policies
- */
 import { useRef, useEffect, useCallback } from 'react';
 import { usePage } from '@inertiajs/react';
 
