@@ -24,7 +24,12 @@ class ChatController extends Controller
         $userId = Auth::id();
         
         // Get chats where user is participant
-        $chats = Chat::whereJsonContains('participant_ids', $userId)
+        // Get chats where user is participant (handling both string and int types in JSON)
+        $chats = Chat::where(function ($query) use ($userId) {
+                $query->whereJsonContains('participant_ids', $userId)
+                      ->orWhereJsonContains('participant_ids', (string) $userId)
+                      ->orWhereJsonContains('participant_ids', (int) $userId);
+            })
             ->with(['mission', 'messages' => function($q) {
                 $q->latest()->take(1);
             }])
@@ -39,7 +44,12 @@ class ChatController extends Controller
         $userId = Auth::id();
         
         // Get all chats for this user
-        $chats = Chat::whereJsonContains('participant_ids', $userId)
+        // Get chats where user is participant (handling both string and int types in JSON)
+        $chats = Chat::where(function ($query) use ($userId) {
+                $query->whereJsonContains('participant_ids', $userId)
+                      ->orWhereJsonContains('participant_ids', (string) $userId)
+                      ->orWhereJsonContains('participant_ids', (int) $userId);
+            })
             ->with(['mission.user', 'mission.assignedUser', 'mission.offers.user', 'messages' => function($q) {
                 $q->latest()->take(1);
             }])
