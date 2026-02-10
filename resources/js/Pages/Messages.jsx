@@ -276,16 +276,16 @@ export default function Messages({ chats: initialChats, selectedChatId }) {
                                             </div>
                                         </div>
                                     ) : (
-                                        <div key={msg.id} className={`flex ${msg.user_id === auth.user.id ? 'justify-end' : 'justify-start'}`}>
-                                            <div className={`max-w-[70%] ${msg.user_id === auth.user.id ? '' : 'flex items-start gap-2'}`}>
-                                                {msg.user_id !== auth.user.id && (
+                                        <div key={msg.id} className={`flex ${Number(msg.user_id) === Number(auth.user.id) ? 'justify-end' : 'justify-start'}`}>
+                                            <div className={`max-w-[70%] ${Number(msg.user_id) === Number(auth.user.id) ? '' : 'flex items-start gap-2'}`}>
+                                                {Number(msg.user_id) !== Number(auth.user.id) && (
                                                     <div className="w-8 h-8 rounded-full bg-gold-accent flex items-center justify-center text-primary-black font-black text-xs shrink-0">
                                                         {msg.user?.name?.charAt(0)?.toUpperCase() || 'U'}
                                                     </div>
                                                 )}
                                                 <div>
                                                     <div className={`p-4 rounded-[20px] text-sm font-medium shadow-sm ${
-                                                        msg.user_id === auth.user.id 
+                                                        Number(msg.user_id) === Number(auth.user.id) 
                                                             ? 'bg-primary-black text-white rounded-br-sm' 
                                                             : 'bg-white text-primary-black border border-gray-border rounded-bl-sm'
                                                     }`}>
