@@ -135,6 +135,13 @@ Route::middleware('auth')->group(function () {
     Route::post('/onboarding/analyze', [OnboardingController::class, 'analyze'])->name('onboarding.analyze');
     Route::post('/onboarding/submit', [OnboardingController::class, 'store'])->name('onboarding.store');
 
+    // Notifications
+    Route::prefix('notifications')->name('notifications.')->group(function () {
+        Route::get('/', [NotificationController::class, 'index'])->name('index');
+        Route::post('/{id}/read', [NotificationController::class, 'markAsRead'])->name('mark-read');
+        Route::post('/mark-all-read', [NotificationController::class, 'markAllRead'])->name('mark-all-read');
+    });
+
     // Role Switching
     Route::post('/role/switch', [RoleSwitchController::class, 'switch'])->name('role.switch');
 });
@@ -165,12 +172,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('/notifications', [ProfileController::class, 'updateNotificationPreferences'])->name('notifications.update');
     });
 
-    // Notifications
-    Route::prefix('notifications')->name('notifications.')->group(function () {
-        Route::get('/', [NotificationController::class, 'index'])->name('index');
-        Route::post('/{id}/read', [NotificationController::class, 'markAsRead'])->name('mark-read');
-        Route::post('/mark-all-read', [NotificationController::class, 'markAllRead'])->name('mark-all-read');
-    });
+
 
     // Chat System (Internal API)
     Route::get('/messages', [\App\Http\Controllers\ChatController::class, 'messages'])->name('messages');
