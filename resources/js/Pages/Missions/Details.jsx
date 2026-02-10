@@ -14,8 +14,8 @@ import NearbyMotivesSection from '@/Components/NearbyMotivesSection';
 export default function Details({ mission, canSeeAddress }) {
     const { t } = useTranslation();
     const { auth, flash } = usePage().props;
-    const isOwner = auth.user.id === mission.user_id;
-    const isAssigned = auth.user.id === mission.assigned_user_id;
+    const isOwner = Number(auth.user.id) === Number(mission.user_id);
+    const isAssigned = Number(auth.user.id) === Number(mission.assigned_user_id);
 
     // Payment state
     const [clientSecret, setClientSecret] = useState(flash?.stripe_client_secret || usePage().props.stripe_client_secret || null);
