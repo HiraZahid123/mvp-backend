@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Test User',
             'email' => 'test@example.com',
             'phone' => '+1987654321',
-            'role_type' => 'customer',
+            'role_type' => 'client',
             'email_verified_at' => now(),
             'phone_verified_at' => now(),
             'location_lat' => 40.7128,
