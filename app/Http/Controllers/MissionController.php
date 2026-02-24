@@ -306,7 +306,7 @@ class MissionController extends Controller
 
         return Inertia::render('Missions/Matchmaking', [
             'mission' => $mission,
-            'helpers' => $helpers,
+            'providers' => $helpers,
         ]);
     }
 
@@ -347,7 +347,7 @@ class MissionController extends Controller
 
         return Inertia::render('Missions/Matchmaking', [
             'mission' => $missionData,
-            'helpers' => $helpers,
+            'providers' => $helpers,
             'isGuest' => true,
         ]);
     }
