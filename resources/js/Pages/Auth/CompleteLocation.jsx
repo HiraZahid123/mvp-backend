@@ -38,7 +38,7 @@ export default function CompleteLocation({ user, role }) {
             heroImage="/images/illustrations/login-hero.svg"
             bgAccentClass="bg-cream-accent"
         >
-            <Head title={t("Localisation")} />
+            <Head title={t("Location")} />
 
             <div className="flex items-center mb-8">
                 <BackButton href={route('auth.select-role')} className="text-sm">
@@ -64,13 +64,13 @@ export default function CompleteLocation({ user, role }) {
                     disabled={processing || !locationData}
                     processing={processing}
                 >
-                    {t('Confirmer ma zone')}
+                    {t('Confirm my area')}
                 </PrimaryButton>
             </form>
 
-            <div className="mt-6 p-4 bg-gold-accent/5 rounded-[24px] border border-gold-accent/20">
+            <div className="mt-6 p-4 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/5 rounded-[24px] border border-oflem-terracotta/20">
                 <p className="text-xs text-gray-muted text-center">
-                    {t("Votre position est utilisée uniquement pour vous connecter avec des opportunités locales.")}
+                    {t("Your location is only used to connect you with local opportunities.")}
                 </p>
             </div>
         </AuthSplitLayout>

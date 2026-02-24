@@ -33,7 +33,7 @@ class RoleSelectionController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'role' => 'required|in:customer,performer,both',
+            'role' => 'required|in:client,provider,both',
         ]);
 
         $user = Auth::user();

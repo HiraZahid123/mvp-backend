@@ -65,7 +65,7 @@ export default function DeleteUserForm({ className = '' }) {
 
             <Modal show={confirmingUserDeletion} onClose={closeModal}>
                 <form onSubmit={deleteUser} className="p-10 bg-white rounded-[32px]">
-                    <h2 className="text-2xl font-black text-primary-black tracking-tight mb-4 text-center">
+                    <h2 className="text-2xl font-black text-oflem-charcoal tracking-tight mb-4 text-center">
                         {t('Are you absolutely sure?')}
                     </h2>
 

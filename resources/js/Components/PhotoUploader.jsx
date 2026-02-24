@@ -30,7 +30,7 @@ export default function PhotoUploader({ value, onChange, previewUrl }) {
             {/* Photo Preview Circle */}
             <div 
                 onClick={handleClick}
-                className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-gray-border/30 cursor-pointer group hover:border-gold-accent transition-all duration-300"
+                className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-gray-border/30 cursor-pointer group hover:border-oflem-terracotta transition-all duration-300"
             >
                 {preview ? (
                     <img 
@@ -39,7 +39,7 @@ export default function PhotoUploader({ value, onChange, previewUrl }) {
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                     />
                 ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-gold-accent/20 to-gold-accent/5 flex items-center justify-center">
+                    <div className="w-full h-full bg-gradient-to-br from-oflem-terracotta/20 to-oflem-terracotta/5 flex items-center justify-center">
                         <img 
                             src="/images/branding/oflem-placeholder.svg" 
                             alt="OFLEM placeholder" 
@@ -70,8 +70,8 @@ export default function PhotoUploader({ value, onChange, previewUrl }) {
                     px-6 py-2.5 
                     bg-white border-2 border-gray-border/50
                     rounded-[24px]
-                    text-sm font-bold text-primary-black
-                    hover:border-gold-accent hover:bg-gold-accent/5
+                    text-sm font-bold text-oflem-charcoal
+                    hover:border-oflem-terracotta hover:bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/5
                     transition-all duration-300
                 "
             >

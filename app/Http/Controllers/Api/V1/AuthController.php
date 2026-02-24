@@ -33,7 +33,7 @@ class AuthController extends Controller
             'email' => 'required|string|lowercase|email|max:255|unique:users',
             'phone' => 'required|string|max:20|unique:users',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role_type' => 'required|in:customer,performer,both',
+            'role_type' => 'required|in:client,provider,both',
         ]);
 
         $user = User::create([

@@ -52,7 +52,7 @@ export default function NotificationPreferences({ preferences }) {
                 id={name}
                 onClick={() => setData(name, !data[name])}
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    data[name] ? 'bg-oflem-terracotta' : 'bg-gray-300'
+                    data[name] ? 'bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light' : 'bg-gray-300'
                 }`}
             >
                 <span
@@ -263,7 +263,7 @@ export default function NotificationPreferences({ preferences }) {
                         <button
                             type="submit"
                             disabled={processing}
-                            className="px-8 py-4 bg-oflem-terracotta text-white rounded-full font-black text-lg hover:bg-oflem-terracotta/90 transition-colors disabled:opacity-50 flex items-center gap-3"
+                            className="px-8 py-4 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white rounded-full font-black text-lg hover:bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/90 transition-colors disabled:opacity-50 flex items-center gap-3"
                         >
                             <Save className="w-5 h-5" />
                             {processing ? t('Saving...') : t('Save Preferences')}

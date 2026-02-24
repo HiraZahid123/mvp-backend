@@ -31,8 +31,8 @@ class StripeService
                 ],
                 'metadata' => [
                     'mission_id' => $mission->id,
-                    'customer_id' => $mission->user_id,
-                    'performer_id' => $mission->assigned_user_id,
+                    'client_id' => $mission->user_id,
+                    'provider_id' => $mission->assigned_user_id,
                     'platform_commission' => $commission / 100,
                 ],
             ]);
@@ -48,7 +48,7 @@ class StripeService
             'status' => 'pending',
             'amount' => $mission->budget,
             'platform_commission' => $commission / 100,
-            'performer_amount' => ($amount - $commission) / 100,
+            'provider_amount' => ($amount - $commission) / 100,
             'stripe_metadata' => $paymentIntent->toArray(),
         ]);
 
@@ -110,7 +110,7 @@ class StripeService
         try {
             $this->stripe->refunds->create([
                 'payment_intent' => $payment->payment_intent_id,
-                'reason' => 'requested_by_customer',
+                'reason' => 'requested_by_client',
             ]);
             
             $payment->update([

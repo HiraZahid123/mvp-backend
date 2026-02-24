@@ -149,7 +149,7 @@ export default function MissionRecap({ mission }) {
                     {/* Chat Availability Note */}
                     <div className="bg-oflem-cream/50 rounded-3xl p-6 border border-oflem-terracotta/10">
                         <div className="flex items-start gap-4">
-                            <div className="w-10 h-10 bg-oflem-terracotta/10 rounded-full flex items-center justify-center flex-shrink-0">
+                            <div className="w-10 h-10 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/10 rounded-full flex items-center justify-center flex-shrink-0">
                                 <CheckCircle2 className="w-5 h-5 text-oflem-terracotta" />
                             </div>
                             <div>
@@ -174,9 +174,9 @@ export default function MissionRecap({ mission }) {
                     </SecondaryButton>
                     <PrimaryButton
                         onClick={handleConfirm}
-                        className="flex-1 py-5 text-base bg-oflem-terracotta hover:bg-oflem-terracotta/90"
+                        className="flex-1 py-5 text-base bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light hover:bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/90 flex items-center justify-center gap-3"
                     >
-                        ✅ {t('Confirm my mission')}
+                        <CheckCircle2 size={24} /> {t('Confirm my mission')}
                     </PrimaryButton>
                 </div>
 

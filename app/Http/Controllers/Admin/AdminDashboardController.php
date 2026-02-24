@@ -16,8 +16,8 @@ class AdminDashboardController extends Controller
     {
         // User statistics
         $totalUsers = User::count();
-        $customers = User::whereIn('role_type', ['customer', 'both'])->count();
-        $performers = User::whereIn('role_type', ['performer', 'both'])->count();
+        $clients = User::whereIn('role_type', ['client', 'both'])->count();
+        $providers = User::whereIn('role_type', ['provider', 'both'])->count();
         $newUsersThisMonth = User::whereMonth('created_at', now()->month)->count();
 
         // Mission statistics
@@ -45,8 +45,8 @@ class AdminDashboardController extends Controller
             'stats' => [
                 'users' => [
                     'total' => $totalUsers,
-                    'customers' => $customers,
-                    'performers' => $performers,
+                    'clients' => $clients,
+                    'providers' => $providers,
                     'newThisMonth' => $newUsersThisMonth,
                 ],
                 'missions' => [

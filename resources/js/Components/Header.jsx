@@ -5,18 +5,30 @@ import useTranslation from '@/Hooks/useTranslation';
 import NotificationBell from '@/Components/Header/NotificationBell';
 import useNotificationSound from '@/Hooks/useNotificationSound';
 import Dropdown from '@/Components/Dropdown';
+import { 
+    ChevronDown, LayoutDashboard, Users, Wallet, ClipboardList, 
+    Home, UserCircle, RefreshCw, LogOut, Compass, MessageSquare,
+    PlusCircle, Search, Briefcase, Settings, Bell, Star, 
+    Menu, X, ArrowRight
+} from 'lucide-react';
 
 export default function Header() {
     const { t } = useTranslation();
     const { auth } = usePage().props;
     const { playSound } = useNotificationSound();
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
     
     const userRole = auth.user?.last_selected_role || auth.user?.role_type || 'guest';
     const isAdminRoute = typeof window !== 'undefined' && window.location.pathname.startsWith('/admin');
+    const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
 
-    // Listen for real-time notifications
     useEffect(() => {
+        const handleScroll = () => {
+            setScrolled(window.scrollY > 10);
+        };
+        window.addEventListener('scroll', handleScroll);
+
         if (auth.user && window.Echo) {
             const channel = window.Echo.private(`App.Models.User.${auth.user.id}`);
             channel.notification((notification) => {
@@ -25,257 +37,391 @@ export default function Header() {
             });
             return () => {
                 window.Echo.leave(`App.Models.User.${auth.user.id}`);
+                window.removeEventListener('scroll', handleScroll);
             };
         }
+        return () => window.removeEventListener('scroll', handleScroll);
     }, [auth.user?.id, playSound]);
 
     const navLinks = {
         admin: [
-            { name: t('Dashboard'), href: '/admin/dashboard', icon: '📊' },
-            { name: t('Users'), href: '/admin/users', icon: '👥' },
-            { name: t('Withdrawals'), href: '/admin/withdrawals', icon: '💰' },
-            { name: t('Missions'), href: '/admin/missions', icon: '📋' },
+            { name: t('Dashboard'), href: '/admin/dashboard', icon: LayoutDashboard },
+            { name: t('Users'), href: '/admin/users', icon: Users },
+            { name: t('Withdrawals'), href: '/admin/withdrawals', icon: Wallet },
+            { name: t('Missions'), href: '/admin/missions', icon: ClipboardList },
         ],
-        performer: [
-            { name: t('Dashboard'), href: route('dashboard') },
-            { name: t('Find Missions'), href: route('missions.active') },
-            { name: t('Messages'), href: route('messages') },
+        provider: [
+            { name: t('Dashboard'), href: route('dashboard'), icon: Home },
+            { name: t('Find Missions'), href: route('missions.active'), icon: Compass },
+            { name: t('Messages'), href: route('messages'), icon: MessageSquare },
+            { name: t('My Wallet'), href: route('wallet.index'), icon: Wallet },
         ],
-        customer: [
-            { name: t('Dashboard'), href: route('dashboard') },
-            { name: t('Find Helpers'), href: route('providers.index') },
-            { name: t('Messages'), href: route('messages') },
+        client: [
+            { name: t('Dashboard'), href: route('dashboard'), icon: Home },
+            { name: t('Find Helpers'), href: route('providers.index'), icon: Search },
+            { name: t('Messages'), href: route('messages'), icon: MessageSquare },
+            { name: t('My Wallet'), href: route('wallet.client'), icon: Wallet },
+        ],
+        both: [
+            { name: t('Dashboard'), href: route('dashboard'), icon: Home },
+            { name: t('Missions'), href: route('missions.active'), icon: Compass },
+            { name: t('Messages'), href: route('messages'), icon: MessageSquare },
+            { name: t('My Wallet'), href: route('wallet.index'), icon: Wallet },
         ],
         guest: [
-            { name: t('Find Helpers'), href: route('providers.index') },
-            { name: t('How it works'), href: '/#how-it-works' },
+            { name: t('How it works'), href: '/#how-it-works', icon: Star },
+            { name: t('Find Helpers'), href: route('providers.index'), icon: Search },
         ]
     };
 
-    const currentLinks = isAdminRoute ? navLinks.admin : (userRole === 'performer' ? navLinks.performer : (userRole === 'customer' ? navLinks.customer : navLinks.guest));
+    const currentLinks = isAdminRoute 
+        ? navLinks.admin 
+        : (navLinks[userRole] || navLinks.guest);
+
+    const isActive = (href) => {
+        if (href === '/') return currentPath === '/';
+        return currentPath.startsWith(href);
+    };
+
+    const dropdownLinks = [
+        { name: t('Dashboard'), href: route('dashboard'), icon: Home },
+        { name: t('Profile Settings'), href: route('profile.edit'), icon: UserCircle },
+        ...(userRole === 'provider' || userRole === 'both' 
+            ? [{ name: t('My Wallet'), href: route('wallet.index'), icon: Wallet }] 
+            : [{ name: t('Payments'), href: route('wallet.client'), icon: Wallet }]
+        ),
+        { name: t('Notifications'), href: route('profile.notifications'), icon: Bell },
+    ];
+
+    const ctaButton = () => {
+        if (isAdminRoute) return null;
+        if (userRole === 'client' || userRole === 'both') {
+            return { label: t('Post a mission'), href: route('missions.create'), style: 'terracotta' };
+        }
+        return null;
+    };
+
+    const cta = ctaButton();
 
     return (
-        <nav className="bg-white/80 backdrop-blur-md border-b border-gray-border/50 sticky top-0 z-50 shadow-sm transition-all duration-300">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex justify-between h-16 items-center">
+        <nav className={`bg-white/95 backdrop-blur-xl border-b sticky top-0 z-[100] transition-all duration-300 ${
+            scrolled ? 'border-zinc-200/80 shadow-[0_4px_24px_rgba(0,0,0,0.06)]' : 'border-zinc-100'
+        }`}>
+            <div className="max-w-[1280px] mx-auto px-4 sm:px-6">
+                <div className="flex justify-between h-[68px] items-center">
                     {/* Brand & Desktop Nav */}
                     <div className="flex items-center gap-8">
-                        <Link href="/" className="flex items-center gap-2 group">
-                            <span className="text-xl md:text-2xl font-black tracking-tight text-oflem-charcoal uppercase group-hover:text-oflem-terracotta transition-colors">OFLEM</span>
-                            {auth.user?.admin_role && isAdminRoute && (
-                                <span className="text-[10px] bg-oflem-terracotta text-white px-2 py-0.5 rounded-full font-black uppercase tracking-widest">ADMIN</span>
-                            )}
+                        <Link href="/" className="logo text-[28px] font-black tracking-[-0.8px] text-zinc-900 flex items-baseline group hover:scale-[1.03] transition-transform duration-200">
+                            Oflem<span className="text-oflem-terracotta">.</span>
                         </Link>
 
-                        <div className="hidden lg:flex items-center space-x-1">
-                            {currentLinks.map((link) => (
-                                <Link
-                                    key={link.href}
-                                    href={link.href}
-                                    className={`px-4 py-2 rounded-xl text-sm font-black transition-all ${
-                                        (window.location.pathname === link.href || (link.href !== '/' && window.location.pathname.startsWith(link.href)))
-                                            ? 'bg-oflem-cream text-oflem-terracotta'
-                                            : 'text-gray-muted hover:text-oflem-charcoal hover:bg-gray-50'
-                                    }`}
-                                >
-                                    {link.icon && <span className="mr-2">{link.icon}</span>}
-                                    {link.name}
-                                </Link>
-                            ))}
+                        <div className="hidden lg:flex items-center gap-1">
+                            {currentLinks.map((link) => {
+                                const Icon = link.icon;
+                                const active = isActive(link.href);
+                                return (
+                                    <Link
+                                        key={link.name + link.href}
+                                        href={link.href}
+                                        className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-[13px] font-bold transition-all duration-200 ${
+                                            active
+                                                ? 'bg-oflem-terracotta/8 text-oflem-terracotta'
+                                                : 'text-zinc-500 hover:text-zinc-800 hover:bg-zinc-50'
+                                        }`}
+                                    >
+                                        <Icon size={15} className={active ? 'text-oflem-terracotta' : ''} />
+                                        {link.name}
+                                    </Link>
+                                );
+                            })}
                         </div>
                     </div>
 
                     {/* Right Side Actions */}
-                    <div className="hidden sm:flex items-center gap-4">
-
+                    <div className="hidden sm:flex items-center gap-3">
+                        {/* Language Switcher */}
+                        <div className="flex items-center bg-zinc-50 rounded-lg p-0.5 border border-zinc-100">
+                            {['FR', 'EN', 'DE', 'IT'].map((lang, i) => (
+                                <React.Fragment key={lang}>
+                                    <button 
+                                        onClick={() => router.post(route('language.switch'), { locale: lang.toLowerCase() })}
+                                        className={`text-[11px] font-black px-2.5 py-1.5 rounded-md transition-all duration-200 ${
+                                            usePage().props.locale?.toUpperCase() === lang 
+                                                ? 'bg-white text-oflem-terracotta shadow-sm' 
+                                                : 'text-zinc-400 hover:text-zinc-600'
+                                        }`}
+                                    >
+                                        {lang}
+                                    </button>
+                                    {i < 3 && <div className="w-px h-3 bg-zinc-200" />}
+                                </React.Fragment>
+                            ))}
+                        </div>
 
                         {auth.user ? (
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-2.5">
                                 <NotificationBell />
                                 
-                                {/* Wallet Info */}
-                                <Link 
-                                    href={userRole === 'customer' ? route('wallet.client') : route('wallet.index')} 
-                                    className="flex items-center gap-2 px-3 py-1.5 bg-oflem-cream rounded-full border border-gold-accent/20 hover:border-gold-accent transition-all group"
-                                >
-                                    <div className="flex flex-col items-end">
-                                        <span className="text-[9px] font-black text-gray-muted uppercase leading-none mb-0.5">{t('Wallet')}</span>
-                                        <span className="text-xs font-black text-oflem-charcoal group-hover:text-oflem-terracotta transition-colors leading-none">
-                                            {userRole === 'customer' 
-                                                ? t('Client')
-                                                : `CHF ${parseFloat(auth.user.balance || 0).toFixed(2)}`
-                                            }
-                                        </span>
-                                    </div>
-                                    <span className="text-lg">💰</span>
-                                </Link>
-
-                                {/* Role Specific Action Button */}
-                                {!isAdminRoute && (
-                                    userRole === 'performer' ? (
-                                        <Link 
-                                            href={route('missions.active')} 
-                                            className="bg-oflem-charcoal text-white px-5 py-2 rounded-full text-xs font-black hover:bg-oflem-charcoal/90 transition-all shadow-sm"
-                                        >
-                                            {t('Available Tasks')}
-                                        </Link>
-                                    ) : (
-                                        <Link 
-                                            href={route('missions.create')} 
-                                            className="bg-oflem-terracotta text-white px-5 py-2 rounded-full text-xs font-black hover:bg-oflem-terracotta/90 transition-all shadow-sm"
-                                        >
-                                            {t('Post a Mission')}
-                                        </Link>
-                                    )
-                                )}
-
-                                {/* Admin Panel Toggle */}
-                                {auth.user.admin_role && (
-                                    <Link 
-                                        href={isAdminRoute ? route('dashboard') : '/admin/dashboard'}
-                                        className={`p-2 rounded-full transition-all ${
-                                            isAdminRoute 
-                                                ? 'bg-oflem-charcoal text-white' 
-                                                : 'bg-oflem-terracotta text-white hover:opacity-90'
-                                        }`}
-                                        title={isAdminRoute ? t('Exit Admin') : t('Admin Panel')}
-                                    >
-                                        {isAdminRoute ? '🏠' : '🔐'}
-                                    </Link>
-                                )}
-
                                 {/* User Dropdown */}
                                 <Dropdown>
                                     <Dropdown.Trigger>
-                                        <button className="flex items-center gap-2 p-1 pr-3 bg-white border border-gray-border rounded-full hover:shadow-md transition-all">
-                                            <div className="w-8 h-8 rounded-full bg-cream-accent flex items-center justify-center text-xs font-black text-gold-accent overflow-hidden border border-gray-border/50">
+                                        <button className="flex items-center gap-2 p-1 pr-3 bg-white border border-zinc-200 rounded-2xl hover:shadow-md hover:border-zinc-300 transition-all duration-200">
+                                            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-zinc-100 to-zinc-50 flex items-center justify-center text-sm font-black text-oflem-charcoal overflow-hidden border border-zinc-100">
                                                 {auth.user.avatar ? (
                                                     <img src={auth.user.avatar} alt="" className="w-full h-full object-cover" />
                                                 ) : (
                                                     auth.user.name.charAt(0).toUpperCase()
                                                 )}
                                             </div>
-                                            <span className="text-sm font-black text-oflem-charcoal hidden md:block">{auth.user.name.split(' ')[0]}</span>
-                                            <svg className="w-4 h-4 text-gray-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7" />
-                                            </svg>
+                                            <div className="flex flex-col items-start leading-none">
+                                                <span className="text-[12px] font-black text-oflem-charcoal hidden md:block">{auth.user.name.split(' ')[0]}</span>
+                                                <span className="text-[9px] font-bold text-oflem-terracotta uppercase tracking-wider">{t(userRole)}</span>
+                                            </div>
+                                            <ChevronDown className="w-3.5 h-3.5 text-zinc-400" />
                                         </button>
                                     </Dropdown.Trigger>
-                                    <Dropdown.Content contentClasses="py-2 bg-white rounded-[24px] shadow-2xl border border-gray-border/50 w-56">
-                                        <div className="px-5 py-3 border-b border-gray-border mb-1">
-                                            <div className="text-[10px] font-black uppercase text-gray-muted mb-1">{t('Active Role')}</div>
-                                            <div className="text-xs font-black text-oflem-terracotta uppercase tracking-widest">
-                                                {isAdminRoute ? t('Administrator') : (userRole === 'performer' ? t('Provider') : t('Client'))}
+                                    <Dropdown.Content contentClasses="py-1 bg-white rounded-2xl shadow-2xl border border-zinc-100 w-60 overflow-hidden">
+                                        {/* Balance header */}
+                                        <div className="px-4 py-3 bg-gradient-to-br from-zinc-900 to-zinc-800 text-white">
+                                            <div className="text-[9px] font-black uppercase tracking-widest text-white/50 mb-1">{t('Account Balance')}</div>
+                                            <div className="text-xl font-black">
+                                                CHF {parseFloat(auth.user.balance || 0).toFixed(2)}
                                             </div>
                                         </div>
-                                        <Dropdown.Link href={route('profile.edit')}>👤 {t('Profile Settings')}</Dropdown.Link>
                                         
+                                        {/* Links */}
+                                        <div className="py-1">
+                                            {dropdownLinks.map((item) => {
+                                                const Icon = item.icon;
+                                                return (
+                                                    <Dropdown.Link key={item.href + item.name} href={item.href}>
+                                                        <span className="flex items-center gap-2.5 text-[13px]">
+                                                            <Icon size={15} className="text-zinc-400" />
+                                                            {item.name}
+                                                        </span>
+                                                    </Dropdown.Link>
+                                                );
+                                            })}
+                                        </div>
+                                        
+                                        {/* Role Switch */}
                                         {!isAdminRoute && (
-                                            userRole === 'performer' ? (
+                                            <>
+                                                <div className="border-t border-zinc-100" />
                                                 <button 
-                                                    onClick={() => router.post(route('role.switch'), { role: 'customer' })}
-                                                    className="block w-full px-4 py-2 text-left text-sm font-black text-oflem-charcoal hover:bg-oflem-cream transition-colors"
+                                                    onClick={() => router.post(route('role.switch'), { role: userRole === 'provider' ? 'client' : 'provider' })}
+                                                    className="flex items-center gap-2.5 w-full px-4 py-2.5 text-left text-[13px] font-bold text-zinc-600 hover:bg-zinc-50 transition-colors"
                                                 >
-                                                    🔄 {t('Switch to Flemmard')}
+                                                    <RefreshCw size={15} className="text-zinc-400" />
+                                                    {userRole === 'provider' ? t('Switch to Client') : t('Switch to Provider')}
                                                 </button>
-                                            ) : (
-                                                <button 
-                                                    onClick={() => router.post(route('role.switch'), { role: 'performer' })}
-                                                    className="block w-full px-4 py-2 text-left text-sm font-black text-oflem-charcoal hover:bg-oflem-cream transition-colors"
-                                                >
-                                                    🔄 {t('Switch to Motivé')}
-                                                </button>
-                                            )
+                                            </>
                                         )}
 
-                                        <div className="border-t border-gray-border my-1"></div>
-                                        <Dropdown.Link href={route('logout')} method="post" as="button" className="text-red-600">🚪 {t('Sign Out')}</Dropdown.Link>
+                                        <div className="border-t border-zinc-100" />
+                                        <Dropdown.Link href={route('logout')} method="post" as="button">
+                                            <span className="flex items-center gap-2.5 text-[13px] text-red-500">
+                                                <LogOut size={15} />
+                                                {t('Log out')}
+                                            </span>
+                                        </Dropdown.Link>
                                     </Dropdown.Content>
                                 </Dropdown>
+
+                                {/* CTA Button */}
+                                {cta && (
+                                    <Link 
+                                        href={cta.href} 
+                                        className={`px-5 py-2 rounded-xl text-[13px] font-black text-white shadow-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] flex items-center gap-1.5 ${
+                                            cta.style === 'charcoal' 
+                                                ? 'bg-oflem-charcoal hover:bg-zinc-800' 
+                                                : 'bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light'
+                                        }`}
+                                    >
+                                        {cta.style === 'charcoal' ? <Compass size={14} /> : <PlusCircle size={14} />}
+                                        {cta.label}
+                                    </Link>
+                                )}
                             </div>
                         ) : (
                             <div className="flex items-center gap-3">
-                                <Link href={route('login')} className="text-sm font-black text-oflem-charcoal hover:underline px-2">
+                                <Link href={route('login')} className="text-[13px] font-black text-zinc-700 bg-white border border-zinc-200 px-5 py-2 rounded-xl hover:border-zinc-300 hover:shadow-sm transition-all">
                                     {t('Log in')}
                                 </Link>
                                 <Link 
                                     href={route('register')} 
-                                    className="bg-oflem-terracotta text-white px-6 py-2.5 rounded-full font-black text-sm transition-all shadow-sm hover:shadow-md hover:bg-oflem-terracotta/90"
+                                    className="text-[13px] font-black text-white bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light px-5 py-2 rounded-xl shadow-sm hover:shadow-md active:scale-[0.98] transition-all flex items-center gap-1.5"
                                 >
                                     {t('Sign up')}
+                                    <ArrowRight size={14} />
                                 </Link>
                             </div>
                         )}
                     </div>
 
-                    {/* Mobile Menu Button */}
-                    <div className="flex items-center sm:hidden">
+                    {/* Mobile: Notification + Menu */}
+                    <div className="flex items-center gap-2 sm:hidden">
+                        {auth.user && <NotificationBell />}
                         <button
                             onClick={() => setShowingNavigationDropdown(!showingNavigationDropdown)}
-                            className="p-2 rounded-full text-gray-muted hover:text-oflem-charcoal hover:bg-gray-100 transition-all"
+                            className="p-2 rounded-xl text-zinc-700 hover:bg-zinc-100 transition-all"
                         >
-                            <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                                <path className={!showingNavigationDropdown ? 'inline-flex' : 'hidden'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-                                <path className={showingNavigationDropdown ? 'inline-flex' : 'hidden'} strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
+                            {showingNavigationDropdown ? <X size={22} /> : <Menu size={22} />}
                         </button>
                     </div>
                 </div>
             </div>
 
             {/* Mobile Menu */}
-            <div className={`${showingNavigationDropdown ? 'block' : 'hidden'} sm:hidden bg-white border-t border-gray-border animate-in slide-in-from-top-1 duration-200`}>
-                <div className="px-4 pt-4 pb-3 space-y-2">
-                    {currentLinks.map((link) => (
-                        <Link
-                            key={link.href}
-                            href={link.href}
-                            className={`block px-4 py-3 rounded-2xl text-base font-black transition-all ${
-                                window.location.pathname === link.href
-                                    ? 'bg-oflem-cream text-oflem-terracotta'
-                                    : 'text-gray-muted hover:bg-gray-50'
+            <div className={`${showingNavigationDropdown ? 'block' : 'hidden'} sm:hidden bg-white border-t border-zinc-100`}>
+                <div className="px-4 pt-3 pb-5 space-y-1 max-h-[calc(100vh-68px)] overflow-y-auto">
+                    {/* Nav Links */}
+                    {currentLinks.map((link) => {
+                        const Icon = link.icon;
+                        const active = isActive(link.href);
+                        return (
+                            <Link
+                                key={link.name + link.href}
+                                href={link.href}
+                                onClick={() => setShowingNavigationDropdown(false)}
+                                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-bold transition-all ${
+                                    active
+                                        ? 'bg-oflem-terracotta/8 text-oflem-terracotta'
+                                        : 'text-zinc-600 hover:bg-zinc-50'
+                                }`}
+                            >
+                                <Icon size={18} className={active ? 'text-oflem-terracotta' : 'text-zinc-400'} />
+                                {link.name}
+                            </Link>
+                        );
+                    })}
+                    
+                    {/* CTA for mobile */}
+                    {cta && (
+                        <Link 
+                            href={cta.href}
+                            onClick={() => setShowingNavigationDropdown(false)}
+                            className={`flex items-center justify-center gap-2 mx-2 mt-2 py-3.5 rounded-xl text-[14px] font-black text-white transition-all ${
+                                cta.style === 'charcoal' 
+                                    ? 'bg-oflem-charcoal' 
+                                    : 'bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light'
                             }`}
                         >
-                            {link.icon && <span className="mr-3">{link.icon}</span>}
-                            {link.name}
+                            {cta.style === 'charcoal' ? <Compass size={16} /> : <PlusCircle size={16} />}
+                            {cta.label}
                         </Link>
-                    ))}
-                    
-                    <div className="pt-4 border-t border-gray-border">
+                    )}
+
+                    {/* Divider */}
+                    <div className="border-t border-zinc-100 my-3" />
+
+                    {/* Language Switcher Mobile */}
+                    <div className="flex items-center justify-center gap-1 px-4 py-2">
+                        {['FR', 'EN', 'DE', 'IT'].map((lang) => (
+                            <button 
+                                key={lang}
+                                onClick={() => router.post(route('language.switch'), { locale: lang.toLowerCase() })}
+                                className={`text-[11px] font-black px-3 py-1.5 rounded-lg transition-all ${
+                                    usePage().props.locale?.toUpperCase() === lang 
+                                        ? 'bg-oflem-terracotta/10 text-oflem-terracotta' 
+                                        : 'text-zinc-400 hover:text-zinc-600 hover:bg-zinc-50'
+                                }`}
+                            >
+                                {lang}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* User Section */}
+                    <div className="border-t border-zinc-100 pt-3 mt-2">
                         {auth.user ? (
-                            <div className="space-y-4">
-                                <div className="flex items-center gap-3 px-4 py-2">
-                                    <div className="w-10 h-10 rounded-full bg-cream-accent flex items-center justify-center text-sm font-black text-gold-accent overflow-hidden border border-gray-border/50">
+                            <div className="space-y-2">
+                                {/* User Info Card */}
+                                <div className="flex items-center gap-3 px-4 py-3 bg-zinc-50 rounded-2xl">
+                                    <div className="w-11 h-11 rounded-xl bg-white border border-zinc-100 flex items-center justify-center text-base font-black text-oflem-charcoal overflow-hidden shadow-sm">
                                         {auth.user.avatar ? (
                                             <img src={auth.user.avatar} alt="" className="w-full h-full object-cover" />
                                         ) : (
                                             auth.user.name.charAt(0).toUpperCase()
                                         )}
                                     </div>
-                                    <div>
-                                        <div className="font-black text-base text-oflem-charcoal">{auth.user.name}</div>
-                                        <div className="text-xs font-bold text-gray-muted uppercase tracking-widest">
-                                            {isAdminRoute ? t('Admin') : (userRole === 'performer' ? t('Provider') : t('Client'))}
+                                    <div className="flex-1 min-w-0">
+                                        <div className="font-black text-[14px] text-zinc-900 truncate">{auth.user.name}</div>
+                                        <div className="text-[10px] font-bold uppercase text-oflem-terracotta tracking-wider">
+                                            {t(userRole)} • CHF {parseFloat(auth.user.balance || 0).toFixed(2)}
                                         </div>
                                     </div>
                                 </div>
                                 
-                                <div className="grid grid-cols-2 gap-3 px-2">
-                                    <Link href={route('profile.edit')} className="flex items-center justify-center py-3 bg-gray-50 rounded-2xl font-black text-sm text-gray-muted hover:bg-gray-100 transition-all">
-                                        ⚙️ {t('Settings')}
+                                {/* Quick Links */}
+                                <div className="space-y-0.5">
+                                    {dropdownLinks.map((item) => {
+                                        const Icon = item.icon;
+                                        return (
+                                            <Link 
+                                                key={item.href + item.name} 
+                                                href={item.href}
+                                                onClick={() => setShowingNavigationDropdown(false)}
+                                                className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-bold text-zinc-600 hover:bg-zinc-50 transition-all"
+                                            >
+                                                <Icon size={16} className="text-zinc-400" />
+                                                {item.name}
+                                            </Link>
+                                        );
+                                    })}
+                                </div>
+
+                                {/* Role Switch */}
+                                {!isAdminRoute && (
+                                    <button 
+                                        onClick={() => {
+                                            router.post(route('role.switch'), { role: userRole === 'provider' ? 'client' : 'provider' });
+                                            setShowingNavigationDropdown(false);
+                                        }}
+                                        className="flex items-center gap-3 w-full px-4 py-2.5 rounded-xl text-[13px] font-bold text-zinc-600 hover:bg-zinc-50 transition-colors"
+                                    >
+                                        <RefreshCw size={16} className="text-zinc-400" />
+                                        {userRole === 'provider' ? t('Switch to Client') : t('Switch to Provider')}
+                                    </button>
+                                )}
+                                
+                                {/* Actions Grid */}
+                                <div className="grid grid-cols-2 gap-2 pt-2">
+                                    <Link 
+                                        href={route('profile.edit')}
+                                        onClick={() => setShowingNavigationDropdown(false)}
+                                        className="flex items-center justify-center gap-2 py-3 bg-zinc-100 rounded-xl font-black text-[12px] text-zinc-600 hover:bg-zinc-200 transition-all"
+                                    >
+                                        <Settings size={14} />
+                                        {t('Settings')}
                                     </Link>
-                                    <Link href={route('logout')} method="post" as="button" className="flex items-center justify-center py-3 bg-red-50 rounded-2xl font-black text-sm text-red-600 hover:bg-red-100 transition-all">
-                                        🚪 {t('Log out')}
+                                    <Link 
+                                        href={route('logout')} 
+                                        method="post" 
+                                        as="button"
+                                        className="flex items-center justify-center gap-2 py-3 bg-red-50 rounded-xl font-black text-[12px] text-red-500 hover:bg-red-100 transition-all"
+                                    >
+                                        <LogOut size={14} />
+                                        {t('Logout')}
                                     </Link>
                                 </div>
                             </div>
                         ) : (
-                            <div className="flex flex-col gap-3 px-2">
-                                <Link href={route('login')} className="flex items-center justify-center py-4 bg-gray-50 rounded-2xl font-black text-oflem-charcoal">
+                            <div className="flex flex-col gap-2 px-2">
+                                <Link 
+                                    href={route('login')} 
+                                    onClick={() => setShowingNavigationDropdown(false)}
+                                    className="flex items-center justify-center py-3.5 bg-zinc-50 border border-zinc-200 rounded-xl font-black text-zinc-900 text-[14px]"
+                                >
                                     {t('Log in')}
                                 </Link>
-                                <Link href={route('register')} className="flex items-center justify-center py-4 bg-oflem-terracotta text-white rounded-2xl font-black shadow-lg">
+                                <Link 
+                                    href={route('register')} 
+                                    onClick={() => setShowingNavigationDropdown(false)}
+                                    className="flex items-center justify-center gap-2 py-3.5 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white rounded-xl font-black text-[14px] shadow-sm"
+                                >
                                     {t('Get Started')}
+                                    <ArrowRight size={14} />
                                 </Link>
                             </div>
                         )}

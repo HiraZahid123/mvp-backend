@@ -9,7 +9,7 @@ export default function AuthSplitLayout({ children, heroImage, heroHeading, hero
                 <div className="relative z-10 w-full max-w-lg mx-auto flex flex-col items-center">
                     {heroHeading && (
                         <div className="text-center mb-6 lg:mb-8">
-                            <h2 className="text-2xl lg:text-3xl font-black text-primary-black tracking-tight mb-2">{heroHeading}</h2>
+                            <h2 className="text-2xl lg:text-3xl font-black text-oflem-charcoal tracking-tight mb-2">{heroHeading}</h2>
                             {heroSubtext && <p className="text-gray-muted text-sm lg:text-base font-bold">{heroSubtext}</p>}
                         </div>
                     )}

@@ -11,18 +11,18 @@ use Inertia\Inertia;
 class WalletController extends Controller
 {
     /**
-     * Performer Wallet - Show earnings, balance, and withdrawal options
+     * Provider Wallet - Show earnings, balance, and withdrawal options
      */
     public function index()
     {
         $user = Auth::user();
         
-        // Sum all captured payments where user was the performer (total earned)
+        // Sum all captured payments where user was the provider (total earned)
         $totalEarned = Payment::whereHas('mission', function($query) use ($user) {
                 $query->where('assigned_user_id', $user->id);
             })
             ->where('status', 'captured')
-            ->sum('performer_amount');
+            ->sum('provider_amount');
 
         // Sync balance if out of date
         $actualBalance = $totalEarned - $user->total_withdrawn;

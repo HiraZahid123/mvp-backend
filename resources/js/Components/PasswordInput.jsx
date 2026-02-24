@@ -26,9 +26,9 @@ export default function PasswordInput({
                     w-full px-4 py-3 pr-12
                     bg-input-bg border border-gray-border/50
                     rounded-[24px]
-                    text-primary-black text-base
+                    text-oflem-charcoal text-base
                     placeholder:text-gray-muted/60
-                    focus:outline-none focus:ring-2 focus:ring-gold-accent/30 focus:border-gold-accent
+                    focus:outline-none focus:ring-2 focus:ring-oflem-terracotta/30 focus:border-oflem-terracotta
                     transition-all duration-200
                     ${className}
                 `}
@@ -36,7 +36,7 @@ export default function PasswordInput({
             <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-muted hover:text-primary-black transition-colors duration-200"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-muted hover:text-oflem-charcoal transition-colors duration-200"
                 tabIndex={-1}
             >
                 {showPassword ? (

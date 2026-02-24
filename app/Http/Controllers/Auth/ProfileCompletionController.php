@@ -142,7 +142,7 @@ class ProfileCompletionController extends Controller
             return redirect()->route('missions.pending');
         }
 
-        if ($user->isPerformer()) {
+        if ($user->isProvider()) {
             return redirect()->route('onboarding.index');
         }
 

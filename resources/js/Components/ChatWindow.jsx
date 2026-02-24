@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { usePage } from '@inertiajs/react';
 import axios from 'axios';
 import useTranslation from '@/Hooks/useTranslation';
+import { Send } from 'lucide-react';
 
 export default function ChatWindow({ chat, onClose }) {
     const { t } = useTranslation();
@@ -87,9 +88,9 @@ export default function ChatWindow({ chat, onClose }) {
     return (
         <div className="fixed bottom-6 right-6 w-96 h-[500px] bg-white rounded-[32px] shadow-2xl border border-gray-border flex flex-col z-[100] overflow-hidden animate-in slide-in-from-bottom-10 duration-500">
             {/* Header */}
-            <div className="p-5 bg-primary-black text-white flex items-center justify-between">
+            <div className="p-5 bg-oflem-charcoal text-white flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-gold-accent flex items-center justify-center text-primary-black font-black text-xs">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light flex items-center justify-center text-oflem-charcoal font-black text-xs">
                         {chat.mission?.title.charAt(0)}
                     </div>
                     <div>
@@ -107,7 +108,7 @@ export default function ChatWindow({ chat, onClose }) {
                 {messages.map((msg) => (
                     msg.user_id === null || msg.is_system ? (
                         <div key={msg.id} className="flex justify-center my-2">
-                             <div className="bg-cream-accent/50 border border-gold-accent/20 px-4 py-2 rounded-2xl text-[11px] font-bold text-primary-black/60 text-center max-w-[90%]">
+                             <div className="bg-cream-accent/50 border border-oflem-terracotta/20 px-4 py-2 rounded-2xl text-[11px] font-bold text-oflem-charcoal/60 text-center max-w-[90%]">
                                 {msg.content}
                              </div>
                         </div>
@@ -115,8 +116,8 @@ export default function ChatWindow({ chat, onClose }) {
                         <div key={msg.id} className={`flex ${msg.user_id === auth.user.id ? 'justify-end' : 'justify-start'}`}>
                             <div className={`max-w-[80%] p-4 rounded-[20px] text-sm font-medium ${
                                 msg.user_id === auth.user.id 
-                                    ? 'bg-primary-black text-white rounded-br-sm' 
-                                    : 'bg-white text-primary-black border border-gray-border rounded-bl-sm shadow-sm'
+                                    ? 'bg-oflem-charcoal text-white rounded-br-sm' 
+                                    : 'bg-white text-oflem-charcoal border border-gray-border rounded-bl-sm shadow-sm'
                             }`}>
                                 <p>{msg.content}</p>
                                 <span className="text-[9px] opacity-40 mt-1 block text-right">
@@ -132,7 +133,7 @@ export default function ChatWindow({ chat, onClose }) {
                         <div className="bg-white border border-gray-border px-4 py-2 rounded-full shadow-sm text-[10px] font-bold text-gray-muted flex items-center gap-2">
                              <div className="flex gap-1">
                                 <span className="w-1 h-1 bg-gray-400 rounded-full animate-bounce"></span>
-                                <span className="w-1 h-1 bg-gold-accent rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></span>
+                                <span className="w-1 h-1 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></span>
                                 <span className="w-1 h-1 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.4s'}}></span>
                              </div>
                              {typingUsers[0].name} {t('is typing...')}
@@ -153,15 +154,15 @@ export default function ChatWindow({ chat, onClose }) {
                             handleTyping(true);
                         }}
                         placeholder={t('Type a message...')}
-                        className="flex-1 bg-oflem-cream border-none rounded-full px-5 py-3 text-sm font-medium focus:ring-2 focus:ring-gold-accent transition-all"
+                        className="flex-1 bg-oflem-cream border-none rounded-full px-5 py-3 text-sm font-medium focus:ring-2 focus:ring-oflem-terracotta transition-all"
                     />
-                    <button
-                        type="submit"
-                        disabled={!newMessage.trim()}
-                        className="w-10 h-10 bg-primary-black text-white rounded-full flex items-center justify-center hover:bg-black transition-all disabled:opacity-30 shadow-lg"
-                    >
-                        <svg className="w-5 h-5 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-                    </button>
+                        <button
+                            type="submit"
+                            disabled={!newMessage.trim()}
+                            className="w-10 h-10 bg-oflem-charcoal text-white rounded-full flex items-center justify-center hover:bg-black transition-all disabled:opacity-30 shadow-lg group"
+                        >
+                            <Send size={18} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                        </button>
                 </div>
             </form>
         </div>

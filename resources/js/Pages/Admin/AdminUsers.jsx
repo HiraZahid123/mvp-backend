@@ -35,12 +35,12 @@ export default function AdminUsers({ users, stats, filters }) {
                         <p className="text-3xl font-black">{stats.total}</p>
                     </div>
                     <div className="bg-white rounded-2xl p-4 shadow">
-                        <p className="text-sm font-bold text-gray-500">Customers</p>
-                        <p className="text-3xl font-black text-blue-600">{stats.customers}</p>
+                        <p className="text-sm font-bold text-gray-500">Clients</p>
+                        <p className="text-3xl font-black text-blue-600">{stats.clients}</p>
                     </div>
                     <div className="bg-white rounded-2xl p-4 shadow">
-                        <p className="text-sm font-bold text-gray-500">Performers</p>
-                        <p className="text-3xl font-black text-green-600">{stats.performers}</p>
+                        <p className="text-sm font-bold text-gray-500">Providers</p>
+                        <p className="text-3xl font-black text-green-600">{stats.providers}</p>
                     </div>
                     <div className="bg-white rounded-2xl p-4 shadow">
                         <p className="text-sm font-bold text-gray-500">Admins</p>
@@ -64,13 +64,13 @@ export default function AdminUsers({ users, stats, filters }) {
                             className="px-4 py-3 rounded-xl border-2 border-gray-300 focus:border-oflem-terracotta outline-none"
                         >
                             <option value="all">All Roles</option>
-                            <option value="customer">Customer</option>
-                            <option value="performer">Performer</option>
+                            <option value="client">Client</option>
+                            <option value="provider">Provider</option>
                             <option value="both">Both</option>
                         </select>
                         <button
                             type="submit"
-                            className="bg-oflem-terracotta hover:bg-opacity-90 text-white px-8 py-3 rounded-xl font-bold transition-all"
+                            className="bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light hover:bg-opacity-90 text-white px-8 py-3 rounded-xl font-bold transition-all"
                         >
                             Search
                         </button>
@@ -108,7 +108,7 @@ export default function AdminUsers({ users, stats, filters }) {
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className="px-3 py-1 rounded-full text-xs font-bold bg-oflem-terracotta text-white">
+                                            <span className="px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white">
                                                 {user.role_type}
                                             </span>
                                         </td>
@@ -165,7 +165,7 @@ export default function AdminUsers({ users, stats, filters }) {
                                         disabled={!link.url}
                                         className={`px-4 py-2 rounded-xl font-bold text-sm transition-all ${
                                             link.active
-                                                ? 'bg-oflem-terracotta text-white'
+                                                ? 'bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white'
                                                 : link.url
                                                 ? 'bg-gray-200 hover:bg-gray-300 text-gray-700'
                                                 : 'bg-gray-100 text-gray-400 cursor-not-allowed'

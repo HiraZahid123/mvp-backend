@@ -119,14 +119,14 @@ export default function VerifyEmailCode({ email }) {
             heroImage="/images/illustrations/verify-email.svg"
             bgAccentClass="bg-cream-accent"
         >
-            <Head title={t("Vérifier l'email")} />
+            <Head title={t("Verify Email")} />
 
             <div className="text-center mb-8">
-                <h1 className="text-[32px] lg:text-[40px] font-serif font-bold text-primary-black tracking-tight mb-3 leading-tight">
-                    {t("Vérifiez votre email")}
+                <h1 className="text-[32px] lg:text-[40px] font-serif font-bold text-oflem-charcoal tracking-tight mb-3 leading-tight">
+                    {t("Verify your email")}
                 </h1>
                 <p className="text-gray-muted text-base font-medium">
-                    {t("Nous avons envoyé un code à ")}<span className="font-bold text-primary-black">{email}</span>
+                    {t("We've sent a code to ")}<span className="font-bold text-oflem-charcoal">{email}</span>
                 </p>
             </div>
 
@@ -150,8 +150,8 @@ export default function VerifyEmailCode({ email }) {
                                     text-center text-2xl font-bold
                                     bg-input-bg border-2 border-gray-border/50
                                     rounded-[16px]
-                                    text-primary-black
-                                    focus:outline-none focus:ring-2 focus:ring-gold-accent/30 focus:border-gold-accent
+                                    text-oflem-charcoal
+                                    focus:outline-none focus:ring-2 focus:ring-oflem-terracotta/30 focus:border-oflem-terracotta
                                     transition-all duration-200
                                 "
                             />
@@ -167,13 +167,13 @@ export default function VerifyEmailCode({ email }) {
                             type="button"
                             onClick={handleResend}
                             disabled={resending}
-                            className="text-sm font-bold text-gold-accent hover:underline disabled:opacity-50"
+                            className="text-sm font-bold text-oflem-terracotta hover:underline disabled:opacity-50"
                         >
-                            {resending ? t('Envoi...') : t('Renvoyer le code')}
+                            {resending ? t('Sending...') : t('Resend code')}
                         </button>
                     ) : (
                         <p className="text-sm text-gray-muted font-medium">
-                            {t("Renvoyer le code dans ")}<span className="font-bold text-primary-black">{timeLeft}s</span>
+                            {t("Resend code in ")}<span className="font-bold text-oflem-charcoal">{timeLeft}s</span>
                         </p>
                     )}
                 </div>
@@ -184,13 +184,13 @@ export default function VerifyEmailCode({ email }) {
                     disabled={processing || code.join('').length !== 6}
                     processing={processing}
                 >
-                    {t('Vérifier')}
+                    {t('Verify')}
                 </PrimaryButton>
             </form>
 
-            <div className="mt-6 p-4 bg-gold-accent/5 rounded-[24px] border border-gold-accent/20">
+            <div className="mt-6 p-4 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/5 rounded-[24px] border border-oflem-terracotta/20">
                 <p className="text-xs text-gray-muted text-center">
-                    {t("Le code expirera dans ")}<span className="font-bold text-primary-black">{t("10 minutes")}</span>
+                    {t("The code will expire in ")}<span className="font-bold text-oflem-charcoal">{t("10 minutes")}</span>
                 </p>
             </div>
         </AuthSplitLayout>

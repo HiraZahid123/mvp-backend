@@ -31,8 +31,8 @@ class DisputeInitiatedNotification extends Notification
                     ->subject('[ADMIN] New Dispute Initiated')
                     ->line('A new dispute has been initiated and requires your attention.')
                     ->line('Mission: ' . $this->mission->title)
-                    ->line('Customer: ' . $this->mission->user->name)
-                    ->line('Performer: ' . $this->mission->assignedUser->name)
+                    ->line('Client: ' . $this->mission->user->name)
+                    ->line('Provider: ' . $this->mission->assignedUser->name)
                     ->line('Reason: ' . $this->mission->dispute_reason)
                     ->action('Review Dispute', url('/admin/missions/' . $this->mission->id))
                     ->line('Please review and resolve this dispute as soon as possible.');
@@ -43,8 +43,8 @@ class DisputeInitiatedNotification extends Notification
         return [
             'mission_id' => $this->mission->id,
             'mission_title' => $this->mission->title,
-            'customer_id' => $this->mission->user_id,
-            'performer_id' => $this->mission->assigned_user_id,
+            'client_id' => $this->mission->user_id,
+            'provider_id' => $this->mission->assigned_user_id,
             'dispute_reason' => $this->mission->dispute_reason,
             'type' => 'dispute_initiated',
             'message' => 'New dispute requires admin review.',

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { X, Sliders } from 'lucide-react';
+import { Sliders, X } from 'lucide-react';
 
-export default function FilterDrawer({ filters, onFilterChange, isOpen, onClose }) {
+export default function FilterDrawer({ filters, onFilterChange, isOpen, onClose, availableCategories }) {
     const [localFilters, setLocalFilters] = useState(filters);
 
     const handleApply = () => {
@@ -9,10 +9,14 @@ export default function FilterDrawer({ filters, onFilterChange, isOpen, onClose 
         onClose();
     };
 
-    const categories = [
+    const defaultCategories = [
         'Cleaning', 'Moving', 'DIY', 'IT', 'Admin', 'Delivery', 
         'Pets', 'Gardening', 'Events', 'Education', 'Wellness', 'Other'
     ];
+
+    const displayCategories = availableCategories?.length > 0 
+        ? [...new Set([...availableCategories, ...defaultCategories])]
+        : defaultCategories;
 
     if (!isOpen) return null;
 
@@ -48,12 +52,12 @@ export default function FilterDrawer({ filters, onFilterChange, isOpen, onClose 
                             Category
                         </label>
                         <select
-                            value={localFilters.category || ''}
-                            onChange={(e) => setLocalFilters({ ...localFilters, category: e.target.value })}
+                            value={localFilters.categories && localFilters.categories.length > 0 ? localFilters.categories[0] : ''}
+                            onChange={(e) => setLocalFilters({ ...localFilters, categories: e.target.value ? [e.target.value] : [] })}
                             className="w-full px-4 py-3 bg-oflem-cream border-0 rounded-2xl font-medium focus:ring-2 focus:ring-oflem-terracotta/20"
                         >
                             <option value="">All Categories</option>
-                            {categories.map(cat => (
+                            {displayCategories.map(cat => (
                                 <option key={cat} value={cat}>{cat}</option>
                             ))}
                         </select>
@@ -124,7 +128,7 @@ export default function FilterDrawer({ filters, onFilterChange, isOpen, onClose 
                                 onChange={(e) => setLocalFilters({ ...localFilters, remote_only: e.target.checked })}
                                 className="sr-only peer"
                             />
-                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-oflem-terracotta/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-oflem-terracotta"></div>
+                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-oflem-terracotta/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light"></div>
                         </label>
                     </div>
                 </div>
@@ -143,7 +147,7 @@ export default function FilterDrawer({ filters, onFilterChange, isOpen, onClose 
                     </button>
                     <button
                         onClick={handleApply}
-                        className="flex-1 px-6 py-4 bg-oflem-terracotta text-white rounded-2xl font-black hover:bg-oflem-terracotta/90 transition-colors"
+                        className="flex-1 px-6 py-4 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white rounded-2xl font-black hover:bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/90 transition-colors"
                     >
                         Apply Filters
                     </button>

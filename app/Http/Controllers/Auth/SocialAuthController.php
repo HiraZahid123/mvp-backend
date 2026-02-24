@@ -53,7 +53,7 @@ class SocialAuthController extends Controller
             $user = User::findByProvider($provider, $socialUser->getId());
 
             $authType = session('social_auth_type', 'login');
-            $roleType = session('social_auth_role_type', 'customer');
+            $roleType = session('social_auth_role_type', 'client');
 
             if ($user) {
                 // Existing user - log them in
@@ -174,7 +174,7 @@ class SocialAuthController extends Controller
             'provider' => 'required|in:google,apple,facebook',
             'access_token' => 'required|string',
             'type' => 'sometimes|in:login,register',
-            'role_type' => 'sometimes|in:customer,performer,both',
+            'role_type' => 'sometimes|in:client,provider,both',
         ]);
 
         try {
@@ -185,7 +185,7 @@ class SocialAuthController extends Controller
             $user = User::findByProvider($request->provider, $socialUser->getId());
 
             if (!$user) {
-                $roleType = $request->get('role_type', 'customer');
+                $roleType = $request->get('role_type', 'client');
                 $user = $this->createSocialUser($request->provider, $socialUser, $roleType);
             }
 

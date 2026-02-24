@@ -46,7 +46,7 @@ const TypewriterEffect = memo(({ strings, pauseTime = 2000, typingSpeed = 100, o
             placeholder={isActive ? currentText : ""}
             onChange={handleInput}
             onFocus={() => setIsActive(false)}
-            className={`w-full bg-white border-2 border-gray-border rounded-full px-8 py-4 text-lg font-medium focus:outline-none focus:border-gold-accent transition-all placeholder:text-gray-muted/50 ${className}`}
+            className={`w-full bg-white border-2 border-gray-border rounded-full px-8 py-4 text-lg font-medium focus:outline-none focus:border-oflem-terracotta transition-all placeholder:text-gray-muted/50 ${className}`}
         />
     );
 });

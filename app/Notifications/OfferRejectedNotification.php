@@ -60,7 +60,7 @@ class OfferRejectedNotification extends Notification implements ShouldQueue
                     ->subject('Offer Not Selected')
                     ->line('Thank you for your interest in the mission.')
                     ->line('Mission: ' . $this->mission->title)
-                    ->line('Unfortunately, another performer was selected for this mission.')
+                    ->line('Unfortunately, another provider was selected for this mission.')
                     ->line('Don\'t be discouraged! Keep browsing for more opportunities.')
                     ->action('Browse Missions', url('/missions/active'))
                     ->line('Thank you for using Oflem!');
@@ -77,7 +77,7 @@ class OfferRejectedNotification extends Notification implements ShouldQueue
             'type' => 'offer_rejected',
             'mission_id' => $this->mission->id,
             'title' => $this->mission->title,
-            'message' => "Another performer was chosen for the mission: " . $this->mission->title,
+            'message' => "Another provider was chosen for the mission: " . $this->mission->title,
         ];
     }
 

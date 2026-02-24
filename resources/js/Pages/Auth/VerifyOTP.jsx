@@ -95,8 +95,8 @@ export default function VerifyOTP() {
                     className="absolute -top-12 left-0" 
                 />
 
-                <h2 className="text-lg font-medium text-primary-black mb-1">{t('Oflem')}</h2>
-                <h1 className="text-[32px] lg:text-[40px] font-black text-primary-black tracking-tight mb-2">
+                <h2 className="text-lg font-medium text-oflem-charcoal mb-1">{t('Oflem')}</h2>
+                <h1 className="text-[32px] lg:text-[40px] font-black text-oflem-charcoal tracking-tight mb-2">
                     {!otpSent ? t("One small code to go") : t("Almost done")}
                 </h1>
                 <p className="text-gray-muted text-sm font-medium">
@@ -112,25 +112,25 @@ export default function VerifyOTP() {
                         <div
                             onClick={() => setSelectedMethod('email')}
                             className={`p-5 bg-white border rounded-[24px] cursor-pointer transition-all flex items-center justify-between group ${
-                                selectedMethod === 'email' ? 'border-gold-accent ring-1 ring-gold-accent' : 'border-gray-border hover:border-gold-accent'
+                                selectedMethod === 'email' ? 'border-oflem-terracotta ring-1 ring-oflem-terracotta' : 'border-gray-border hover:border-oflem-terracotta'
                             }`}
                         >
                             <div className="flex items-center space-x-4">
-                                <div className="w-12 h-12 rounded-full bg-cream-accent flex items-center justify-center text-gold-accent transition-colors group-hover:bg-gold-accent group-hover:text-white">
+                                <div className="w-12 h-12 rounded-full bg-cream-accent flex items-center justify-center text-oflem-terracotta transition-colors group-hover:bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light group-hover:text-white">
                                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                     </svg>
                                 </div>
                                 <div>
-                                    <h3 className="font-black text-primary-black">{t('Send code to email :')}</h3>
+                                    <h3 className="font-black text-oflem-charcoal">{t('Send code to email :')}</h3>
                                     <p className="text-sm text-gray-muted font-bold">{email}</p>
                                 </div>
                             </div>
                             <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
-                                selectedMethod === 'email' ? 'border-gold-accent' : 'border-gray-border group-hover:border-gold-accent'
+                                selectedMethod === 'email' ? 'border-oflem-terracotta' : 'border-gray-border group-hover:border-oflem-terracotta'
                             }`}>
                                 <div className={`w-3 h-3 rounded-full transition-colors ${
-                                    selectedMethod === 'email' ? 'bg-gold-accent' : 'bg-transparent'
+                                    selectedMethod === 'email' ? 'bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light' : 'bg-transparent'
                                 }`}></div>
                             </div>
                         </div>
@@ -138,25 +138,25 @@ export default function VerifyOTP() {
                         <div
                             onClick={() => setSelectedMethod('phone')}
                             className={`p-5 bg-white border rounded-[24px] cursor-pointer transition-all flex items-center justify-between group ${
-                                selectedMethod === 'phone' ? 'border-gold-accent ring-1 ring-gold-accent' : 'border-gray-border hover:border-gold-accent'
+                                selectedMethod === 'phone' ? 'border-oflem-terracotta ring-1 ring-oflem-terracotta' : 'border-gray-border hover:border-oflem-terracotta'
                             }`}
                         >
                             <div className="flex items-center space-x-4">
-                                <div className="w-12 h-12 rounded-full bg-cream-accent flex items-center justify-center text-gold-accent transition-colors group-hover:bg-gold-accent group-hover:text-white">
+                                <div className="w-12 h-12 rounded-full bg-cream-accent flex items-center justify-center text-oflem-terracotta transition-colors group-hover:bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light group-hover:text-white">
                                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                                     </svg>
                                 </div>
                                 <div>
-                                    <h3 className="font-black text-primary-black">{t('Send code to phone number :')}</h3>
+                                    <h3 className="font-black text-oflem-charcoal">{t('Send code to phone number :')}</h3>
                                     <p className="text-sm text-gray-muted font-bold">{phone}</p>
                                 </div>
                             </div>
                             <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
-                                selectedMethod === 'phone' ? 'border-gold-accent' : 'border-gray-border group-hover:border-gold-accent'
+                                selectedMethod === 'phone' ? 'border-oflem-terracotta' : 'border-gray-border group-hover:border-oflem-terracotta'
                             }`}>
                                 <div className={`w-3 h-3 rounded-full transition-colors ${
-                                    selectedMethod === 'phone' ? 'bg-gold-accent' : 'bg-transparent'
+                                    selectedMethod === 'phone' ? 'bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light' : 'bg-transparent'
                                 }`}></div>
                             </div>
                         </div>
@@ -173,12 +173,12 @@ export default function VerifyOTP() {
                 ) : (
                     <>
                         <div className="mb-6">
-                             <p className="text-primary-black font-black text-center">{selectedMethod === 'email' ? email : phone}</p>
+                             <p className="text-oflem-charcoal font-black text-center">{selectedMethod === 'email' ? email : phone}</p>
                         </div>
 
                         <form onSubmit={submit} className="space-y-8">
                             <div className="space-y-2">
-                                <label className="text-sm font-black text-primary-black block text-center">{t('Enter the code received by email.')}</label>
+                                <label className="text-sm font-black text-oflem-charcoal block text-center">{t('Enter the code received by email.')}</label>
                                 <div className="flex justify-between gap-1 sm:gap-2 max-w-sm mx-auto">
                                     {otp.map((digit, index) => (
                                         <input
@@ -189,7 +189,7 @@ export default function VerifyOTP() {
                                             value={digit}
                                             onChange={(e) => handleOtpChange(e.target.value, index)}
                                             onPaste={handlePaste}
-                                            className="w-10 h-10 sm:w-12 sm:h-12 text-center text-xl font-black bg-input-bg border border-gray-border focus:ring-1 focus:ring-gold-accent focus:border-gold-accent rounded-full outline-none transition-all"
+                                            className="w-10 h-10 sm:w-12 sm:h-12 text-center text-xl font-black bg-input-bg border border-gray-border focus:ring-1 focus:ring-oflem-terracotta focus:border-oflem-terracotta rounded-full outline-none transition-all"
                                         />
                                     ))}
                                 </div>
@@ -214,7 +214,7 @@ export default function VerifyOTP() {
                                             type="button"
                                             onClick={() => sendOTP(selectedMethod)}
                                             disabled={timeLeft > 0}
-                                            className={`font-black transition-colors ${timeLeft > 0 ? 'text-gray-400 cursor-not-allowed' : 'text-primary-black underline hover:text-gold-accent'}`}
+                                            className={`font-black transition-colors ${timeLeft > 0 ? 'text-gray-400 cursor-not-allowed' : 'text-oflem-charcoal underline hover:text-oflem-terracotta'}`}
                                         >
                                             {timeLeft > 0 ? (
                                                 <>
@@ -231,7 +231,7 @@ export default function VerifyOTP() {
                                 <button 
                                     type="button" 
                                     onClick={() => setOtpSent(false)} 
-                                    className="text-xs text-gray-muted font-black hover:text-primary-black transition-colors"
+                                    className="text-xs text-gray-muted font-black hover:text-oflem-charcoal transition-colors"
                                 >
                                     {t('Change Method')}
                                 </button>

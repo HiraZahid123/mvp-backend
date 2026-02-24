@@ -6,6 +6,22 @@ import axios from 'axios';
 import useNotificationSound from '@/Hooks/useNotificationSound';
 import PaymentModal from '@/Components/Payments/PaymentModal';
 import { router } from '@inertiajs/react';
+import { 
+    MessageSquare, 
+    FileText, 
+    Calendar, 
+    Briefcase, 
+    ArrowRight, 
+    Send,
+    Circle,
+    Lock,
+    Handshake,
+    CheckCircle,
+    Clock,
+    RefreshCw,
+    Tag,
+    Zap
+} from 'lucide-react';
 
 export default function Messages({ chats: initialChats, selectedChatId }) {
     const { t } = useTranslation();
@@ -105,6 +121,7 @@ export default function Messages({ chats: initialChats, selectedChatId }) {
         setNewMessage('');
         handleTyping(false);
 
+        // Ensure we send as provider or client context (handled by API)
         axios.post(route('api.chats.messages.store', activeChat.id), { content })
             .then(response => {
                 console.log('Message sent successfully:', response.data);
@@ -176,22 +193,22 @@ export default function Messages({ chats: initialChats, selectedChatId }) {
         });
     };
 
-    const handleHire = (performerId) => {
+    const handleHire = (providerId) => {
         if (!confirm(t('Are you sure you want to hire this person? This will initiate the payment hold for the mission budget.'))) return;
         
-        axios.post(route('missions.hire', { mission: activeChat.mission_id, performer: performerId }))
+        axios.post(route('missions.hire', { mission: activeChat.mission_id, provider: providerId }))
             .then(response => {
                 if (response.data.stripe_client_secret) {
                     setClientSecret(response.data.stripe_client_secret);
                     setShowPaymentModal(true);
                 } else {
-                    alert(t('Performer hired successfully!'));
+                    alert(t('Provider hired successfully!'));
                     window.location.reload();
                 }
             })
             .catch(error => {
-                console.error("Failed to hire performer", error);
-                alert(t('Failed to hire performer. Please try again.'));
+                console.error("Failed to hire provider", error);
+                alert(t('Failed to hire provider. Please try again.'));
             });
     };
 
@@ -207,13 +224,15 @@ export default function Messages({ chats: initialChats, selectedChatId }) {
                 {/* Left Sidebar - Conversations */}
                 <div className="w-1/4 bg-white border-r border-gray-border flex flex-col">
                     <div className="p-6 border-b border-gray-border">
-                        <h2 className="text-2xl font-black text-primary-black">{t('Conversations')}</h2>
+                        <h2 className="text-2xl font-black text-oflem-charcoal">{t('Conversations')}</h2>
                     </div>
                     
                     <div className="flex-1 overflow-y-auto">
                         {chats.length === 0 ? (
-                            <div className="p-8 text-center">
-                                <div className="text-6xl mb-4">💬</div>
+                            <div className="p-8 text-center mt-20">
+                                <div className="w-16 h-16 bg-oflem-cream rounded-full flex items-center justify-center mx-auto mb-4 text-oflem-terracotta/40">
+                                    <MessageSquare size={32} />
+                                </div>
                                 <p className="text-gray-muted font-bold">{t('No conversations yet')}</p>
                             </div>
                         ) : (
@@ -226,22 +245,22 @@ export default function Messages({ chats: initialChats, selectedChatId }) {
                                         key={chat.id}
                                         onClick={() => loadChat(chat)}
                                         className={`w-full p-5 border-b border-gray-border/30 hover:bg-oflem-cream/20 transition-all text-left ${
-                                            isActive ? 'bg-oflem-cream/40 border-l-4 border-l-gold-accent' : ''
+                                            isActive ? 'bg-oflem-cream/40 border-l-4 border-l-oflem-terracotta' : ''
                                         }`}
                                     >
                                         <div className="flex items-start gap-3">
-                                            <div className="w-12 h-12 rounded-full bg-gold-accent flex items-center justify-center text-primary-black font-black shrink-0">
+                                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light flex items-center justify-center text-oflem-charcoal font-black shrink-0">
                                                 {other.name?.charAt(0)?.toUpperCase() || 'U'}
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex items-center justify-between mb-1">
-                                                    <h3 className="font-black text-primary-black truncate">{other.name}</h3>
+                                                    <h3 className="font-black text-oflem-charcoal truncate">{other.name}</h3>
                                                     <span className="text-[10px] text-gray-muted font-bold">
                                                         {chat.last_message_at ? new Date(chat.last_message_at).toLocaleDateString() : ''}
                                                     </span>
                                                 </div>
-                                                <p className="text-xs text-gray-muted font-bold mb-1 truncate">
-                                                    📋 {chat.mission?.title || t('Mission')}
+                                                <p className="text-xs text-gray-muted font-bold mb-1 truncate flex items-center gap-1.5">
+                                                    <FileText size={10} className="text-oflem-terracotta" /> {chat.mission?.title || t('Mission')}
                                                 </p>
                                                 <p className="text-xs text-gray-muted font-medium truncate">
                                                     {chat.messages?.[0]?.content || t('Start a conversation')}
@@ -262,12 +281,14 @@ export default function Messages({ chats: initialChats, selectedChatId }) {
                             {/* Chat Header */}
                             <div className="p-6 bg-white border-b border-gray-border flex items-center justify-between">
                                 <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 rounded-full bg-gold-accent flex items-center justify-center text-primary-black font-black">
+                                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light flex items-center justify-center text-oflem-charcoal font-black">
                                         {getOtherParticipant(activeChat).name?.charAt(0)?.toUpperCase() || 'U'}
                                     </div>
                                     <div>
-                                        <h2 className="text-xl font-black text-primary-black">{getOtherParticipant(activeChat).name}</h2>
-                                        <p className="text-sm text-gray-muted font-bold">📋 {activeChat.mission?.title}</p>
+                                        <h2 className="text-xl font-black text-oflem-charcoal">{getOtherParticipant(activeChat).name}</h2>
+                                        <p className="text-sm text-gray-muted font-bold flex items-center gap-1.5 mt-1">
+                                            <FileText size={12} className="text-oflem-terracotta" /> {activeChat.mission?.title}
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -277,7 +298,7 @@ export default function Messages({ chats: initialChats, selectedChatId }) {
                                 {messages.map((msg) => (
                                     msg.user_id === null || msg.is_system_message ? (
                                         <div key={msg.id} className="flex justify-center my-4">
-                                            <div className="bg-oflem-cream/50 border border-gold-accent/30 px-6 py-3 rounded-2xl text-xs font-bold text-primary-black/70 text-center max-w-[80%]">
+                                            <div className="bg-oflem-cream/50 border border-oflem-terracotta/30 px-6 py-3 rounded-2xl text-xs font-bold text-oflem-charcoal/70 text-center max-w-[80%]">
                                                 {msg.content}
                                             </div>
                                         </div>
@@ -285,15 +306,15 @@ export default function Messages({ chats: initialChats, selectedChatId }) {
                                         <div key={msg.id} className={`flex ${Number(msg.user_id) === Number(auth.user.id) ? 'justify-end' : 'justify-start'}`}>
                                             <div className={`max-w-[70%] ${Number(msg.user_id) === Number(auth.user.id) ? '' : 'flex items-start gap-2'}`}>
                                                 {Number(msg.user_id) !== Number(auth.user.id) && (
-                                                    <div className="w-8 h-8 rounded-full bg-gold-accent flex items-center justify-center text-primary-black font-black text-xs shrink-0">
+                                                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light flex items-center justify-center text-oflem-charcoal font-black text-xs shrink-0">
                                                         {msg.user?.name?.charAt(0)?.toUpperCase() || 'U'}
                                                     </div>
                                                 )}
                                                 <div>
                                                     <div className={`p-4 rounded-[20px] text-sm font-medium shadow-sm ${
                                                         Number(msg.user_id) === Number(auth.user.id) 
-                                                            ? 'bg-primary-black text-white rounded-br-sm' 
-                                                            : 'bg-white text-primary-black border border-gray-border rounded-bl-sm'
+                                                            ? 'bg-oflem-charcoal text-white rounded-br-sm' 
+                                                            : 'bg-white text-oflem-charcoal border border-gray-border rounded-bl-sm'
                                                     }`}>
                                                         <p>{msg.content}</p>
                                                     </div>
@@ -311,7 +332,7 @@ export default function Messages({ chats: initialChats, selectedChatId }) {
                                         <div className="flex items-center gap-2 bg-white border border-gray-border px-4 py-2 rounded-full shadow-sm">
                                             <div className="flex gap-1">
                                                 <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></span>
-                                                <span className="w-2 h-2 bg-gold-accent rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></span>
+                                                <span className="w-2 h-2 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></span>
                                                 <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.4s'}}></span>
                                             </div>
                                             <span className="text-xs font-bold text-gray-muted">{typingUsers[0].name} {t('is typing...')}</span>
@@ -332,16 +353,14 @@ export default function Messages({ chats: initialChats, selectedChatId }) {
                                             handleTyping(true);
                                         }}
                                         placeholder={t('Type your message...')}
-                                        className="flex-1 bg-oflem-cream border-gray-border rounded-full px-6 py-4 text-sm font-medium focus:ring-2 focus:ring-gold-accent focus:border-transparent transition-all"
+                                        className="flex-1 bg-oflem-cream border-gray-border rounded-full px-6 py-4 text-sm font-medium focus:ring-2 focus:ring-oflem-terracotta focus:border-transparent transition-all"
                                     />
                                     <button
                                         type="submit"
                                         disabled={!newMessage.trim()}
-                                        className="w-14 h-14 bg-primary-black text-white rounded-full flex items-center justify-center hover:bg-black transition-all disabled:opacity-30 shadow-lg"
+                                        className="w-14 h-14 bg-oflem-charcoal text-white rounded-full flex items-center justify-center hover:bg-black transition-all disabled:opacity-30 shadow-lg group"
                                     >
-                                        <svg className="w-6 h-6 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                                        </svg>
+                                        <Send size={24} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                                     </button>
                                 </div>
                             </form>
@@ -349,8 +368,10 @@ export default function Messages({ chats: initialChats, selectedChatId }) {
                     ) : (
                         <div className="flex-1 flex items-center justify-center">
                             <div className="text-center">
-                                <div className="text-8xl mb-6">💬</div>
-                                <h3 className="text-2xl font-black text-primary-black mb-2">{t('Select a conversation')}</h3>
+                                <div className="w-24 h-24 bg-white rounded-full shadow-sm flex items-center justify-center mx-auto mb-6 text-oflem-terracotta/20">
+                                    <MessageSquare size={48} />
+                                </div>
+                                <h3 className="text-2xl font-black text-oflem-charcoal mb-2">{t('Select a conversation')}</h3>
                                 <p className="text-gray-muted font-bold">{t('Choose a chat from the sidebar to start messaging')}</p>
                             </div>
                         </div>
@@ -361,7 +382,7 @@ export default function Messages({ chats: initialChats, selectedChatId }) {
                 {activeChat && (
                     <div className="w-80 bg-white border-l border-gray-border flex flex-col overflow-y-auto">
                         <div className="p-6 border-b border-gray-border">
-                            <h3 className="text-lg font-black text-primary-black mb-2">{t('Mission Details')}</h3>
+                            <h3 className="text-lg font-black text-oflem-charcoal mb-2">{t('Mission Details')}</h3>
                         </div>
 
                         <div className="p-6 space-y-6">
@@ -370,27 +391,33 @@ export default function Messages({ chats: initialChats, selectedChatId }) {
                                 <p className="text-xs text-gray-muted font-bold uppercase mb-3">{t('Status')}</p>
                                 <div className={`px-4 py-3 rounded-xl font-black text-sm text-center ${
                                     activeChat.mission?.status === 'OUVERTE' ? 'bg-blue-100 text-blue-700' :
-                                    activeChat.mission?.status === 'EN_NEGOCIATION' ? 'bg-gold-accent/20 text-gold-accent' :
-                                    activeChat.mission?.status === 'VERROUILLEE' ? 'bg-gold-accent/20 text-gold-accent' :
+                                    activeChat.mission?.status === 'EN_NEGOCIATION' ? 'bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/20 text-oflem-terracotta' :
+                                    activeChat.mission?.status === 'VERROUILLEE' ? 'bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/20 text-oflem-terracotta' :
                                     activeChat.mission?.status === 'EN_COURS' ? 'bg-yellow-100 text-yellow-700' :
                                     activeChat.mission?.status === 'EN_VALIDATON' ? 'bg-orange-100 text-orange-700' :
                                     activeChat.mission?.status === 'TERMINEE' ? 'bg-green-100 text-green-700' :
                                     'bg-gray-100 text-gray-700'
                                 }`}>
-                                    {activeChat.mission?.status === 'OUVERTE' ? '🔓 ' + t('Open') :
-                                     activeChat.mission?.status === 'EN_NEGOCIATION' ? '✅ ' + t('Assigned') :
-                                     activeChat.mission?.status === 'VERROUILLEE' ? '✅ ' + t('Assigned') :
-                                     activeChat.mission?.status === 'EN_COURS' ? '⏳ ' + t('In Progress') :
-                                     activeChat.mission?.status === 'EN_VALIDATON' ? '✅ ' + t('In Validation') :
-                                     activeChat.mission?.status === 'TERMINEE' ? '✔️ ' + t('Completed') :
-                                     t(activeChat.mission?.status || 'Unknown')}
+                                    {activeChat.mission?.status === 'OUVERTE' ? (
+                                        <span className="flex items-center justify-center gap-1.5"><Circle size={10} fill="currentColor" className="text-blue-500" /> {t('Open')}</span>
+                                    ) : activeChat.mission?.status === 'EN_NEGOCIATION' || activeChat.mission?.status === 'VERROUILLEE' ? (
+                                        <span className="flex items-center justify-center gap-1.5"><Handshake size={14} /> {t('Assigned')}</span>
+                                    ) : activeChat.mission?.status === 'EN_COURS' ? (
+                                        <span className="flex items-center justify-center gap-1.5"><RefreshCw size={14} className="animate-spin-slow" /> {t('In Progress')}</span>
+                                    ) : activeChat.mission?.status === 'EN_VALIDATON' ? (
+                                        <span className="flex items-center justify-center gap-1.5"><Clock size={14} /> {t('In Validation')}</span>
+                                    ) : activeChat.mission?.status === 'TERMINEE' ? (
+                                        <span className="flex items-center justify-center gap-1.5"><CheckCircle size={14} /> {t('Completed')}</span>
+                                    ) : (
+                                        t(activeChat.mission?.status || 'Unknown')
+                                    )}
                                 </div>
                             </div>
 
                             {/* Budget */}
                             <div>
                                 <p className="text-xs text-gray-muted font-bold uppercase mb-3">{t('Budget')}</p>
-                                <p className="text-3xl font-black text-gold-accent">
+                                <p className="text-3xl font-black text-oflem-terracotta">
                                     {activeChat.mission?.budget ? `€${activeChat.mission.budget}` : t('Not set')}
                                 </p>
                             </div>
@@ -400,8 +427,8 @@ export default function Messages({ chats: initialChats, selectedChatId }) {
                                 <div>
                                     <p className="text-xs text-gray-muted font-bold uppercase mb-3">{t('Deadline')}</p>
                                     <div className="flex items-center gap-2">
-                                        <span className="text-2xl">📅</span>
-                                        <span className="text-lg font-black text-primary-black">
+                                        <Calendar size={18} className="text-oflem-terracotta" />
+                                        <span className="text-lg font-black text-oflem-charcoal">
                                             {new Date(activeChat.mission.deadline).toLocaleDateString()}
                                         </span>
                                     </div>
@@ -410,19 +437,19 @@ export default function Messages({ chats: initialChats, selectedChatId }) {
 
                             {/* Active Offer Section */}
                             {getActiveOffer(activeChat) && (
-                                <div className="p-4 bg-oflem-cream/20 border border-gold-accent/20 rounded-2xl space-y-3">
+                                <div className="p-4 bg-oflem-cream/20 border border-oflem-terracotta/20 rounded-2xl space-y-3">
                                     <div className="flex items-center justify-between">
                                         <p className="text-xs text-gray-muted font-black uppercase">{t('Pending Offer')}</p>
-                                        <span className="px-2 py-0.5 bg-gold-accent text-primary-black text-[10px] font-black rounded text-uppercase">
+                                        <span className="px-2 py-0.5 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-oflem-charcoal text-[10px] font-black rounded text-uppercase">
                                             {t('Pending')}
                                         </span>
                                     </div>
                                     <div className="flex items-baseline gap-1">
-                                        <span className="text-2xl font-black text-primary-black">€{getActiveOffer(activeChat).amount}</span>
+                                        <span className="text-2xl font-black text-oflem-charcoal">€{getActiveOffer(activeChat).amount}</span>
                                         <span className="text-xs text-gray-muted font-bold">{t('Proposed')}</span>
                                     </div>
                                     {getActiveOffer(activeChat).message && (
-                                        <p className="text-xs text-primary-black/70 italic leading-relaxed">
+                                        <p className="text-xs text-oflem-charcoal/70 italic leading-relaxed">
                                             "{getActiveOffer(activeChat).message}"
                                         </p>
                                     )}
@@ -430,7 +457,7 @@ export default function Messages({ chats: initialChats, selectedChatId }) {
                                     {activeChat.mission?.user_id === auth.user.id && (
                                         <button
                                             onClick={() => handleAcceptOffer(getActiveOffer(activeChat))}
-                                            className="w-full py-3 bg-gold-accent text-primary-black font-black rounded-full hover:shadow-lg transition-all text-sm"
+                                            className="w-full py-3 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-oflem-charcoal font-black rounded-full hover:shadow-lg transition-all text-sm"
                                         >
                                             {t('Accept Offer')}
                                         </button>
@@ -440,16 +467,16 @@ export default function Messages({ chats: initialChats, selectedChatId }) {
 
                             {/* Direct Hire Section (If no offer exists) */}
                             {!getActiveOffer(activeChat) && activeChat.mission?.user_id === auth.user.id && activeChat.mission?.status === 'OUVERTE' && (
-                                <div className="p-4 bg-primary-black/5 border border-primary-black/10 rounded-2xl space-y-4">
+                                <div className="p-4 bg-oflem-charcoal/5 border border-oflem-charcoal/10 rounded-2xl space-y-4">
                                     <div className="text-center">
                                         <p className="text-xs text-gray-muted font-black uppercase mb-1">{t('Ready to start?')}</p>
-                                        <p className="text-sm text-primary-black font-bold">{t('Hire this person immediately')}</p>
+                                        <p className="text-sm text-oflem-charcoal font-bold">{t('Hire this person immediately')}</p>
                                     </div>
                                     <button
                                         onClick={() => handleHire(getOtherParticipant(activeChat).id)}
-                                        className="w-full py-3 bg-primary-black text-white font-black rounded-full hover:bg-black transition-all text-sm shadow-md"
+                                        className="w-full py-3 bg-oflem-charcoal text-white font-black rounded-full hover:bg-black transition-all text-sm shadow-md flex items-center justify-center gap-2"
                                     >
-                                        💼 {t('Hire')} {getOtherParticipant(activeChat).name}
+                                        <Briefcase size={16} /> {t('Hire')} {getOtherParticipant(activeChat).name}
                                     </button>
                                     <p className="text-[10px] text-gray-muted text-center italic leading-tight">
                                         {t('Hiring will secure the budget in escrow and assign the task.')}
@@ -461,7 +488,7 @@ export default function Messages({ chats: initialChats, selectedChatId }) {
                             {activeChat.mission?.description && (
                                 <div>
                                     <p className="text-xs text-gray-muted font-bold uppercase mb-3">{t('Description')}</p>
-                                    <p className="text-sm text-primary-black font-medium leading-relaxed">
+                                    <p className="text-sm text-oflem-charcoal font-medium leading-relaxed">
                                         {activeChat.mission.description}
                                     </p>
                                 </div>
@@ -470,9 +497,9 @@ export default function Messages({ chats: initialChats, selectedChatId }) {
                             {/* View Full Mission */}
                             <Link
                                 href={route('missions.show', activeChat.mission_id)}
-                                className="w-full block text-center px-4 py-3 bg-primary-black text-white font-black rounded-full hover:bg-black transition-all"
+                                className="w-full block text-center px-4 py-3 bg-oflem-charcoal text-white font-black rounded-full hover:bg-black transition-all"
                             >
-                                {t('View Full Mission')} →
+                                {t('View Full Mission')} <ArrowRight size={16} className="inline ml-1" />
                             </Link>
                         </div>
                     </div>

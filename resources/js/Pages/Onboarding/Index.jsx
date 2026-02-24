@@ -5,6 +5,7 @@ import useTranslation from '@/Hooks/useTranslation';
 import InputLabel from '@/Components/InputLabel';
 import InputError from '@/Components/InputError';
 import axios from 'axios';
+import { Sparkles } from 'lucide-react';
 
 export default function Index({ existingProfile = null }) {
     // ... rest of the logic ...
@@ -78,7 +79,7 @@ export default function Index({ existingProfile = null }) {
             <div className="py-16">
                 <div className="bg-white rounded-[40px] p-8 md:p-12 shadow-sm border border-gray-border">
                     <div className="mb-10 text-center">
-                        <h2 className="text-3xl font-black text-primary-black mb-3">
+                        <h2 className="text-3xl font-black text-oflem-charcoal mb-3">
                             {step === 1 ? t('Tell us about your expertise') : t('Review your profile')}
                         </h2>
                         <p className="text-gray-muted font-bold">
@@ -96,7 +97,7 @@ export default function Index({ existingProfile = null }) {
                                     id="description"
                                     value={data.description}
                                     onChange={(e) => setData('description', e.target.value)}
-                                    className="w-full bg-oflem-cream border-gray-border rounded-[24px] p-5 text-sm font-medium focus:border-gold-accent focus:ring-0 min-h-[200px] transition-all"
+                                    className="w-full bg-oflem-cream border-gray-border rounded-[24px] p-5 text-sm font-medium focus:border-oflem-terracotta focus:ring-0 min-h-[200px] transition-all"
                                     placeholder={t('Example: I have been a carpenter for 10 years, specializing in custom furniture and repairs. I also have experience with painting and drywall...')}
                                 />
                                 <InputError message={analysisError} className="mt-2" />
@@ -105,16 +106,16 @@ export default function Index({ existingProfile = null }) {
                             <button
                                 onClick={handleAnalyze}
                                 disabled={isAnalyzing}
-                                className="w-full py-5 bg-gold-accent text-primary-black font-black rounded-full hover:opacity-90 transition-all shadow-md text-lg flex items-center justify-center gap-3"
+                                className="w-full py-5 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-oflem-charcoal font-black rounded-full hover:opacity-90 transition-all shadow-md text-lg flex items-center justify-center gap-3"
                             >
                                 {isAnalyzing ? (
                                     <>
-                                        <span className="w-6 h-6 border-4 border-primary-black border-t-transparent rounded-full animate-spin"></span>
+                                        <span className="w-6 h-6 border-4 border-oflem-charcoal border-t-transparent rounded-full animate-spin"></span>
                                         {t('Analyzing...')}
                                     </>
                                 ) : (
                                     <>
-                                        ✨ {t('Analyze Profile')}
+                                        <Sparkles size={20} /> {t('Analyze Profile')}
                                     </>
                                 )}
                             </button>
@@ -130,7 +131,7 @@ export default function Index({ existingProfile = null }) {
                                     id="bio"
                                     value={data.bio}
                                     onChange={(e) => setData('bio', e.target.value)}
-                                    className="w-full bg-oflem-cream border-gray-border rounded-[24px] p-5 text-sm font-medium focus:border-gold-accent focus:ring-0 min-h-[100px]"
+                                    className="w-full bg-oflem-cream border-gray-border rounded-[24px] p-5 text-sm font-medium focus:border-oflem-terracotta focus:ring-0 min-h-[100px]"
                                 />
                                 <InputError message={errors.bio} className="mt-2" />
                             </div>
@@ -144,7 +145,7 @@ export default function Index({ existingProfile = null }) {
                                         id="years"
                                         value={data.years_experience}
                                         onChange={(e) => setData('years_experience', e.target.value)}
-                                        className="w-full bg-oflem-cream border-gray-border rounded-full px-6 py-4 text-sm font-bold focus:border-gold-accent focus:ring-0"
+                                        className="w-full bg-oflem-cream border-gray-border rounded-full px-6 py-4 text-sm font-bold focus:border-oflem-terracotta focus:ring-0"
                                     />
                                     <InputError message={errors.years_experience} className="mt-2" />
                                 </div>
@@ -157,7 +158,7 @@ export default function Index({ existingProfile = null }) {
                                         id="category"
                                         value={data.main_category}
                                         onChange={(e) => setData('main_category', e.target.value)}
-                                        className="w-full bg-oflem-cream border-gray-border rounded-full px-6 py-4 text-sm font-bold focus:border-gold-accent focus:ring-0"
+                                        className="w-full bg-oflem-cream border-gray-border rounded-full px-6 py-4 text-sm font-bold focus:border-oflem-terracotta focus:ring-0"
                                     />
                                     <InputError message={errors.main_category} className="mt-2" />
                                 </div>
@@ -169,9 +170,9 @@ export default function Index({ existingProfile = null }) {
                                 <div className="bg-oflem-cream rounded-[24px] p-6 border border-gray-border min-h-[100px] flex flex-wrap gap-3">
                                     {data.skills.map((skill, index) => (
                                         <div key={index} className="bg-white border border-gray-border px-4 py-2 rounded-full flex items-center gap-2 shadow-sm">
-                                            <span className="font-bold text-sm text-primary-black">{skill.name}</span>
+                                            <span className="font-bold text-sm text-oflem-charcoal">{skill.name}</span>
                                             <span className={`text-[10px] uppercase font-black px-2 py-0.5 rounded-full ${
-                                                skill.proficiency === 'expert' ? 'bg-gold-accent text-primary-black' : 
+                                                skill.proficiency === 'expert' ? 'bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-oflem-charcoal' : 
                                                 skill.proficiency === 'beginner' ? 'bg-gray-200 text-gray-500' : 'bg-blue-100 text-blue-600'
                                             }`}>
                                                 {skill.proficiency}
@@ -195,14 +196,14 @@ export default function Index({ existingProfile = null }) {
                                 <button
                                     type="button"
                                     onClick={() => setStep(1)}
-                                    className="flex-1 py-4 bg-white border-2 border-gray-border text-primary-black font-black rounded-full hover:bg-oflem-cream transition-all"
+                                    className="flex-1 py-4 bg-white border-2 border-gray-border text-oflem-charcoal font-black rounded-full hover:bg-oflem-cream transition-all"
                                 >
                                     {t('Back')}
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={processing}
-                                    className="flex-1 py-4 bg-primary-black text-white font-black rounded-full hover:bg-black transition-all shadow-xl"
+                                    className="flex-1 py-4 bg-oflem-charcoal text-white font-black rounded-full hover:bg-black transition-all shadow-xl"
                                 >
                                     {processing ? t('Saving...') : t('Complete Profile')}
                                 </button>

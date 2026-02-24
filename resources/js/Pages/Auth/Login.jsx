@@ -12,7 +12,7 @@ export default function Login({ canResetPassword, status }) {
             heroImage="/images/illustrations/login-screen.svg"
             bgAccentClass="bg-cream-accent"
         >
-            <Head title={t("Se connecter")} />
+            <Head title={t("Sign In")} />
 
             {status && (
                 <div className="mb-6 font-medium text-sm text-green-600 bg-green-50 px-4 py-3 rounded-[24px] border border-green-100">
@@ -21,11 +21,11 @@ export default function Login({ canResetPassword, status }) {
             )}
 
             <div className="text-center lg:text-left">
-                <h1 className="text-[36px] lg:text-[44px] font-serif font-bold text-primary-black tracking-tight mb-3 leading-tight">
-                    {t("Ravi de vous revoir.")}
+                <h1 className="text-[36px] lg:text-[44px] font-serif font-bold text-oflem-charcoal tracking-tight mb-3 leading-tight">
+                    {t("Nice to see you again.")}
                 </h1>
                 <p className="text-gray-muted text-base font-medium mb-10 leading-relaxed">
-                    {t("Le temps est une ressource. Gérez la vôtre comme un pro.")}
+                    {t("Time is a resource. Manage yours like a pro.")}
                 </p>
             </div>
 
@@ -40,21 +40,21 @@ export default function Login({ canResetPassword, status }) {
             <div className="text-center">
                 <Link 
                     href={route('login.manual')}
-                    className="text-base font-bold text-primary-black hover:text-gold-accent transition-colors duration-200 underline underline-offset-4"
+                    className="text-base font-bold text-oflem-charcoal hover:text-oflem-terracotta transition-colors duration-200 underline underline-offset-4"
                 >
-                    {t("Ou utiliser mon e-mail")}
+                    {t("Or use my email")}
                 </Link>
             </div>
 
             {/* Register Link */}
             <div className="mt-12 text-center">
                 <p className="text-sm text-gray-muted font-medium">
-                    {t("Pas encore membre ?")}{' '}
+                    {t("Not a member yet?")}{' '}
                     <Link 
                         href={route('register')} 
-                        className="text-primary-black font-black hover:underline"
+                        className="text-oflem-charcoal font-black hover:underline"
                     >
-                        {t("S'inscrire")}
+                        {t("Sign Up")}
                     </Link>
                 </p>
             </div>

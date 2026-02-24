@@ -29,7 +29,7 @@ export default function LoginManual({ canResetPassword, status }) {
             heroImage="/images/illustrations/login-screen.svg"
             bgAccentClass="bg-cream-accent"
         >
-            <Head title={t("Se connecter")} />
+            <Head title={t("Sign In")} />
 
             <div className="mb-8 lg:mb-10 relative">
                 <BackButton 
@@ -37,11 +37,11 @@ export default function LoginManual({ canResetPassword, status }) {
                     className="absolute -top-12 left-0" 
                 />
 
-                <h1 className="text-[32px] lg:text-[40px] font-serif font-bold text-primary-black tracking-tight mb-3 leading-tight">
-                    {t("On connaît la chanson.")}
+                <h1 className="text-[32px] lg:text-[40px] font-serif font-bold text-oflem-charcoal tracking-tight mb-3 leading-tight">
+                    {t("You know the drill.")}
                 </h1>
                 <p className="text-gray-muted text-base font-medium">
-                    {t("Vos accès, en toute sécurité.")}
+                    {t("Your access, securely.")}
                 </p>
             </div>
 
@@ -54,13 +54,13 @@ export default function LoginManual({ canResetPassword, status }) {
             <form onSubmit={submit} className="space-y-6">
                 {/* Email */}
                 <div className="space-y-1.5">
-                    <InputLabel htmlFor="email" value={t("E-mail")} />
+                    <InputLabel htmlFor="email" value={t("Email")} />
                     <TextInput
                         id="email"
                         type="email"
                         value={data.email}
                         onChange={(e) => setData('email', e.target.value)}
-                        placeholder={t("votre@email.com")}
+                        placeholder={t("your@email.com")}
                         autoComplete="username"
                         required
                     />
@@ -69,12 +69,12 @@ export default function LoginManual({ canResetPassword, status }) {
 
                 {/* Password */}
                 <div className="space-y-1.5">
-                    <InputLabel htmlFor="password" value={t("Mot de passe")} />
+                    <InputLabel htmlFor="password" value={t("Password")} />
                     <PasswordInput
                         id="password"
                         value={data.password}
                         onChange={(e) => setData('password', e.target.value)}
-                        placeholder={t("Votre mot de passe")}
+                        placeholder={t("Your password")}
                         autoComplete="current-password"
                         required
                     />
@@ -86,39 +86,39 @@ export default function LoginManual({ canResetPassword, status }) {
                     <div className="text-right">
                         <Link
                             href={route('password.request')}
-                            className="text-sm font-bold text-primary-black hover:text-gold-accent transition-colors duration-200"
+                            className="text-sm font-bold text-oflem-charcoal hover:text-oflem-terracotta transition-colors duration-200"
                         >
-                            {t("Mot de passe oublié ?")}
+                            {t("Forgot password?")}
                         </Link>
                     </div>
                 )}
 
                 {/* Submit Button */}
                 <PrimaryButton className="w-full mt-4" disabled={processing} processing={processing}>
-                    {t('Se connecter')}
+                    {t('Sign In')}
                 </PrimaryButton>
             </form>
 
             {/* Register Link */}
             <div className="mt-8 text-center">
                 <p className="text-sm text-gray-muted font-medium">
-                    {t("Pas encore membre ?")}{' '}
+                    {t("Not a member yet?")}{' '}
                     <Link 
                         href={route('register')} 
-                        className="text-primary-black font-black hover:underline"
+                        className="text-oflem-charcoal font-black hover:underline"
                     >
-                        {t("S'inscrire")}
+                        {t("Sign Up")}
                     </Link>
                 </p>
             </div>
 
             {/* Forgot Password Modal/Info */}
-            <div className="mt-6 p-4 bg-gold-accent/5 rounded-[24px] border border-gold-accent/20">
-                <p className="text-xs font-bold text-primary-black mb-1">
-                    {t("Un petit trou de mémoire ?")}
+            <div className="mt-6 p-4 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/5 rounded-[24px] border border-oflem-terracotta/20">
+                <p className="text-xs font-bold text-oflem-charcoal mb-1">
+                    {t("A little memory gap?")}
                 </p>
                 <p className="text-xs text-gray-muted">
-                    {t("Pas de panique, on vous envoie un lien de réinitialisation.")}
+                    {t("Don't panic, we'll send you a reset link.")}
                 </p>
             </div>
         </AuthSplitLayout>

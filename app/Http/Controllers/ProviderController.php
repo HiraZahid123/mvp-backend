@@ -14,7 +14,7 @@ class ProviderController extends Controller
     public function index(Request $request)
     {
         $query = User::query()
-            ->whereIn('role_type', ['performer', 'both'])
+            ->whereIn('role_type', ['provider', 'both'])
             ->where('is_admin', false)
             ->with(['providerProfile', 'skills'])
             ->withCount('reviewsReceived');

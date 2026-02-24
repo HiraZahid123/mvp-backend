@@ -42,7 +42,7 @@ export default function UpdateProfileInformation({
     return (
         <section className={`${className} bg-white rounded-[32px] p-8 border border-gray-border`}>
             <header className="mb-8">
-                <h2 className="text-2xl font-black text-primary-black tracking-tight">
+                <h2 className="text-2xl font-black text-oflem-charcoal tracking-tight">
                     {t('Profile Information')}
                 </h2>
 
@@ -63,7 +63,7 @@ export default function UpdateProfileInformation({
                     <button 
                         type="button"
                         onClick={() => fileInputRef.current.click()}
-                        className="absolute bottom-0 right-0 w-6 h-6 bg-white rounded-full shadow-md flex items-center justify-center border border-gray-border hover:bg-gold-accent transition-colors"
+                        className="absolute bottom-0 right-0 w-6 h-6 bg-white rounded-full shadow-md flex items-center justify-center border border-gray-border hover:bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light transition-colors"
                     >
                          <svg className="w-3 h-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
@@ -81,7 +81,7 @@ export default function UpdateProfileInformation({
                      <button 
                         type="button"
                         onClick={() => fileInputRef.current.click()}
-                        className="text-sm font-black text-primary-black hover:text-gold-accent transition-colors"
+                        className="text-sm font-black text-oflem-charcoal hover:text-oflem-terracotta transition-colors"
                     >
                         {t('Change Photo')}
                     </button>
@@ -122,14 +122,14 @@ export default function UpdateProfileInformation({
                 </div>
 
                 {mustVerifyEmail && user.email_verified_at === null && (
-                    <div className="p-4 bg-cream-accent rounded-[16px] border border-gold-accent/20">
-                        <p className="text-sm text-primary-black font-bold">
+                    <div className="p-4 bg-cream-accent rounded-[16px] border border-oflem-terracotta/20">
+                        <p className="text-sm text-oflem-charcoal font-bold">
                             {t('Your email address is unverified.')}
                             <Link
                                 href={route('verification.send')}
                                 method="post"
                                 as="button"
-                                className="ml-2 font-black text-gold-accent hover:underline focus:outline-none"
+                                className="ml-2 font-black text-oflem-terracotta hover:underline focus:outline-none"
                             >
                                 {t('Click here to re-send.')}
                             </Link>

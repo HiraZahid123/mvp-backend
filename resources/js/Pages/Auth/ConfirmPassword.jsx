@@ -36,8 +36,8 @@ export default function ConfirmPassword() {
                     className="absolute -top-12 left-0" 
                 />
 
-                <h2 className="text-lg font-medium text-primary-black mb-1">{t('Oflem')}</h2>
-                <h1 className="text-[32px] lg:text-[40px] font-black text-primary-black mb-2 tracking-tight">{t('Confirm Password')}</h1>
+                <h2 className="text-lg font-medium text-oflem-charcoal mb-1">{t('Oflem')}</h2>
+                <h1 className="text-[32px] lg:text-[40px] font-black text-oflem-charcoal mb-2 tracking-tight">{t('Confirm Password')}</h1>
                 <p className="text-gray-muted text-sm font-medium">{t('This is a secure area. Please confirm your password before continuing.')}</p>
             </div>
 

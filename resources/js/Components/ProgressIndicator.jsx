@@ -12,9 +12,9 @@ export default function ProgressIndicator({ currentStep, totalSteps, className =
                         key={index}
                         className={`h-1.5 rounded-full transition-all ${
                             index < currentStep
-                                ? 'w-8 bg-oflem-terracotta'
+                                ? 'w-8 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light'
                                 : index === currentStep - 1
-                                ? 'w-12 bg-oflem-terracotta'
+                                ? 'w-12 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light'
                                 : 'w-6 bg-gray-200'
                         }`}
                     />

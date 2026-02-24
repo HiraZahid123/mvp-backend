@@ -6,32 +6,39 @@
 
 @layer base {
     :root {
-        --primary-dark: #001F3F;
-        --primary-accent: #BFE7FE;
+        --primary-dark: #1A1D3F;
+        --oflem-terracotta: #FF6B35;
         --white: #FFFFFF;
-        --border-light: #F5F5F5;
+        --zinc-200: #e2e8f0;
     }
 
     body {
-        @apply text-primary-dark bg-white font-sans antialiased;
+        @apply text-oflem-charcoal bg-white font-sans antialiased;
     }
     
     h1, h2, h3, h4, h5, h6 {
-        @apply font-bold text-primary-dark;
+        @apply font-bold text-oflem-charcoal;
     }
 }
 
 @layer components {
     .btn-primary {
-        @apply bg-primary-accent text-primary-dark px-8 py-3 rounded-[30px] font-normal text-xl shadow-btn-inner transition-all hover:brightness-105 active:scale-[0.98] disabled:opacity-50 flex items-center justify-center;
+        @apply bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white px-8 py-3.5 rounded-rs font-black text-[15px] uppercase tracking-widest shadow-sho transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] disabled:opacity-50 flex items-center justify-center;
+    }
+
+    .btn-secondary {
+        @apply bg-oflem-charcoal text-white px-8 py-3.5 rounded-rs font-black text-[15px] uppercase tracking-widest shadow-lg transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] disabled:opacity-50 flex items-center justify-center;
+    }
+
+    .btn-outline {
+        @apply bg-white text-oflem-charcoal border-2 border-zinc-200 px-8 py-3.5 rounded-rs font-black text-[15px] uppercase tracking-widest transition-all duration-300 hover:border-oflem-terracotta/40 hover:bg-zinc-50 active:scale-[0.98] disabled:opacity-50 flex items-center justify-center;
     }
 
     .input-standard {
-        /* rgba(0, 0, 0, 0.11) converted to tailwind arbitrary value in shadow-card */
-        @apply w-full px-6 bg-white border-none rounded-[30px] shadow-card h-[61px] outline-none transition-all text-primary-dark placeholder:text-primary-dark/70 font-light text-sm focus:ring-2 focus:ring-primary-dark/20;
+        @apply w-full px-6 bg-white border-zinc-200 border-2 rounded-rl h-[61px] outline-none transition-all text-oflem-charcoal placeholder:text-zinc-400 font-medium text-sm focus:ring-2 focus:ring-oflem-terracotta/20 focus:border-oflem-terracotta;
     }
 
     .text-secondary-gray {
-        @apply text-primary-dark/70;
+        @apply text-zinc-500;
     }
 }

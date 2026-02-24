@@ -9,7 +9,35 @@ import Modal from '@/Components/Modal';
 import DisputeButton from '@/Components/DisputeButton';
 import axios from 'axios';
 import PaymentModal from '@/Components/Payments/PaymentModal';
-import NearbyMotivesSection from '@/Components/NearbyMotivesSection';
+import NearbyProvidersSection from '@/Components/NearbyProvidersSection';
+import { 
+    ShieldCheck, 
+    Clock, 
+    CheckCircle, 
+    MapPin, 
+    User, 
+    Circle, 
+    Lock, 
+    Handshake, 
+    MessageSquare,
+    AlertCircle,
+    Image as ImageIcon,
+    Edit3,
+    X,
+    RefreshCw,
+    Wallet,
+    Zap,
+    Tag,
+    Rocket,
+    Briefcase,
+    Calendar,
+    CircleDollarSign,
+    PartyPopper,
+    Hammer,
+    CreditCard,
+    Sparkles,
+    Star
+} from 'lucide-react';
 
 export default function Details({ mission, canSeeAddress }) {
     const { t } = useTranslation();
@@ -115,28 +143,29 @@ export default function Details({ mission, canSeeAddress }) {
                     <div className="lg:col-span-2 space-y-8">
                         <section className="bg-white rounded-[40px] p-8 md:p-12 shadow-sm border border-gray-border">
                             <div className="flex flex-wrap items-center gap-3 mb-8">
-                                <span className="px-4 py-1.5 bg-cream-accent text-primary-black text-[10px] font-black uppercase tracking-widest rounded-full">
+                                <span className="px-4 py-1.5 bg-cream-accent text-oflem-charcoal text-[10px] font-black uppercase tracking-widest rounded-full">
                                     {t(mission.category || 'General')}
                                 </span>
                                 {mission.status === 'OUVERTE' ? (
-                                    <span className="px-4 py-1.5 bg-green-100 text-green-700 text-[10px] font-black uppercase tracking-widest rounded-full">
-                                        🟢 {t('Open')}
+                                    <span className="flex items-center gap-1.5 px-4 py-1.5 bg-green-100 text-green-700 text-[10px] font-black uppercase tracking-widest rounded-full">
+                                        <Circle size={10} fill="currentColor" /> {t('Open')}
                                     </span>
                                 ) : mission.status === 'EN_NEGOCIATION' ? (
-                                    <span className="px-4 py-1.5 bg-blue-100 text-blue-700 text-[10px] font-black uppercase tracking-widest rounded-full">
-                                        {mission.assigned_user_id ? `🔒 ${t('Reserved')}` : `🤝 ${t('In Negotiation')}`}
+                                    <span className="flex items-center gap-1.5 px-4 py-1.5 bg-blue-100 text-blue-700 text-[10px] font-black uppercase tracking-widest rounded-full">
+                                        {mission.assigned_user_id ? <Lock size={10} /> : <Handshake size={12} />}
+                                        {mission.assigned_user_id ? t('Reserved') : t('In Negotiation')}
                                     </span>
                                 ) : mission.status === 'VERROUILLEE' ? (
-                                    <span className="px-4 py-1.5 bg-gold-accent text-primary-black text-[10px] font-black uppercase tracking-widest rounded-full">
-                                        ✅ {t('Assigned')}
+                                    <span className="flex items-center gap-1.5 px-4 py-1.5 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white text-[10px] font-black uppercase tracking-widest rounded-full shadow-sm">
+                                        <CheckCircle size={10} /> {t('Assigned')}
                                     </span>
                                 ) : mission.status === 'EN_COURS' ? (
-                                    <span className="px-4 py-1.5 bg-yellow-400/20 text-yellow-700 text-[10px] font-black uppercase tracking-widest rounded-full">
-                                        ⏳ {t('In Progress')}
+                                    <span className="flex items-center gap-1.5 px-4 py-1.5 bg-yellow-400/20 text-yellow-700 text-[10px] font-black uppercase tracking-widest rounded-full">
+                                        <Clock size={10} /> {t('In Progress')}
                                     </span>
                                 ) : mission.status === 'EN_VALIDATION' ? (
-                                    <span className="px-4 py-1.5 bg-orange-100 text-orange-700 text-[10px] font-black uppercase tracking-widest rounded-full">
-                                        ✅ {t('In Validation')}
+                                    <span className="flex items-center gap-1.5 px-4 py-1.5 bg-orange-100 text-orange-700 text-[10px] font-black uppercase tracking-widest rounded-full">
+                                        <CheckCircle size={10} /> {t('In Validation')}
                                     </span>
                                 ) : (
                                     <span className="px-4 py-1.5 bg-gray-100 text-gray-700 text-[10px] font-black uppercase tracking-widest rounded-full">
@@ -145,7 +174,7 @@ export default function Details({ mission, canSeeAddress }) {
                                 )}
                             </div>
 
-                            <h1 className="text-4xl font-black text-primary-black mb-6">{mission.title}</h1>
+                            <h1 className="text-4xl font-black text-oflem-charcoal mb-6">{mission.title}</h1>
                             
                             <div className="prose prose-sm max-w-none text-gray-muted font-medium mb-12 leading-relaxed">
                                 {mission.description.split('\n').map((para, i) => (
@@ -155,24 +184,26 @@ export default function Details({ mission, canSeeAddress }) {
 
                             <div className="grid md:grid-cols-2 gap-8 pt-8 border-t border-gray-border">
                                 <div className="space-y-6">
-                                    <DetailItem icon="💰" label={t('Budget')} value={mission.budget ? `CHF ${mission.budget}` : t('Open for offers')} />
-                                    <DetailItem icon="📅" label={t('Requested Date')} value={mission.date_time ? new Date(mission.date_time).toLocaleString() : t('Flexible')} />
+                                    <DetailItem icon={<CircleDollarSign size={20} className="text-oflem-terracotta" />} label={t('Budget')} value={mission.budget ? `CHF ${mission.budget}` : t('Open for offers')} />
+                                    <DetailItem icon={<Calendar size={20} className="text-oflem-terracotta" />} label={t('Requested Date')} value={mission.date_time ? new Date(mission.date_time).toLocaleString() : t('Flexible')} />
                                 </div>
                                 <div className="space-y-6">
                                     <DetailItem 
-                                        icon="📍" 
+                                        icon={<MapPin size={20} className="text-oflem-terracotta" />} 
                                         label={t('Location')} 
                                         value={canSeeAddress ? (mission.exact_address || mission.location) : mission.location || t('Approximate location')} 
                                         subValue={!canSeeAddress && t('Exact address revealed after assignment')}
                                     />
-                                    <DetailItem icon="👤" label={t('Posted by')} value={mission.user.name} />
+                                    <DetailItem icon={<User size={20} className="text-oflem-terracotta" />} label={t('Posted by')} value={mission.user.name} />
                                 </div>
                             </div>
                         </section>
 
                         {/* Questions Section */}
                         <section className="bg-white rounded-[40px] p-8 md:p-12 shadow-sm border border-gray-border">
-                            <h2 className="text-2xl font-black text-primary-black mb-8">💬 {t('Questions & Answers')}</h2>
+                            <h2 className="text-2xl font-black text-oflem-charcoal mb-8 flex items-center gap-3">
+                                <MessageSquare className="text-oflem-terracotta" size={28} /> {t('Questions & Answers')}
+                            </h2>
                             
                             <div className="space-y-8 mb-10">
                                 {mission.questions.length > 0 ? mission.questions.map((q) => (
@@ -182,7 +213,7 @@ export default function Details({ mission, canSeeAddress }) {
                                                 {q.user.name.charAt(0)}
                                             </div>
                                             <div className="bg-oflem-cream p-5 rounded-[24px] flex-1">
-                                                <p className="text-sm font-bold text-primary-black mb-1">{q.user.name}</p>
+                                                <p className="text-sm font-bold text-oflem-charcoal mb-1">{q.user.name}</p>
                                                 <p className="text-sm text-gray-muted font-medium">{q.question}</p>
                                             </div>
                                         </div>
@@ -191,8 +222,8 @@ export default function Details({ mission, canSeeAddress }) {
                                                 <div className="flex-shrink-0 w-10 h-10 rounded-full bg-cream-accent flex items-center justify-center font-black">
                                                     {mission.user.name.charAt(0)}
                                                 </div>
-                                                <div className="bg-cream-accent p-5 rounded-[24px] flex-1 border border-gold-accent/20">
-                                                    <p className="text-sm font-bold text-primary-black mb-1">{mission.user.name} <span className="text-[10px] uppercase text-gold-accent ml-2">{t('Creator')}</span></p>
+                                                <div className="bg-cream-accent p-5 rounded-[24px] flex-1 border border-oflem-terracotta/20">
+                                                    <p className="text-sm font-bold text-oflem-charcoal mb-1">{mission.user.name} <span className="text-[10px] uppercase text-oflem-terracotta ml-2">{t('Creator')}</span></p>
                                                     <p className="text-sm text-gray-muted font-medium">{q.answer}</p>
                                                 </div>
                                             </div>
@@ -210,7 +241,7 @@ export default function Details({ mission, canSeeAddress }) {
                                     <InputLabel htmlFor="question" value={t('Ask a question')} className="text-xs uppercase tracking-widest font-black" />
                                     <textarea
                                         id="question"
-                                        className="w-full bg-oflem-cream border-gray-border rounded-[24px] p-5 text-sm font-medium focus:border-gold-accent focus:ring-0 min-h-[100px]"
+                                        className="w-full bg-oflem-cream border-gray-border rounded-[24px] p-5 text-sm font-medium focus:border-oflem-terracotta focus:ring-0 min-h-[100px]"
                                         placeholder={t('Ask for more details about the mission...')}
                                         value={questionForm.data.question}
                                         onChange={e => questionForm.setData('question', e.target.value)}
@@ -219,7 +250,7 @@ export default function Details({ mission, canSeeAddress }) {
                                     <button
                                         type="submit"
                                         disabled={questionForm.processing}
-                                        className="px-8 py-3 bg-primary-black text-white font-black rounded-full hover:bg-black transition-all text-sm disabled:opacity-50"
+                                        className="px-8 py-3 bg-oflem-charcoal text-white font-black rounded-full hover:bg-black transition-all text-sm disabled:opacity-50"
                                     >
                                         {t('Post Question')}
                                     </button>
@@ -229,19 +260,23 @@ export default function Details({ mission, canSeeAddress }) {
 
                         {/* Validation Section - Only shown when mission is EN_VALIDATION */}
                         {mission.status === 'EN_VALIDATION' && isOwner && (
-                            <section className="bg-gradient-to-br from-gold-accent/10 to-cream-accent rounded-[40px] p-8 md:p-12 shadow-lg border-2 border-gold-accent">
+                            <section className="bg-gradient-to-br from-oflem-terracotta/10 to-cream-accent rounded-[40px] p-8 md:p-12 shadow-lg border-2 border-oflem-terracotta">
                                 <div className="text-center mb-8">
-                                    <div className="text-6xl mb-4">⏳</div>
-                                    <h2 className="text-3xl font-black text-primary-black mb-2">Validation Required</h2>
+                                    <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm text-oflem-terracotta">
+                                        <Clock size={32} />
+                                    </div>
+                                    <h2 className="text-3xl font-black text-oflem-charcoal mb-2">{t('Validation Required')}</h2>
                                     <p className="text-sm text-gray-muted font-bold">
-                                        The performer has submitted their work. Please review and validate or dispute.
+                                        The provider has submitted their work. Please review and validate or dispute.
                                     </p>
                                 </div>
 
                                 {/* Proof of Completion */}
                                 {mission.completion_proof_path && (
-                                    <div className="mb-8 bg-white rounded-[24px] p-6">
-                                        <h3 className="text-lg font-black text-primary-black mb-4">📸 Proof of Completion</h3>
+                                    <div className="mb-8 bg-white rounded-[24px] p-6 text-left">
+                                        <h3 className="text-lg font-black text-oflem-charcoal mb-4 flex items-center gap-3">
+                                            <ImageIcon className="text-oflem-terracotta" size={20} /> {t('Proof of Completion')}
+                                        </h3>
                                         <img 
                                             src={`/storage/${mission.completion_proof_path}`} 
                                             alt="Completion Proof" 
@@ -249,8 +284,8 @@ export default function Details({ mission, canSeeAddress }) {
                                         />
                                         {mission.completion_notes && (
                                             <div className="bg-oflem-cream rounded-[16px] p-4">
-                                                <p className="text-xs font-black text-gray-muted uppercase tracking-widest mb-2">Notes from Performer</p>
-                                                <p className="text-sm text-primary-black font-medium">{mission.completion_notes}</p>
+                                                <p className="text-xs font-black text-gray-muted uppercase tracking-widest mb-2">Notes from Provider</p>
+                                                <p className="text-sm text-oflem-charcoal font-medium">{mission.completion_notes}</p>
                                             </div>
                                         )}
                                     </div>
@@ -260,13 +295,13 @@ export default function Details({ mission, canSeeAddress }) {
                                 <div className="grid md:grid-cols-2 gap-4">
                                     <button
                                         onClick={() => {
-                                            if (confirm('Are you sure you want to validate this mission? Payment will be released to the performer.')) {
+                                            if (confirm('Are you sure you want to validate this mission? Payment will be released to the provider.')) {
                                                 router.post(route('missions.validate', mission.id));
                                             }
                                         }}
-                                        className="py-5 bg-green-600 text-white font-black rounded-full hover:bg-green-700 transition-all shadow-xl text-lg flex items-center justify-center gap-2"
+                                        className="py-5 bg-green-600 text-white font-black rounded-full hover:bg-green-700 transition-all shadow-xl text-lg flex items-center justify-center gap-3 group"
                                     >
-                                        ✅ {t('Validate & Release Payment')}
+                                        <CheckCircle size={24} className="group-hover:scale-110 transition-transform" /> {t('Validate & Release Payment')}
                                     </button>
                                     <DisputeButton missionId={mission.id} t={t} />
                                 </div>
@@ -277,29 +312,31 @@ export default function Details({ mission, canSeeAddress }) {
                                             const response = await axios.get(route('api.missions.chat', mission.id));
                                             router.visit(route('messages', { chat_id: response.data.id }));
                                         }}
-                                        className="w-full py-4 bg-primary-black text-white font-black rounded-full hover:bg-oflem-charcoal transition-all flex items-center justify-center gap-2"
+                                        className="w-full py-4 bg-oflem-charcoal text-white font-black rounded-full hover:bg-oflem-charcoal transition-all flex items-center justify-center gap-2"
                                     >
-                                        💬 {t('Message Performer')}
+                                        <MessageSquare size={18} className="inline" /> {t('Message Provider')}
                                     </button>
                                 </div>
 
                                 {/* Auto-complete countdown */}
                                 <div className="mt-6 text-center">
                                     <p className="text-xs text-gray-muted font-bold">
-                                        ⚠️ Auto-validates in 72 hours if no action is taken
+                                        <AlertCircle size={14} className="inline mr-1" /> Auto-validates in 72 hours if no action is taken
                                     </p>
                                 </div>
                             </section>
                         )}
 
-                        {/* Proof Upload Section - For Performers when work is in progress */}
+                        {/* Proof Upload Section - For Providers when work is in progress */}
                         {mission.status === 'EN_COURS' && isAssigned && (
                             <section className="bg-gradient-to-br from-green-50 to-green-100 rounded-[40px] p-8 md:p-12 shadow-lg border-2 border-green-400">
                                 <div className="text-center mb-8">
-                                    <div className="text-6xl mb-4">📸</div>
-                                    <h2 className="text-3xl font-black text-primary-black mb-2">Submit Proof of Completion</h2>
+                                    <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm text-oflem-green">
+                                        <ImageIcon size={32} />
+                                    </div>
+                                    <h2 className="text-3xl font-black text-oflem-charcoal mb-2">{t('Submit Proof of Completion')}</h2>
                                     <p className="text-sm text-gray-muted font-bold">
-                                        Upload a photo and notes to show the customer you've completed the mission.
+                                        Upload a photo and notes to show the client you've completed the mission.
                                     </p>
                                 </div>
 
@@ -307,18 +344,20 @@ export default function Details({ mission, canSeeAddress }) {
                             </section>
                         )}
 
-                        {/* Performer View - Waiting for Validation */}
+                        {/* Provider View - Waiting for Validation */}
                         {mission.status === 'EN_VALIDATION' && isAssigned && (
                             <section className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-[40px] p-8 md:p-12 shadow-lg border-2 border-blue-300">
                                 <div className="text-center">
-                                    <div className="text-6xl mb-4">⏳</div>
-                                    <h2 className="text-3xl font-black text-primary-black mb-2">Awaiting Validation</h2>
+                                    <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm text-blue-500">
+                                        <RefreshCw size={32} className="animate-spin-slow" />
+                                    </div>
+                                    <h2 className="text-3xl font-black text-oflem-charcoal mb-2">{t('Awaiting Validation')}</h2>
                                     <p className="text-sm text-gray-muted font-bold mb-6">
-                                        The customer is reviewing your work. You'll be notified once they validate.
+                                        The client is reviewing your work. You'll be notified once they validate.
                                     </p>
                                     {mission.completion_proof_path && (
                                         <div className="bg-white rounded-[24px] p-6 text-left">
-                                            <h3 className="text-lg font-black text-primary-black mb-4">Your Submission</h3>
+                                            <h3 className="text-lg font-black text-oflem-charcoal mb-4">Your Submission</h3>
                                             <img 
                                                 src={`/storage/${mission.completion_proof_path}`} 
                                                 alt="Your Proof" 
@@ -343,9 +382,9 @@ export default function Details({ mission, canSeeAddress }) {
                                     <div className="space-y-4 mb-6 pb-6 border-b border-gray-border">
                                         <Link
                                             href={route('missions.edit', mission.id)}
-                                            className="w-full py-4 bg-gold-accent text-primary-black font-black rounded-full hover:opacity-90 transition-all shadow-xl flex items-center justify-center gap-2"
+                                            className="w-full py-4 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white font-black rounded-full hover:opacity-90 transition-all shadow-xl flex items-center justify-center gap-3 group"
                                         >
-                                            ✏️ {t('Edit Mission')}
+                                            <Edit3 size={18} className="group-hover:rotate-12 transition-transform" /> {t('Edit Mission')}
                                         </Link>
                                         <button
                                             onClick={() => {
@@ -353,9 +392,9 @@ export default function Details({ mission, canSeeAddress }) {
                                                     router.post(route('missions.update-status', mission.id), { status: 'ANNULEE' });
                                                 }
                                             }}
-                                            className="w-full py-3 bg-red-100 text-red-700 font-black rounded-full hover:bg-red-200 transition-all text-sm"
+                                            className="w-full py-3 bg-red-100 text-red-700 font-black rounded-full hover:bg-red-200 transition-all text-sm flex items-center justify-center gap-2"
                                         >
-                                            ❌ {t('Cancel Mission')}
+                                            <X size={16} /> {t('Cancel Mission')}
                                         </button>
                                     </div>
                                 )}
@@ -372,9 +411,9 @@ export default function Details({ mission, canSeeAddress }) {
                                                             router.post(route('missions.update-status', mission.id), { status: 'OUVERTE' });
                                                         }
                                                     }}
-                                                    className="w-full py-3 bg-blue-100 text-blue-700 font-black rounded-full hover:bg-blue-200 transition-all text-sm"
+                                                    className="w-full py-3 bg-blue-100 text-blue-700 font-black rounded-full hover:bg-blue-200 transition-all text-sm flex items-center justify-center gap-2"
                                                 >
-                                                    🔄 {t('Reopen Mission')}
+                                                    <RefreshCw size={14} /> {t('Reopen Mission')}
                                                 </button>
                                                 <button
                                                     onClick={() => {
@@ -382,9 +421,9 @@ export default function Details({ mission, canSeeAddress }) {
                                                             router.post(route('missions.update-status', mission.id), { status: 'ANNULEE' });
                                                         }
                                                     }}
-                                                    className="w-full py-3 bg-red-100 text-red-700 font-black rounded-full hover:bg-red-200 transition-all text-sm"
+                                                    className="w-full py-3 bg-red-100 text-red-700 font-black rounded-full hover:bg-red-200 transition-all text-sm flex items-center justify-center gap-2"
                                                 >
-                                                    ❌ {t('Cancel Mission')}
+                                                    <X size={14} /> {t('Cancel Mission')}
                                                 </button>
                                             </>
                                         )}
@@ -393,11 +432,13 @@ export default function Details({ mission, canSeeAddress }) {
 
                                 {mission.status === 'EN_NEGOCIATION' ? (
                                     <div className="text-center">
-                                        <div className="text-4xl mb-4">🤝</div>
-                                        <h2 className="text-xl font-black text-primary-black mb-2">{t('Negotiation Phase')}</h2>
+                                        <div className="w-16 h-16 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                            <Handshake size={32} />
+                                        </div>
+                                        <h2 className="text-xl font-black text-oflem-charcoal mb-2">{t('Negotiation Phase')}</h2>
                                         <p className="text-sm text-gray-muted font-bold mb-6">
                                             {isOwner 
-                                                ? t('You have selected a performer. Confirm to reveal your address and move forward.') 
+                                                ? t('You have selected a provider. Confirm to reveal your address and move forward.') 
                                                 : isAssigned 
                                                     ? t('Waiting for creators final confirmation...') 
                                                     : t('This mission is currently in negotiation.')
@@ -407,16 +448,16 @@ export default function Details({ mission, canSeeAddress }) {
                                             <div className="space-y-4">
                                                 <button
                                                     onClick={() => router.post(route('missions.confirm-assignment', mission.id))}
-                                                    className="w-full py-4 bg-gold-accent text-primary-black font-black rounded-full hover:opacity-90 transition-all shadow-xl"
+                                                    className="w-full py-4 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white font-black rounded-full hover:opacity-90 transition-all shadow-xl flex items-center justify-center gap-2"
                                                 >
-                                                    ✅ {t('Confirm Assignment')}
+                                                    <CheckCircle size={20} /> {t('Confirm Assignment')}
                                                 </button>
                                                 {clientSecret && (
                                                     <button
                                                         onClick={() => setShowPaymentModal(true)}
-                                                        className="w-full py-4 bg-green-500 text-white font-black rounded-full hover:bg-green-600 transition-all shadow-xl flex items-center justify-center gap-2"
+                                                        className="w-full py-4 bg-green-500 text-white font-black rounded-full hover:bg-green-600 transition-all shadow-xl flex items-center justify-center gap-3 group"
                                                     >
-                                                        💳 {t('Complete Payment Hold')}
+                                                        <CreditCard size={20} className="group-hover:scale-110 transition-transform" /> {t('Complete Payment Hold')}
                                                     </button>
                                                 )}
                                                 <button
@@ -424,9 +465,9 @@ export default function Details({ mission, canSeeAddress }) {
                                                         const response = await axios.get(route('api.missions.chat', mission.id));
                                                         router.visit(route('messages', { chat_id: response.data.id }));
                                                     }}
-                                                    className="w-full py-4 bg-primary-black text-white font-black rounded-full hover:bg-oflem-charcoal transition-all flex items-center justify-center gap-2"
+                                                    className="w-full py-4 bg-oflem-charcoal text-white font-black rounded-full hover:bg-oflem-charcoal transition-all flex items-center justify-center gap-3 group"
                                                 >
-                                                    💬 {t('Message Performer')}
+                                                    <MessageSquare size={20} className="group-hover:scale-110 transition-transform" /> {t('Message Provider')}
                                                 </button>
                                             </div>
                                         )}
@@ -436,16 +477,18 @@ export default function Details({ mission, canSeeAddress }) {
                                                     const response = await axios.get(route('api.missions.chat', mission.id));
                                                     router.visit(route('messages', { chat_id: response.data.id }));
                                                 }}
-                                                className="w-full py-4 bg-primary-black text-white font-black rounded-full hover:bg-black transition-all flex items-center justify-center gap-2"
+                                                className="w-full py-4 bg-oflem-charcoal text-white font-black rounded-full hover:bg-black transition-all flex items-center justify-center gap-3 group"
                                             >
-                                                💬 {t('Message Creator')}
+                                                <MessageSquare size={20} className="group-hover:scale-110 transition-transform" /> {t('Message Creator')}
                                             </button>
                                         )}
                                     </div>
                                 ) : mission.status === 'VERROUILLEE' ? (
                                     <div className="text-center">
-                                        <div className="text-4xl mb-4">🎉</div>
-                                        <h2 className="text-xl font-black text-primary-black mb-2">
+                                        <div className="w-16 h-16 bg-oflem-terracotta/10 text-oflem-terracotta rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                            <PartyPopper size={32} />
+                                        </div>
+                                        <h2 className="text-xl font-black text-oflem-charcoal mb-2">
                                             {isAssigned ? t('Mission Assigned to You!') : t('Mission Booked')}
                                         </h2>
                                         <p className="text-sm text-gray-muted font-bold mb-6">
@@ -458,18 +501,18 @@ export default function Details({ mission, canSeeAddress }) {
                                             <div className="space-y-4">
                                                 <button
                                                     onClick={() => router.post(route('missions.start-work', mission.id))}
-                                                    className="w-full py-4 bg-gold-accent text-primary-black font-black rounded-full hover:opacity-90 transition-all shadow-xl"
+                                                    className="w-full py-4 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white font-black rounded-full hover:opacity-90 transition-all shadow-xl flex items-center justify-center gap-3 group"
                                                 >
-                                                    🔨 {t('Start Work Now')}
+                                                    <Hammer size={20} className="group-hover:rotate-12 transition-transform" /> {t('Start Work Now')}
                                                 </button>
                                                 <button
                                                     onClick={async () => {
                                                         const response = await axios.get(route('api.missions.chat', mission.id));
                                                         router.visit(route('messages', { chat_id: response.data.id }));
                                                     }}
-                                                    className="w-full py-4 bg-primary-black text-white font-black rounded-full hover:bg-oflem-charcoal transition-all flex items-center justify-center gap-2"
+                                                    className="w-full py-4 bg-oflem-charcoal text-white font-black rounded-full hover:bg-oflem-charcoal transition-all flex items-center justify-center gap-2"
                                                 >
-                                                    💬 {t('Message Creator')}
+                                                    <MessageSquare size={18} className="inline" /> {t('Message Creator')}
                                                 </button>
                                             </div>
                                         )}
@@ -479,41 +522,45 @@ export default function Details({ mission, canSeeAddress }) {
                                                     const response = await axios.get(route('api.missions.chat', mission.id));
                                                     router.visit(route('messages', { chat_id: response.data.id }));
                                                 }}
-                                                className="w-full py-4 bg-primary-black text-white font-black rounded-full hover:bg-oflem-charcoal transition-all flex items-center justify-center gap-2"
+                                                className="w-full py-4 bg-oflem-charcoal text-white font-black rounded-full hover:bg-oflem-charcoal transition-all flex items-center justify-center gap-3 group"
                                             >
-                                                💬 {t('Message Performer')}
+                                                <MessageSquare size={20} className="group-hover:scale-110 transition-transform" /> {t('Message Provider')}
                                             </button>
                                         )}
                                     </div>
                                 ) : mission.status === 'EN_COURS' ? (
                                     <div className="text-center">
-                                        <div className="text-4xl mb-4">🚀</div>
-                                        <h2 className="text-xl font-black text-primary-black mb-2">{t('Work In Progress')}</h2>
+                                        <div className="w-16 h-16 bg-oflem-terracotta/10 text-oflem-terracotta rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                            <Rocket size={32} className="animate-pulse" />
+                                        </div>
+                                        <h2 className="text-xl font-black text-oflem-charcoal mb-2">{t('Work In Progress')}</h2>
                                         <p className="text-sm text-gray-muted font-bold mb-6">
-                                            {isAssigned ? t('Finish the task and upload proof!') : t('The performer is currently working.')}
+                                            {isAssigned ? t('Finish the task and upload proof!') : t('The provider is currently working.')}
                                         </p>
                                         <button
                                             onClick={async () => {
                                                 const response = await axios.get(route('api.missions.chat', mission.id));
                                                 router.visit(route('messages', { chat_id: response.data.id }));
                                             }}
-                                            className="w-full py-4 bg-primary-black text-white font-black rounded-full hover:bg-oflem-charcoal transition-all flex items-center justify-center gap-2"
+                                            className="w-full py-4 bg-oflem-charcoal text-white font-black rounded-full hover:bg-oflem-charcoal transition-all flex items-center justify-center gap-3 group"
                                         >
-                                            💬 {isOwner ? t('Message Performer') : t('Message Creator')}
+                                            <MessageSquare size={20} className="group-hover:scale-110 transition-transform" /> {isOwner ? t('Message Provider') : t('Message Creator')}
                                         </button>
                                     </div>
                                 ) : isOwner ? (
                                     <>
-                                        <h2 className="text-xl font-black text-primary-black mb-6">🤝 {t('Offers')}</h2>
+                                        <h2 className="text-xl font-black text-oflem-charcoal mb-6 flex items-center gap-3">
+                                            <Tag className="text-oflem-terracotta" size={24} /> {t('Offers')}
+                                        </h2>
                                         <div className="space-y-6">
                                             {mission.offers.length > 0 ? mission.offers.map(offer => (
                                                 <div key={offer.id} className="p-5 bg-oflem-cream rounded-[24px] border border-gray-border">
                                                     <div className="flex justify-between items-start mb-4">
                                                         <div>
-                                                            <p className="font-black text-primary-black">{offer.user.name}</p>
-                                                            <p className="text-xs text-gray-muted font-bold">★ 5.0 (New)</p>
+                                                            <p className="font-black text-oflem-charcoal">{offer.user.name}</p>
+                                                            <p className="text-xs text-gray-muted font-bold"><Star size={12} className="inline text-oflem-terracotta fill-oflem-terracotta" /> 5.0 (New)</p>
                                                         </div>
-                                                        <p className="text-lg font-black text-gold-accent">CHF {offer.amount}</p>
+                                                        <p className="text-lg font-black text-oflem-terracotta">CHF {offer.amount}</p>
                                                     </div>
                                                     <p className="text-xs text-gray-muted font-medium mb-6 line-clamp-2">{offer.message}</p>
                                                     
@@ -529,13 +576,13 @@ export default function Details({ mission, canSeeAddress }) {
                                                                     }
                                                                 });
                                                             }}
-                                                            className="w-full py-3 bg-primary-black text-white font-black rounded-full hover:bg-black transition-all text-sm shadow-md"
+                                                            className="w-full py-3 bg-oflem-charcoal text-white font-black rounded-full hover:bg-black transition-all text-sm shadow-md flex items-center justify-center gap-2"
                                                         >
-                                                            💼 {t('Hire')} {offer.user.name}
+                                                            <Briefcase size={16} /> {t('Hire')} {offer.user.name}
                                                         </button>
                                                     )}
                                                     {offer.status === 'accepted' && (
-                                                        <div className="text-center py-2 bg-gold-accent text-primary-black font-black text-[10px] uppercase rounded-full">
+                                                        <div className="text-center py-2 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-oflem-charcoal font-black text-[10px] uppercase rounded-full">
                                                             {t('Selected')}
                                                         </div>
                                                     )}
@@ -546,14 +593,14 @@ export default function Details({ mission, canSeeAddress }) {
                                         </div>
                                     </>
                                 ) : (
-                                    /* Performer/Guest Section for OUVERTE missions - Only show to non-owners */
+                                    /* Provider/Guest Section for OUVERTE missions - Only show to non-owners */
                                     !isOwner && mission.status === 'OUVERTE' && (
                                         <div className="space-y-8">
                                             {mission.price_type === 'fixed' && (
                                                 <div className="space-y-6 pb-6 border-b border-gray-border">
                                                     <div className="text-center pb-6 border-b border-gray-border">
-                                                        <p className="text-xs font-black text-gray-muted uppercase tracking-widest mb-1">{t('Fixed Price')}</p>
-                                                        <p className="text-4xl font-black text-primary-black">CHF {mission.budget}</p>
+                                                        <p className="text-xs font-black text-zinc-400 uppercase tracking-widest mb-1">{t('Fixed Price')}</p>
+                                                        <p className="text-4xl font-black text-oflem-charcoal">CHF {mission.budget}</p>
                                                     </div>
                                                     <button
                                                         onClick={() => {
@@ -561,9 +608,9 @@ export default function Details({ mission, canSeeAddress }) {
                                                                 acceptMission();
                                                             }
                                                         }}
-                                                        className="w-full py-5 bg-primary-black text-white font-black rounded-full hover:bg-black transition-all shadow-xl text-lg"
+                                                        className="w-full py-5 bg-oflem-charcoal text-white font-black rounded-full hover:bg-black transition-all shadow-xl text-lg flex items-center justify-center gap-3 group"
                                                     >
-                                                        ⚡ {t('Accept Instantly')}
+                                                        <Zap size={24} className="text-oflem-terracotta group-hover:scale-110 transition-transform" /> {t('Accept Instantly')}
                                                     </button>
                                                     <p className="text-[10px] text-gray-muted font-bold text-center leading-relaxed">
                                                         {t('By accepting, you commit to completing this mission for the fixed price shown.')}
@@ -572,8 +619,8 @@ export default function Details({ mission, canSeeAddress }) {
                                             )}
 
                                             <form onSubmit={submitOffer} className="space-y-6">
-                                                <h2 className="text-xl font-black text-primary-black mb-4">
-                                                    {mission.price_type === 'fixed' ? t('Or Propose your Price') : `🏷️ ${t('Submit an Offer')}`}
+                                                <h2 className="text-xl font-black text-oflem-charcoal mb-4 flex items-center gap-3">
+                                                    {mission.price_type === 'fixed' ? t('Or Propose your Price') : <><Tag className="text-oflem-terracotta" size={24} /> {t('Submit an Offer')}</>}
                                                 </h2>
                                                 
                                                 <div>
@@ -597,7 +644,7 @@ export default function Details({ mission, canSeeAddress }) {
                                                     <InputLabel htmlFor="message" value={t('Message (Optional)')} className="text-xs uppercase tracking-widest font-black mb-3" />
                                                     <textarea
                                                         id="message"
-                                                        className="w-full bg-oflem-cream border-gray-border rounded-[24px] p-5 text-sm font-medium focus:border-gold-accent focus:ring-0 min-h-[100px]"
+                                                        className="w-full bg-oflem-cream border-gray-border rounded-[24px] p-5 text-sm font-medium focus:border-oflem-terracotta focus:ring-0 min-h-[100px]"
                                                         placeholder={t('Tell the creator why you are a good fit...')}
                                                         value={offerForm.data.message}
                                                         onChange={e => offerForm.setData('message', e.target.value)}
@@ -608,9 +655,9 @@ export default function Details({ mission, canSeeAddress }) {
                                                 <button
                                                     type="submit"
                                                     disabled={offerForm.processing}
-                                                    className="w-full py-5 bg-gold-accent text-primary-black font-black rounded-full hover:opacity-90 transition-all shadow-xl text-lg"
+                                                    className="w-full py-5 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white font-black rounded-full hover:opacity-90 transition-all shadow-xl text-lg flex items-center justify-center gap-3 group"
                                                 >
-                                                    🚀 {t('Send Offer')}
+                                                    <Rocket size={24} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" /> {t('Send Offer')}
                                                 </button>
                                             </form>
                                         </div>
@@ -620,10 +667,10 @@ export default function Details({ mission, canSeeAddress }) {
                         </div>
                 </div>
 
-                {/* Nearby Motivés Section - Only for Mission Owners with Open Missions */}
+                {/* Nearby Providers Section - Only for Mission Owners with Open Missions */}
                 {isOwner && mission.status === 'OUVERTE' && (
                     <div className="mt-8">
-                        <NearbyMotivesSection mission={mission} t={t} />
+                        <NearbyProvidersSection mission={mission} t={t} />
                     </div>
                 )}
             </div>
@@ -686,7 +733,7 @@ function ProofUploadForm({ missionId, t }) {
                             file:mr-4 file:py-3 file:px-6
                             file:rounded-full file:border-0
                             file:text-sm file:font-black
-                            file:bg-primary-black file:text-white
+                            file:bg-oflem-charcoal file:text-white
                             hover:file:bg-black file:cursor-pointer
                             cursor-pointer"
                         required
@@ -713,7 +760,7 @@ function ProofUploadForm({ missionId, t }) {
                     id="completion_notes"
                     value={data.completion_notes}
                     onChange={e => setData('completion_notes', e.target.value)}
-                    className="w-full bg-oflem-cream border-gray-border rounded-[24px] p-5 text-sm font-medium focus:border-gold-accent focus:ring-0 min-h-[120px]"
+                    className="w-full bg-oflem-cream border-gray-border rounded-[24px] p-5 text-sm font-medium focus:border-oflem-terracotta focus:ring-0 min-h-[120px]"
                     placeholder={t('Describe what you completed, any additional details...')}
                     maxLength={1000}
                 />
@@ -749,13 +796,13 @@ function ProofUploadForm({ missionId, t }) {
                     </>
                 ) : (
                     <>
-                        ✅ {t('Submit for Validation')}
+                        <CheckCircle size={20} /> {t('Submit for Validation')}
                     </>
                 )}
             </button>
 
             <p className="text-xs text-gray-muted font-bold text-center">
-                ⚠️ {t('The customer will have 72 hours to validate your work')}
+                <AlertCircle size={14} className="inline mr-1" /> {t('The client will have 72 hours to validate your work')}
             </p>
         </form>
     );
@@ -785,7 +832,7 @@ function AnswerForm({ missionId, questionId, t }) {
             <button
                 type="submit"
                 disabled={processing}
-                className="px-6 py-2 bg-gold-accent text-primary-black font-black rounded-full hover:opacity-90 transition-all text-[10px] uppercase tracking-widest disabled:opacity-50"
+                className="px-6 py-2 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-oflem-charcoal font-black rounded-full hover:opacity-90 transition-all text-[10px] uppercase tracking-widest disabled:opacity-50"
             >
                 {t('Answer')}
             </button>
@@ -799,8 +846,8 @@ function DetailItem({ icon, label, value, subValue }) {
             <span className="text-2xl mt-1">{icon}</span>
             <div>
                 <p className="text-[10px] font-black text-gray-muted uppercase tracking-widest mb-1">{label}</p>
-                <p className="font-black text-primary-black">{value}</p>
-                {subValue && <p className="text-[10px] font-bold text-gold-accent mt-1 italic">{subValue}</p>}
+                <p className="font-black text-oflem-charcoal">{value}</p>
+                {subValue && <p className="text-[10px] font-bold text-oflem-terracotta mt-1 italic">{subValue}</p>}
             </div>
         </div>
     );

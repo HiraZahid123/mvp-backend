@@ -236,10 +236,10 @@ class MissionController extends Controller
 
             $user = Auth::user();
 
-            // Auto-set Role to Customer if missing (Mission-First Flow)
+            // Auto-set Role to Client if missing (Mission-First Flow)
             if (empty($user->role_type)) {
-                $user->role_type = 'customer';
-                $user->last_selected_role = 'customer';
+                $user->role_type = 'client';
+                $user->last_selected_role = 'client';
             }
 
             // Sync Location from Mission to Profile if Profile Location is missing
@@ -248,7 +248,7 @@ class MissionController extends Controller
                     $user->location_lat = $data['lat'];
                     $user->location_lng = $data['lng'];
                     $user->location_address = $data['location'] ?? $data['exact_address'] ?? null;
-                    // Default radius for customers
+                    // Default radius for clients
                     $user->discovery_radius_km = 30; 
                 }
             }
@@ -360,7 +360,14 @@ class MissionController extends Controller
         
         // Get filter inputs
         $radius = $request->query('radius', $user->discovery_radius_km ?? 10);
-        $filters = $request->only(['search', 'budget_min', 'budget_max', 'start_date', 'end_date', 'categories']);
+        
+        $filters = $request->only(['search', 'budget_min', 'budget_max', 'start_date', 'end_date', 'categories', 'category']);
+        
+        // Standardize category/categories
+        if ($request->has('category') && !$request->has('categories')) {
+            $filters['categories'] = [$request->category];
+        }
+
         $sortBy = $request->query('sort_by', 'distance');
 
         $query = Mission::where('status', Mission::STATUS_OUVERTE)
@@ -396,9 +403,17 @@ class MissionController extends Controller
 
         $missions = $query->paginate(12)->withQueryString();
 
+        // Fetch all distinct categories used in active missions for the filter sidebar
+        $availableCategories = Mission::where('status', Mission::STATUS_OUVERTE)
+            ->whereNotNull('category')
+            ->distinct()
+            ->pluck('category')
+            ->toArray();
+
         return Inertia::render('Missions/ActiveMissions', [
             'missions' => $missions,
             'userLocation' => ['lat' => $lat, 'lng' => $lng],
+            'availableCategories' => $availableCategories,
             'currentFilters' => array_merge($filters, [
                 'radius' => $radius,
                 'sort_by' => $sortBy
@@ -584,14 +599,14 @@ class MissionController extends Controller
 
     public function askQuestion(Request $request, Mission $mission)
     {
-        // Only Motivés (performers) can ask questions, not mission owners
+        // Only Providers can ask questions, not mission owners
         if (Auth::id() == $mission->user_id) {
             return back()->withErrors(['question' => 'Mission owners cannot ask questions on their own missions.']);
         }
 
-        // Ensure user is a performer
-        if (!Auth::user()->isPerformer()) {
-            return back()->withErrors(['question' => 'Only performers can ask questions about missions.']);
+        // Ensure user is a provider
+        if (!Auth::user()->isProvider()) {
+            return back()->withErrors(['question' => 'Only providers can ask questions about missions.']);
         }
 
         $request->validate([
@@ -642,7 +657,7 @@ class MissionController extends Controller
                     'participant_ids' => [$mission->user_id, Auth::id()],
                 ]);
 
-                // Send initial message from performer
+                // Send initial message from provider
                 $message = $chat->messages()->create([
                     'user_id' => Auth::id(),
                     'content' => "Hello! I've accepted your mission instantly. Looking forward to working together!",
@@ -670,14 +685,14 @@ class MissionController extends Controller
     }
 
 
-    public function hire(Request $request, Mission $mission, User $performer)
+    public function hire(Request $request, Mission $mission, User $provider)
     {
         if (Auth::id() != $mission->user_id && !Auth::user()->isAdmin()) {
             abort(403);
         }
 
         // Prevent self-hiring
-        if ($mission->user_id === $performer->id) {
+        if ($mission->user_id === $provider->id) {
             return response()->json(['message' => 'You cannot hire yourself for your own mission.'], 422);
         }
 
@@ -686,41 +701,41 @@ class MissionController extends Controller
         }
 
         try {
-            \Illuminate\Support\Facades\DB::transaction(function () use ($mission, $performer, &$pi) {
+            \Illuminate\Support\Facades\DB::transaction(function () use ($mission, $provider, &$pi) {
                 $mission->transitionTo(Mission::STATUS_EN_NEGOCIATION);
-                $mission->assigned_user_id = $performer->id;
+                $mission->assigned_user_id = $provider->id;
                 $mission->save();
 
                 // Create Stripe payment intent (Escrow Hold)
                 $pi = app(\App\Services\StripeService::class)->createHold($mission);
                 
                 // Check if there's an offer from this user before updating
-                $existingOffer = $mission->offers()->where('user_id', $performer->id)->first();
+                $existingOffer = $mission->offers()->where('user_id', $provider->id)->first();
                 if ($existingOffer) {
                     $existingOffer->update(['status' => 'accepted']);
                 }
                 
                 // Reject other offers
-                $mission->offers()->where('user_id', '!=', $performer->id)->update(['status' => 'rejected']);
+                $mission->offers()->where('user_id', '!=', $provider->id)->update(['status' => 'rejected']);
             });
 
-            // Notify Performer
-            $performer->notify(new \App\Notifications\MissionAssignedNotification($mission));
+            // Notify Provider
+            $provider->notify(new \App\Notifications\MissionAssignedNotification($mission));
 
             // Create or get chat for the redirect
             $chat = \App\Models\Chat::firstOrCreate([
                 'mission_id' => $mission->id,
             ], [
-                'participant_ids' => [$mission->user_id, $performer->id],
+                'participant_ids' => [$mission->user_id, $provider->id],
             ]);
 
             return redirect()->route('missions.show', $mission->id)
-                ->with('success', 'Performer hired successfully! Please complete the payment hold.')
+                ->with('success', 'Provider hired successfully! Please complete the payment hold.')
                 ->with('stripe_client_secret', $pi->client_secret)
                 ->with('chat_id', $chat->id);
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('Direct Hire Failed: ' . $e->getMessage());
-            return back()->withErrors(['mission' => 'Failed to hire performer. ' . $e->getMessage()]);
+            return back()->withErrors(['mission' => 'Failed to hire provider. ' . $e->getMessage()]);
         }
     }
 
@@ -750,10 +765,10 @@ class MissionController extends Controller
                 $mission->offers()->where('id', '!=', $offer->id)->update(['status' => 'rejected']);
             });
 
-            // Notify Performer
+            // Notify Provider
             $offer->user->notify(new \App\Notifications\MissionAssignedNotification($mission));
 
-            // Notify Rejected Performers
+            // Notify Rejected Providers
             $mission->offers()
                 ->where('id', '!=', $offer->id)
                 ->whereNotNull('user_id')
@@ -770,7 +785,7 @@ class MissionController extends Controller
             ]);
 
             return back()
-                ->with('success', 'Performer selected! Please complete the payment hold.')
+                ->with('success', 'Provider selected! Please complete the payment hold.')
                 ->with('stripe_client_secret', $pi->client_secret)
                 ->with('chat_id', $chat->id);
         } catch (\Exception $e) {
@@ -832,7 +847,7 @@ class MissionController extends Controller
         ]);
 
         return back()
-            ->with('success', 'Assignment confirmed! The performer can now start work and see your address.')
+            ->with('success', 'Assignment confirmed! The provider can now start work and see your address.')
             ->with('chat_id', $chat->id);
     }
 
@@ -881,7 +896,7 @@ class MissionController extends Controller
 
         $mission->transitionTo(Mission::STATUS_EN_VALIDATION);
 
-        // Notify customer
+        // Notify client
         $mission->user->notify(new \App\Notifications\MissionReadyForValidationNotification($mission));
 
         return back()->with('success', 'Mission submitted for validation! The host has 72 hours to validate.');
@@ -917,7 +932,7 @@ class MissionController extends Controller
             return back()->withErrors(['mission' => 'This mission cannot be validated in its current state.']);
         }
 
-        // Release funds to performer (Stripe)
+        // Release funds to provider (Stripe)
         try {
             app(\App\Services\StripeService::class)->releaseFunds($mission);
         } catch (\Exception $e) {
@@ -929,19 +944,19 @@ class MissionController extends Controller
 
         $mission->transitionTo(Mission::STATUS_TERMINEE);
         
-        // Update Performer Virtual Balance
+        // Update Provider Virtual Balance
         $payment = \App\Models\Payment::where('mission_id', $mission->id)->first();
         if ($payment && $mission->assignedUser) {
-            $mission->assignedUser->increment('balance', $payment->performer_amount);
+            $mission->assignedUser->increment('balance', $payment->provider_amount);
         }
 
-        // Notify performer
+        // Notify provider
         if ($mission->assignedUser) {
             $mission->assignedUser->notify(new \App\Notifications\MissionCompletedNotification($mission));
         }
 
 
-        return back()->with('success', 'Mission validated! Payment has been released to the performer.');
+        return back()->with('success', 'Mission validated! Payment has been released to the provider.');
     }
 
     public function initiateDispute(Request $request, Mission $mission)
@@ -967,7 +982,7 @@ class MissionController extends Controller
             $admin->notify(new \App\Notifications\DisputeInitiatedNotification($mission));
         }
 
-        // Notify performer
+        // Notify provider
         if ($mission->assignedUser) {
             $mission->assignedUser->notify(new \App\Notifications\MissionDisputedNotification($mission));
         }
@@ -1000,7 +1015,7 @@ class MissionController extends Controller
         try {
             \Illuminate\Support\Facades\DB::transaction(function () use ($mission, $needsRefund) {
                 if ($needsRefund && $mission->payment_intent_id) {
-                    // Issue refund to customer
+                    // Issue refund to client
                     app(\App\Services\StripeService::class)->refund($mission, 'Mission cancelled');
                 }
 
@@ -1014,24 +1029,24 @@ class MissionController extends Controller
         return back()->with('success', 'Mission cancelled.' . ($needsRefund ? ' Refund has been processed.' : ''));
     }
 
-    public function contactHelper(Mission $mission, User $helper)
+    public function contactProvider(Mission $mission, User $provider)
     {
         if (Auth::id() != $mission->user_id && !Auth::user()->isAdmin()) {
             abort(403);
         }
 
         // Prevent self-contact
-        if ($helper->id === Auth::id()) {
-            return back()->withErrors(['helper' => 'You cannot contact yourself.']);
+        if ($provider->id === Auth::id()) {
+            return back()->withErrors(['provider' => 'You cannot contact yourself.']);
         }
 
-        // Validate helper is actually a performer
-        if (!$helper->isPerformer()) {
-            return back()->withErrors(['helper' => 'This user is not a registered helper.']);
+        // Validate provider is actually a provider
+        if (!$provider->isProvider()) {
+            return back()->withErrors(['provider' => 'This user is not a registered provider.']);
         }
 
-        // Create or find a chat between the owner and the helper for this mission
-        $participantIds = [Auth::id(), $helper->id];
+        // Create or find a chat between the owner and the provider for this mission
+        $participantIds = [Auth::id(), $provider->id];
         sort($participantIds); // Ensure consistent ordering
 
         // Use firstOrCreate to avoid duplicate chat creation
@@ -1066,12 +1081,12 @@ class MissionController extends Controller
             'comment' => 'nullable|string|max:1000',
         ]);
 
-        // Only host or performer can review (depending on mission status)
+        // Only host or provider can review (depending on mission status)
         $userId = Auth::id();
         $isHost = $userId == $mission->user_id;
-        $isPerformer = $userId == $mission->assigned_user_id;
+        $isProvider = $userId == $mission->assigned_user_id;
 
-        if (!$isHost && !$isPerformer) {
+        if (!$isHost && !$isProvider) {
             abort(403);
         }
 
@@ -1101,11 +1116,11 @@ class MissionController extends Controller
         return back()->with('success', 'Review submitted successfully!');
     }
 
-    public function getNearbyMotives(Mission $mission)
+    public function getNearbyProviders(Mission $mission)
     {
-        // Only mission owner can view nearby Motivés
+        // Only mission owner can view nearby providers
         if (Auth::id() !== $mission->user_id) {
-            abort(403, 'Only the mission owner can view nearby helpers.');
+            abort(403, 'Only the mission owner can view nearby providers.');
         }
 
         // Extract mission requirements for matching
@@ -1117,10 +1132,10 @@ class MissionController extends Controller
             }
         }
 
-        // Get nearby Motivés using matchmaking service
-        $nearbyMotives = $this->matchmakingService->findMatches(
+        // Get nearby providers using matchmaking service
+        $nearbyProviders = $this->matchmakingService->findMatches(
             $requirements,
-            20, // Get up to 20 nearby helpers
+            20, // Get up to 20 nearby providers
             [
                 'lat' => $mission->lat,
                 'lng' => $mission->lng,
@@ -1129,7 +1144,7 @@ class MissionController extends Controller
         );
 
         // Filter out mission owner and load additional data
-        $nearbyMotives = $nearbyMotives->filter(function($user) use ($mission) {
+        $nearbyProviders = $nearbyProviders->filter(function($user) use ($mission) {
             return $user->id !== $mission->user_id;
         })->map(function($user) use ($mission) {
             // Calculate distance
@@ -1154,14 +1169,14 @@ class MissionController extends Controller
             return $user;
         })->values();
 
-        \Illuminate\Support\Facades\Log::info("Found " . $nearbyMotives->count() . " nearby motives for mission {$mission->id}");
+        \Illuminate\Support\Facades\Log::info("Found " . $nearbyProviders->count() . " nearby providers for mission {$mission->id}");
 
         return response()->json([
-            'nearby_motives' => $nearbyMotives
+            'nearby_providers' => $nearbyProviders
         ]);
     }
 
-    public function sendMissionToMotive(Mission $mission, User $motive)
+    public function sendMissionToProvider(Mission $mission, User $provider)
     {
         // Only mission owner can send mission
         if (Auth::id() !== $mission->user_id) {
@@ -1169,20 +1184,20 @@ class MissionController extends Controller
         }
 
         // Prevent self-invitation
-        if ($motive->id === Auth::id()) {
-            return back()->withErrors(['motive' => 'You cannot send a mission invitation to yourself.']);
+        if ($provider->id === Auth::id()) {
+            return back()->withErrors(['provider' => 'You cannot send a mission invitation to yourself.']);
         }
 
-        // Validate motive is a performer
-        if (!$motive->isPerformer()) {
-            return back()->withErrors(['motive' => 'This user is not a registered helper.']);
+        // Validate provider is a provider
+        if (!$provider->isProvider()) {
+            return back()->withErrors(['provider' => 'This user is not a registered provider.']);
         }
 
-        // Create notification for the Motivé
-        $motive->notify(new \App\Notifications\MissionInvitationNotification($mission, Auth::user()));
+        // Create notification for the provider
+        $provider->notify(new \App\Notifications\MissionInvitationNotification($mission, Auth::user()));
 
         // Create or get chat
-        $participantIds = [Auth::id(), $motive->id];
+        $participantIds = [Auth::id(), $provider->id];
         sort($participantIds);
 
         $chat = Chat::firstOrCreate(
@@ -1203,7 +1218,7 @@ class MissionController extends Controller
             ]);
         }
 
-        return back()->with('success', 'Mission sent to ' . $motive->name . ' successfully!');
+        return back()->with('success', 'Mission sent to ' . $provider->name . ' successfully!');
     }
 
     // Helper function to calculate distance between two coordinates

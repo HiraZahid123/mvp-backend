@@ -188,7 +188,7 @@ export default function AdminWithdrawals({ withdrawals, stats, currentStatus }) 
                                         disabled={!link.url}
                                         className={`px-4 py-2 rounded-xl font-bold text-sm transition-all ${
                                             link.active
-                                                ? 'bg-oflem-terracotta text-white'
+                                                ? 'bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white'
                                                 : link.url
                                                 ? 'bg-gray-200 hover:bg-gray-300 text-gray-700'
                                                 : 'bg-gray-100 text-gray-400 cursor-not-allowed'

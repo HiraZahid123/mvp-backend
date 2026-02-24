@@ -57,7 +57,7 @@ class AutoCompleteMissions extends Command
             try {
                 $mission->transitionTo(Mission::STATUS_TERMINEE);
                 
-                // Release funds to performer
+                // Release funds to provider
                 $this->stripeService->releaseFunds($mission);
 
                 // Notify both parties

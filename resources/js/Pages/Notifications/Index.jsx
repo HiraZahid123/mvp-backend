@@ -3,6 +3,7 @@ import { Head, Link, router } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import useTranslation from '@/Hooks/useTranslation';
 import { motion } from 'framer-motion';
+import { MapPin, X, Mail, BellOff } from 'lucide-react';
 
 export default function Index({ notifications }) {
     const { t } = useTranslation();
@@ -54,12 +55,12 @@ export default function Index({ notifications }) {
                                 transition={{ delay: index * 0.05 }}
                                 className={`bg-white rounded-[24px] p-6 shadow-sm border border-gray-border flex items-start gap-6 transition-all ${!n.read_at ? 'ring-2 ring-oflem-terracotta/10 border-oflem-terracotta/30' : 'opacity-80'}`}
                             >
-                                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl ${
-                                    n.data.type === 'nearby_mission' ? 'bg-blue-50' : 
-                                    n.data.type === 'offer_rejected' ? 'bg-red-50' : 'bg-gray-50'
+                                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
+                                    n.data.type === 'nearby_mission' ? 'bg-blue-50 text-blue-500' : 
+                                    n.data.type === 'offer_rejected' ? 'bg-red-50 text-red-500' : 'bg-gray-50 text-gray-400'
                                 }`}>
-                                    {n.data.type === 'nearby_mission' ? '📍' : 
-                                     n.data.type === 'offer_rejected' ? '❌' : '✉️'}
+                                    {n.data.type === 'nearby_mission' ? <MapPin size={22} /> : 
+                                     n.data.type === 'offer_rejected' ? <X size={22} /> : <Mail size={22} />}
                                 </div>
 
                                 <div className="flex-1">
@@ -103,7 +104,9 @@ export default function Index({ notifications }) {
                         ))
                     ) : (
                         <div className="bg-white rounded-[32px] p-24 text-center border-2 border-dashed border-gray-border">
-                            <div className="text-6xl mb-6">📭</div>
+                            <div className="w-20 h-20 bg-zinc-50 rounded-3xl flex items-center justify-center mx-auto mb-6 text-zinc-300">
+                                <BellOff size={48} />
+                            </div>
                             <h2 className="text-2xl font-black text-oflem-charcoal mb-2">{t('No notifications yet')}</h2>
                             <p className="text-gray-muted font-bold max-w-sm mx-auto">
                                 {t('We will notify you here when there is news about your tasks or location.')}

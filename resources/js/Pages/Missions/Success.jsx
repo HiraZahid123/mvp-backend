@@ -2,11 +2,22 @@ import React from 'react';
 import { Head, Link } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import useTranslation from '@/Hooks/useTranslation';
-import { CheckCircle, MessageSquare, Bell, Search, ArrowRight } from 'lucide-react';
+import { 
+    CheckCircle, 
+    MessageSquare, 
+    Bell, 
+    Search, 
+    ArrowRight,
+    Sparkles,
+    CircleDollarSign,
+    MapPin,
+    Calendar,
+    PartyPopper
+} from 'lucide-react';
 
 export default function MissionSuccess({ mission, userRole }) {
     const { t } = useTranslation();
-    const isCustomer = userRole === 'customer';
+    const isClient = userRole === 'client';
 
     return (
         <AuthenticatedLayout
@@ -21,13 +32,13 @@ export default function MissionSuccess({ mission, userRole }) {
                     <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
                         <CheckCircle className="w-12 h-12 text-green-600" />
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-black text-oflem-charcoal mb-4">
-                        {isCustomer ? t('Mission Published!') : t('Offer Submitted!')} 🎉
+                    <h1 className="text-4xl md:text-5xl font-black text-oflem-charcoal mb-4 flex items-center justify-center gap-3">
+                        {isClient ? t('Mission Published!') : t('Offer Submitted!')} <Sparkles className="text-oflem-terracotta" />
                     </h1>
                     <p className="text-lg font-bold text-gray-muted">
-                        {isCustomer 
-                            ? t('Your mission is now live and visible to motivated helpers')
-                            : t('The customer will review your offer and get back to you')}
+                        {isClient 
+                            ? t('Your mission is now live and visible to professional providers')
+                            : t('The client will review your offer and get back to you')}
                     </p>
                 </div>
 
@@ -37,21 +48,21 @@ export default function MissionSuccess({ mission, userRole }) {
                         {mission.title}
                     </h2>
                     <div className="flex flex-wrap gap-4 text-sm">
-                        <div className="flex items-center gap-2">
-                            <span className="text-2xl">💰</span>
+                        <div className="flex items-center gap-3">
+                            <CircleDollarSign size={20} className="text-oflem-terracotta" />
                             <span className="font-bold text-gray-600">CHF {mission.budget}</span>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <span className="text-2xl">📍</span>
+                        <div className="flex items-center gap-3">
+                            <MapPin size={20} className="text-oflem-terracotta" />
                             <span className="font-bold text-gray-600">{mission.location}</span>
                         </div>
                         {mission.date_time && (
-                            <div className="flex items-center gap-2">
-                                <span className="text-2xl">📅</span>
-                                <span className="font-bold text-gray-600">
-                                    {new Date(mission.date_time).toLocaleDateString()}
-                                </span>
-                            </div>
+                             <div className="flex items-center gap-3">
+                                 <Calendar size={20} className="text-oflem-terracotta" />
+                                 <span className="font-bold text-gray-600">
+                                     {new Date(mission.date_time).toLocaleDateString()}
+                                 </span>
+                             </div>
                         )}
                     </div>
                 </div>
@@ -65,7 +76,7 @@ export default function MissionSuccess({ mission, userRole }) {
                     {isCustomer ? (
                         <div className="space-y-4">
                             <div className="flex items-start gap-4">
-                                <div className="w-10 h-10 bg-oflem-terracotta/10 rounded-full flex items-center justify-center flex-shrink-0 font-black text-oflem-terracotta">
+                                <div className="w-10 h-10 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/10 rounded-full flex items-center justify-center flex-shrink-0 font-black text-oflem-terracotta">
                                     1
                                 </div>
                                 <div>
@@ -78,7 +89,7 @@ export default function MissionSuccess({ mission, userRole }) {
                                 </div>
                             </div>
                             <div className="flex items-start gap-4">
-                                <div className="w-10 h-10 bg-oflem-terracotta/10 rounded-full flex items-center justify-center flex-shrink-0 font-black text-oflem-terracotta">
+                                <div className="w-10 h-10 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/10 rounded-full flex items-center justify-center flex-shrink-0 font-black text-oflem-terracotta">
                                     2
                                 </div>
                                 <div>
@@ -91,7 +102,7 @@ export default function MissionSuccess({ mission, userRole }) {
                                 </div>
                             </div>
                             <div className="flex items-start gap-4">
-                                <div className="w-10 h-10 bg-oflem-terracotta/10 rounded-full flex items-center justify-center flex-shrink-0 font-black text-oflem-terracotta">
+                                <div className="w-10 h-10 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/10 rounded-full flex items-center justify-center flex-shrink-0 font-black text-oflem-terracotta">
                                     3
                                 </div>
                                 <div>
@@ -107,7 +118,7 @@ export default function MissionSuccess({ mission, userRole }) {
                     ) : (
                         <div className="space-y-4">
                             <div className="flex items-start gap-4">
-                                <div className="w-10 h-10 bg-oflem-terracotta/10 rounded-full flex items-center justify-center flex-shrink-0 font-black text-oflem-terracotta">
+                                <div className="w-10 h-10 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/10 rounded-full flex items-center justify-center flex-shrink-0 font-black text-oflem-terracotta">
                                     1
                                 </div>
                                 <div>
@@ -115,12 +126,12 @@ export default function MissionSuccess({ mission, userRole }) {
                                         {t('Wait for Response')}
                                     </h4>
                                     <p className="text-sm font-medium text-gray-600">
-                                        {t('The customer will review your offer and may contact you via chat.')}
+                                        {t('The client will review your offer and may contact you via chat.')}
                                     </p>
                                 </div>
                             </div>
                             <div className="flex items-start gap-4">
-                                <div className="w-10 h-10 bg-oflem-terracotta/10 rounded-full flex items-center justify-center flex-shrink-0 font-black text-oflem-terracotta">
+                                <div className="w-10 h-10 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/10 rounded-full flex items-center justify-center flex-shrink-0 font-black text-oflem-terracotta">
                                     2
                                 </div>
                                 <div>
@@ -133,7 +144,7 @@ export default function MissionSuccess({ mission, userRole }) {
                                 </div>
                             </div>
                             <div className="flex items-start gap-4">
-                                <div className="w-10 h-10 bg-oflem-terracotta/10 rounded-full flex items-center justify-center flex-shrink-0 font-black text-oflem-terracotta">
+                                <div className="w-10 h-10 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/10 rounded-full flex items-center justify-center flex-shrink-0 font-black text-oflem-terracotta">
                                     3
                                 </div>
                                 <div>
@@ -175,7 +186,7 @@ export default function MissionSuccess({ mission, userRole }) {
                     >
                         <Search className="w-8 h-8 text-oflem-terracotta group-hover:scale-110 transition-transform" />
                         <span className="font-black text-sm text-center text-oflem-charcoal">
-                            {isCustomer ? t('Dashboard') : t('Find More')}
+                            {isClient ? t('Dashboard') : t('Find More')}
                         </span>
                     </Link>
                 </div>
@@ -184,7 +195,7 @@ export default function MissionSuccess({ mission, userRole }) {
                 <div className="mt-8 text-center">
                     <Link
                         href={route('dashboard')}
-                        className="inline-flex items-center gap-3 px-10 py-5 bg-oflem-terracotta text-white rounded-full font-black text-lg hover:bg-oflem-terracotta/90 transition-all shadow-xl group"
+                        className="inline-flex items-center gap-3 px-10 py-5 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white rounded-full font-black text-lg hover:bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/90 transition-all shadow-xl group"
                     >
                         {t('Go to Dashboard')}
                         <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />

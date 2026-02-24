@@ -154,7 +154,7 @@ class ChatController extends Controller
         // Ensure mission has been assigned before creating chat
         if (!$mission->assigned_user_id) {
             return response()->json([
-                'error' => 'Chat cannot be created until a performer is assigned to this mission.'
+                'error' => 'Chat cannot be created until a provider is assigned to this mission.'
             ], 422);
         }
         

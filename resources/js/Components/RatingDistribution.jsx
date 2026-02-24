@@ -16,13 +16,13 @@ export default function RatingDistribution({ distribution, totalReviews }) {
                 return (
                     <div key={stars} className="flex items-center gap-3">
                         <div className="flex items-center gap-1 w-16">
-                            <span className="text-sm font-black text-primary-black">{stars}</span>
-                            <Star className="w-3 h-3 fill-gold-accent text-gold-accent" />
+                            <span className="text-sm font-black text-oflem-charcoal">{stars}</span>
+                            <Star className="w-3 h-3 fill-oflem-terracotta text-oflem-terracotta" />
                         </div>
                         
                         <div className="flex-1 h-2 bg-oflem-cream rounded-full overflow-hidden">
                             <div
-                                className="h-full bg-gold-accent rounded-full transition-all duration-500"
+                                className="h-full bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light rounded-full transition-all duration-500"
                                 style={{ width: `${percentage}%` }}
                             />
                         </div>

@@ -4,6 +4,14 @@ import useTranslation from '@/Hooks/useTranslation';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import TypewriterEffect from '@/Components/TypewriterEffect';
 import axios from 'axios';
+import { 
+    Rocket, 
+    Ban, 
+    Paintbrush, 
+    Package, 
+    Wrench, 
+    Leaf
+} from 'lucide-react';
 
 export default function Search() {
     const { t } = useTranslation();
@@ -60,8 +68,8 @@ export default function Search() {
             <Head title={t('Search Mission')} />
 
             <div className="py-20 text-center">
-                <h1 className="text-4xl md:text-5xl font-black text-primary-black tracking-tight leading-tight mb-6">
-                    {t('What can we')} <span className="text-gold-accent">{t('do for you?')}</span>
+                <h1 className="text-4xl md:text-5xl font-black text-oflem-charcoal tracking-tight leading-tight mb-6">
+                    {t('What can we')} <span className="text-oflem-terracotta">{t('do for you?')}</span>
                 </h1>
                 <p className="text-lg font-bold text-gray-muted mb-12 max-w-xl mx-auto leading-relaxed">
                     {t('Describe your mission in a few words. Our AI will help you find the best match.')}
@@ -90,16 +98,18 @@ export default function Search() {
                             disabled={!searchTerm || isChecking}
                             className={`absolute right-3 top-1/2 -translate-y-1/2 px-8 py-3 rounded-full font-black transition-all shadow-md active:scale-95 ${
                                 searchTerm && !isChecking
-                                    ? 'bg-gold-accent text-primary-black hover:opacity-90'
+                                    ? 'bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-oflem-charcoal hover:opacity-90'
                                     : 'bg-gray-200 text-gray-400 cursor-not-allowed opacity-50'
                             }`}
                         >
-                            {isChecking ? t('Checking...') : `🚀 ${t('Post Mission')}`}
+                            {isChecking ? t('Checking...') : (
+                                <span className="flex items-center gap-2"><Rocket size={16} /> {t('Post Mission')}</span>
+                            )}
                         </button>
                     </form>
                     {hasChecked && !isClean && (
-                        <p className="text-red-500 text-sm font-bold mt-4 flex items-center justify-center gap-2 animate-bounce">
-                            <span>🚫</span> {t('Content violates moderation rules. Please revise.')}
+                        <p className="text-red-500 text-sm font-bold mt-4 flex items-center justify-center gap-2">
+                            <Ban size={18} /> {t('Content violates moderation rules. Please revise.')}
                         </p>
                     )}
                 </div>
@@ -107,18 +117,18 @@ export default function Search() {
                 {/* Quick categories / Suggestions */}
                 <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4">
                     {[
-                        { icon: '🧹', label: t('Cleaning') },
-                        { icon: '📦', label: t('Delivery') },
-                        { icon: '🛠️', label: t('Repair') },
-                        { icon: '🌿', label: t('Garden') }
+                        { icon: <Paintbrush size={32} className="text-oflem-terracotta" />, label: t('Cleaning') },
+                        { icon: <Package size={32} className="text-oflem-terracotta" />, label: t('Delivery') },
+                        { icon: <Wrench size={32} className="text-oflem-terracotta" />, label: t('Repair') },
+                        { icon: <Leaf size={32} className="text-oflem-terracotta" />, label: t('Garden') }
                     ].map((cat, i) => (
                         <button 
                             key={i}
                             onClick={() => router.get(route('missions.create'), { category: cat.label.toLowerCase() })}
-                            className="bg-white border border-gray-border p-6 rounded-[24px] hover:border-gold-accent transition-all group"
+                            className="bg-white border border-gray-border p-6 rounded-[24px] hover:border-oflem-terracotta transition-all group"
                         >
-                            <div className="text-3xl mb-2 group-hover:scale-110 transition-transform">{cat.icon}</div>
-                            <div className="text-xs font-black text-primary-black uppercase tracking-widest">{cat.label}</div>
+                            <div className="flex justify-center mb-2 group-hover:scale-110 transition-transform">{cat.icon}</div>
+                            <div className="text-xs font-black text-oflem-charcoal uppercase tracking-widest">{cat.label}</div>
                         </button>
                     ))}
                 </div>

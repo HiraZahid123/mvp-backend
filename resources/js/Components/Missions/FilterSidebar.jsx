@@ -1,11 +1,15 @@
 import React from 'react';
 import { Sliders } from 'lucide-react';
 
-export default function FilterSidebar({ filters, onFilterChange }) {
-    const categories = [
+export default function FilterSidebar({ filters, onFilterChange, availableCategories }) {
+    const defaultCategories = [
         'Cleaning', 'Moving', 'DIY', 'IT', 'Admin', 'Delivery', 
         'Pets', 'Gardening', 'Events', 'Education', 'Wellness', 'Other'
     ];
+    
+    const displayCategories = availableCategories?.length > 0 
+        ? [...new Set([...availableCategories, ...defaultCategories])]
+        : defaultCategories;
 
     return (
         <div className="hidden lg:block w-80 flex-shrink-0">
@@ -22,12 +26,12 @@ export default function FilterSidebar({ filters, onFilterChange }) {
                             Category
                         </label>
                         <select
-                            value={filters.category || ''}
-                            onChange={(e) => onFilterChange({ ...filters, category: e.target.value })}
+                            value={filters.categories && filters.categories.length > 0 ? filters.categories[0] : ''}
+                            onChange={(e) => onFilterChange({ ...filters, categories: e.target.value ? [e.target.value] : [] })}
                             className="w-full px-4 py-3 bg-oflem-cream border-0 rounded-2xl font-medium focus:ring-2 focus:ring-oflem-terracotta/20"
                         >
                             <option value="">All Categories</option>
-                            {categories.map(cat => (
+                            {displayCategories.map(cat => (
                                 <option key={cat} value={cat}>{cat}</option>
                             ))}
                         </select>
@@ -98,7 +102,7 @@ export default function FilterSidebar({ filters, onFilterChange }) {
                                 onChange={(e) => onFilterChange({ ...filters, remote_only: e.target.checked })}
                                 className="sr-only peer"
                             />
-                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-oflem-terracotta/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-oflem-terracotta"></div>
+                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-oflem-terracotta/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light"></div>
                         </label>
                     </div>
 

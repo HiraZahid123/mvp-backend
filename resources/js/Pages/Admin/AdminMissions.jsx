@@ -53,7 +53,7 @@ export default function AdminMissions({ missions, stats, currentStatus }) {
                                 <tr>
                                     <th className="px-6 py-4 text-left font-black">Title</th>
                                     <th className="px-6 py-4 text-left font-black">Client</th>
-                                    <th className="px-6 py-4 text-left font-black">Performer</th>
+                                    <th className="px-6 py-4 text-left font-black">Provider</th>
                                     <th className="px-6 py-4 text-left font-black">Budget</th>
                                     <th className="px-6 py-4 text-left font-black">Status</th>
                                     <th className="px-6 py-4 text-left font-black">Created</th>
@@ -120,7 +120,7 @@ export default function AdminMissions({ missions, stats, currentStatus }) {
                                         disabled={!link.url}
                                         className={`px-4 py-2 rounded-xl font-bold text-sm transition-all ${
                                             link.active
-                                                ? 'bg-oflem-terracotta text-white'
+                                                ? 'bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white'
                                                 : link.url
                                                 ? 'bg-gray-200 hover:bg-gray-300 text-gray-700'
                                                 : 'bg-gray-100 text-gray-400 cursor-not-allowed'

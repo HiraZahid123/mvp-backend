@@ -28,11 +28,11 @@ export default function RegisterManual() {
     return (
         <AuthSplitLayout 
             heroImage="/images/illustrations/register-hero.svg"
-            heroHeading={t("Une inscription,")}
-            heroSubtext={t("sans l'interrogatoire.")}
+            heroHeading={t("One signup,")}
+            heroSubtext={t("without the interrogation.")}
             bgAccentClass="bg-cream-accent"
         >
-            <Head title={t("S'inscrire")} />
+            <Head title={t("Sign Up")} />
 
             <div className="mb-8 lg:mb-10 relative">
                 <BackButton 
@@ -40,24 +40,24 @@ export default function RegisterManual() {
                     className="absolute -top-12 left-0" 
                 />
 
-                <h1 className="text-[32px] lg:text-[40px] font-serif font-bold text-primary-black tracking-tight mb-3 leading-tight">
-                    {t("Une inscription,")} <br className="hidden lg:block" /> {t("sans l'interrogatoire.")}
+                <h1 className="text-[32px] lg:text-[40px] font-serif font-bold text-oflem-charcoal tracking-tight mb-3 leading-tight">
+                    {t("One signup,")} <br className="hidden lg:block" /> {t("without the interrogation.")}
                 </h1>
                 <p className="text-gray-muted text-base font-medium">
-                    {t("Le strict nécessaire pour une mise en relation de confiance.")}
+                    {t("The bare minimum for a trusted connection.")}
                 </p>
             </div>
 
             <form onSubmit={submit} className="space-y-6">
                 {/* Full Name */}
                 <div className="space-y-1.5">
-                    <InputLabel htmlFor="name" value={t("Nom complet")} />
+                    <InputLabel htmlFor="name" value={t("Full Name")} />
                     <TextInput
                         id="name"
                         type="text"
                         value={data.name}
                         onChange={(e) => setData('name', e.target.value)}
-                        placeholder={t("Votre nom complet")}
+                        placeholder={t("Your full name")}
                         autoComplete="name"
                         required
                     />
@@ -66,13 +66,13 @@ export default function RegisterManual() {
 
                 {/* Email */}
                 <div className="space-y-1.5">
-                    <InputLabel htmlFor="email" value={t("E-mail")} />
+                    <InputLabel htmlFor="email" value={t("Email")} />
                     <TextInput
                         id="email"
                         type="email"
                         value={data.email}
                         onChange={(e) => setData('email', e.target.value)}
-                        placeholder={t("votre@email.com")}
+                        placeholder={t("your@email.com")}
                         autoComplete="username"
                         required
                     />
@@ -81,12 +81,12 @@ export default function RegisterManual() {
 
                 {/* Password */}
                 <div className="space-y-1.5">
-                    <InputLabel htmlFor="password" value={t("Mot de passe")} />
+                    <InputLabel htmlFor="password" value={t("Password")} />
                     <PasswordInput
                         id="password"
                         value={data.password}
                         onChange={(e) => setData('password', e.target.value)}
-                        placeholder={t("Choisissez un mot de passe")}
+                        placeholder={t("Choose a password")}
                         autoComplete="new-password"
                         required
                     />
@@ -95,12 +95,12 @@ export default function RegisterManual() {
 
                 {/* Confirm Password */}
                 <div className="space-y-1.5">
-                    <InputLabel htmlFor="password_confirmation" value={t("Confirmer le mot de passe")} />
+                    <InputLabel htmlFor="password_confirmation" value={t("Confirm Password")} />
                     <PasswordInput
                         id="password_confirmation"
                         value={data.password_confirmation}
                         onChange={(e) => setData('password_confirmation', e.target.value)}
-                        placeholder={t("Confirmez votre mot de passe")}
+                        placeholder={t("Confirm your password")}
                         autoComplete="new-password"
                         required
                     />
@@ -109,19 +109,19 @@ export default function RegisterManual() {
 
                 {/* Submit Button */}
                 <PrimaryButton className="w-full mt-4" disabled={processing} processing={processing}>
-                    {t("S'inscrire")}
+                    {t("Sign Up")}
                 </PrimaryButton>
             </form>
 
             {/* Login Link */}
             <div className="mt-8 text-center">
                 <p className="text-sm text-gray-muted font-medium">
-                    {t("Déjà membre ?")}{' '}
+                    {t("Already a member?")}{' '}
                     <Link 
                         href={route('login')} 
-                        className="text-primary-black font-black hover:underline"
+                        className="text-oflem-charcoal font-black hover:underline"
                     >
-                        {t("Se connecter")}
+                        {t("Sign In")}
                     </Link>
                 </p>
             </div>

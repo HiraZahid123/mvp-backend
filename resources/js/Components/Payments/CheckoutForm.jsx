@@ -53,7 +53,7 @@ export default function CheckoutForm({ onCancel, onSuccess }) {
                 <PrimaryButton
                     disabled={isLoading || !stripe || !elements}
                     id="submit"
-                    className="w-full py-4 text-base bg-oflem-terracotta hover:bg-oflem-terracotta/90"
+                    className="w-full py-4 text-base bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light hover:bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/90"
                 >
                     <span id="button-text">
                         {isLoading ? <div className="spinner" id="spinner"></div> : t("Authorize Payment Hold")}

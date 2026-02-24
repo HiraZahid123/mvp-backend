@@ -92,11 +92,11 @@
         },
         "onboarding": {
             "welcome_title": "Benvenuto su OFLEM",
-            "welcome_subtitle": "La prima piattaforma per i pigri.",
+            "welcome_subtitle": "La prima piattaforma per delegare.",
             "role_selection_title": "Cosa vuoi fare su Oflem?",
             "role_selection_subtitle": "Scegli ciò che ti si addice meglio. Puoi cambiare più tardi.",
-            "role_flemmard": "Sono pigro!",
-            "role_motivated": "Sono motivato",
+            "role_flemmard": "Client",
+            "role_motivated": "Provider",
             "role_both": "Entrambi",
             "location_title": "Solo la tua zona. Dopo, Oflem gestisce.",
             "location_subtitle": "La tua posizione viene utilizzata solo per connetterti con opportunità locali.",
@@ -172,12 +172,12 @@
         },
         "published": {
             "title": "Missione pubblicata!",
-            "subtitle": "La tua missione è ora attiva e visibile agli aiutanti motivati",
+            "subtitle": "La tua missione è ora attiva e visibile ai provider",
             "next_steps": "Prossimi passi",
             "wait_offers": "Attendi offerte",
-            "wait_offers_desc": "Gli aiutanti motivati ti invieranno offerte. Riceverai notifiche.",
+            "wait_offers_desc": "I provider ti invieranno offerte. Riceverai notifiche.",
             "review_chat": "Rivedi e chatta",
-            "review_chat_desc": "Rivedi le offerte, chatta con gli aiutanti e scegli la migliore corrispondenza.",
+            "review_chat_desc": "Rivedi le offerte, chatta con i provider e scegli la migliore corrispondenza.",
             "accept_pay": "Accetta e paga",
             "accept_pay_desc": "Accetta un'offerta e paga in sicurezza. I fondi sono tenuti in deposito fino al completamento.",
             "view_mission": "Visualizza missione",
@@ -294,16 +294,16 @@
         "hero": {
             "tagline": "Piattaforma Qualità Svizzera",
             "title": "Tutto ciò che vuoi. Davvero.",
-            "subtitle": "Oflem non è un elenco di categorie. Descrivi il tuo compito e troveremo il Motivato giusto.",
+            "subtitle": "Oflem non è un elenco di categorie. Descrivi il tuo compito e troveremo il Provider giusto.",
             "search_prefix": "Sono troppo pigro per...",
             "search_placeholder": "portare a spasso il mio cane",
             "search_button": "Avvia la ricerca",
-            "role_flemmard": "Sono un Pigro",
-            "role_motivated": "Sono Motivato"
+            "role_flemmard": "Sono un Client",
+            "role_motivated": "Sono un Provider"
         },
         "stats": {
-            "happy_lazy": "Pigri felici",
-            "active_motivated": "Motivati attivi",
+            "happy_lazy": "Clienti felici",
+            "active_motivated": "Provider attivi",
             "missions_done": "Missioni completate",
             "last_mission": "Ultima missione",
             "trust_index": "Indice di fiducia"
@@ -325,7 +325,7 @@
             "total_trust": "Fiducia totale",
             "total_trust_desc": "Profili verificati e valutazioni della community.",
             "full_rewards": "100% di ricompense",
-            "full_rewards_desc": "I Motivati ricevono il prezzo completo concordato.",
+            "full_rewards_desc": "I Provider ricevono il prezzo completo concordato.",
             "swiss_quality": "Qualità svizzera",
             "swiss_quality_desc": "Una piattaforma costruita da chi cerca aiuto per chi cerca aiuto."
         },

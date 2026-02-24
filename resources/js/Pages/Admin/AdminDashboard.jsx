@@ -2,6 +2,7 @@ import React from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { motion } from 'framer-motion';
 import { Link } from '@inertiajs/react';
+import { Users, ClipboardList, Clock, ArrowUpRight, ArrowRight } from 'lucide-react';
 
 export default function AdminDashboard({ stats, recentWithdrawals, recentUsers }) {
     const StatCard = ({ title, value, subtitle, icon, color }) => (
@@ -16,7 +17,9 @@ export default function AdminDashboard({ stats, recentWithdrawals, recentUsers }
                     <h3 className="text-4xl font-black mt-2">{value}</h3>
                     {subtitle && <p className="text-sm text-gray-600 mt-1">{subtitle}</p>}
                 </div>
-                <span className="text-4xl">{icon}</span>
+                <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400">
+                    {icon}
+                </div>
             </div>
         </motion.div>
     );
@@ -36,28 +39,28 @@ export default function AdminDashboard({ stats, recentWithdrawals, recentUsers }
                         title="Total Users"
                         value={stats.users.total}
                         subtitle={`${stats.users.newThisMonth} new this month`}
-                        icon="👥"
+                        icon={<Users size={24} />}
                         color="border-blue-500"
                     />
                     <StatCard
                         title="Total Missions"
                         value={stats.missions.total}
                         subtitle={`${stats.missions.open} open`}
-                        icon="📋"
+                        icon={<ClipboardList size={24} />}
                         color="border-green-500"
                     />
                     <StatCard
                         title="Pending Withdrawals"
                         value={stats.withdrawals.pending}
                         subtitle={`CHF ${parseFloat(stats.withdrawals.pendingAmount).toFixed(2)}`}
-                        icon="💰"
+                        icon={<Clock size={24} />}
                         color="border-yellow-500"
                     />
                     <StatCard
                         title="Total Withdrawn"
                         value={`CHF ${parseFloat(stats.withdrawals.totalWithdrawn).toFixed(0)}`}
                         subtitle={`${stats.withdrawals.pending} pending requests`}
-                        icon="💸"
+                        icon={<ArrowUpRight size={24} />}
                         color="border-oflem-terracotta"
                     />
                 </div>
@@ -73,12 +76,12 @@ export default function AdminDashboard({ stats, recentWithdrawals, recentUsers }
                         <h3 className="text-2xl font-black mb-4">User Breakdown</h3>
                         <div className="space-y-3">
                             <div className="flex justify-between items-center">
-                                <span className="font-bold">Customers</span>
-                                <span className="text-2xl font-black text-blue-600">{stats.users.customers}</span>
+                                <span className="font-bold">Clients</span>
+                                <span className="text-2xl font-black text-blue-600">{stats.users.clients}</span>
                             </div>
                             <div className="flex justify-between items-center">
-                                <span className="font-bold">Performers</span>
-                                <span className="text-2xl font-black text-green-600">{stats.users.performers}</span>
+                                <span className="font-bold">Providers</span>
+                                <span className="text-2xl font-black text-green-600">{stats.users.providers}</span>
                             </div>
                         </div>
                     </motion.div>
@@ -118,7 +121,7 @@ export default function AdminDashboard({ stats, recentWithdrawals, recentUsers }
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="text-2xl font-black">Recent Withdrawals</h3>
                             <Link href="/admin/withdrawals" className="text-oflem-terracotta font-bold hover:underline">
-                                View All →
+                                View All <ArrowRight size={14} className="inline ml-1" />
                             </Link>
                         </div>
                         <div className="space-y-3">
@@ -153,7 +156,7 @@ export default function AdminDashboard({ stats, recentWithdrawals, recentUsers }
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="text-2xl font-black">Recent Users</h3>
                             <Link href="/admin/users" className="text-oflem-terracotta font-bold hover:underline">
-                                View All →
+                                View All <ArrowRight size={14} className="inline ml-1" />
                             </Link>
                         </div>
                         <div className="space-y-3">
@@ -163,7 +166,7 @@ export default function AdminDashboard({ stats, recentWithdrawals, recentUsers }
                                         <p className="font-bold">{user.name}</p>
                                         <p className="text-sm text-gray-600">{user.email}</p>
                                     </div>
-                                    <span className="text-xs px-3 py-1 rounded-full font-bold bg-oflem-terracotta text-white">
+                                    <span className="text-xs px-3 py-1 rounded-full font-bold bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white">
                                         {user.role_type}
                                     </span>
                                 </div>

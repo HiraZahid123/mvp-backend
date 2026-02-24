@@ -9,6 +9,7 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import BackButton from '@/Components/BackButton';
 
 export default function CompleteIdentity({ user }) {
+    const { t } = useTranslation();
     const [photoFile, setPhotoFile] = useState(null);
 
     const { data, setData, post, processing, errors } = useForm({
@@ -33,21 +34,21 @@ export default function CompleteIdentity({ user }) {
             heroImage="/images/illustrations/verify-email.svg"
             bgAccentClass="bg-cream-accent"
         >
-            <Head title="Profil" />
+            <Head title={t("Profile")} />
 
             <div className="flex items-center mb-8">
                 <BackButton href={route('auth.select-role')} className="text-sm">
-                    Retour
+                    {t("Back")}
                 </BackButton>
             </div>
 
             <div className="text-center mb-8">
-                <h1 className="text-[32px] lg:text-[40px] font-serif font-bold text-primary-black tracking-tight mb-3 leading-tight">
-                    Enchanté !<br />Presque prêt...
+                <h1 className="text-[32px] lg:text-[40px] font-serif font-bold text-oflem-charcoal tracking-tight mb-3 leading-tight">
+                    {t("Nice to meet you!")}<br />{t("Almost ready...")}
                 </h1>
                 <p className="text-gray-muted text-base font-medium px-4">
-                    Ajoutez une photo et personnalisez votre pseudo si vous le souhaitez.<br />
-                    Sinon, on utilisera votre nom.
+                    {t("Add a photo and customize your username if you wish.")}<br />
+                    {t("Otherwise, we'll use your name.")}
                 </p>
             </div>
 
@@ -64,13 +65,13 @@ export default function CompleteIdentity({ user }) {
 
                 {/* Username/Display Name */}
                 <div className="space-y-1.5">
-                    <InputLabel htmlFor="username" value="Nom d'affichage (optionnel)" className="text-center lg:text-left" />
+                    <InputLabel htmlFor="username" value={t("Display name (optional)")} className="text-center lg:text-left" />
                     <TextInput
                         id="username"
                         type="text"
                         value={data.username}
                         onChange={(e) => setData('username', e.target.value)}
-                        placeholder="Laissez vide pour utiliser votre nom"
+                        placeholder={t("Leave empty to use your name")}
                         autoComplete="nickname"
                     />
                     <InputError message={errors.username} />
@@ -82,13 +83,13 @@ export default function CompleteIdentity({ user }) {
                     disabled={processing}
                     processing={processing}
                 >
-                    Continuer
+                    {t("Continue")}
                 </PrimaryButton>
             </form>
 
-            <div className="mt-6 p-4 bg-gold-accent/5 rounded-[24px] border border-gold-accent/20">
+            <div className="mt-6 p-4 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/5 rounded-[24px] border border-oflem-terracotta/20">
                 <p className="text-xs text-gray-muted text-center">
-                    Vos informations restent privées et sécurisées.
+                    {t("Your information remains private and secure.")}
                 </p>
             </div>
         </AuthSplitLayout>

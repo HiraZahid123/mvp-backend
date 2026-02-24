@@ -26,22 +26,22 @@ export default function MoodOfTheDay({ user, currentRole }) {
 
     const roles = [
         {
-            key: 'customer',
+            key: 'client',
             icon: '/images/icons/battery-low.svg',
-            title: t('FLEMMARD'),
-            description: t('Je veux déléguer et me reposer aujourd\'hui.'),
+            title: t('Client'),
+            description: t('I want to delegate and rest today.'),
         },
         {
-            key: 'performer',
+            key: 'provider',
             icon: '/images/icons/battery-high.svg',
-            title: t('MOTIVÉ'),
-            description: t('Je suis prêt à saisir des opportunités.'),
+            title: t('Provider'),
+            description: t("I'm ready to seize opportunities."),
         },
         {
             key: 'both',
             icon: '/images/icons/battery-medium.svg',
-            title: t('LES DEUX'),
-            description: t('Les deux ! Mode multitâche activé.'),
+            title: t('BOTH'),
+            description: t('Both! Multitask mode activated.'),
         },
     ];
 
@@ -59,11 +59,11 @@ export default function MoodOfTheDay({ user, currentRole }) {
             </div>
 
             <div className="text-center mb-8">
-                <h1 className="text-[32px] lg:text-[40px] font-serif font-bold text-primary-black tracking-tight mb-3 leading-tight">
-                    {t("Quelle est l'humeur du jour ?")}
+                <h1 className="text-[32px] lg:text-[40px] font-serif font-bold text-oflem-charcoal tracking-tight mb-3 leading-tight">
+                    {t("What's the mood of the day?")}
                 </h1>
                 <p className="text-gray-muted text-base font-medium">
-                    {t("Bienvenue")}, <span className="font-bold text-primary-black">{user?.display_name || user?.name}</span> !
+                    {t("Welcome")}, <span className="font-bold text-oflem-charcoal">{user?.display_name || user?.name}</span> !
                 </p>
             </div>
 
@@ -88,13 +88,13 @@ export default function MoodOfTheDay({ user, currentRole }) {
                     disabled={processing || !selectedRole}
                     processing={processing}
                 >
-                    {t('C\'est parti !')}
+                    {t("Let's go!")}
                 </PrimaryButton>
             </form>
 
-            <div className="mt-6 p-4 bg-gold-accent/5 rounded-[24px] border border-gold-accent/20">
+            <div className="mt-6 p-4 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/5 rounded-[24px] border border-oflem-terracotta/20">
                 <p className="text-xs text-gray-muted text-center">
-                    {t('Cette sélection détermine votre tableau de bord initial. Vous pouvez la changer à tout moment.')}
+                    {t('This selection determines your initial dashboard. You can change it at any time.')}
                 </p>
             </div>
         </AuthSplitLayout>

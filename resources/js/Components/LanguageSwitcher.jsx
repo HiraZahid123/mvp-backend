@@ -17,7 +17,7 @@ export default function LanguageSwitcher() {
             <button
                 onClick={() => changeLanguage('en')}
                 className={`text-xs font-black px-2 py-1 rounded transition-colors ${
-                    locale === 'en' ? 'bg-gold-accent text-primary-black' : 'text-gray-muted hover:text-primary-black'
+                    locale === 'en' ? 'bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-oflem-charcoal' : 'text-gray-muted hover:text-oflem-charcoal'
                 }`}
             >
                 EN
@@ -26,7 +26,7 @@ export default function LanguageSwitcher() {
             <button
                 onClick={() => changeLanguage('fr')}
                 className={`text-xs font-black px-2 py-1 rounded transition-colors ${
-                    locale === 'fr' ? 'bg-gold-accent text-primary-black' : 'text-gray-muted hover:text-primary-black'
+                    locale === 'fr' ? 'bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-oflem-charcoal' : 'text-gray-muted hover:text-oflem-charcoal'
                 }`}
             >
                 FR

@@ -92,7 +92,7 @@ export default function UsersIndex({ users, filters }) {
                             </select>
                             <button
                                 type="submit"
-                                className="px-8 py-3 bg-oflem-terracotta text-white rounded-2xl font-black hover:bg-oflem-terracotta/90 transition-colors"
+                                className="px-8 py-3 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white rounded-2xl font-black hover:bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/90 transition-colors"
                             >
                                 <Filter className="w-5 h-5 inline mr-2" />
                                 {t('Filter')}
@@ -129,7 +129,7 @@ export default function UsersIndex({ users, filters }) {
                                     <tr key={user.id} className="hover:bg-oflem-cream/30 transition-colors">
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-4">
-                                                <div className="w-12 h-12 bg-oflem-terracotta/10 rounded-full flex items-center justify-center font-black text-oflem-terracotta">
+                                                <div className="w-12 h-12 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/10 rounded-full flex items-center justify-center font-black text-oflem-terracotta">
                                                     {user.name?.charAt(0).toUpperCase() || 'U'}
                                                 </div>
                                                 <div>
@@ -171,7 +171,7 @@ export default function UsersIndex({ users, filters }) {
                                             <div className="flex items-center justify-end gap-2">
                                                 <Link
                                                     href={route('admin.users.show', user.id)}
-                                                    className="px-4 py-2 bg-oflem-cream text-oflem-charcoal rounded-xl font-bold text-sm hover:bg-oflem-terracotta hover:text-white transition-colors"
+                                                    className="px-4 py-2 bg-oflem-cream text-oflem-charcoal rounded-xl font-bold text-sm hover:bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light hover:text-white transition-colors"
                                                 >
                                                     {t('View')}
                                                 </Link>
@@ -212,7 +212,7 @@ export default function UsersIndex({ users, filters }) {
                                             preserveScroll
                                             className={`px-4 py-2 rounded-xl font-bold text-sm transition-colors ${
                                                 link.active
-                                                    ? 'bg-oflem-terracotta text-white'
+                                                    ? 'bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white'
                                                     : link.url
                                                     ? 'bg-white text-oflem-charcoal hover:bg-oflem-cream'
                                                     : 'bg-gray-100 text-gray-400 cursor-not-allowed'
@@ -229,7 +229,9 @@ export default function UsersIndex({ users, filters }) {
                 {/* Empty State */}
                 {users.data.length === 0 && (
                     <div className="bg-white rounded-3xl p-20 text-center shadow-sm border border-gray-100">
-                        <div className="text-6xl mb-6">👥</div>
+                        <div className="w-20 h-20 bg-zinc-50 rounded-3xl flex items-center justify-center mx-auto mb-6 text-zinc-300">
+                            <UserCheck className="w-10 h-10" />
+                        </div>
                         <h3 className="text-2xl font-black text-oflem-charcoal mb-4">
                             {t('No users found')}
                         </h3>
@@ -238,7 +240,7 @@ export default function UsersIndex({ users, filters }) {
                         </p>
                         <button
                             onClick={() => router.get(route('admin.users.index'))}
-                            className="px-8 py-4 bg-oflem-terracotta text-white rounded-full font-black hover:bg-oflem-terracotta/90 transition-colors"
+                            className="px-8 py-4 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white rounded-full font-black hover:bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/90 transition-colors"
                         >
                             {t('Clear Filters')}
                         </button>

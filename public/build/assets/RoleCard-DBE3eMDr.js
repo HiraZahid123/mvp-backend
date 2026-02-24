@@ -1,0 +1,6 @@
+import{j as e}from"./app-QnVUizLf.js";function c({icon:t,emoji:r,title:l,description:s,selected:a,onClick:o}){return e.jsx("button",{type:"button",onClick:o,className:`
+                w-full p-6 rounded-[24px]
+                border-2 transition-all duration-300
+                text-left
+                ${a?"border-oflem-terracotta bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/10 shadow-lg scale-[1.02]":"border-gray-border/50 bg-white hover:border-oflem-terracotta/50 hover:shadow-md hover:-translate-y-1"}
+            `,children:e.jsxs("div",{className:"flex items-start gap-4",children:[e.jsx("div",{className:"flex-shrink-0",children:t?e.jsx("img",{src:t,alt:"",className:"w-12 h-12 object-contain"}):e.jsx("span",{className:"text-4xl",children:r})}),e.jsxs("div",{className:"flex-1",children:[e.jsx("h3",{className:"text-xl font-black text-oflem-charcoal mb-2",children:l}),e.jsx("p",{className:"text-sm text-gray-muted font-medium leading-relaxed",children:s})]}),a&&e.jsx("div",{className:"flex-shrink-0",children:e.jsx("svg",{className:"w-6 h-6 text-oflem-terracotta",fill:"currentColor",viewBox:"0 0 20 20",children:e.jsx("path",{fillRule:"evenodd",d:"M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z",clipRule:"evenodd"})})})]})})}export{c as R};

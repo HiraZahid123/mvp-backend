@@ -123,8 +123,8 @@ export default function CompleteProfile() {
                     className="absolute -top-12 left-0" 
                 />
 
-                <h2 className="text-lg font-medium text-primary-black mb-1">{t('Promise, this is the last thing')}</h2>
-                <h1 className="text-[32px] lg:text-[40px] font-black text-primary-black tracking-tight mb-2">
+                <h2 className="text-lg font-medium text-oflem-charcoal mb-1">{t('Promise, this is the last thing')}</h2>
+                <h1 className="text-[32px] lg:text-[40px] font-black text-oflem-charcoal tracking-tight mb-2">
                     {t('Just your area. After that, Oflem handles it.')}
                 </h1>
                 <div className="flex flex-col items-center w-full mt-6 mb-2">
@@ -135,7 +135,7 @@ export default function CompleteProfile() {
                         <button 
                             type="button"
                             onClick={() => fileInputRef.current.click()}
-                            className="absolute bottom-0 right-0 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center border border-gray-border overflow-hidden hover:bg-gold-accent transition-colors group"
+                            className="absolute bottom-0 right-0 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center border border-gray-border overflow-hidden hover:bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light transition-colors group"
                         >
                              <svg className="w-4 h-4 text-gray-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
@@ -152,7 +152,7 @@ export default function CompleteProfile() {
                     <button 
                         type="button"
                         onClick={() => fileInputRef.current.click()}
-                        className="text-xs font-black text-gray-muted hover:text-primary-black transition-colors"
+                        className="text-xs font-black text-gray-muted hover:text-oflem-charcoal transition-colors"
                     >
                         {t('Edit Profile')}
                     </button>
@@ -207,7 +207,7 @@ export default function CompleteProfile() {
                             <InputLabel value={t('Radius')} className="ml-0" />
                             <p className="text-[10px] text-gray-muted font-bold">{t('Pick a radius to make tasking easier')}</p>
                         </div>
-                        <span className="text-sm font-black text-primary-black">{radius} km</span>
+                        <span className="text-sm font-black text-oflem-charcoal">{radius} km</span>
                     </div>
                     
                     <div className="px-4">
@@ -217,7 +217,7 @@ export default function CompleteProfile() {
                             max="50"
                             value={radius}
                             onChange={(e) => handleRadiusChange(parseInt(e.target.value))}
-                            className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-gold-accent"
+                            className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-oflem-terracotta"
                         />
                     </div>
 
@@ -257,7 +257,7 @@ export default function CompleteProfile() {
                             </GoogleMap>
                         ) : (
                             <div className="w-full h-[240px] bg-gray-100 flex items-center justify-center italic text-gray-400">
-                                {loadError ? 'Error loading maps' : 'Loading map...'}
+                                {loadError ? t('Error loading maps') : t('Loading map...')}
                             </div>
                         )}
                     </div>

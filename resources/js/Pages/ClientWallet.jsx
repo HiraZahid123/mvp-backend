@@ -3,6 +3,7 @@ import { Head, Link } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import useTranslation from '@/Hooks/useTranslation';
 import { motion } from 'framer-motion';
+import { CreditCard, ArrowUpRight, Target } from 'lucide-react';
 
 export default function ClientWallet({ totalSpent, payments }) {
     const { t } = useTranslation();
@@ -39,7 +40,7 @@ export default function ClientWallet({ totalSpent, payments }) {
                             {t('Create New Mission')}
                         </Link>
                     </div>
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-oflem-terracotta/20 rounded-full -mr-20 -mt-20 blur-3xl" />
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/20 rounded-full -mr-20 -mt-20 blur-3xl" />
                     <div className="absolute bottom-0 left-0 w-48 h-48 bg-blue-500/10 rounded-full -ml-10 -mb-10 blur-2xl" />
                 </motion.div>
 
@@ -64,7 +65,7 @@ export default function ClientWallet({ totalSpent, payments }) {
             {/* Payment History */}
             <div className="space-y-6">
                 <h3 className="text-xl font-black text-oflem-charcoal flex items-center gap-3">
-                    <span>💳</span> {t('Payment History')}
+                    <CreditCard size={20} className="inline mr-2" /> {t('Payment History')}
                 </h3>
 
                 <div className="bg-white rounded-[40px] border border-gray-border overflow-hidden shadow-sm">
@@ -80,7 +81,7 @@ export default function ClientWallet({ totalSpent, payments }) {
                                 >
                                     <div className="flex items-center gap-6">
                                         <div className="w-14 h-14 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center text-xl shadow-sm">
-                                            📤
+                                            <ArrowUpRight size={24} />
                                         </div>
                                         <div>
                                             <p className="font-black text-oflem-charcoal text-lg mb-1">{payment.mission.title}</p>
@@ -102,14 +103,16 @@ export default function ClientWallet({ totalSpent, payments }) {
                         </div>
                     ) : (
                         <div className="p-20 text-center">
-                            <div className="text-6xl mb-6">🎯</div>
+                            <div className="w-20 h-20 bg-zinc-50 rounded-3xl flex items-center justify-center mx-auto mb-6 text-zinc-300">
+                                <Target className="w-10 h-10" />
+                            </div>
                             <h4 className="text-xl font-black text-oflem-charcoal mb-2">{t('No payments yet')}</h4>
                             <p className="text-gray-muted font-bold max-w-sm mx-auto">
                                 {t('Create your first mission to get started!')}
                             </p>
                             <Link 
                                 href={route('missions.create')}
-                                className="inline-block mt-8 px-8 py-3 bg-oflem-terracotta text-white font-black rounded-full hover:opacity-90 transition-all text-sm"
+                                className="inline-block mt-8 px-8 py-3 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white font-black rounded-full hover:opacity-90 transition-all text-sm"
                             >
                                 {t('Create Mission')}
                             </Link>

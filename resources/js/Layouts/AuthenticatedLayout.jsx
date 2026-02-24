@@ -18,7 +18,7 @@ export default function AuthenticatedLayout({
             {header && (
                 <header className="bg-white border-b border-gray-border h-16 flex items-center shrink-0">
                     <div className={`mx-auto ${maxWidth} px-4 sm:px-6 lg:px-8 w-full`}>
-                        <div className="text-xl font-black text-primary-black tracking-tight uppercase">{header}</div>
+                        <div className="text-xl font-black text-oflem-charcoal tracking-tight uppercase">{header}</div>
                     </div>
                 </header>
             )}

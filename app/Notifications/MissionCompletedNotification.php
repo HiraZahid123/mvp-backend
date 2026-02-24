@@ -29,7 +29,7 @@ class MissionCompletedNotification extends Notification
     {
         return (new MailMessage)
                     ->subject('Mission Validated - Payment Released!')
-                    ->line('Great news! The customer has validated your work.')
+                    ->line('Great news! The client has validated your work.')
                     ->line('Mission: ' . $this->mission->title)
                     ->line('Payment of CHF ' . number_format($this->mission->budget, 2) . ' has been released to your account.')
                     ->action('View Mission', url('/missions/' . $this->mission->id))

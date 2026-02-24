@@ -2,7 +2,7 @@ import React from 'react';
 import { Head, Link } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import useTranslation from '@/Hooks/useTranslation';
-import { Calendar, DollarSign, CreditCard, User, CheckCircle, XCircle } from 'lucide-react';
+import { Calendar, DollarSign, CreditCard, User, CheckCircle, XCircle, ArrowLeft } from 'lucide-react';
 
 export default function Show({ payment }) {
     const { t } = useTranslation();
@@ -34,7 +34,7 @@ export default function Show({ payment }) {
                         href={route('admin.payments.index')}
                         className="text-sm font-bold text-oflem-terracotta hover:underline mb-4 inline-block"
                     >
-                        ← {t('Back to Payments')}
+                        <ArrowLeft size={16} className="inline mr-1" /> {t('Back to Payments')}
                     </Link>
                     <h1 className="text-4xl font-black text-oflem-charcoal mb-2">
                         {t('Payment Details')}
@@ -158,7 +158,7 @@ export default function Show({ payment }) {
                             </div>
                             <Link
                                 href={route('admin.missions.show', payment.mission.id)}
-                                className="inline-block px-6 py-3 bg-oflem-terracotta text-white rounded-2xl font-black text-sm hover:bg-oflem-terracotta/90 transition-colors"
+                                className="inline-block px-6 py-3 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white rounded-2xl font-black text-sm hover:bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/90 transition-colors"
                             >
                                 {t('View Mission')}
                             </Link>

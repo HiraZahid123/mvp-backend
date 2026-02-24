@@ -14,7 +14,7 @@ class RoleSwitchController extends Controller
     public function switch(Request $request)
     {
         $request->validate([
-            'role' => 'required|in:customer,performer',
+            'role' => 'required|in:client,provider',
         ]);
 
         $user = Auth::user();
@@ -35,10 +35,10 @@ class RoleSwitchController extends Controller
         ]);
 
         // Determine destination based on the new role
-        if ($request->role === 'customer') {
-            return redirect()->route('missions.create')->with('success', 'Switched to Flemmard role.');
+        if ($request->role === 'client') {
+            return redirect()->route('missions.create')->with('success', 'Switched to Client role.');
         }
 
-        return redirect()->route('dashboard')->with('success', 'Switched to Motivé role.');
+        return redirect()->route('dashboard')->with('success', 'Switched to Provider role.');
     }
 }

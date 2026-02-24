@@ -48,8 +48,8 @@ export default function Dashboard({ stats, recentUsers }) {
                 {/* Recent Users Table */}
                 <div className="bg-white border border-gray-border rounded-[32px] overflow-hidden shadow-sm">
                     <div className="p-8 border-b border-gray-border flex justify-between items-center bg-white">
-                        <h3 className="text-xl font-bold text-primary-black tracking-tight">{t('Recent User Onboarding')}</h3>
-                        <button className="text-sm font-bold text-gold-accent hover:underline">{t('Manage All Users')}</button>
+                        <h3 className="text-xl font-bold text-oflem-charcoal tracking-tight">{t('Recent User Onboarding')}</h3>
+                        <button className="text-sm font-bold text-oflem-terracotta hover:underline">{t('Manage All Users')}</button>
                     </div>
                     <div className="overflow-x-auto">
                         <table className="min-w-full divide-y divide-gray-100">
@@ -65,7 +65,7 @@ export default function Dashboard({ stats, recentUsers }) {
                                 {recentUsers.map((user) => (
                                     <tr key={user.id} className="hover:bg-cream-accent/30 transition-colors group">
                                         <td className="px-8 py-5 whitespace-nowrap">
-                                            <div className="text-sm font-bold text-primary-black">{user.name}</div>
+                                            <div className="text-sm font-bold text-oflem-charcoal">{user.name}</div>
                                             <div className="text-xs text-gray-muted font-medium">{user.email}</div>
                                         </td>
                                         <td className="px-8 py-5 whitespace-nowrap">
@@ -82,7 +82,7 @@ export default function Dashboard({ stats, recentUsers }) {
                                             {new Date(user.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                                         </td>
                                         <td className="px-8 py-5 whitespace-nowrap text-right text-sm">
-                                            <button className="text-gold-accent font-bold hover:underline opacity-0 group-hover:opacity-100 transition-opacity">{t('Details')}</button>
+                                            <button className="text-oflem-terracotta font-bold hover:underline opacity-0 group-hover:opacity-100 transition-opacity">{t('Details')}</button>
                                         </td>
                                     </tr>
                                 ))}
@@ -102,7 +102,7 @@ function StatCard({ title, value, icon, color, bg }) {
                 <div className={`w-12 h-12 ${bg} rounded-2xl flex items-center justify-center ${color}`}>
                     {icon}
                 </div>
-                <div className="text-3xl font-black text-primary-black tracking-tight">{value}</div>
+                <div className="text-3xl font-black text-oflem-charcoal tracking-tight">{value}</div>
             </div>
             <div className="text-xs font-black uppercase tracking-[0.15em] text-gray-muted">{title}</div>
         </div>

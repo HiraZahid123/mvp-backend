@@ -99,7 +99,7 @@ class MatchmakingService
      */
     protected function queryCandidates(array $skillNames, ?string $category, ?float $lat, ?float $lng, ?int $radius, int $limit): Collection
     {
-        $query = User::where('role_type', '!=', 'customer')
+        $query = User::where('role_type', '!=', 'client')
             ->where('is_admin', false)
             ->with(['skills', 'providerProfile']);
 
@@ -131,7 +131,7 @@ class MatchmakingService
 
         // Final Fallback: If absolutely no filtered results, return any top performers (Global Fallback)
         if ($results->isEmpty()) {
-            return User::where('role_type', '!=', 'customer')
+            return User::where('role_type', '!=', 'client')
                 ->where('is_admin', false)
                 ->where('id', '!=', auth()->id())
                 ->with(['skills', 'providerProfile'])

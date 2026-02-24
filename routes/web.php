@@ -31,9 +31,10 @@ use Inertia\Inertia;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', function () {
-    return Inertia::render('Welcome');
-});
+use App\Http\Controllers\HomeController;
+/* ... */
+Route::get('/', [HomeController::class, 'index'])->name('home');
+
 
 // Public Profile Route
 Route::get('/profile/{id}', [ProfileController::class, 'show'])->name('profile.show');
@@ -155,11 +156,58 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     // Dashboard
     Route::get('/dashboard', function () {
+        $user = auth()->user();
+
+        // Client data
         $missions = \App\Models\Mission::with(['user', 'offers'])
-            ->where('user_id', auth()->id())
+            ->where('user_id', $user->id)
             ->latest()
             ->get();
-        return Inertia::render('Dashboard', ['missions' => $missions]);
+            
+        $stats = [
+            'open' => $missions->whereIn('status', [\App\Models\Mission::STATUS_OUVERTE, \App\Models\Mission::STATUS_EN_NEGOCIATION])->count(),
+            'active' => $missions->whereIn('status', [\App\Models\Mission::STATUS_VERROUILLEE, \App\Models\Mission::STATUS_EN_COURS, \App\Models\Mission::STATUS_EN_VALIDATION, \App\Models\Mission::STATUS_EN_LITIGE])->count(),
+            'completed' => $missions->where('status', \App\Models\Mission::STATUS_TERMINEE)->count(),
+            'balance' => $user->balance,
+        ];
+
+        // Provider data
+        $providerMissions = \App\Models\Mission::with(['user', 'offers'])
+            ->where('assigned_user_id', $user->id)
+            ->latest()
+            ->get();
+
+        $providerOffers = \App\Models\MissionOffer::with(['mission'])
+            ->where('user_id', $user->id)
+            ->latest()
+            ->take(10)
+            ->get();
+
+        $providerReviews = \App\Models\Review::with(['reviewer', 'mission'])
+            ->where('user_id', $user->id)
+            ->latest()
+            ->take(5)
+            ->get();
+
+        $providerStats = [
+            'active' => $providerMissions->whereIn('status', [\App\Models\Mission::STATUS_VERROUILLEE, \App\Models\Mission::STATUS_EN_COURS, \App\Models\Mission::STATUS_EN_VALIDATION])->count(),
+            'completed' => $providerMissions->where('status', \App\Models\Mission::STATUS_TERMINEE)->count(),
+            'earnings' => $providerMissions->where('status', \App\Models\Mission::STATUS_TERMINEE)->sum('budget'),
+            'offers_sent' => \App\Models\MissionOffer::where('user_id', $user->id)->count(),
+            'avg_rating' => $user->rating_cache ?? 0,
+            'reviews_count' => $user->reviews_count_cache ?? 0,
+            'balance' => $user->balance ?? 0,
+            'pending_withdrawal' => $user->pending_withdrawal ?? 0,
+        ];
+
+        return Inertia::render('Dashboard', [
+            'missions' => $missions,
+            'stats' => $stats,
+            'providerMissions' => $providerMissions,
+            'providerOffers' => $providerOffers,
+            'providerReviews' => $providerReviews,
+            'providerStats' => $providerStats,
+        ]);
     })->name('dashboard');
     // Profile Management
     Route::prefix('profile')->name('profile.')->group(function () {
@@ -212,7 +260,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/{mission}/matchmaking', [MissionController::class, 'showMatchmaking'])->name('matchmaking');
         
         // Mission Actions
-        Route::post('/{mission}/hire/{performer}', [MissionController::class, 'hire'])->name('hire');
+        Route::post('/{mission}/hire/{provider}', [MissionController::class, 'hire'])->name('hire');
         Route::post('/{mission}/offer', [MissionController::class, 'submitOffer'])->name('submit-offer');
         Route::post('/{mission}/question', [MissionController::class, 'askQuestion'])->name('ask-question');
         Route::post('/{mission}/accept', [MissionController::class, 'acceptFixedPrice'])->name('accept');
@@ -224,9 +272,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/{mission}/validate', [MissionController::class, 'validateCompletion'])->name('validate');
         Route::post('/{mission}/dispute', [MissionController::class, 'initiateDispute'])->name('dispute');
         Route::post('/{mission}/cancel', [MissionController::class, 'cancel'])->name('cancel');
-        Route::post('/{mission}/contact/{helper}', [MissionController::class, 'contactHelper'])->name('contact');
-        Route::get('/{mission}/nearby-motives', [MissionController::class, 'getNearbyMotives'])->name('nearby-motives');
-        Route::post('/{mission}/send-to-motive/{motive}', [MissionController::class, 'sendMissionToMotive'])->name('send-to-motive');
+        Route::post('/{mission}/contact/{provider}', [MissionController::class, 'contactProvider'])->name('contact');
+        Route::get('/{mission}/nearby-providers', [MissionController::class, 'getNearbyProviders'])->name('nearby-providers');
+        Route::post('/{mission}/send-to-provider/{provider}', [MissionController::class, 'sendMissionToProvider'])->name('send-to-provider');
     });
 });
 

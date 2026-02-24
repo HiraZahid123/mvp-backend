@@ -8,8 +8,12 @@ export default function FilterChips({ filters, onFilterChange }) {
     if (filters.search) {
         activeFilters.push({ key: 'search', label: `Search: ${filters.search}`, value: filters.search });
     }
-    if (filters.category) {
-        activeFilters.push({ key: 'category', label: `Category: ${filters.category}`, value: filters.category });
+    if (filters.categories && filters.categories.length > 0) {
+        activeFilters.push({ 
+            key: 'categories', 
+            label: `Category: ${filters.categories.join(', ')}`, 
+            value: filters.categories 
+        });
     }
     if (filters.min_budget) {
         activeFilters.push({ key: 'min_budget', label: `Min: CHF ${filters.min_budget}`, value: filters.min_budget });
@@ -48,7 +52,7 @@ export default function FilterChips({ filters, onFilterChange }) {
                 <button
                     key={filter.key}
                     onClick={() => removeFilter(filter.key)}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-oflem-terracotta/10 text-oflem-terracotta rounded-full text-sm font-bold hover:bg-oflem-terracotta hover:text-white transition-colors group"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/10 text-oflem-terracotta rounded-full text-sm font-bold hover:bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light hover:text-white transition-colors group"
                 >
                     {filter.label}
                     <X className="w-3 h-3 group-hover:rotate-90 transition-transform" />

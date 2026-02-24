@@ -29,9 +29,9 @@ class MissionAutoCompletedNotification extends Notification
         return (new MailMessage)
             ->subject('Mission Auto-Completed - ' . $this->mission->title)
             ->line('Your mission "' . $this->mission->title . '" has been automatically completed.')
-            ->line('Since no validation action was taken within 72 hours, the mission has been marked as complete and payment has been released to the performer.')
+            ->line('Since no validation action was taken within 72 hours, the mission has been marked as complete and payment has been released to the provider.')
             ->action('View Mission', route('missions.show', $this->mission->id))
-            ->line('You can still leave a review for the performer.');
+            ->line('You can still leave a review for the provider.');
     }
 
     public function toArray($notifiable)

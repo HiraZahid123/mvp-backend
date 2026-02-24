@@ -6,6 +6,16 @@ import { motion } from 'framer-motion';
 import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
+import { 
+    Clock, 
+    History, 
+    ArrowDownLeft, 
+    Inbox,
+    Wallet as WalletIcon,
+    ChevronRight,
+    Search,
+    AlertCircle
+} from 'lucide-react';
 
 export default function Wallet({ balance, availableBalance, pendingWithdrawal, totalWithdrawn, transactions, pendingWithdrawals }) {
     const { t } = useTranslation();
@@ -79,7 +89,7 @@ export default function Wallet({ balance, availableBalance, pendingWithdrawal, t
                             <p className="text-xs opacity-60 mt-4">{t('Minimum withdrawal amount is CHF 10.00')}</p>
                         )}
                     </div>
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-oflem-terracotta/20 rounded-full -mr-20 -mt-20 blur-3xl" />
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/20 rounded-full -mr-20 -mt-20 blur-3xl" />
                     <div className="absolute bottom-0 left-0 w-48 h-48 bg-blue-500/10 rounded-full -ml-10 -mb-10 blur-2xl" />
                 </motion.div>
 
@@ -109,7 +119,7 @@ export default function Wallet({ balance, availableBalance, pendingWithdrawal, t
             {pendingWithdrawals.length > 0 && (
                 <div className="mb-12">
                     <h3 className="text-xl font-black text-oflem-charcoal flex items-center gap-3 mb-6">
-                        <span>⏳</span> {t('Pending Withdrawals')}
+                        <Clock className="text-oflem-terracotta" size={24} /> {t('Pending Withdrawals')}
                     </h3>
                     <div className="bg-white rounded-[40px] border border-gray-border overflow-hidden shadow-sm divide-y divide-gray-border">
                         {pendingWithdrawals.map((withdrawal) => (
@@ -148,7 +158,7 @@ export default function Wallet({ balance, availableBalance, pendingWithdrawal, t
             {/* Transaction History */}
             <div className="space-y-6">
                 <h3 className="text-xl font-black text-oflem-charcoal flex items-center gap-3">
-                    <span>🕒</span> {t('Transaction History')}
+                    <History className="text-oflem-terracotta" size={24} /> {t('Transaction History')}
                 </h3>
 
                 <div className="bg-white rounded-[40px] border border-gray-border overflow-hidden shadow-sm">
@@ -163,8 +173,8 @@ export default function Wallet({ balance, availableBalance, pendingWithdrawal, t
                                     className="p-8 flex items-center justify-between hover:bg-oflem-cream/50 transition-colors"
                                 >
                                     <div className="flex items-center gap-6">
-                                        <div className="w-14 h-14 bg-green-50 text-green-600 rounded-2xl flex items-center justify-center text-xl shadow-sm">
-                                            📥
+                                        <div className="w-14 h-14 bg-green-50 text-green-600 rounded-2xl flex items-center justify-center shadow-sm">
+                                            <ArrowDownLeft size={24} />
                                         </div>
                                         <div>
                                             <p className="font-black text-oflem-charcoal text-lg mb-1">{tx.mission.title}</p>
@@ -186,16 +196,18 @@ export default function Wallet({ balance, availableBalance, pendingWithdrawal, t
                         </div>
                     ) : (
                         <div className="p-20 text-center">
-                            <div className="text-6xl mb-6">🏜️</div>
+                            <div className="w-20 h-20 bg-zinc-50 rounded-3xl flex items-center justify-center mx-auto mb-6 text-zinc-300">
+                                <Inbox size={48} />
+                            </div>
                             <h4 className="text-xl font-black text-oflem-charcoal mb-2">{t('No transactions yet')}</h4>
                             <p className="text-gray-muted font-bold max-w-sm mx-auto">
                                 {t('Complete your first mission to start building your balance!')}
                             </p>
                             <Link 
-                                href={route('providers.index')}
-                                className="inline-block mt-8 px-8 py-3 bg-oflem-terracotta text-white font-black rounded-full hover:opacity-90 transition-all text-sm"
+                                href={route('missions.active')}
+                                className="inline-block mt-8 px-8 py-3 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white font-black rounded-full hover:opacity-90 transition-all text-sm"
                             >
-                                {t('Find Helpers')}
+                                {t('Find Missions')}
                             </Link>
                         </div>
                     )}
@@ -281,7 +293,7 @@ export default function Wallet({ balance, availableBalance, pendingWithdrawal, t
                                 <button
                                     type="submit"
                                     disabled={withdrawalForm.processing}
-                                    className="flex-1 py-3 bg-oflem-terracotta text-white font-black rounded-full hover:opacity-90 transition-all disabled:opacity-50"
+                                    className="flex-1 py-3 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white font-black rounded-full hover:opacity-90 transition-all disabled:opacity-50"
                                 >
                                     {t('Submit Request')}
                                 </button>

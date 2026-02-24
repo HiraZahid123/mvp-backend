@@ -34,8 +34,8 @@ export default function ForgotPassword({ status }) {
                     children={t('Back to login')}
                 />
 
-                <h2 className="text-lg font-medium text-primary-black mb-1">{t('Oflem')}</h2>
-                <h1 className="text-[32px] lg:text-[40px] font-black text-primary-black mb-2 tracking-tight">{t('Reset Password')}</h1>
+                <h2 className="text-lg font-medium text-oflem-charcoal mb-1">{t('Oflem')}</h2>
+                <h1 className="text-[32px] lg:text-[40px] font-black text-oflem-charcoal mb-2 tracking-tight">{t('Reset Password')}</h1>
                 <p className="text-gray-muted text-sm font-medium">{t("We'll send a password reset link to your email to help you regain access.")}</p>
             </div>
 

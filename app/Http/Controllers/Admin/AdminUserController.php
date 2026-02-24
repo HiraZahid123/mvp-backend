@@ -34,8 +34,8 @@ class AdminUserController extends Controller
 
         $stats = [
             'total' => User::count(),
-            'customers' => User::whereIn('role_type', ['customer', 'both'])->count(),
-            'performers' => User::whereIn('role_type', ['performer', 'both'])->count(),
+            'clients' => User::whereIn('role_type', ['client', 'both'])->count(),
+            'providers' => User::whereIn('role_type', ['provider', 'both'])->count(),
             'admins' => User::whereNotNull('admin_role')->count(),
         ];
 

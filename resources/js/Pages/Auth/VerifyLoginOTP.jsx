@@ -89,8 +89,8 @@ export default function VerifyLoginOTP() {
                     className="absolute -top-12 left-0" 
                 />
 
-                <h2 className="text-lg font-medium text-primary-black mb-1">{t('Oflem')}</h2>
-                <h1 className="text-[32px] lg:text-[40px] font-black text-primary-black tracking-tight mb-2">
+                <h2 className="text-lg font-medium text-oflem-charcoal mb-1">{t('Oflem')}</h2>
+                <h1 className="text-[32px] lg:text-[40px] font-black text-oflem-charcoal tracking-tight mb-2">
                     {t("Verify Login")}
                 </h1>
                 <p className="text-gray-muted text-sm font-medium">
@@ -100,12 +100,12 @@ export default function VerifyLoginOTP() {
 
             <div className="space-y-6">
                 <div className="mb-6">
-                     <p className="text-primary-black font-black text-center">{email}</p>
+                     <p className="text-oflem-charcoal font-black text-center">{email}</p>
                 </div>
 
                 <form onSubmit={submit} className="space-y-8">
                     <div className="space-y-2">
-                        <label className="text-sm font-black text-primary-black block text-center">{t('One-time password')}</label>
+                        <label className="text-sm font-black text-oflem-charcoal block text-center">{t('One-time password')}</label>
                         <div className="flex justify-between gap-1 sm:gap-2 max-w-sm mx-auto">
                             {otp.map((digit, index) => (
                                 <input
@@ -116,7 +116,7 @@ export default function VerifyLoginOTP() {
                                     value={digit}
                                     onChange={(e) => handleOtpChange(e.target.value, index)}
                                     onPaste={handlePaste}
-                                    className="w-10 h-10 sm:w-12 sm:h-12 text-center text-xl font-black bg-input-bg border border-gray-border focus:ring-1 focus:ring-gold-accent focus:border-gold-accent rounded-full outline-none transition-all"
+                                    className="w-10 h-10 sm:w-12 sm:h-12 text-center text-xl font-black bg-input-bg border border-gray-border focus:ring-1 focus:ring-oflem-terracotta focus:border-oflem-terracotta rounded-full outline-none transition-all"
                                 />
                             ))}
                         </div>
@@ -141,7 +141,7 @@ export default function VerifyLoginOTP() {
                                     type="button"
                                     onClick={resendOTP}
                                     disabled={!canResend}
-                                    className={`font-black transition-colors ${!canResend ? 'text-gray-400 cursor-not-allowed' : 'text-primary-black underline hover:text-gold-accent'}`}
+                                    className={`font-black transition-colors ${!canResend ? 'text-gray-400 cursor-not-allowed' : 'text-oflem-charcoal underline hover:text-oflem-terracotta'}`}
                                 >
                                     {!canResend ? (
                                         <>

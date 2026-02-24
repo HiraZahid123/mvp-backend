@@ -27,16 +27,16 @@ export default function SelectRole({ user }) {
 
     const roles = [
         {
-            key: 'customer',
+            key: 'client',
             icon: '/images/icons/battery-low.svg',
-            title: t('FLEMMARD'),
-            description: t('Je délègue. Mon temps est précieux.'),
+            title: t('Client'),
+            description: t('I delegate. My time is precious.'),
         },
         {
-            key: 'performer',
+            key: 'provider',
             icon: '/images/icons/battery-high.svg',
-            title: t('MOTIVÉ'),
-            description: t('Je gère. Prêt à rentabiliser ma disponibilité.'),
+            title: t('Provider'),
+            description: t('I manage. Ready to monetize my availability.'),
         },
     ];
 
@@ -45,7 +45,7 @@ export default function SelectRole({ user }) {
             heroImage="/images/illustrations/role-selection.svg"
             bgAccentClass="bg-cream-accent"
         >
-            <Head title={t("Choisir un rôle")} />
+            <Head title={t("Choose a role")} />
 
             {/* Back Button & Progress */}
             <div className="flex items-center justify-between mb-8">
@@ -56,11 +56,11 @@ export default function SelectRole({ user }) {
             </div>
 
             <div className="text-center mb-8 lg:mb-10">
-                <h1 className="text-[32px] lg:text-[40px] font-serif font-bold text-primary-black tracking-tight mb-3 leading-tight">
-                    {t("Choisissez votre rôle")}
+                <h1 className="text-[32px] lg:text-[40px] font-serif font-bold text-oflem-charcoal tracking-tight mb-3 leading-tight">
+                    {t("Choose your role")}
                 </h1>
                 <p className="text-gray-muted text-base font-medium">
-                    {t("Comment souhaitez-vous utiliser OFLEM ?")}
+                    {t("How do you want to use OFLEM?")}
                 </p>
             </div>
 
@@ -85,13 +85,13 @@ export default function SelectRole({ user }) {
                     disabled={processing || !selectedRole}
                     processing={processing}
                 >
-                    {t('Continuer')}
+                    {t('Continue')}
                 </PrimaryButton>
             </form>
 
-            <div className="mt-6 p-4 bg-gold-accent/5 rounded-[24px] border border-gold-accent/20">
+            <div className="mt-6 p-4 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/5 rounded-[24px] border border-oflem-terracotta/20">
                 <p className="text-xs text-gray-muted text-center">
-                    {t("You can switch roles anytime. Motivés can also post missions as Flemmards.")}
+                    {t("You can switch roles anytime. Providers can also post missions as Clients.")}
                 </p>
             </div>
         </AuthSplitLayout>

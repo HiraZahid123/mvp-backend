@@ -92,11 +92,11 @@
         },
         "onboarding": {
             "welcome_title": "Willkommen bei OFLEM",
-            "welcome_subtitle": "Die erste Plattform für Faulenzer.",
+            "welcome_subtitle": "Die erste Plattform zum Delegieren.",
             "role_selection_title": "Was möchten Sie auf Oflem machen?",
             "role_selection_subtitle": "Wählen Sie, was am besten zu Ihnen passt. Sie können es später ändern.",
-            "role_flemmard": "Ich bin faul!",
-            "role_motivated": "Ich bin motiviert",
+            "role_flemmard": "Client",
+            "role_motivated": "Provider",
             "role_both": "Beides",
             "location_title": "Nur Ihre Zone. Danach kümmert sich Oflem.",
             "location_subtitle": "Ihr Standort wird nur verwendet, um Sie mit lokalen Möglichkeiten zu verbinden.",
@@ -172,12 +172,12 @@
         },
         "published": {
             "title": "Mission veröffentlicht!",
-            "subtitle": "Ihre Mission ist jetzt live und für motivierte Helfer sichtbar",
+            "subtitle": "Ihre Mission ist jetzt live und für Provider sichtbar",
             "next_steps": "Nächste Schritte",
             "wait_offers": "Auf Angebote warten",
-            "wait_offers_desc": "Motivierte Helfer werden Ihnen Angebote senden. Sie erhalten Benachrichtigungen.",
+            "wait_offers_desc": "Provider werden Ihnen Angebote senden. Sie erhalten Benachrichtigungen.",
             "review_chat": "Prüfen und chatten",
-            "review_chat_desc": "Prüfen Sie Angebote, chatten Sie mit Helfern und wählen Sie die beste Übereinstimmung.",
+            "review_chat_desc": "Prüfen Sie Angebote, chatten Sie mit Providern und wählen Sie die beste Übereinstimmung.",
             "accept_pay": "Akzeptieren und bezahlen",
             "accept_pay_desc": "Akzeptieren Sie ein Angebot und bezahlen Sie sicher. Gelder werden bis zur Fertigstellung hinterlegt.",
             "view_mission": "Mission ansehen",
@@ -294,7 +294,7 @@
         "hero": {
             "tagline": "Plattform Schweizer Qualität",
             "title": "Alles, was du willst. Wirklich.",
-            "subtitle": "Oflem ist keine Kategorienliste. Beschreibe deine Aufgabe und wir finden den richtigen Motivierten.",
+            "subtitle": "Oflem ist keine Kategorienliste. Beschreibe deine Aufgabe und wir finden den richtigen Provider.",
             "search_prefix": "Ich bin zu faul, um...",
             "search_placeholder": "meinen Hund ausführen",
             "search_button": "Suche starten",
@@ -302,8 +302,8 @@
             "role_motivated": "Ich bin motiviert"
         },
         "stats": {
-            "happy_lazy": "Glückliche Faulenzer",
-            "active_motivated": "Aktive Motivierte",
+            "happy_lazy": "Glückliche Clients",
+            "active_motivated": "Aktive Provider",
             "missions_done": "Erledigte Missionen",
             "last_mission": "Letzte Mission",
             "trust_index": "Vertrauensindex"
@@ -325,7 +325,7 @@
             "total_trust": "Vollständiges Vertrauen",
             "total_trust_desc": "Verifizierte Profile und Community-Bewertungen.",
             "full_rewards": "100% Belohnungen",
-            "full_rewards_desc": "Motivierte erhalten den vollen vereinbarten Preis.",
+            "full_rewards_desc": "Provider erhalten den vollen vereinbarten Preis.",
             "swiss_quality": "Schweizer Qualität",
             "swiss_quality_desc": "Eine Plattform von Hilfesuchenden für Hilfesuchende gebaut."
         },

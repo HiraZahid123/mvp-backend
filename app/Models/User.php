@@ -111,19 +111,19 @@ class User extends Authenticatable
     }
 
     /**
-     * Check if user has customer role.
+     * Check if user has client role.
      */
-    public function isCustomer(): bool
+    public function isClient(): bool
     {
-        return in_array($this->role_type, ['customer', 'both']);
+        return in_array($this->role_type, ['client', 'both']);
     }
 
     /**
-     * Check if user has performer role.
+     * Check if user has provider role.
      */
-    public function isPerformer(): bool
+    public function isProvider(): bool
     {
-        return in_array($this->role_type, ['performer', 'both']);
+        return in_array($this->role_type, ['provider', 'both']);
     }
 
     /**
@@ -191,7 +191,7 @@ class User extends Authenticatable
     /**
      * Create user from social provider data
      */
-    public static function createFromProvider(string $provider, array $providerUser, string $roleType = 'customer'): self
+    public static function createFromProvider(string $provider, array $providerUser, string $roleType = 'client'): self
     {
         return self::create([
             'name' => $providerUser['name'] ?? $providerUser['nickname'] ?? 'User',
@@ -238,7 +238,7 @@ class User extends Authenticatable
      */
     public function getLastSelectedRole(): string
     {
-        return $this->last_selected_role ?? $this->role_type ?? 'customer';
+        return $this->last_selected_role ?? $this->role_type ?? 'client';
     }
 
     /**
@@ -376,7 +376,7 @@ class User extends Authenticatable
         $haversine = "(6371 * acos(cos(radians(?)) * cos(radians(location_lat)) * cos(radians(location_lng) - radians(?)) + sin(radians(?)) * sin(radians(location_lat))))";
 
         return $query->selectRaw("users.*, $haversine AS distance_to_point", [$lat, $lng, $lat])
-            ->where('role_type', '!=', 'customer') // Only performers or both
+            ->where('role_type', '!=', 'client') // Only providers or both
             ->where('is_admin', false)
             ->whereRaw("$haversine <= users.discovery_radius_km", [$lat, $lng, $lat]);
     }

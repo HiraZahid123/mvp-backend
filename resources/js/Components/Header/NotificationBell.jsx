@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, usePage, router } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import useTranslation from '@/Hooks/useTranslation';
+import { Bell, MapPin, XCircle, HelpCircle, Mail, PartyPopper } from 'lucide-react';
 
 export default function NotificationBell() {
     const { t } = useTranslation();
@@ -61,9 +62,9 @@ export default function NotificationBell() {
                 onClick={() => setIsOpen(!isOpen)}
                 className="relative p-2 text-gray-muted hover:text-oflem-charcoal transition-colors focus:outline-none"
             >
-                <span className="text-xl">🔔</span>
+                <Bell size={20} />
                 {unreadCount > 0 && (
-                    <span className="absolute top-1 right-1 bg-oflem-terracotta text-white text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center border-2 border-oflem-cream">
+                    <span className="absolute top-1 right-1 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center border-2 border-oflem-cream">
                         {unreadCount > 9 ? '9+' : unreadCount}
                     </span>
                 )}
@@ -115,11 +116,11 @@ export default function NotificationBell() {
                                             >
                                                 <div className="flex gap-3">
                                                     <div className="text-lg">
-                                                        {n.data.type === 'nearby_mission' ? '📍' : 
-                                                         n.data.type === 'offer_rejected' ? '❌' : 
-                                                         n.data.type === 'new_question' ? '❓' :
-                                                         n.data.type === 'new_message' ? '✉️' : 
-                                                         n.data.type === 'mission_assigned' ? '🎊' : '🔔'}
+                                                        {n.data.type === 'nearby_mission' ? <MapPin size={18} className="text-blue-500" /> : 
+                                                         n.data.type === 'offer_rejected' ? <XCircle size={18} className="text-red-500" /> : 
+                                                         n.data.type === 'new_question' ? <HelpCircle size={18} className="text-yellow-500" /> :
+                                                         n.data.type === 'new_message' ? <Mail size={18} className="text-zinc-500" /> : 
+                                                         n.data.type === 'mission_assigned' ? <PartyPopper size={18} className="text-green-500" /> : <Bell size={18} className="text-zinc-400" />}
                                                     </div>
                                                     <div className="flex-1">
                                                         <p className="text-xs font-bold text-oflem-charcoal mb-1">

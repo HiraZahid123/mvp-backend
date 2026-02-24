@@ -2,7 +2,7 @@ import React from 'react';
 import { Head, Link } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import useTranslation from '@/Hooks/useTranslation';
-import { User, Mail, Calendar, Shield, MapPin, Phone } from 'lucide-react';
+import { User, Mail, Calendar, Shield, MapPin, Phone, ArrowLeft } from 'lucide-react';
 
 export default function Show({ user }) {
     const { t } = useTranslation();
@@ -32,7 +32,7 @@ export default function Show({ user }) {
                         href={route('admin.users.index')}
                         className="text-sm font-bold text-oflem-terracotta hover:underline mb-4 inline-block"
                     >
-                        ← {t('Back to Users')}
+                        <ArrowLeft size={16} className="inline mr-1" /> {t('Back to Users')}
                     </Link>
                     <h1 className="text-4xl font-black text-oflem-charcoal mb-2">
                         {t('User Details')}
@@ -42,7 +42,7 @@ export default function Show({ user }) {
                 {/* User Info Card */}
                 <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 mb-6">
                     <div className="flex items-start gap-6 mb-8">
-                        <div className="w-24 h-24 bg-oflem-terracotta/10 rounded-full flex items-center justify-center font-black text-4xl text-oflem-terracotta">
+                        <div className="w-24 h-24 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/10 rounded-full flex items-center justify-center font-black text-4xl text-oflem-terracotta">
                             {user.name?.charAt(0).toUpperCase() || 'U'}
                         </div>
                         <div className="flex-1">

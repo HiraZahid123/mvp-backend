@@ -3,6 +3,7 @@ import { Head, Link, router } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import useTranslation from '@/Hooks/useTranslation';
 import lodash from 'lodash';
+import { Search, RefreshCw, MapPin, Star } from 'lucide-react';
 
 export default function Index({ providers, filters: initialFilters }) {
     const { t } = useTranslation();
@@ -49,13 +50,13 @@ export default function Index({ providers, filters: initialFilters }) {
 
                 <div className="flex flex-col md:flex-row gap-6 mb-12">
                     <div className="flex-1 relative">
-                        <span className="absolute left-6 top-1/2 -translate-y-1/2 text-xl text-gray-muted">🔍</span>
+                        <Search size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-muted" />
                         <input
                             type="text"
                             placeholder={t('Search by name or skill...')}
                             value={filters.search || ''}
                             onChange={handleSearchChange}
-                            className="w-full pl-14 pr-8 py-4 bg-white border-2 border-gray-border rounded-[24px] font-bold text-primary-black outline-none focus:border-gold-accent transition-all shadow-sm"
+                            className="w-full pl-14 pr-8 py-4 bg-white border-2 border-gray-border rounded-[24px] font-bold text-oflem-charcoal outline-none focus:border-oflem-terracotta transition-all shadow-sm"
                         />
                     </div>
                 </div>
@@ -68,16 +69,18 @@ export default function Index({ providers, filters: initialFilters }) {
                     </div>
                 ) : (
                     <div className="bg-white rounded-[40px] p-20 text-center border-2 border-dashed border-gray-border">
-                        <div className="text-6xl mb-6">🔍</div>
-                        <h2 className="text-2xl font-black text-primary-black mb-4">{t('No helpers found')}</h2>
+                        <div className="w-16 h-16 bg-zinc-50 rounded-3xl flex items-center justify-center mx-auto mb-6 text-zinc-300">
+                                <Search size={40} />
+                            </div>
+                        <h2 className="text-2xl font-black text-oflem-charcoal mb-4">{t('No helpers found')}</h2>
                         <p className="text-gray-muted font-bold max-w-md mx-auto mb-10">
                             {t("We couldn't find any helpers matching your search. Try different keywords or browse all.")}
                         </p>
                         <button 
                             onClick={() => setFilters({})}
-                            className="inline-block px-10 py-4 bg-gold-accent text-primary-black font-black rounded-full hover:opacity-90 transition-all shadow-md"
+                            className="inline-block px-10 py-4 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-oflem-charcoal font-black rounded-full hover:opacity-90 transition-all shadow-md flex items-center gap-3 mx-auto"
                         >
-                            🔄 {t('Reset Search')}
+                            <RefreshCw size={18} /> {t('Reset Search')}
                         </button>
                     </div>
                 )}
@@ -93,8 +96,8 @@ export default function Index({ providers, filters: initialFilters }) {
                                 dangerouslySetInnerHTML={{ __html: link.label }}
                                 className={`px-4 py-2 rounded-xl font-bold text-sm transition-all ${
                                     link.active 
-                                        ? 'bg-primary-black text-white' 
-                                        : 'bg-white text-gray-muted hover:text-primary-black border border-gray-border'
+                                        ? 'bg-oflem-charcoal text-white' 
+                                        : 'bg-white text-gray-muted hover:text-oflem-charcoal border border-gray-border'
                                 } ${!link.url && 'opacity-50 cursor-not-allowed'}`}
                                 as="button"
                                 disabled={!link.url}
@@ -109,9 +112,9 @@ export default function Index({ providers, filters: initialFilters }) {
 
 function ProviderCard({ provider, t }) {
     return (
-        <div className="bg-white rounded-[32px] p-8 border border-gray-border shadow-sm hover:border-gold-accent transition-all group flex flex-col h-full">
+        <div className="bg-white rounded-[32px] p-8 border border-gray-border shadow-sm hover:border-oflem-terracotta transition-all group flex flex-col h-full">
             <div className="flex items-center gap-5 mb-8">
-                <div className="w-20 h-20 rounded-2xl bg-cream-accent flex items-center justify-center text-primary-black font-black text-2xl overflow-hidden border border-gray-border">
+                <div className="w-20 h-20 rounded-2xl bg-cream-accent flex items-center justify-center text-oflem-charcoal font-black text-2xl overflow-hidden border border-gray-border">
                     {provider.profile_photo_url ? (
                         <img src={provider.profile_photo_url} alt={provider.name} className="w-full h-full object-cover" />
                     ) : (
@@ -119,7 +122,7 @@ function ProviderCard({ provider, t }) {
                     )}
                 </div>
                 <div>
-                    <h3 className="text-xl font-black text-primary-black flex items-center gap-2">
+                    <h3 className="text-xl font-black text-oflem-charcoal flex items-center gap-2">
                         {provider.name}
                         {provider.verified && (
                             <span className="text-blue-500" title={t('Verified')}>
@@ -128,7 +131,7 @@ function ProviderCard({ provider, t }) {
                         )}
                     </h3>
                     <div className="flex items-center gap-2 mt-1">
-                        <span className="text-gold-accent font-black">★ {provider.average_rating || 0}</span>
+                        <span className="text-oflem-terracotta font-black flex items-center gap-1"><Star size={14} className="fill-oflem-terracotta" /> {provider.average_rating || 0}</span>
                         <span className="text-gray-muted text-xs font-black uppercase tracking-widest">({provider.total_reviews} {t('reviews')})</span>
                     </div>
                 </div>
@@ -138,20 +141,20 @@ function ProviderCard({ provider, t }) {
                 {provider.hourly_rate && (
                     <div className="flex justify-between items-center px-4 py-3 bg-oflem-cream rounded-2xl border border-gray-border/50">
                         <span className="text-xs font-black text-gray-muted uppercase tracking-widest">{t('Hourly Rate')}</span>
-                        <span className="text-base font-black text-primary-black">{provider.hourly_rate} CHF</span>
+                        <span className="text-base font-black text-oflem-charcoal">{provider.hourly_rate} CHF</span>
                     </div>
                 )}
                 
                 {provider.location && (
                     <div className="flex items-center gap-2 text-gray-muted">
-                        <span className="text-lg">📍</span>
+                        <MapPin size={16} className="text-oflem-terracotta" />
                         <span className="text-sm font-bold">{provider.location}</span>
                     </div>
                 )}
 
                 <div className="flex flex-wrap gap-2">
                     {provider.skills && provider.skills.map((skill, index) => (
-                        <span key={index} className="px-3 py-1 bg-white border border-gray-border rounded-full text-[10px] font-black text-gray-muted uppercase tracking-widest group-hover:border-gold-accent/30 transition-colors">
+                        <span key={index} className="px-3 py-1 bg-white border border-gray-border rounded-full text-[10px] font-black text-gray-muted uppercase tracking-widest group-hover:border-oflem-terracotta/30 transition-colors">
                             {skill}
                         </span>
                     ))}
@@ -165,7 +168,7 @@ function ProviderCard({ provider, t }) {
 
             <Link 
                 href={route('profile.show', provider.id)}
-                className="w-full py-4 bg-primary-black text-white font-black rounded-full hover:bg-black transition-all shadow-md group-hover:scale-[1.02] active:scale-[0.98] text-center"
+                className="w-full py-4 bg-oflem-charcoal text-white font-black rounded-full hover:bg-black transition-all shadow-md group-hover:scale-[1.02] active:scale-[0.98] text-center"
             >
                 {t('View Profile')}
             </Link>

@@ -36,7 +36,7 @@ class HandleInertiaRequests extends Middleware
         $locale = substr($locale, 0, 2);
 
         // Validate against supported locales
-        if (!in_array($locale, ['en', 'fr'])) {
+        if (!in_array($locale, ['en', 'fr', 'de', 'it'])) {
             $locale = 'en';
         }
 

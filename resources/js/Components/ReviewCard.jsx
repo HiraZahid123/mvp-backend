@@ -1,14 +1,17 @@
 import React from 'react';
 import { Star } from 'lucide-react';
 
+import useTranslation from '@/Hooks/useTranslation';
+
 export default function ReviewCard({ review }) {
+    const { t } = useTranslation();
     const renderStars = (rating) => {
         return [...Array(5)].map((_, index) => (
             <Star
                 key={index}
                 className={`w-4 h-4 ${
                     index < rating
-                        ? 'fill-gold-accent text-gold-accent'
+                        ? 'fill-oflem-terracotta text-oflem-terracotta'
                         : 'text-gray-border'
                 }`}
             />
@@ -28,12 +31,12 @@ export default function ReviewCard({ review }) {
         <div className="bg-white rounded-[24px] p-6 border border-gray-border hover:shadow-md transition-shadow">
             <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-full bg-oflem-cream flex items-center justify-center font-black text-primary-black text-lg">
+                    <div className="w-12 h-12 rounded-full bg-oflem-cream flex items-center justify-center font-black text-oflem-charcoal text-lg">
                         {review.reviewer?.name?.charAt(0) || '?'}
                     </div>
                     <div>
-                        <p className="font-black text-primary-black">
-                            {review.reviewer?.name || 'Anonymous'}
+                        <p className="font-black text-oflem-charcoal">
+                            {review.reviewer?.name || t('Anonymous')}
                         </p>
                         <p className="text-xs text-gray-muted font-medium">
                             {formatDate(review.created_at)}
@@ -54,7 +57,7 @@ export default function ReviewCard({ review }) {
             {review.mission && (
                 <div className="mt-4 pt-4 border-t border-gray-border">
                     <p className="text-xs text-gray-muted font-bold uppercase tracking-widest">
-                        Mission: {review.mission.title}
+                        {t('Mission')}: {review.mission.title}
                     </p>
                 </div>
             )}

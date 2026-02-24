@@ -28,14 +28,14 @@ export default function VerifyEmail({ status }) {
                     className="absolute -top-12 left-0" 
                 />
 
-                <h2 className="text-lg font-medium text-primary-black mb-1">{t('Oflem')}</h2>
-                <h1 className="text-[32px] lg:text-[40px] font-black text-primary-black tracking-tight mb-2">{t('Check Email')}</h1>
+                <h2 className="text-lg font-medium text-oflem-charcoal mb-1">{t('Oflem')}</h2>
+                <h1 className="text-[32px] lg:text-[40px] font-black text-oflem-charcoal tracking-tight mb-2">{t('Check Email')}</h1>
                 <p className="text-gray-muted text-sm font-medium italic">{t('Thanks for signing up!')}</p>
             </div>
 
             <div className="p-8 bg-white border border-gray-border rounded-[24px] mb-8 text-center sm:text-left">
                 <div className="w-16 h-16 bg-cream-accent rounded-full flex items-center justify-center mx-auto sm:mx-0 mb-6 shadow-sm">
-                    <svg className="w-8 h-8 text-gold-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-8 h-8 text-oflem-terracotta" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
                 </div>
@@ -60,7 +60,7 @@ export default function VerifyEmail({ status }) {
                         href={route('logout')}
                         method="post"
                         as="button"
-                        className="text-sm text-gray-muted hover:text-primary-black transition-colors font-bold underline underline-offset-4 decoration-1"
+                        className="text-sm text-gray-muted hover:text-oflem-charcoal transition-colors font-bold underline underline-offset-4 decoration-1"
                     >
                         {t('Log Out')}
                     </Link>

@@ -8,6 +8,17 @@ import InputLabel from '@/Components/InputLabel';
 import InputError from '@/Components/InputError';
 import axios from 'axios';
 import MissionLocationPicker from '@/Components/MissionLocationPicker';
+import { 
+    Sparkles, 
+    Rocket, 
+    ShieldCheck, 
+    Lock, 
+    ChevronDown, 
+    ChevronRight,
+    MapPin,
+    Calendar,
+    Clock
+} from 'lucide-react';
 
 export default function Create({ prefillTitle = '', aiTitle = null }) {
     const { t } = useTranslation();
@@ -141,7 +152,7 @@ export default function Create({ prefillTitle = '', aiTitle = null }) {
                                     }}
                                     className={`px-6 py-3 rounded-full text-sm font-bold transition-all border-2 ${
                                         data.budget === amount.toString() && priceInputMode === 'quick'
-                                            ? 'border-primary-black bg-primary-black text-white shadow-md scale-105'
+                                            ? 'border-oflem-charcoal bg-oflem-charcoal text-white shadow-md scale-105'
                                             : 'border-gray-border bg-white text-gray-700 hover:border-gray-400'
                                     }`}
                                 >
@@ -156,7 +167,7 @@ export default function Create({ prefillTitle = '', aiTitle = null }) {
                                 }}
                                 className={`px-6 py-3 rounded-full text-sm font-bold transition-all border-2 ${
                                     priceInputMode === 'custom'
-                                        ? 'border-primary-black bg-primary-black text-white shadow-md scale-105'
+                                        ? 'border-oflem-charcoal bg-oflem-charcoal text-white shadow-md scale-105'
                                         : 'border-gray-border bg-white text-gray-700 hover:border-gray-400'
                                 }`}
                             >
@@ -170,7 +181,7 @@ export default function Create({ prefillTitle = '', aiTitle = null }) {
                                     id="budget"
                                     type="number"
                                     value={data.budget}
-                                    className="w-full bg-white border-2 border-gray-border rounded-2xl py-3 pl-14 pr-6 text-lg font-bold text-primary-black focus:border-primary-black focus:ring-0 transition-all"
+                                    className="w-full bg-white border-2 border-gray-border rounded-2xl py-3 pl-14 pr-6 text-lg font-bold text-oflem-charcoal focus:border-oflem-charcoal focus:ring-0 transition-all"
                                     onChange={(e) => setData('budget', e.target.value)}
                                     placeholder="0"
                                     required
@@ -204,9 +215,11 @@ export default function Create({ prefillTitle = '', aiTitle = null }) {
                         <button
                             type="button"
                             onClick={() => setShowMoreOptions(!showMoreOptions)}
-                            className="text-sm font-bold text-gray-600 hover:text-primary-black transition-colors flex items-center gap-2"
+                            className="text-sm font-bold text-zinc-500 hover:text-oflem-charcoal transition-colors flex items-center gap-2 group"
                         >
-                            <span>{showMoreOptions ? '▼' : '▶'}</span>
+                            <span className="group-hover:translate-y-0.5 transition-transform">
+                                {showMoreOptions ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                            </span>
                             {t('More options')}
                         </button>
 
@@ -219,7 +232,7 @@ export default function Create({ prefillTitle = '', aiTitle = null }) {
                                         <textarea
                                             id="description"
                                             value={data.description}
-                                            className="w-full bg-white border-gray-border rounded-2xl p-4 text-sm font-medium focus:border-primary-black focus:ring-0 min-h-[120px] transition-all"
+                                            className="w-full bg-white border-gray-border rounded-2xl p-4 text-sm font-medium focus:border-oflem-charcoal focus:ring-0 min-h-[120px] transition-all"
                                             onChange={(e) => setData('description', e.target.value)}
                                             placeholder={t('Add more details if needed...')}
                                         />
@@ -234,12 +247,12 @@ export default function Create({ prefillTitle = '', aiTitle = null }) {
                                         >
                                             {isGeneratingDescription ? (
                                                 <>
-                                                    <span className="w-3 h-3 border-2 border-gray-400 border-t-primary-black rounded-full animate-spin"></span>
+                                                    <span className="w-3 h-3 border-2 border-gray-400 border-t-oflem-charcoal rounded-full animate-spin"></span>
                                                     {t('Generating...')}
                                                 </>
                                             ) : (
                                                 <>
-                                                    ✨ {t('Auto-fill')}
+                                                    <Sparkles size={14} className="text-oflem-terracotta" /> {t('Auto-fill')}
                                                 </>
                                             )}
                                         </button>
@@ -272,8 +285,8 @@ export default function Create({ prefillTitle = '', aiTitle = null }) {
                                         onChange={(e) => setData('exact_address', e.target.value)}
                                         placeholder={t('Street, number, apartment...')}
                                     />
-                                    <p className="mt-2 text-xs text-gray-500 flex items-center gap-1">
-                                        🔒 {t('Only shared with your Motivé after confirmation')}
+                                    <p className="mt-2 text-xs text-zinc-400 font-bold flex items-center gap-1.5">
+                                        <Lock size={12} className="text-oflem-terracotta" /> {t('Only shared with your Provider after confirmation')}
                                     </p>
                                     <InputError message={errors.exact_address} className="mt-2" />
                                 </div>
@@ -289,21 +302,22 @@ export default function Create({ prefillTitle = '', aiTitle = null }) {
                             className={`w-full py-5 font-black rounded-full transition-all shadow-xl text-lg flex items-center justify-center gap-3 active:scale-[0.98] ${
                                 !data.title.trim() || !data.budget || processing || isModerating
                                     ? 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none'
-                                    : 'bg-primary-black text-white hover:bg-black'
+                                    : 'bg-oflem-charcoal text-white hover:bg-black'
                             }`}
                         >
                             {processing || isModerating ? (
-                                <span className="w-6 h-6 border-4 border-gold-accent border-t-white rounded-full animate-spin"></span>
+                                <span className="w-6 h-6 border-4 border-oflem-terracotta border-t-white rounded-full animate-spin"></span>
                             ) : (
                                 <>
-                                    {t('Find a Motivé')} 🚀
+                                    <span>{t('Find a Provider')}</span>
+                                    <Rocket size={20} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                                 </>
                             )}
                         </button>
                         
                         {/* Reassurance Text */}
-                        <p className="mt-4 text-center text-xs text-gray-500 font-medium">
-                            🔒 {t('Your payment is protected. You only pay when the job is done.')}
+                        <p className="mt-4 text-center text-xs text-zinc-400 font-bold flex items-center justify-center gap-1.5">
+                            <ShieldCheck size={14} className="text-oflem-green" /> {t('Your payment is protected. You only pay when the job is done.')}
                         </p>
                     </div>
                 </form>

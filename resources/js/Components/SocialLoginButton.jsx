@@ -45,8 +45,8 @@ export default function SocialLoginButton({ provider, type = 'login' }) {
                 px-6 py-4
                 bg-white border-2 border-gray-border/50
                 rounded-[24px]
-                text-primary-black text-base font-bold
-                hover:border-gold-accent hover:bg-gold-accent/5
+                text-oflem-charcoal text-base font-bold
+                hover:border-oflem-terracotta hover:bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/5
                 hover:shadow-md hover:-translate-y-0.5
                 transition-all duration-300
                 group

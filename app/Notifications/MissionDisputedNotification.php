@@ -29,7 +29,7 @@ class MissionDisputedNotification extends Notification
     {
         return (new MailMessage)
                     ->subject('Mission Disputed')
-                    ->line('The customer has initiated a dispute for the mission.')
+                    ->line('The client has initiated a dispute for the mission.')
                     ->line('Mission: ' . $this->mission->title)
                     ->line('Reason: ' . $this->mission->dispute_reason)
                     ->line('An admin will review the case and contact you shortly.')

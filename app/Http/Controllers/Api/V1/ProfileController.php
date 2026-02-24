@@ -54,7 +54,7 @@ class ProfileController extends Controller
     public function updateRole(Request $request)
     {
         $request->validate([
-            'role' => 'required|in:customer,performer,both',
+            'role' => 'required|in:client,provider,both',
         ]);
 
         $user = Auth::user();

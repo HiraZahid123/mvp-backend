@@ -30,7 +30,7 @@ class MoodSelectionController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'role' => 'required|in:customer,performer,both',
+            'role' => 'required|in:client,provider,both',
         ]);
 
         $user = Auth::user();
@@ -55,12 +55,12 @@ class MoodSelectionController extends Controller
     private function redirectBasedOnRole(string $role, $user)
     {
         switch ($role) {
-            case 'customer':
-                // FLEMMARD - Redirect to Home Page
+            case 'client':
+                // CLIENT - Redirect to Home Page
                 return redirect('/');
                 
-            case 'performer':
-                // MOTIVÉ - Redirect to AI Onboarding
+            case 'provider':
+                // PROVIDER - Redirect to AI Onboarding
                 return redirect()->route('onboarding.index');
                 
             case 'both':

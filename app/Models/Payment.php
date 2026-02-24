@@ -24,7 +24,7 @@ class Payment extends Model
         'status',
         'amount',
         'platform_commission',
-        'performer_amount',
+        'provider_amount',
         'currency',
         'held_at',
         'captured_at',
@@ -36,7 +36,7 @@ class Payment extends Model
     protected $casts = [
         'amount' => 'decimal:2',
         'platform_commission' => 'decimal:2',
-        'performer_amount' => 'decimal:2',
+        'provider_amount' => 'decimal:2',
         'held_at' => 'datetime',
         'captured_at' => 'datetime',
         'refunded_at' => 'datetime',

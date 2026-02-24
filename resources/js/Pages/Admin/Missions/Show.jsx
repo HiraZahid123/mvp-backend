@@ -2,7 +2,7 @@ import React from 'react';
 import { Head, Link } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import useTranslation from '@/Hooks/useTranslation';
-import { Calendar, User, MapPin, DollarSign, MessageSquare } from 'lucide-react';
+import { Calendar, User, MapPin, DollarSign, MessageSquare, ArrowLeft } from 'lucide-react';
 
 export default function Show({ mission }) {
     const { t } = useTranslation();
@@ -37,7 +37,7 @@ export default function Show({ mission }) {
                         href={route('admin.missions.index')}
                         className="text-sm font-bold text-oflem-terracotta hover:underline mb-4 inline-block"
                     >
-                        ← {t('Back to Missions')}
+                        <ArrowLeft size={16} className="inline mr-1" /> {t('Back to Missions')}
                     </Link>
                     <h1 className="text-4xl font-black text-oflem-charcoal mb-2">
                         {t('Mission Details')}

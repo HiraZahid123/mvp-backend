@@ -6,6 +6,7 @@ import TextInput from '@/Components/TextInput';
 import InputLabel from '@/Components/InputLabel';
 import InputError from '@/Components/InputError';
 import PrimaryButton from '@/Components/PrimaryButton';
+import { ShieldCheck, ArrowLeft } from 'lucide-react';
 
 export default function Verify2FA({ email }) {
     const { t } = useTranslation();
@@ -25,13 +26,13 @@ export default function Verify2FA({ email }) {
             <div className="max-w-md mx-auto mt-20">
                 <div className="bg-white rounded-[40px] p-10 shadow-xl border border-gray-border">
                     <div className="text-center mb-10">
-                        <div className="w-20 h-20 bg-gold-accent rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-gold-accent/20">
-                            <span className="text-4xl">🔐</span>
+                        <div className="w-20 h-20 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-oflem-terracotta/20">
+                            <ShieldCheck size={40} className="text-white" />
                         </div>
-                        <h1 className="text-2xl font-black text-primary-black mb-2">{t('Verification Required')}</h1>
+                        <h1 className="text-2xl font-black text-oflem-charcoal mb-2">{t('Verification Required')}</h1>
                         <p className="text-sm text-gray-muted font-bold">
                             {t('We\'ve sent a 6-digit code to')} <br />
-                            <span className="text-primary-black font-black">{email}</span>
+                            <span className="text-oflem-charcoal font-black">{email}</span>
                         </p>
                     </div>
 
@@ -62,7 +63,7 @@ export default function Verify2FA({ email }) {
                                     href={route('admin.2fa.resend')}
                                     method="post"
                                     as="button"
-                                    className="text-xs font-black text-gold-accent uppercase tracking-widest hover:underline"
+                                    className="text-xs font-black text-oflem-terracotta uppercase tracking-widest hover:underline"
                                 >
                                     {t('Didn\'t receive the code? Resend')}
                                 </Link>
@@ -76,9 +77,9 @@ export default function Verify2FA({ email }) {
                         href={route('admin.logout')}
                         method="post"
                         as="button"
-                        className="text-sm font-bold text-gray-muted hover:text-primary-black"
+                        className="text-sm font-bold text-gray-muted hover:text-oflem-charcoal"
                     >
-                        ← {t('Back to Login')}
+                        <ArrowLeft size={16} className="inline mr-1" /> {t('Back to Login')}
                     </Link>
                 </div>
             </div>

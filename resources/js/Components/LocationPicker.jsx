@@ -32,8 +32,8 @@ export default function LocationPicker({
 
     // Dynamic title based on role
     const titles = {
-        customer: 'Votre zone de confort ?',
-        performer: 'Votre zone d\'intervention ?',
+        client: 'Votre zone de confort ?',
+        provider: 'Votre zone d\'intervention ?',
         both: 'Votre périmètre d\'action ?',
     };
 
@@ -193,7 +193,7 @@ export default function LocationPicker({
     return (
         <div className="space-y-6">
             {/* Title */}
-            <h2 className="text-2xl font-black text-primary-black text-center">
+            <h2 className="text-2xl font-black text-oflem-charcoal text-center">
                 {t(title)}
             </h2>
 
@@ -205,13 +205,13 @@ export default function LocationPicker({
                     className={`
                         p-3 lg:p-4 rounded-[24px] border-2 transition-all duration-300
                         ${method === 'gps'
-                            ? 'border-gold-accent bg-gold-accent/10'
-                            : 'border-gray-border/50 bg-white hover:border-gold-accent/50'
+                            ? 'border-oflem-terracotta bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/10'
+                            : 'border-gray-border/50 bg-white hover:border-oflem-terracotta/50'
                         }
                     `}
                 >
-                    <MapPinIcon className="w-6 h-6 lg:w-8 lg:h-8 mx-auto mb-2 text-gold-accent" />
-                    <p className="text-[10px] lg:text-sm font-bold text-primary-black">{t('GPS')}</p>
+                    <MapPinIcon className="w-6 h-6 lg:w-8 lg:h-8 mx-auto mb-2 text-oflem-terracotta" />
+                    <p className="text-[10px] lg:text-sm font-bold text-oflem-charcoal">{t('GPS')}</p>
                 </button>
 
                 <button
@@ -220,13 +220,13 @@ export default function LocationPicker({
                     className={`
                         p-3 lg:p-4 rounded-[24px] border-2 transition-all duration-300
                         ${method === 'zipcode'
-                            ? 'border-gold-accent bg-gold-accent/10'
-                            : 'border-gray-border/50 bg-white hover:border-gold-accent/50'
+                            ? 'border-oflem-terracotta bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/10'
+                            : 'border-gray-border/50 bg-white hover:border-oflem-terracotta/50'
                         }
                     `}
                 >
-                    <MapIcon className="w-6 h-6 lg:w-8 lg:h-8 mx-auto mb-2 text-gold-accent" />
-                    <p className="text-[10px] lg:text-sm font-bold text-primary-black">{t('Code postal')}</p>
+                    <MapIcon className="w-6 h-6 lg:w-8 lg:h-8 mx-auto mb-2 text-oflem-terracotta" />
+                    <p className="text-[10px] lg:text-sm font-bold text-oflem-charcoal">{t('Code postal')}</p>
                 </button>
             </div>
 
@@ -239,10 +239,10 @@ export default function LocationPicker({
                         disabled={loading}
                         className="
                             w-full px-6 py-4 
-                            bg-gold-accent text-white
+                            bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white
                             rounded-[24px]
                             font-bold text-base
-                            hover:bg-gold-accent/90
+                            hover:bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/90
                             disabled:opacity-50 disabled:cursor-not-allowed
                             transition-all duration-300
                         "
@@ -266,9 +266,9 @@ export default function LocationPicker({
                             w-full px-4 py-3
                             bg-input-bg border border-gray-border/50
                             rounded-[24px]
-                            text-primary-black text-base
+                            text-oflem-charcoal text-base
                             placeholder:text-gray-muted/60
-                            focus:outline-none focus:ring-2 focus:ring-gold-accent/30 focus:border-gold-accent
+                            focus:outline-none focus:ring-2 focus:ring-oflem-terracotta/30 focus:border-oflem-terracotta
                             transition-all duration-200
                         "
                     />
@@ -278,10 +278,10 @@ export default function LocationPicker({
                         disabled={loading || !zipCode}
                         className="
                             w-full px-6 py-4
-                            bg-gold-accent text-white
+                            bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white
                             rounded-[24px]
                             font-bold text-base
-                            hover:bg-gold-accent/90
+                            hover:bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/90
                             disabled:opacity-50 disabled:cursor-not-allowed
                             transition-all duration-300
                         "
@@ -300,7 +300,7 @@ export default function LocationPicker({
 
             {/* Location Confirmed & Map */}
             {location && (
-                <div className="space-y-4 p-6 bg-gold-accent/5 rounded-[24px] border border-gold-accent/30">
+                <div className="space-y-4 p-6 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/5 rounded-[24px] border border-oflem-terracotta/30">
                     <div className="flex items-center justify-center gap-2 text-green-600">
                         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
@@ -370,8 +370,8 @@ export default function LocationPicker({
 
                     {/* Radius Slider */}
                     <div className="space-y-2">
-                        <label className="block text-sm font-bold text-primary-black">
-                            {t('Rayon de découverte:')} <span className="text-gold-accent">{radius} km</span>
+                        <label className="block text-sm font-bold text-oflem-charcoal">
+                            {t('Rayon de découverte:')} <span className="text-oflem-terracotta">{radius} km</span>
                         </label>
                         <input
                             type="range"
