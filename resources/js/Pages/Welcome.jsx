@@ -28,7 +28,9 @@ import {
     Paintbrush,
     Sprout,
     Mail,
-    Smartphone
+    Smartphone,
+    MapPin,
+    Lock
 } from 'lucide-react';
 
 const useIntersectionObserver = (options) => {
@@ -94,6 +96,183 @@ const FAQItem = ({ question, answer }) => {
     );
 };
 
+const CommissionTiers = ({ t }) => (
+    <div className="max-w-[960px] mx-auto mt-10">
+        <div className="text-center max-w-[600px] mx-auto mb-10">
+            <span className="text-[12px] font-black uppercase text-oflem-terracotta tracking-[3px] mb-2 block">{t('Tarification')}</span>
+            <h3 className="text-2xl sm:text-3xl font-black text-oflem-charcoal mb-4">{t('Une commission simple, affichée avant paiement')}</h3>
+            <p className="text-zinc-500 font-medium leading-relaxed">{t('Publier est gratuit. Quand vous acceptez une offre, vous payez le prix du prestataire plus la commission Oflem, visible avant de confirmer.')}</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+            {/* Small Tier */}
+            <div className="bg-white rounded-2xl p-8 relative overflow-hidden flex flex-col gap-2 border-2 border-zinc-100 shadow-sm">
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-zinc-400 to-zinc-300" />
+                <div className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mt-2">{t('Petites missions')}</div>
+                <div className="text-5xl font-black tracking-tighter text-oflem-charcoal">25<span className="text-2xl ml-0.5">%</span></div>
+                <div className="text-[13px] font-bold text-zinc-500">{t("Jusqu'à CHF 149")}</div>
+                <div className="bg-zinc-50 rounded-xl p-3 text-[12px] text-zinc-600 mt-4 leading-relaxed">
+                    {t('Prestataire : CHF 40 → ')}<strong>{t('Vous payez : CHF 50')}</strong>
+                </div>
+            </div>
+
+            {/* Medium Tier */}
+            <div className="bg-white rounded-2xl p-8 relative overflow-hidden flex flex-col gap-2 border-2 border-oflem-terracotta/30 shadow-lg shadow-oflem-terracotta/5">
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-oflem-terracotta to-oflem-terracotta-light" />
+                <div className="absolute top-3 right-3 bg-oflem-terracotta text-white text-[9px] font-black px-2 py-1 rounded-lg uppercase tracking-wider">{t('Le plus courant')}</div>
+                <div className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mt-2">{t('Missions courantes')}</div>
+                <div className="text-5xl font-black tracking-tighter text-oflem-terracotta">20<span className="text-2xl ml-0.5">%</span></div>
+                <div className="text-[13px] font-bold text-zinc-500">{t('CHF 150 à CHF 499')}</div>
+                <div className="bg-orange-50 rounded-xl p-3 text-[12px] text-zinc-700 mt-4 leading-relaxed">
+                    {t('Prestataire : CHF 200 → ')}<strong>{t('Vous payez : CHF 240')}</strong>
+                </div>
+            </div>
+
+            {/* Large Tier */}
+            <div className="bg-white rounded-2xl p-8 relative overflow-hidden flex flex-col gap-2 border-2 border-oflem-green/30 shadow-lg shadow-oflem-green/5">
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-oflem-green to-emerald-400" />
+                <div className="absolute top-3 right-3 bg-oflem-green text-white text-[9px] font-black px-2 py-1 rounded-lg uppercase tracking-wider">{t('Meilleur taux')}</div>
+                <div className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mt-2">{t('Grands projets')}</div>
+                <div className="text-5xl font-black tracking-tighter text-oflem-green">12<span className="text-2xl ml-0.5">%</span></div>
+                <div className="text-[13px] font-bold text-zinc-500">{t('Dès CHF 500')}</div>
+                <div className="bg-emerald-50 rounded-xl p-3 text-[12px] text-zinc-700 mt-4 leading-relaxed">
+                    {t('Prestataire : CHF 600 → ')}<strong>{t('Vous payez : CHF 672')}</strong>
+                </div>
+            </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-[780px] mx-auto">
+            <div className="bg-zinc-50 rounded-2xl p-5 border border-zinc-100">
+                <div className="text-[13px] font-black text-oflem-charcoal mb-2">{t('Pour les prestataires')}</div>
+                <p className="text-[13px] text-zinc-500 leading-relaxed font-medium">
+                    {t("Le prestataire reçoit 100% de ce qu'il a proposé. La commission est côté client : sa rémunération est nette, dès le départ.")}
+                </p>
+            </div>
+            <div className="bg-zinc-50 rounded-2xl p-5 border border-zinc-100">
+                <div className="text-[13px] font-black text-oflem-charcoal mb-2">{t('À quoi elle sert')}</div>
+                <p className="text-[13px] text-zinc-500 leading-relaxed font-medium">
+                    {t('Vérification des prestataires, protection du paiement par séquestre, support en cas de litige. Pas un simple mur d\'annonces.')}
+                </p>
+            </div>
+        </div>
+    </div>
+);
+
+const RemoteMissions = ({ t }) => (
+    <section className="py-24 bg-zinc-50 relative overflow-hidden" id="remote">
+        <div className="container mx-auto px-6 relative z-10">
+            <div className="section-head mb-16">
+                <span className="text-[12px] font-black uppercase text-oflem-terracotta tracking-[3px] mb-4 block">{t('Missions à distance')}</span>
+                <h2 className="text-4xl font-black text-oflem-charcoal mb-6 tracking-tight uppercase leading-[1.1]">
+                    {t("Certaines choses n'ont pas besoin")}<br />{t('de déplacement.')}
+                </h2>
+                <p className="text-lg text-zinc-500 font-medium max-w-3xl leading-relaxed">
+                    {t("Déclaration d'impôts, traduction de documents, aide pour comprendre un courrier officiel, relecture d'un dossier, mise en page professionnelle. Ces missions se font intégralement en ligne.")}
+                </p>
+            </div>
+
+            {/* Remote Grid */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-16">
+                {[
+                    t("Aide pour ma déclaration d'impôts vaudoise, régime indépendant"),
+                    t("Traduction d'un contrat allemand vers le français"),
+                    t("Révision de mon CV pour un poste en Suisse alémanique"),
+                    t("M'expliquer mon décompte de caisse maladie")
+                ].map((text, i) => (
+                    <div key={i} className="bg-white border-2 border-zinc-100 rounded-2xl p-6 flex items-center shadow-sm">
+                        <p className="text-[13px] text-zinc-600 font-medium italic leading-relaxed">
+                            <span className="text-oflem-terracotta font-black text-xl mr-1">"</span>{text}<span className="text-oflem-terracotta font-black text-xl ml-1">"</span>
+                        </p>
+                    </div>
+                ))}
+            </div>
+
+            {/* Info Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-white border-2 border-zinc-100 border-t-4 border-t-oflem-terracotta rounded-3xl p-8 md:p-12 flex flex-col shadow-xl ring-1 ring-black/5">
+                    <div className="text-3xl mb-6">👤</div>
+                    <h4 className="text-xl font-black text-oflem-charcoal mb-4 leading-snug">{t('Vous avez un besoin à distance')}</h4>
+                    <p className="text-[14px] text-zinc-500 leading-relaxed font-medium mb-10">
+                        {t('Décrivez votre demande librement. Un prestataire qualifié travaille depuis chez lui et vous livre le résultat. Paiement protégé, comme pour toute mission Oflem.')}
+                    </p>
+                    <Link href={route('missions.create')} className="mt-auto px-6 py-4 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white rounded-xl font-black text-xs uppercase tracking-widest text-center shadow-sho hover:scale-[1.02] transition-transform">
+                        {t('Publier une mission à distance')}
+                    </Link>
+                </div>
+
+                <div className="bg-white border-2 border-zinc-100 border-t-4 border-t-zinc-900 rounded-3xl p-8 md:p-12 flex flex-col shadow-xl ring-1 ring-black/5">
+                    <div className="text-3xl mb-6">🖥️</div>
+                    <h4 className="text-xl font-black text-oflem-charcoal mb-4 leading-snug">{t('Vous proposez vos compétences à distance')}</h4>
+                    <p className="text-[14px] text-zinc-500 leading-relaxed font-medium mb-8">
+                        {t('Les prestataires "remote only" passent par un contrôle d\'identité allégé. En contrepartie, ils n\'accèdent qu\'aux missions à distance.')}
+                    </p>
+                    <div className="space-y-3 mb-10">
+                        {[
+                            { label: t('Inscription simplifiée, identité seule'), active: true },
+                            { label: t('Missions depuis chez vous, à votre rythme'), active: true },
+                            { label: t('100% de votre offre vous revient'), active: true },
+                            { label: t('Accès limité aux missions à distance uniquement'), active: false }
+                        ].map((check, i) => (
+                            <div key={i} className="flex items-center gap-3 text-[13px] font-bold">
+                                {check.active ? (
+                                    <CheckCircle2 size={16} className="text-oflem-green" />
+                                ) : (
+                                    <div className="w-4 h-4 rounded-full border-2 border-zinc-200" />
+                                )}
+                                <span className={check.active ? 'text-zinc-700' : 'text-zinc-400'}>{check.label}</span>
+                            </div>
+                        ))}
+                    </div>
+                    <Link href={route('register')} className="mt-auto px-6 py-4 bg-oflem-charcoal text-white rounded-xl font-black text-xs uppercase tracking-widest text-center shadow-sho hover:scale-[1.02] transition-transform">
+                        {t('Créer mon profil prestataire')}
+                    </Link>
+                </div>
+            </div>
+        </div>
+    </section>
+);
+
+const HowItWorksSteps = ({ t }) => (
+    <div className="steps-container space-y-12">
+        <AnimatedSection>
+            <div className="section-head mb-12">
+                <span className="text-[12px] font-black uppercase text-oflem-terracotta tracking-[3px] mb-4 block">{t('How it works')}</span>
+                <h2 className="text-4xl font-black text-oflem-charcoal tracking-tight uppercase leading-none">{t('Three steps. No more.')}</h2>
+            </div>
+        </AnimatedSection>
+
+        {[
+            { 
+                num: 1, 
+                title: t('Describe what you need'), 
+                desc: t('One sentence is enough. "Help with my Vaud tax return" or "Someone to assemble a wardrobe Saturday morning in Montreux". Indicate your budget. Posting is free and without commitment.') 
+            },
+            { 
+                num: 2, 
+                title: t('Verified providers respond'), 
+                desc: t('People near you, verified by Oflem, consult your request and make a proposal. You compare, you choose, without pressure.') 
+            },
+            { 
+                num: 3, 
+                title: t('You only pay when everything is finished'), 
+                desc: t('The amount is set aside safely. The provider is paid only after validation from you. In case of a problem, our team intervenes.') 
+            }
+        ].map((step, i) => (
+            <AnimatedSection key={i} delay={`${100 * i}ms`}>
+                <div className="flex gap-6 group">
+                    <div className="w-12 h-12 rounded-full bg-oflem-charcoal text-white flex items-center justify-center font-black text-xl shrink-0 group-hover:bg-oflem-terracotta transition-colors duration-300">
+                        {step.num}
+                    </div>
+                    <div>
+                        <h3 className="text-xl font-black text-oflem-charcoal mb-3 tracking-tight group-hover:text-oflem-terracotta transition-colors">{step.title}</h3>
+                        <p className="text-[15px] text-zinc-500 leading-relaxed font-medium">{step.desc}</p>
+                    </div>
+                </div>
+            </AnimatedSection>
+        ))}
+    </div>
+);
+
 const CookieBar = () => {
     const { t } = useTranslation();
     const [isVisible, setIsVisible] = useState(false);
@@ -151,6 +330,11 @@ export default function Welcome({ missions: initialMissions, providers: initialP
     const [searchTerm, setSearchTerm] = useState('');
     const [isChecking, setIsChecking] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
+
+    // Social Proof Control Flag
+    // In Switzerland, it is legally forbidden to use fake testimonials or placeholder numbers.
+    // Deactivate visually until real data is available.
+    const SHOW_SOCIAL_PROOF = false;
     
     // Typewriter effect logic
     const examples = [
@@ -315,20 +499,22 @@ export default function Welcome({ missions: initialMissions, providers: initialP
                                 )}
 
                                 {/* Hero Stamp */}
-                                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-3 mt-8 pt-4 text-center sm:text-left">
-                                    <div className="flex -space-x-3">
-                                        {[1,2,3,4].map(i => (
-                                            <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-zinc-200 overflow-hidden shadow-sm">
-                                                <img src={`https://i.pravatar.cc/100?img=${i+10}`} alt="user" />
-                                            </div>
-                                        ))}
-                                        <div className="w-10 h-10 rounded-full border-2 border-white bg-oflem-charcoal text-white flex items-center justify-center text-[10px] font-black shadow-sm">+4k</div>
+                                {SHOW_SOCIAL_PROOF && (
+                                    <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-3 mt-8 pt-4 text-center sm:text-left">
+                                        <div className="flex -space-x-3">
+                                            {[1,2,3,4].map(i => (
+                                                <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-zinc-200 overflow-hidden shadow-sm">
+                                                    <img src={`https://i.pravatar.cc/100?img=${i+10}`} alt="user" />
+                                                </div>
+                                            ))}
+                                            <div className="w-10 h-10 rounded-full border-2 border-white bg-oflem-charcoal text-white flex items-center justify-center text-[10px] font-black shadow-sm">+4k</div>
+                                        </div>
+                                        <div className="text-[12px] font-bold text-zinc-500 leading-tight">
+                                            <span className="text-oflem-charcoal font-black block uppercase tracking-tight">{t('1,400+ Successful missions')}</span>
+                                            {t('in French-speaking Switzerland this week')}
+                                        </div>
                                     </div>
-                                    <div className="text-[12px] font-bold text-zinc-500 leading-tight">
-                                        <span className="text-oflem-charcoal font-black block uppercase tracking-tight">{t('1,400+ Successful missions')}</span>
-                                        {t('in French-speaking Switzerland this week')}
-                                    </div>
-                                </div>
+                                )}
                             </AnimatedSection>
 
                              <AnimatedSection delay="700ms" className="mt-8 pt-8 border-t border-zinc-200/60">
@@ -401,11 +587,13 @@ export default function Welcome({ missions: initialMissions, providers: initialP
                                                                     <div className="flex justify-between items-center w-full">
                                                                         <h4 className="text-[13px] font-black">{offer.name}</h4>
                                                                     </div>
-                                                                    <div className="flex text-[#FFD23F] text-[10px] mb-1">
-                                                                        {[...Array(5)].map((_, i) => (
-                                                                            <Star key={i} className={`w-2.5 h-2.5 fill-current ${i < offer.stars ? 'text-[#FFD23F]' : 'text-zinc-200'}`} />
-                                                                        ))}
-                                                                    </div>
+                                                                    {SHOW_SOCIAL_PROOF && (
+                                                                        <div className="flex text-[#FFD23F] text-[10px] mb-1">
+                                                                            {[...Array(5)].map((_, i) => (
+                                                                                <Star key={i} className={`w-2.5 h-2.5 fill-current ${i < offer.stars ? 'text-[#FFD23F]' : 'text-zinc-200'}`} />
+                                                                            ))}
+                                                                        </div>
+                                                                    )}
                                                                     <div className="text-[10px] text-zinc-400 font-bold">{offer.dist}</div>
                                                                 </div>
                                                             </div>
@@ -430,31 +618,237 @@ export default function Welcome({ missions: initialMissions, providers: initialP
                 </div>
             </section>
 
-            {/* Trust Pillars */}
-             <section className="py-16 md:py-24 bg-white border-b border-zinc-100">
+            {/* 1. Categories (Wild Missions Grid) - Aligned to Haykel's White Design */}
+            <section className="py-24 bg-white border-b border-zinc-100" id="categories">
                 <div className="container mx-auto px-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {pillars.slice(0, 3).map((pillar, i) => (
-                            <AnimatedSection key={i} delay={`${200 * i}ms`} className="pillar-card p-6 sm:p-8 lg:p-10 bg-white border border-zinc-100 rounded-rl hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-500">
-                                <div className={`w-14 h-14 sm:w-16 sm:h-16 ${pillar.bg} rounded-full flex items-center justify-center mb-6 sm:mb-8 shadow-lg`}>
+                    <div className="section-head mb-16 text-center">
+                        <AnimatedSection>
+                            <span className="text-[12px] font-black uppercase text-oflem-terracotta tracking-[3px] mb-4 block">{t('Endless possibilities')}</span>
+                            <h2 className="text-4xl font-black text-oflem-charcoal mb-4 uppercase tracking-tight leading-none">{t('Missions Sauvages')}</h2>
+                            <p className="text-lg text-zinc-500 font-medium max-w-2xl mx-auto">{t('What will you delegate today?')}</p>
+                        </AnimatedSection>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-0 border border-zinc-100 rounded-rl overflow-hidden shadow-sm">
+                        {[
+                            { name: t('Cleaning'), icon: "🧹", desc: t('Apartment, window...') },
+                            { name: t('Handyman'), icon: "🔧", desc: t('Fix, assemble, drill...') },
+                            { name: t('Delivery'), icon: "📦", desc: t('Groceries, parcels...') },
+                            { name: t('IT Help'), icon: "🖥️", desc: t('Update, troubleshooting...') },
+                            { name: t('Gardening'), icon: "🌿", desc: t('Tall grass, leaves...') },
+                            { name: t('Moving'), icon: "🚚", desc: t('Boxes, heavy furniture...') },
+                            { name: t('Pets'), icon: "🐕", desc: t('Walking, sitting...') },
+                            { name: t('Admin'), icon: "📋", desc: t('Letters, taxes...') },
+                            { name: t('Furniture'), icon: "🪑", desc: t('IKEA, cabinets...') },
+                            { name: t('Painting'), icon: "🎨", desc: t('One wall or more...') },
+                            { name: t('Tutoring'), icon: "📚", desc: t('Language, school...') },
+                            { name: t('Anything?'), icon: "✦", desc: t('If it\'s legal, post it.') },
+                        ].map((cat, i) => (
+                            <AnimatedSection key={i} delay={`${50 * i}ms`} className="msv-item group border-r border-b border-zinc-100 p-6 sm:p-8 bg-white hover:bg-orange-50/50 transition-all duration-300 cursor-pointer">
+                                <div className="w-12 h-12 bg-zinc-50 rounded-xl flex items-center justify-center text-2xl mb-4 group-hover:scale-110 group-hover:bg-orange-100 transition-all">
+                                    {cat.icon}
+                                </div>
+                                <div className="text-[14px] font-black text-oflem-charcoal uppercase tracking-wider mb-1">{cat.name}</div>
+                                <div className="text-[12px] text-zinc-400 font-bold group-hover:text-oflem-terracotta transition-colors line-clamp-1">{cat.desc}</div>
+                            </AnimatedSection>
+                        ))}
+                    </div>
+                    
+                    <div className="mt-12 text-center">
+                        <Link href={route('missions.active')} className="inline-flex items-center gap-3 text-oflem-terracotta font-black text-[12px] uppercase tracking-widest hover:gap-5 transition-all group">
+                            {t('Voir toutes les catégories')} <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                        </Link>
+                    </div>
+                </div>
+            </section>
+
+            {/* 2. How it Works (Map Interaction) */}
+            <section className="py-24 bg-white overflow-hidden" id="how-it-works">
+                <div className="container mx-auto px-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+                        <HowItWorksSteps t={t} />
+                        <AnimatedSection delay="300ms">
+                            <MapMock showSocialProof={SHOW_SOCIAL_PROOF} />
+                        </AnimatedSection>
+                    </div>
+                </div>
+            </section>
+
+            {/* Trust Pillars */}
+             <section className="py-16 md:py-24 bg-white border-b border-zinc-100" id="why-oflem">
+                <div className="container mx-auto px-6">
+                    <div className="section-head mb-16 px-6">
+                        <span className="text-[12px] font-black uppercase text-oflem-terracotta tracking-[3px] mb-4 block">{t('Pourquoi Oflem')}</span>
+                        <h2 className="text-4xl font-black text-oflem-charcoal mb-4 tracking-tight uppercase leading-[1.1]">
+                            {t('Poster une annonce, ça peut marcher.')}<br />{t('Sauf quand ça se passe mal.')}
+                        </h2>
+                        <p className="text-lg text-zinc-500 font-medium max-w-3xl leading-relaxed">
+                            {t('Poster une annonce entre particuliers ou appeler l\'ami d\'un ami, ça peut marcher. Mais quand ça se passe mal, vous êtes seul. Oflem, c\'est la fiabilité en plus.')}
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {[
+                            { title: t('Prestataires vérifiés'), text: t('Pièce d\'identité, droit de travailler en Suisse, qualifications vérifiées si nécessaire. Pas un inconnu sans historique.'), icon: <Shield className="w-8 h-8 text-white" />, bg: "bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light" },
+                            { title: t('Argent protégé par séquestre'), text: t('Vous ne payez pas à l\'avance dans le vide. Les fonds sont bloqués et ne partent que lorsque vous avez confirmé.'), icon: <Lock className="w-8 h-8 text-white" />, bg: "bg-gradient-to-br from-oflem-green to-emerald-400" },
+                            { title: t('Toujours quelqu\'un près de chez vous'), text: t('Chaque prestataire qui répond à votre demande vit dans votre région. Pas quelqu\'un à 200 km.'), icon: <MapPin className="w-8 h-8 text-white" />, bg: "bg-gradient-to-br from-blue-500 to-indigo-600" },
+                            { title: t('Médiation en cas de litige'), text: t('Quand quelque chose se passe mal, vous n\'êtes pas seul. Notre équipe intervient, les fonds restent bloqués.'), icon: <Users className="w-8 h-8 text-white" />, bg: "bg-gradient-to-br from-orange-400 to-orange-500" },
+                        ].map((pillar, i) => (
+                            <AnimatedSection key={i} delay={`${150 * i}ms`} className="pillar-card p-8 bg-zinc-50 border border-zinc-100 rounded-3xl hover:shadow-xl transition-all duration-500">
+                                <div className={`w-16 h-16 ${pillar.bg} rounded-2xl flex items-center justify-center mb-6 shadow-lg`}>
                                     {pillar.icon}
                                 </div>
-                                <h3 className="text-lg sm:text-xl font-black text-oflem-charcoal mb-4 tracking-tight">{pillar.title}</h3>
-                                <p className="text-[14px] sm:text-[15px] text-zinc-600 leading-relaxed">{pillar.text}</p>
+                                <h3 className="text-xl font-black text-oflem-charcoal mb-4 tracking-tight">{pillar.title}</h3>
+                                <p className="text-[14px] text-zinc-500 leading-relaxed font-medium">{pillar.text}</p>
+                            </AnimatedSection>
+                        ))}
+                    </div>
+
+                    <CommissionTiers t={t} />
+                </div>
+            </section>
+
+
+
+            {/* Audience Detailed Cards */}
+            <section className="py-24 bg-white relative" id="audience">
+                <div className="container mx-auto px-6">
+                    <div className="section-head mb-16 text-center">
+                        <span className="text-[12px] font-black uppercase text-oflem-terracotta tracking-[3px] mb-4 block">{t('Pour qui')}</span>
+                        <h2 className="text-4xl font-black text-oflem-charcoal mb-4 tracking-tight uppercase leading-[1.1]">
+                            {t('Oflem s\'adresse à tout le monde.')}<br />{t('Et on le dit sans sourire gêné.')}
+                        </h2>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {/* Client Side */}
+                         <AnimatedSection className="p-8 md:p-12 bg-white border-2 border-orange-50 rounded-[40px] text-oflem-charcoal relative overflow-hidden group shadow-2xl shadow-orange-500/5 ring-1 ring-orange-100">
+                             <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-oflem-terracotta/10 to-transparent rounded-full blur-[100px] pointer-events-none" />
+                             <span className="inline-block px-4 py-1.5 bg-orange-50 text-oflem-terracotta rounded-full text-[12px] font-black uppercase tracking-widest mb-8 border border-orange-100 shadow-sm">
+                                 👤 {t('Vous avez un besoin')}
+                             </span>
+                             <h3 className="text-2xl sm:text-3xl font-black mb-6 tracking-tight text-oflem-charcoal">{t('Un coup de main. Sans complication.')}</h3>
+                             <p className="text-zinc-500 font-medium leading-[1.7] mb-8 text-[16px]">
+                                 {t('Il y a des jours où déléguer n\'est pas un luxe, mais simplement pratique. Qu\'il s\'agisse d\'un petit service ou d\'un vrai coup de main.')}
+                             </p>
+                             <ul className="space-y-4 mb-10 border-t border-orange-50 pt-10">
+                                 {[
+                                     t('Publication gratuite, sans engagement'),
+                                     t('Prestataires vérifiés dans votre région'),
+                                     t('Argent protégé jusqu\'à validation'),
+                                     t('Assistance en cas de besoin')
+                                 ].map((item, i) => (
+                                     <li key={i} className="flex items-center gap-3 text-[14px] font-bold text-zinc-600">
+                                         <CheckCircle2 size={16} className="text-oflem-terracotta" />
+                                         {item}
+                                     </li>
+                                 ))}
+                             </ul>
+                             <Link href={route('missions.create')} className="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white px-8 py-5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-sho hover:scale-[1.02] transition-transform">
+                                 {t('Publier ma demande, c\'est gratuit')}
+                             </Link>
+                         </AnimatedSection>
+
+                        {/* Provider Side */}
+                        <AnimatedSection delay="200ms" className="p-8 md:p-12 bg-oflem-charcoal rounded-[40px] text-white relative overflow-hidden group shadow-2xl">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-oflem-terracotta/10 to-transparent rounded-full blur-[100px] pointer-events-none" />
+                            <span className="inline-block px-4 py-1.5 bg-zinc-800/50 text-zinc-300 rounded-full text-[12px] font-black uppercase tracking-widest mb-8 border border-zinc-700 shadow-sm backdrop-blur-sm">
+                                🛠️ {t('Vous avez des compétences')}
+                            </span>
+                            <h3 className="text-2xl sm:text-3xl font-black mb-6 tracking-tight">{t('Votre talent mérite d\'être payé.')}</h3>
+                            <p className="text-zinc-400 font-medium leading-[1.7] mb-8 text-[16px]">
+                                {t('Vous avez un savoir-faire, une compétence, ou simplement du temps. Autour de vous, des personnes cherchent exactement ce que vous savez faire.')}
+                            </p>
+                            <ul className="space-y-4 mb-10 border-t border-zinc-800 pt-10">
+                                {[
+                                    t('Inscription gratuite'),
+                                    t('Vous recevez 100% du montant de votre offre'),
+                                    t('Paiement garanti avant de commencer'),
+                                    t('Votre page personnelle Oflem à partager')
+                                ].map((item, i) => (
+                                    <li key={i} className="flex items-center gap-3 text-[14px] font-bold text-zinc-300">
+                                        <CheckCircle2 size={16} className="text-oflem-green" />
+                                        {item}
+                                    </li>
+                                ))}
+                            </ul>
+                            <Link href={route('register')} className="w-full inline-flex items-center justify-center gap-2 bg-white text-oflem-charcoal px-8 py-5 rounded-2xl font-black text-sm uppercase tracking-widest hover:scale-[1.02] transition-transform">
+                                {t('Créer mon profil prestataire')}
+                            </Link>
+                        </AnimatedSection>
+                    </div>
+                </div>
+            </section>
+
+            <RemoteMissions t={t} />
+
+            {/* Emotional Quote Strip */}
+            <section className="bg-oflem-charcoal py-24 relative overflow-hidden">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(255,107,53,0.12),transparent_50%),radial-gradient(circle_at_80%_50%,rgba(59,130,246,0.08),transparent_50%)]" />
+                <div className="container mx-auto px-6 relative z-10 text-center">
+                    <AnimatedSection>
+                        <blockquote className="text-xl sm:text-2xl md:text-[36px] font-black text-white leading-[1.35] tracking-tight max-w-[760px] mx-auto">
+                            {t('Oflem is the freedom to delegate what weighs you down to finally enjoy your free time.')}
+                        </blockquote>
+                        <cite className="block mt-8 sm:mt-10 text-zinc-500 font-bold not-italic">{t('— The Oflem Switzerland Team')}</cite>
+                    </AnimatedSection>
+                </div>
+            </section>
+
+            {/* Missions Section */}
+            <section className="py-24 bg-white" id="petites-missions">
+                <div className="container mx-auto px-6">
+                    <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+                        <AnimatedSection className="max-w-2xl">
+                            <h2 className="text-4xl font-black text-oflem-charcoal tracking-tight mb-4 uppercase">{t('Explore missions')}</h2>
+                            <p className="text-lg text-zinc-500 font-medium tracking-tight">{t('Hundreds of opportunities near you right now.')}</p>
+                        </AnimatedSection>
+                        <AnimatedSection>
+                            <Link href={route('missions.active')} className="inline-flex items-center gap-2 text-oflem-terracotta font-black text-sm uppercase tracking-wider group">
+                                {t('See all')} <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
+                            </Link>
+                        </AnimatedSection>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {missions.map((m, i) => (
+                            <AnimatedSection key={i} delay={`${150 * i}ms`}>
+                                <Link 
+                                    href={route('missions.show', m.id)}
+                                    className="block p-8 bg-white border-2 border-zinc-100 rounded-rl overflow-hidden relative group transition-all duration-300 hover:border-oflem-terracotta hover:shadow-xl hover:-translate-y-1"
+                                >
+                                    <div className="absolute top-0 left-0 w-full h-[4px] bg-gradient-to-r from-oflem-terracotta to-orange-400" />
+                                    <div className={`inline-block text-[10px] font-black uppercase px-3 py-1 rounded-full mb-4 ${
+                                        m.tag === 'remote' ? 'bg-blue-50 text-blue-600' : 
+                                        m.tag === 'premium' ? 'bg-amber-50 text-amber-700' : 'bg-zinc-100 text-zinc-600'
+                                    }`}>
+                                        {m.tag}
+                                    </div>
+                                    <h4 className="text-[17px] font-black mb-3 text-oflem-charcoal leading-tight group-hover:text-oflem-terracotta transition-colors">{m.title}</h4>
+                                    <p className="text-[13.5px] text-zinc-500 mb-6 leading-relaxed line-clamp-2">{m.desc}</p>
+                                    <hr className="border-zinc-50 mb-4" />
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-[12px] font-bold text-zinc-400">{m.loc}</span>
+                                        <span className="text-2xl font-black text-oflem-green">CHF {m.price}</span>
+                                    </div>
+                                </Link>
                             </AnimatedSection>
                         ))}
                     </div>
                 </div>
             </section>
 
+
+
+
+
             {/* Perspective Section (Tabs) */}
-            <section className="py-24 bg-white">
+            <section className="py-24 bg-white" id="roles">
                 <div className="container mx-auto px-6">
                     <div className="text-center mb-16 max-w-2xl mx-auto">
                         <AnimatedSection>
                             <span className="text-[12px] font-black uppercase text-oflem-terracotta tracking-[3px] mb-4 block">{t('Your Role')}</span>
                             <h2 className="text-4xl font-black text-oflem-charcoal mb-4 tracking-tight uppercase">{t('Two sides, one community')}</h2>
-                            <p className="text-zinc-500 font-bold">{t('Choose the perspective that suits you today.')}</p>
                         </AnimatedSection>
                     </div>
 
@@ -505,12 +899,14 @@ export default function Welcome({ missions: initialMissions, providers: initialP
                                                     <div className="w-12 h-12 rounded-full bg-oflem-green/10 text-oflem-green flex items-center justify-center font-black">LC</div>
                                                     <div>
                                                         <div className="text-[13px] font-black text-oflem-charcoal">Léa C.</div>
-                                                        <div className="text-[11px] text-zinc-400 font-bold">{t('5 stars · Lausanne')}</div>
+                                                        {SHOW_SOCIAL_PROOF && (
+                                                            <div className="text-[11px] text-zinc-400 font-bold">{t('5 stars · Lausanne')}</div>
+                                                        )}
                                                         <div className="mt-2 text-oflem-terracotta font-black text-lg">CHF 20.–</div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div className="absolute -top-4 -right-4 bg-oflem-green text-white px-3 py-1.5 rounded-lg text-[10px] font-black shadow-lg uppercase">Available now</div>
+                                            <div className="absolute -top-4 -right-4 bg-oflem-green text-white px-3 py-1.5 rounded-lg text-[10px] font-black shadow-lg uppercase">{t('Available now')}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -564,217 +960,85 @@ export default function Welcome({ missions: initialMissions, providers: initialP
                 </div>
             </section>
 
-            {/* Emotional Quote Strip */}
-            <section className="bg-oflem-charcoal py-24 relative overflow-hidden">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(255,107,53,0.12),transparent_50%),radial-gradient(circle_at_80%_50%,rgba(59,130,246,0.08),transparent_50%)]" />
-                <div className="container mx-auto px-6 relative z-10 text-center">
-                    <AnimatedSection>
-                        <blockquote className="text-xl sm:text-2xl md:text-[36px] font-black text-white leading-[1.35] tracking-tight max-w-[760px] mx-auto">
-                            {t('Oflem is the freedom to delegate what weighs you down to finally enjoy your free time.')}
-                        </blockquote>
-                        <cite className="block mt-8 sm:mt-10 text-zinc-500 font-bold not-italic">{t('— The Oflem Switzerland Team')}</cite>
-                    </AnimatedSection>
-                </div>
-            </section>
-
-            {/* Missions Section */}
-            <section className="py-24 bg-white">
-                <div className="container mx-auto px-6">
-                    <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
-                        <AnimatedSection className="max-w-2xl">
-                            <h2 className="text-4xl font-black text-oflem-charcoal tracking-tight mb-4 uppercase">{t('Explore missions')}</h2>
-                            <p className="text-lg text-zinc-500 font-medium tracking-tight">{t('Hundreds of opportunities near you right now.')}</p>
-                        </AnimatedSection>
-                        <AnimatedSection>
-                            <Link href={route('missions.active')} className="inline-flex items-center gap-2 text-oflem-terracotta font-black text-sm uppercase tracking-wider group">
-                                {t('See all')} <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
-                            </Link>
-                        </AnimatedSection>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {missions.map((m, i) => (
-                            <AnimatedSection key={i} delay={`${150 * i}ms`}>
-                                <Link 
-                                    href={route('missions.show', m.id)}
-                                    className="block p-8 bg-white border-2 border-zinc-100 rounded-rl overflow-hidden relative group transition-all duration-300 hover:border-oflem-terracotta hover:shadow-xl hover:-translate-y-1"
-                                >
-                                    <div className="absolute top-0 left-0 w-full h-[4px] bg-gradient-to-r from-oflem-terracotta to-orange-400" />
-                                    <div className={`inline-block text-[10px] font-black uppercase px-3 py-1 rounded-full mb-4 ${
-                                        m.tag === 'remote' ? 'bg-blue-50 text-blue-600' : 
-                                        m.tag === 'premium' ? 'bg-amber-50 text-amber-700' : 'bg-zinc-100 text-zinc-600'
-                                    }`}>
-                                        {m.tag}
-                                    </div>
-                                    <h4 className="text-[17px] font-black mb-3 text-oflem-charcoal leading-tight group-hover:text-oflem-terracotta transition-colors">{m.title}</h4>
-                                    <p className="text-[13.5px] text-zinc-500 mb-6 leading-relaxed line-clamp-2">{m.desc}</p>
-                                    <hr className="border-zinc-50 mb-4" />
-                                    <div className="flex justify-between items-center">
-                                        <span className="text-[12px] font-bold text-zinc-400">{m.loc}</span>
-                                        <span className="text-2xl font-black text-oflem-green">CHF {m.price}</span>
-                                    </div>
-                                </Link>
-                            </AnimatedSection>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* Missions Sauvages (Dense Categories) */}
-            <section className="py-24 bg-zinc-900 overflow-hidden relative" id="categories">
-                <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/20 rounded-full blur-[120px] pointer-events-none" />
-                <div className="container mx-auto px-6 relative z-10">
-                    <div className="text-center mb-16">
-                        <AnimatedSection>
-                            <span className="text-[11px] font-black uppercase text-oflem-terracotta tracking-[4px] mb-4 block">{t('Endless possibilities')}</span>
-                            <h2 className="text-4xl md:text-5xl font-black text-white mb-4 uppercase tracking-tight leading-none">{t('Missions Sauvages')}</h2>
-                            <p className="text-zinc-400 font-bold text-lg">{t('What will you delegate today?')}</p>
-                        </AnimatedSection>
-                    </div>
-                    
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-0 border border-zinc-700/50 rounded-rl overflow-hidden bg-zinc-800/30 backdrop-blur-sm">
-                        {[
-                            { name: t('Cleaning'), icon: <Eraser className="w-6 h-6" />, desc: t('Apartment, window...') },
-                            { name: t('Handyman'), icon: <Wrench className="w-6 h-6" />, desc: t('Fix, assemble, drill...') },
-                            { name: t('Delivery'), icon: <Truck className="w-6 h-6" />, desc: t('Groceries, parcels...') },
-                            { name: t('IT Help'), icon: <Smartphone className="w-6 h-6" />, desc: t('Update, troubleshooting...') },
-                            { name: t('Gardening'), icon: <Sprout className="w-6 h-6" />, desc: t('Tall grass, leaves...') },
-                            { name: t('Moving'), icon: <Truck className="w-6 h-6" />, desc: t('Boxes, heavy furniture...') },
-                            { name: t('Pets'), icon: <HeartPulse className="w-6 h-6" />, desc: t('Walking, sitting...') },
-                            { name: t('Admin'), icon: <Mail className="w-6 h-6" />, desc: t('Letters, taxes...') },
-                            { name: t('Furniture'), icon: <PlusCircle className="w-6 h-6" />, desc: t('IKEA, cabinets...') },
-                            { name: t('Painting'), icon: <Paintbrush className="w-6 h-6" />, desc: t('One wall or more...') },
-                            { name: t('Tutoring'), icon: <BookOpen className="w-6 h-6" />, desc: t('Language, school...') },
-                            { name: t('Anything?'), icon: <Zap className="w-6 h-6" />, desc: t('If it\'s legal, post it.') },
-                        ].map((cat, i) => (
-                            <AnimatedSection key={i} delay={`${50 * i}ms`} className="msv-item group border-r border-b border-zinc-700/50 p-4 sm:p-7 hover:bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light transition-all duration-300 cursor-pointer">
-                                <div className="mb-3 sm:mb-4 text-zinc-400 group-hover:text-white transition-colors duration-300">
-                                    {cat.icon}
-                                </div>
-                                <div className="text-[12px] sm:text-[13px] font-black text-white uppercase tracking-wider mb-1 group-hover:text-white transition-colors">{cat.name}</div>
-                                <div className="text-[10px] sm:text-[11px] text-zinc-500 font-bold group-hover:text-white/80 transition-colors line-clamp-1">{cat.desc}</div>
-                            </AnimatedSection>
-                        ))}
-                    </div>
-                    
-                    <div className="mt-12 text-center">
-                        <Link href={route('missions.create')} className="inline-flex items-center gap-3 text-oflem-terracotta font-black text-xs uppercase tracking-widest hover:gap-5 transition-all group">
-                            {t('I didn\'t find my category')} <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                        </Link>
-                    </div>
-                </div>
-            </section>
-
-            {/* Audience Detailed Cards */}
-            <section className="py-24 bg-white relative">
-                <div className="container mx-auto px-6">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        {/* Provider Side */}
-                        <AnimatedSection className="p-6 sm:p-8 lg:p-12 bg-zinc-900 rounded-[32px] text-white relative overflow-hidden group shadow-2xl">
-                            <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/5 rounded-full blur-3xl" />
-                            <div className="flex justify-between items-start mb-10">
-                                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-zinc-800 rounded-2xl flex items-center justify-center text-oflem-terracotta group-hover:scale-110 transition-transform">
-                                    <Zap className="w-6 h-6 sm:w-8 sm:h-8 fill-oflem-terracotta" />
-                                </div>
-                                <span className="px-3 py-1 sm:px-4 sm:py-1.5 bg-zinc-800 border border-zinc-700 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-zinc-400">For Providers</span>
-                            </div>
-                            <h3 className="text-3xl font-black mb-6 tracking-tight">{t('Become a Provider.')}</h3>
-                            <p className="text-zinc-400 font-medium leading-[1.7] mb-8 text-lg">
-                                {t('Monetize your skills and free time. Find missions near you and get paid safely.')}
-                            </p>
-                            <ul className="space-y-4 mb-10 border-t border-zinc-800 pt-10">
-                                {[
-                                    t('Identity verified for total trust'),
-                                    t('Set your own prices and radius'),
-                                    t('Escrow payment: guaranteed pay'),
-                                    t('Low commission on large missions')
-                                ].map((item, i) => (
-                                    <li key={i} className="flex items-center gap-3 text-[13.5px] font-bold text-zinc-300">
-                                        <div className="w-4 h-4 rounded-full bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/20 flex items-center justify-center text-oflem-terracotta"><CheckCircle2 size={10} /></div>
-                                        {item}
-                                    </li>
-                                ))}
-                            </ul>
-                            <Link href={route('register')} className="inline-flex items-center gap-2 bg-white text-zinc-900 px-8 py-4 rounded-xl font-black text-sm uppercase tracking-widest hover:scale-105 transition-transform">
-                                {t('Register as Provider')} <ArrowRight className="w-4 h-4" />
-                            </Link>
-                        </AnimatedSection>
-
-                        {/* Client Side */}
-                         <AnimatedSection delay="200ms" className="p-6 sm:p-8 lg:p-12 bg-orange-50 border-2 border-oflem-terracotta/10 rounded-[32px] text-oflem-charcoal relative overflow-hidden group shadow-xl">
-                            <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/5 rounded-full blur-3xl" />
-                            <div className="flex justify-between items-start mb-10">
-                                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-white border border-orange-100 rounded-2xl flex items-center justify-center text-oflem-terracotta group-hover:scale-110 transition-transform">
-                                    <Users className="w-6 h-6 sm:w-8 sm:h-8" />
-                                </div>
-                                <span className="px-3 py-1 sm:px-4 sm:py-1.5 bg-white border border-orange-100 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-oflem-terracotta">For Clients</span>
-                            </div>
-                            <h3 className="text-3xl font-black mb-6 tracking-tight">{t('Stay a Client.')}</h3>
-                            <p className="text-zinc-600 font-medium leading-[1.7] mb-8 text-lg">
-                                {t('Stop spending your weekends on DIY. Post your need and let experts handle everything for you.')}
-                            </p>
-                            <ul className="space-y-4 mb-10 border-t border-orange-100 pt-10">
-                                {[
-                                    t('Describe anything in seconds'),
-                                    t('Receive multiple offers to compare'),
-                                    t('No money leaves your pocket early'),
-                                    t('Community mediation always included')
-                                ].map((item, i) => (
-                                    <li key={i} className="flex items-center gap-3 text-[13.5px] font-bold text-zinc-700">
-                                        <div className="w-4 h-4 rounded-full bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/10 flex items-center justify-center text-oflem-terracotta"><CheckCircle2 size={10} /></div>
-                                        {item}
-                                    </li>
-                                ))}
-                            </ul>
-                            <Link href={route('missions.create')} className="inline-flex items-center gap-2 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white px-8 py-4 rounded-xl font-black text-sm uppercase tracking-widest shadow-sho hover:scale-105 transition-transform">
-                                {t('Publier maintenant')} <ArrowRight className="w-4 h-4" />
-                            </Link>
-                        </AnimatedSection>
-                    </div>
-                </div>
-            </section>
-
             {/* FAQ Section */}
             <section className="py-24 bg-zinc-50" id="faq">
                 <div className="container mx-auto px-6">
                     <div className="text-center mb-16">
                         <AnimatedSection>
                             <span className="text-[12px] font-black uppercase text-oflem-terracotta tracking-[3px] mb-4 block">{t('Assistance')}</span>
-                            <h2 className="text-4xl font-black text-oflem-charcoal mb-4 tracking-tight uppercase">{t('Frequently Asked Questions')}</h2>
-                            <p className="text-zinc-500 font-bold">{t('Everything you need to know to get started.')}</p>
+                            <h2 className="text-4xl font-black text-oflem-charcoal mb-4 tracking-tight uppercase">{t('Questions fréquentes')}</h2>
+                            <p className="text-zinc-500 font-bold">{t('Tout ce que vous devez savoir avant de commencer.')}</p>
                         </AnimatedSection>
                     </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-7xl mx-auto">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-7xl mx-auto mb-16">
                         <div>
-                            <p className="text-[11px] font-black text-oflem-terracotta uppercase tracking-[2.5px] mb-6 pb-2 border-b-2 border-zinc-200">{t('For clients')}</p>
+                            <p className="text-[11px] font-black text-oflem-terracotta uppercase tracking-[2.5px] mb-6 pb-2 border-b-2 border-zinc-200">{t('Pour les clients')}</p>
                             <FAQItem 
-                                question={t('How does escrow work?')} 
-                                answer={t('The money is kept safe by Oflem until the work is done and you are satisfied. If everything goes well, it is released to the provider.')}
+                                question={t('Comment fonctionne le séquestre ?')} 
+                                answer={t('Imaginez que vous confiez votre argent à un arbitre de confiance. Il le garde en sécurité jusqu\'à ce que le travail soit fait et que vous soyez content. Si tout se passe bien, il le remet au prestataire.')}
                             />
                             <FAQItem 
-                                question={t('How much does the service cost for a client?')} 
-                                answer={t('Posting is free. A sliding scale commission (25% to 12%) is added to the provider\'s price to cover verification, escrow, and support.')}
+                                question={t('Combien ça coûte pour un client ?')} 
+                                answer={t('Publier une demande est gratuit. Quand vous acceptez une offre, vous payez le montant proposé par le prestataire, plus la commission Oflem, clairement affichée avant validation. La commission est dégressive : 25% jusqu\'à CHF 149 · 20% entre CHF 150 et 499 · 12% dès CHF 500.')}
                             />
                             <FAQItem 
-                                question={t('What if I am not satisfied?')} 
-                                answer={t('You don\'t have to validate the mission. Funds remain held and our mediation team intervenes within 24 working hours to find a solution.')}
+                                question={t('Je peux publier n\'importe quelle mission ?')} 
+                                answer={t('Absolument. Promenade de chien, colis à récupérer, meuble à monter, déclaration d\'impôts. Tout ce qui est légal et vous simplifie la vie peut être publié.')}
+                            />
+                            <FAQItem 
+                                question={t('Comment sont vérifiés les prestataires ?')} 
+                                answer={t('Pour les prestataires terrain, nous vérifions la pièce d\'identité, le droit de travailler en Suisse, et les qualifications si nécessaire. Pour les prestataires à distance, un email vérifié et un profil complet suffisent.')}
+                            />
+                            <FAQItem 
+                                question={t('Que faire si je ne suis pas satisfait ?')} 
+                                answer={t('Vous n\'avez pas à valider la mission si le travail n\'est pas conforme. Les fonds restent bloqués tant que le litige n\'est pas résolu. Notre équipe de médiation intervient sous 24h ouvrés.')}
                             />
                         </div>
 
                         <div>
-                            <p className="text-[11px] font-black text-oflem-charcoal uppercase tracking-[2.5px] mb-6 pb-2 border-b-2 border-zinc-200">{t('For providers')}</p>
+                            <p className="text-[11px] font-black text-oflem-charcoal uppercase tracking-[2.5px] mb-6 pb-2 border-b-2 border-zinc-200">{t('Pour les prestataires')}</p>
                             <FAQItem 
-                                question={t('How is my payment guaranteed?')} 
-                                answer={t('The client holds the amount before you start. Once the mission is validated, you receive 100% of your offer; Oflem adds its commission on the client side.')}
+                                question={t('Comment fonctionne le paiement ?')} 
+                                answer={t('Le client bloque le montant en séquestre avant que vous commenciez. Une fois la mission validée, vous recevez 100% de votre offre sous 2 à 3 jours ouvrés. La commission Oflem est ajoutée au prix côté client.')}
                             />
                             <FAQItem 
-                                question={t('Are specific qualifications required?')} 
-                                answer={t('No, Oflem is open to all motivated individuals and professionals. For technical tasks, we simply verify your diplomas or insurance.')}
+                                question={t('Combien ça coûte pour un prestataire ?')} 
+                                answer={t('L\'inscription est gratuite. Aucun abonnement, aucun frais fixe. Vous proposez un prix, vous recevez 100% de ce montant. La commission est ajoutée côté client.')}
                             />
                             <FAQItem 
-                                question={t('Can I choose my missions freely?')} 
-                                answer={t('Yes. You consult requests around you and only respond to those that interest you. No obligation or reports to provide.')}
+                                question={t('Faut-il être artisan ou indépendant ?')} 
+                                answer={t('Non. Oflem est ouvert aux artisans, indépendants, étudiants et particuliers motivés. Pour les travaux techniques, nous vérifions vos qualifications.')}
+                            />
+                            <FAQItem 
+                                question={t('Je choisis mes missions librement ?')} 
+                                answer={t('Oui. Vous consultez les demandes autour de vous et répondez uniquement à celles qui vous intéressent. Pas d\'obligation de volume, vous travaillez quand vous voulez.')}
+                            />
+                            <FAQItem 
+                                question={t('Que se passe-t-il en cas de litige avec un client ?')} 
+                                answer={t('Notre équipe de médiation intervient sous 24h ouvrés. Les fonds restent bloqués en séquestre pendant la résolution. Si vous avez réalisé le travail conformément, vous êtes protégé.')}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="max-w-7xl mx-auto">
+                        <p className="text-[11px] font-black text-blue-500 uppercase tracking-[2.5px] mb-6 pb-2 border-b-2 border-zinc-200">{t('Général')}</p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
+                            <FAQItem 
+                                question={t('Dans quelles régions êtes-vous disponibles ?')} 
+                                answer={t('Suisse romande : Genève, Vaud, Fribourg, Neuchâtel, Valais et Jura. Extension vers la Suisse alémanique prévue prochainement.')}
+                            />
+                            <FAQItem 
+                                question={t('Quelle est la relation juridique entre les parties ?')} 
+                                answer={t('Oflem est un intermédiaire de mise en relation (courtier au sens de l\'art. 412 CO). Aucun lien de subordination n\'existe entre le client et le prestataire.')}
+                            />
+                            <FAQItem 
+                                question={t('À quoi sert concrètement la commission ?')} 
+                                answer={t('Elle finance : 1. La vérification des prestataires, 2. La protection du paiement par séquestre, 3. L\'accompagnement en cas de problème.')}
+                            />
+                            <FAQItem 
+                                question={t('25% c\'est beaucoup pour une petite mission ?')} 
+                                answer={t('Sur CHF 40, ça représente CHF 10. En échange, vous avez un prestataire vérifié, un paiement protégé, et une équipe disponible si ça se passe mal.')}
                             />
                         </div>
                     </div>
@@ -782,28 +1046,48 @@ export default function Welcome({ missions: initialMissions, providers: initialP
             </section>
 
             {/* Final CTA */}
-            <section className="py-24 bg-white">
+             <section className="py-24 bg-white">
                 <div className="container mx-auto px-6">
-                    <AnimatedSection className="bg-gradient-to-br from-oflem-charcoal via-oflem-navy-light to-oflem-charcoal rounded-[32px] p-8 sm:p-12 md:p-20 text-center relative overflow-hidden group shadow-2xl">
-                        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,rgba(255,107,53,0.2),transparent_70%)]" />
-                        <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/10 rounded-full blur-3xl animate-pulse-slow" />
-                        <h2 className="text-2xl sm:text-3xl md:text-5xl font-black text-white mb-10 relative z-10 leading-[1.1] tracking-tight">
-                            {t('READY TO DELEGATE YOUR')}<br />
-                            <span className="text-oflem-terracotta italic font-serif">{t('FIRST MISSION?')}</span>
-                        </h2>
-                        <div className="flex flex-col sm:flex-row gap-5 justify-center relative z-10">
-                            <Link 
-                                href={route('missions.create')} 
-                                className="px-10 py-5 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white rounded-xl font-black text-sm uppercase tracking-widest hover:scale-105 hover:bg-oflem-terracotta-light transition-all shadow-sho"
-                            >
-                                {t('Start now')}
-                            </Link>
-                            <Link 
-                                href={route('register')} 
-                                className="px-10 py-5 bg-white text-oflem-charcoal rounded-xl font-black text-sm uppercase tracking-widest hover:bg-zinc-50 hover:scale-105 transition-all shadow-xl"
-                            >
-                                {t('Create a free account')}
-                            </Link>
+                    <AnimatedSection className="bg-gradient-to-br from-oflem-charcoal to-oflem-navy-light rounded-[48px] p-8 sm:p-12 md:p-24 text-center relative overflow-hidden group shadow-3xl">
+                        {/* Orbs background like in HTML */}
+                        <div className="absolute inset-0 pointer-events-none">
+                            <div className="absolute w-[500px] h-[500px] -top-[150px] -right-[100px] rounded-full bg-radial-gradient(circle,rgba(255,107,53,0.15)_0%,transparent_70%) animate-pulse-slow" />
+                            <div className="absolute w-[350px] h-[350px] -bottom-[100px] -left-[80px] rounded-full bg-radial-gradient(circle,rgba(255,107,53,0.1)_0%,transparent_70%) animate-pulse-slow" />
+                        </div>
+                        
+                        <div className="relative z-10 max-w-3xl mx-auto">
+                            <div className="inline-flex items-center gap-3 bg-oflem-terracotta/20 border border-oflem-terracotta/40 rounded-full px-5 py-2 text-[12px] font-black text-oflem-terracotta uppercase tracking-[2px] mb-10 shadow-sm">
+                                <span className="w-2 h-2 rounded-full bg-oflem-terracotta animate-pulse" />
+                                {t('Prêt à commencer ?')}
+                            </div>
+                            
+                            <h2 className="text-4xl md:text-6xl font-black text-white mb-6 leading-tight tracking-tighter">
+                                {t('Votre temps compte.')}<br />
+                                <span className="text-oflem-terracotta italic font-serif">{t('Votre énergie aussi.')}</span>
+                            </h2>
+                            
+                            <p className="text-xl md:text-2xl font-bold text-white/80 mb-8 tracking-tight">
+                                {t("Laissez Oflem s'occuper du reste.")}
+                            </p>
+                            
+                            <p className="text-lg text-white/50 mb-12 max-w-2xl mx-auto leading-relaxed">
+                                {t('Et si vous avez une compétence, un talent, ou simplement l\'envie d\'aider : quelqu\'un, près de chez vous, en a besoin.')}
+                            </p>
+ 
+                            <div className="flex flex-col sm:flex-row gap-5 justify-center">
+                                <Link 
+                                    href={route('missions.create')} 
+                                    className="px-10 py-5 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white rounded-2xl font-black text-[15px] uppercase tracking-widest hover:scale-[1.05] transition-all shadow-xl shadow-oflem-terracotta/20"
+                                >
+                                    {t('Publier ma demande, c\'est gratuit')}
+                                </Link>
+                                <Link 
+                                    href={route('register')} 
+                                    className="px-10 py-5 bg-white/10 text-white border border-white/20 backdrop-blur-md rounded-2xl font-black text-[15px] uppercase tracking-widest hover:bg-white/20 hover:scale-[1.05] transition-all"
+                                >
+                                    {t('Devenir prestataire')}
+                                </Link>
+                            </div>
                         </div>
                     </AnimatedSection>
                 </div>

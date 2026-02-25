@@ -83,8 +83,6 @@ class User extends Authenticatable
             'pending_withdrawal' => 'decimal:2',
             'total_withdrawn' => 'decimal:2',
         ];
-
-
     }
 
     /**
@@ -184,8 +182,8 @@ class User extends Authenticatable
     public static function findByProvider(string $provider, string $providerId): ?self
     {
         return self::where('provider', $provider)
-                  ->where('provider_id', $providerId)
-                  ->first();
+            ->where('provider_id', $providerId)
+            ->first();
     }
 
     /**
@@ -228,7 +226,7 @@ class User extends Authenticatable
         if ($this->profile_photo) {
             return asset('storage/' . $this->profile_photo);
         }
-        
+
         // Return OFLEM custom placeholder icon
         return asset('images/oflem-placeholder.svg');
     }
@@ -263,7 +261,7 @@ class User extends Authenticatable
     public function skills()
     {
         return $this->belongsToMany(Skill::class, 'provider_skills')
-                    ->withPivot('proficiency_level', 'verified');
+            ->withPivot('proficiency_level', 'verified');
     }
 
     /**
@@ -371,7 +369,7 @@ class User extends Authenticatable
         $lngDelta = $maxRadius / (111.045 * cos(deg2rad($lat)));
 
         $query->whereBetween('location_lat', [$lat - $latDelta, $lat + $latDelta])
-              ->whereBetween('location_lng', [$lng - $lngDelta, $lng + $lngDelta]);
+            ->whereBetween('location_lng', [$lng - $lngDelta, $lng + $lngDelta]);
 
         $haversine = "(6371 * acos(cos(radians(?)) * cos(radians(location_lat)) * cos(radians(location_lng) - radians(?)) + sin(radians(?)) * sin(radians(location_lat))))";
 
@@ -394,9 +392,9 @@ class User extends Authenticatable
      */
     public function isProfileComplete(): bool
     {
-        return $this->hasSelectedRole() && 
-               !empty($this->username) && 
-               !is_null($this->location_lat) && 
-               !is_null($this->location_lng);
+        return $this->hasSelectedRole() &&
+            !empty($this->username) &&
+            !is_null($this->location_lat) &&
+            !is_null($this->location_lng);
     }
 }
