@@ -24,6 +24,8 @@ export default {
                     'oflem-navy': '#1A1D3F',
                     'oflem-navy-light': '#2d3748',
                     'oflem-green': '#10b981',
+                    'oflem-cream': '#FDFBF7',
+                    'cream-accent': '#F9F4EE',
                     'zinc-50': '#f7fafc',
                     'zinc-100': '#edf2f7',
                     'zinc-200': '#e2e8f0',
@@ -40,8 +42,14 @@ export default {
                 boxShadow: {
                     'sh': '0 8px 30px rgba(0,0,0,0.10)',
                     'sho': '0 8px 30px rgba(255,107,53,0.30)',
+                    'elegant': '0 10px 40px -10px rgba(0,0,0,0.12), 0 0 20px rgba(0,0,0,0.03)',
+                    'elegant-glow': '0 10px 40px -10px rgba(255,107,53,0.35), 0 0 20px rgba(255,107,53,0.1)',
                     'card': '0 8px 30px rgba(0,0,0,0.10)',
                     'btn-inner': '0 8px 30px rgba(255,107,53,0.30)',
+                },
+                transitionDuration: {
+                    '400': '400ms',
+                    '500': '500ms',
                 },
                 borderRadius: {
                     'r': '14px',

@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Chat extends Model
 {
+    const STATUS_PENDING = 'pending';
+    const STATUS_ACTIVE = 'active';
+    const STATUS_REJECTED = 'rejected';
+
     protected $fillable = ['mission_id', 'participant_ids', 'last_message_at', 'status'];
     protected $casts = [
         'participant_ids' => 'array',

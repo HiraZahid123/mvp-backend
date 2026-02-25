@@ -73,14 +73,16 @@ class Mission extends Model
     public function canTransitionTo(string $newStatus): bool
     {
         // Validate dispute resolution before allowing transition from EN_LITIGE
-        if ($this->status === self::STATUS_EN_LITIGE && 
-            in_array($newStatus, [self::STATUS_TERMINEE, self::STATUS_ANNULEE])) {
+        if (
+            $this->status === self::STATUS_EN_LITIGE &&
+            in_array($newStatus, [self::STATUS_TERMINEE, self::STATUS_ANNULEE])
+        ) {
             // Only allow transition if dispute has been resolved by admin
             if (!$this->dispute_resolved_at) {
                 return false;
             }
         }
-        
+
         return in_array($newStatus, $this->stateTransitions[$this->status] ?? []);
     }
 
@@ -136,16 +138,16 @@ class Mission extends Model
         if (!$user) {
             return false;
         }
-        
+
         // Only show full address when VERROUILLEE or later AND user is involved
         return $this->address_revealed &&
-               in_array($this->status, [
-                   self::STATUS_VERROUILLEE,
-                   self::STATUS_EN_COURS,
-                   self::STATUS_EN_VALIDATION,
-                   self::STATUS_TERMINEE
-               ]) &&
-               ($user->id === $this->user_id || $user->id === $this->assigned_user_id);
+            in_array($this->status, [
+                self::STATUS_VERROUILLEE,
+                self::STATUS_EN_COURS,
+                self::STATUS_EN_VALIDATION,
+                self::STATUS_TERMINEE
+            ]) &&
+            ($user->id === $this->user_id || $user->id === $this->assigned_user_id);
     }
 
     /**
@@ -157,7 +159,7 @@ class Mission extends Model
         DB::transaction(function () {
             // Lock the row for update to prevent concurrent modifications
             $mission = self::lockForUpdate()->find($this->id);
-            
+
             // Check if address was already revealed to prevent duplicate messages
             if ($mission->address_revealed) {
                 return;
@@ -181,7 +183,7 @@ class Mission extends Model
                 ]),
                 'is_system_message' => true,
             ]);
-            
+
             // Update the current instance
             $this->address_revealed = $mission->address_revealed;
         });
@@ -229,6 +231,11 @@ class Mission extends Model
         return $this->hasMany(Review::class);
     }
 
+    public function chat()
+    {
+        return $this->hasOne(Chat::class);
+    }
+
     /**
      * Scope for FULLTEXT search on title and description.
      */
@@ -253,7 +260,7 @@ class Mission extends Model
         $lngDelta = $radiusKm / (111.045 * cos(deg2rad($lat)));
 
         $query->whereBetween('lat', [$lat - $latDelta, $lat + $latDelta])
-              ->whereBetween('lng', [$lng - $lngDelta, $lng + $lngDelta]);
+            ->whereBetween('lng', [$lng - $lngDelta, $lng + $lngDelta]);
 
         $haversine = "(6371 * acos(cos(radians(?)) * cos(radians(lat)) * cos(radians(lng) - radians(?)) + sin(radians(?)) * sin(radians(lat))))";
 

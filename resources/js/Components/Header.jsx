@@ -385,6 +385,33 @@ export default function Header() {
                                     </button>
                                 )}
                                 
+                                {/* Language Selector (Mobile) */}
+                                <div className="pt-4 pb-2 border-t border-zinc-100 mb-2">
+                                    <div className="px-4 mb-3 text-[11px] font-black uppercase text-zinc-400 tracking-wider">
+                                        {t('Language')}
+                                    </div>
+                                    <div className="flex px-2 gap-2">
+                                        {[
+                                            { code: 'FR', name: 'Français' },
+                                            { code: 'EN', name: 'English' },
+                                            { code: 'DE', name: 'Deutsch' },
+                                            { code: 'IT', name: 'Italiano' }
+                                        ].map((lang) => (
+                                            <button 
+                                                key={lang.code}
+                                                onClick={() => router.post(route('language.switch'), { locale: lang.code.toLowerCase() })}
+                                                className={`flex-1 py-3 rounded-xl text-[12px] font-black transition-all ${
+                                                    usePage().props.locale?.toUpperCase() === lang.code 
+                                                    ? 'bg-oflem-charcoal text-white shadow-sm' 
+                                                    : 'bg-zinc-50 text-zinc-500 hover:bg-zinc-100'
+                                                }`}
+                                            >
+                                                {lang.code}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
                                 {/* Actions Grid */}
                                 <div className="grid grid-cols-2 gap-2 pt-2">
                                     <Link 
@@ -407,22 +434,43 @@ export default function Header() {
                                 </div>
                             </div>
                         ) : (
-                            <div className="flex flex-col gap-2 px-2">
-                                <Link 
-                                    href={route('login')} 
-                                    onClick={() => setShowingNavigationDropdown(false)}
-                                    className="flex items-center justify-center py-3.5 bg-zinc-50 border border-zinc-200 rounded-xl font-black text-zinc-900 text-[14px]"
-                                >
-                                    {t('Log in')}
-                                </Link>
-                                <Link 
-                                    href={route('register')} 
-                                    onClick={() => setShowingNavigationDropdown(false)}
-                                    className="flex items-center justify-center gap-2 py-3.5 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white rounded-xl font-black text-[14px] shadow-sm"
-                                >
-                                    {t('Get Started')}
-                                    <ArrowRight size={14} />
-                                </Link>
+                            <div className="flex flex-col gap-4 px-2">
+                                {/* Language Selector (Guest Mobile) */}
+                                <div className="pt-2 pb-2">
+                                    <div className="flex gap-2">
+                                        {['FR', 'EN', 'DE', 'IT'].map((lang) => (
+                                            <button 
+                                                key={lang}
+                                                onClick={() => router.post(route('language.switch'), { locale: lang.toLowerCase() })}
+                                                className={`flex-1 py-2.5 rounded-xl text-[11px] font-black transition-all ${
+                                                    usePage().props.locale?.toUpperCase() === lang 
+                                                    ? 'bg-oflem-charcoal text-white shadow-sm' 
+                                                    : 'bg-zinc-50 text-zinc-500 hover:bg-zinc-100'
+                                                }`}
+                                            >
+                                                {lang}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className="flex flex-col gap-2">
+                                    <Link 
+                                        href={route('login')} 
+                                        onClick={() => setShowingNavigationDropdown(false)}
+                                        className="flex items-center justify-center py-3.5 bg-zinc-50 border border-zinc-200 rounded-xl font-black text-zinc-900 text-[14px]"
+                                    >
+                                        {t('Log in')}
+                                    </Link>
+                                    <Link 
+                                        href={route('register')} 
+                                        onClick={() => setShowingNavigationDropdown(false)}
+                                        className="flex items-center justify-center gap-2 py-3.5 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white rounded-xl font-black text-[14px] shadow-sm"
+                                    >
+                                        {t('Get Started')}
+                                        <ArrowRight size={14} />
+                                    </Link>
+                                </div>
                             </div>
                         )}
                     </div>

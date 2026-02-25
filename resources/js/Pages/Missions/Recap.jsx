@@ -147,7 +147,7 @@ export default function MissionRecap({ mission }) {
                     </div>
 
                     {/* Chat Availability Note */}
-                    <div className="bg-oflem-cream/50 rounded-3xl p-6 border border-oflem-terracotta/10">
+                    <div className="elegant-capsule !bg-oflem-cream/50 !p-6 border-oflem-terracotta/10">
                         <div className="flex items-start gap-4">
                             <div className="w-10 h-10 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/10 rounded-full flex items-center justify-center flex-shrink-0">
                                 <CheckCircle2 className="w-5 h-5 text-oflem-terracotta" />

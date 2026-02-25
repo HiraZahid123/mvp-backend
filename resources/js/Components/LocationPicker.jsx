@@ -205,8 +205,8 @@ export default function LocationPicker({
                     className={`
                         p-3 lg:p-4 rounded-[24px] border-2 transition-all duration-300
                         ${method === 'gps'
-                            ? 'border-oflem-terracotta bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/10'
-                            : 'border-gray-border/50 bg-white hover:border-oflem-terracotta/50'
+                            ? 'border-oflem-terracotta bg-oflem-terracotta/5 shadow-elegant-glow scale-[1.02]'
+                            : 'border-gray-border/50 bg-white hover:border-oflem-terracotta/40 hover:shadow-elegant'
                         }
                     `}
                 >
@@ -220,8 +220,8 @@ export default function LocationPicker({
                     className={`
                         p-3 lg:p-4 rounded-[24px] border-2 transition-all duration-300
                         ${method === 'zipcode'
-                            ? 'border-oflem-terracotta bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/10'
-                            : 'border-gray-border/50 bg-white hover:border-oflem-terracotta/50'
+                            ? 'border-oflem-terracotta bg-oflem-terracotta/5 shadow-elegant-glow scale-[1.02]'
+                            : 'border-gray-border/50 bg-white hover:border-oflem-terracotta/40 hover:shadow-elegant'
                         }
                     `}
                 >
@@ -239,10 +239,8 @@ export default function LocationPicker({
                         disabled={loading}
                         className="
                             w-full px-6 py-4 
-                            bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white
+                            btn-primary
                             rounded-[24px]
-                            font-bold text-base
-                            hover:bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/90
                             disabled:opacity-50 disabled:cursor-not-allowed
                             transition-all duration-300
                         "
@@ -278,10 +276,8 @@ export default function LocationPicker({
                         disabled={loading || !zipCode}
                         className="
                             w-full px-6 py-4
-                            bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white
+                            btn-primary
                             rounded-[24px]
-                            font-bold text-base
-                            hover:bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/90
                             disabled:opacity-50 disabled:cursor-not-allowed
                             transition-all duration-300
                         "
@@ -300,12 +296,14 @@ export default function LocationPicker({
 
             {/* Location Confirmed & Map */}
             {location && (
-                <div className="space-y-4 p-6 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/5 rounded-[24px] border border-oflem-terracotta/30">
-                    <div className="flex items-center justify-center gap-2 text-green-600">
-                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                        </svg>
-                        <span className="text-sm font-bold">{t('Position confirmée')}</span>
+                <div className="space-y-6 elegant-capsule !bg-oflem-cream/30 !p-8 !border-oflem-terracotta/10">
+                    <div className="flex items-center justify-center gap-3">
+                        <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center shadow-sm">
+                            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M5 13l4 4L19 7" />
+                            </svg>
+                        </div>
+                        <span className="text-sm font-black text-oflem-charcoal uppercase tracking-wider">{t('Position confirmée')}</span>
                     </div>
 
                     {/* Address Display */}
@@ -348,11 +346,11 @@ export default function LocationPicker({
                                             center={selectedLocation}
                                             radius={radius * 1000}
                                             options={{
-                                                strokeColor: '#C57B67',
-                                                strokeOpacity: 1,
-                                                strokeWeight: 3,
-                                                fillColor: '#C57B67',
-                                                fillOpacity: 0.2,
+                                                strokeColor: '#FF6B35',
+                                                strokeOpacity: 0.8,
+                                                strokeWeight: 2,
+                                                fillColor: '#FF6B35',
+                                                fillOpacity: 0.15,
                                                 clickable: false,
                                                 editable: false,
                                                 draggable: false,
@@ -379,9 +377,9 @@ export default function LocationPicker({
                             max="50"
                             value={radius}
                             onChange={(e) => setRadius(parseInt(e.target.value))}
-                            className="w-full h-2 bg-gray-200 rounded-full appearance-none cursor-pointer slider"
+                            className="w-full h-2 bg-zinc-100 rounded-full appearance-none cursor-pointer slider"
                             style={{
-                                background: `linear-gradient(to right, #C57B67 0%, #C57B67 ${((radius - 5) / 45) * 100}%, #E5E5E5 ${((radius - 5) / 45) * 100}%, #E5E5E5 100%)`
+                                background: `linear-gradient(to right, #FF6B35 0%, #FF6B35 ${((radius - 5) / 45) * 100}%, #edf2f7 ${((radius - 5) / 45) * 100}%, #edf2f7 100%)`
                             }}
                         />
                         <div className="flex justify-between text-xs text-gray-muted font-medium">

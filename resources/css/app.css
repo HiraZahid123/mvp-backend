@@ -23,15 +23,15 @@
 
 @layer components {
     .btn-primary {
-        @apply bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white px-8 py-3.5 rounded-rs font-black text-[15px] uppercase tracking-widest shadow-sho transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] disabled:opacity-50 flex items-center justify-center;
+        @apply bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white px-8 py-3.5 rounded-rs font-black text-[15px] uppercase tracking-widest shadow-sho transition-all duration-500 ease-out hover:scale-[1.02] hover:shadow-elegant-glow active:scale-[0.98] disabled:opacity-50 flex items-center justify-center;
     }
 
     .btn-secondary {
-        @apply bg-oflem-charcoal text-white px-8 py-3.5 rounded-rs font-black text-[15px] uppercase tracking-widest shadow-lg transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] disabled:opacity-50 flex items-center justify-center;
+        @apply bg-oflem-charcoal text-white px-8 py-3.5 rounded-rs font-black text-[15px] uppercase tracking-widest shadow-lg transition-all duration-500 ease-out hover:scale-[1.02] hover:shadow-elegant active:scale-[0.98] disabled:opacity-50 flex items-center justify-center;
     }
 
     .btn-outline {
-        @apply bg-white text-oflem-charcoal border-2 border-zinc-200 px-8 py-3.5 rounded-rs font-black text-[15px] uppercase tracking-widest transition-all duration-300 hover:border-oflem-terracotta/40 hover:bg-zinc-50 active:scale-[0.98] disabled:opacity-50 flex items-center justify-center;
+        @apply bg-white text-oflem-charcoal border-2 border-zinc-100 px-8 py-3.5 rounded-rs font-black text-[15px] uppercase tracking-widest transition-all duration-500 ease-out hover:border-oflem-terracotta/40 hover:bg-zinc-50 hover:shadow-elegant active:scale-[0.98] disabled:opacity-50 flex items-center justify-center;
     }
 
     .input-standard {

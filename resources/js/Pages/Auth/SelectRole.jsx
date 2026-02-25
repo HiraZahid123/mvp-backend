@@ -89,8 +89,8 @@ export default function SelectRole({ user }) {
                 </PrimaryButton>
             </form>
 
-            <div className="mt-6 p-4 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/5 rounded-[24px] border border-oflem-terracotta/20">
-                <p className="text-xs text-gray-muted text-center">
+            <div className="elegant-capsule mt-8">
+                <p className="text-xs text-oflem-charcoal font-medium text-center">
                     {t("You can switch roles anytime. Providers can also post missions as Clients.")}
                 </p>
             </div>

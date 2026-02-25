@@ -101,6 +101,7 @@ export default function Details({ mission, canSeeAddress }) {
     const submitOffer = (e) => {
         e.preventDefault();
         offerForm.post(route('missions.submit-offer', mission.id), {
+            preserveScroll: true,
             onSuccess: (page) => {
                 offerForm.reset();
                 if (page.props.flash?.stripe_client_secret) {
@@ -114,6 +115,7 @@ export default function Details({ mission, canSeeAddress }) {
     const submitQuestion = (e) => {
         e.preventDefault();
         questionForm.post(route('missions.ask-question', mission.id), {
+            preserveScroll: true,
             onSuccess: () => questionForm.reset(),
         });
     };
@@ -177,7 +179,7 @@ export default function Details({ mission, canSeeAddress }) {
                             <h1 className="text-4xl font-black text-oflem-charcoal mb-6">{mission.title}</h1>
                             
                             <div className="prose prose-sm max-w-none text-gray-muted font-medium mb-12 leading-relaxed">
-                                {mission.description.split('\n').map((para, i) => (
+                                {(mission.description || '').split('\n').map((para, i) => (
                                     <p key={i} className="mb-4">{para}</p>
                                 ))}
                             </div>
@@ -209,22 +211,22 @@ export default function Details({ mission, canSeeAddress }) {
                                 {mission.questions.length > 0 ? mission.questions.map((q) => (
                                     <div key={q.id} className="space-y-4">
                                         <div className="flex gap-4">
-                                            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-oflem-cream flex items-center justify-center font-black">
+                                            <div className="flex-shrink-0 w-11 h-11 rounded-2xl bg-oflem-terracotta text-white flex items-center justify-center font-black shadow-sm">
                                                 {q.user.name.charAt(0)}
                                             </div>
-                                            <div className="bg-oflem-cream p-5 rounded-[24px] flex-1">
-                                                <p className="text-sm font-bold text-oflem-charcoal mb-1">{q.user.name}</p>
-                                                <p className="text-sm text-gray-muted font-medium">{q.question}</p>
+                                            <div className="elegant-capsule !bg-oflem-cream/30 !p-6 flex-1 !border-oflem-terracotta/5">
+                                                <p className="text-sm font-black text-oflem-charcoal mb-1.5">{q.user.name}</p>
+                                                <p className="text-sm text-gray-muted font-medium leading-relaxed">{q.question}</p>
                                             </div>
                                         </div>
                                         {q.answer ? (
                                             <div className="flex gap-4 ml-12">
-                                                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-cream-accent flex items-center justify-center font-black">
+                                                <div className="flex-shrink-0 w-11 h-11 rounded-2xl bg-oflem-charcoal text-white flex items-center justify-center font-black shadow-sm">
                                                     {mission.user.name.charAt(0)}
                                                 </div>
-                                                <div className="bg-cream-accent p-5 rounded-[24px] flex-1 border border-oflem-terracotta/20">
-                                                    <p className="text-sm font-bold text-oflem-charcoal mb-1">{mission.user.name} <span className="text-[10px] uppercase text-oflem-terracotta ml-2">{t('Creator')}</span></p>
-                                                    <p className="text-sm text-gray-muted font-medium">{q.answer}</p>
+                                                <div className="elegant-capsule !bg-cream-accent/40 !p-6 flex-1 !border-oflem-terracotta/10">
+                                                    <p className="text-sm font-black text-oflem-charcoal mb-1.5">{mission.user.name} <span className="text-[10px] uppercase text-oflem-terracotta ml-2 font-black tracking-widest">{t('Creator')}</span></p>
+                                                    <p className="text-sm text-gray-muted font-medium leading-relaxed">{q.answer}</p>
                                                 </div>
                                             </div>
                                         ) : isOwner && (
@@ -260,7 +262,7 @@ export default function Details({ mission, canSeeAddress }) {
 
                         {/* Validation Section - Only shown when mission is EN_VALIDATION */}
                         {mission.status === 'EN_VALIDATION' && isOwner && (
-                            <section className="bg-gradient-to-br from-oflem-terracotta/10 to-cream-accent rounded-[40px] p-8 md:p-12 shadow-lg border-2 border-oflem-terracotta">
+                            <section className="elegant-capsule !bg-oflem-terracotta/5 !p-8 md:!p-12 !rounded-[40px] border-oflem-terracotta/20">
                                 <div className="text-center mb-8">
                                     <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm text-oflem-terracotta">
                                         <Clock size={32} />
@@ -329,9 +331,9 @@ export default function Details({ mission, canSeeAddress }) {
 
                         {/* Proof Upload Section - For Providers when work is in progress */}
                         {mission.status === 'EN_COURS' && isAssigned && (
-                            <section className="bg-gradient-to-br from-green-50 to-green-100 rounded-[40px] p-8 md:p-12 shadow-lg border-2 border-green-400">
+                            <section className="elegant-capsule !bg-oflem-cream/50 !p-8 md:!p-12 !rounded-[40px] border-zinc-200">
                                 <div className="text-center mb-8">
-                                    <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm text-oflem-green">
+                                    <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm text-oflem-terracotta">
                                         <ImageIcon size={32} />
                                     </div>
                                     <h2 className="text-3xl font-black text-oflem-charcoal mb-2">{t('Submit Proof of Completion')}</h2>
@@ -346,9 +348,9 @@ export default function Details({ mission, canSeeAddress }) {
 
                         {/* Provider View - Waiting for Validation */}
                         {mission.status === 'EN_VALIDATION' && isAssigned && (
-                            <section className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-[40px] p-8 md:p-12 shadow-lg border-2 border-blue-300">
+                            <section className="elegant-capsule !bg-oflem-cream/50 !p-8 md:!p-12 !rounded-[40px] border-zinc-200">
                                 <div className="text-center">
-                                    <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm text-blue-500">
+                                    <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm text-oflem-terracotta">
                                         <RefreshCw size={32} className="animate-spin-slow" />
                                     </div>
                                     <h2 className="text-3xl font-black text-oflem-charcoal mb-2">{t('Awaiting Validation')}</h2>
@@ -471,15 +473,24 @@ export default function Details({ mission, canSeeAddress }) {
                                                 </button>
                                             </div>
                                         )}
-                                        {isAssigned && mission.assigned_user_id && (
+                                        {isAssigned && mission.assigned_user_id && mission.chat && (
                                             <button
                                                 onClick={async () => {
                                                     const response = await axios.get(route('api.missions.chat', mission.id));
                                                     router.visit(route('messages', { chat_id: response.data.id }));
                                                 }}
-                                                className="w-full py-4 bg-oflem-charcoal text-white font-black rounded-full hover:bg-black transition-all flex items-center justify-center gap-3 group"
+                                                disabled={mission.chat.status === 'pending' || mission.chat.status === 'rejected'}
+                                                className={`w-full py-4 font-black rounded-full transition-all flex items-center justify-center gap-3 group ${
+                                                    mission.chat.status === 'pending' 
+                                                        ? 'bg-oflem-cream text-oflem-charcoal cursor-not-allowed border border-oflem-terracotta/20' 
+                                                        : mission.chat.status === 'rejected'
+                                                            ? 'bg-red-50 text-red-500 cursor-not-allowed border border-red-100'
+                                                            : 'bg-oflem-charcoal text-white hover:bg-black'
+                                                }`}
                                             >
-                                                <MessageSquare size={20} className="group-hover:scale-110 transition-transform" /> {t('Message Creator')}
+                                                <MessageSquare size={20} className={mission.chat.status === 'active' ? "group-hover:scale-110 transition-transform" : ""} /> 
+                                                {mission.chat.status === 'pending' ? t('Contact Request Pending') : 
+                                                 mission.chat.status === 'rejected' ? t('Request Declined') : t('Message Creator')}
                                             </button>
                                         )}
                                     </div>
@@ -497,7 +508,7 @@ export default function Details({ mission, canSeeAddress }) {
                                                 : t('This mission has already been assigned.')
                                             }
                                         </p>
-                                        {isAssigned && (
+                                        {isAssigned && mission.chat && (
                                             <div className="space-y-4">
                                                 <button
                                                     onClick={() => router.post(route('missions.start-work', mission.id))}
@@ -510,9 +521,37 @@ export default function Details({ mission, canSeeAddress }) {
                                                         const response = await axios.get(route('api.missions.chat', mission.id));
                                                         router.visit(route('messages', { chat_id: response.data.id }));
                                                     }}
-                                                    className="w-full py-4 bg-oflem-charcoal text-white font-black rounded-full hover:bg-oflem-charcoal transition-all flex items-center justify-center gap-2"
+                                                    disabled={mission.chat.status === 'pending' || mission.chat.status === 'rejected'}
+                                                    className={`w-full py-4 font-black rounded-full transition-all flex items-center justify-center gap-2 ${
+                                                        mission.chat.status === 'pending' 
+                                                            ? 'bg-oflem-cream text-oflem-charcoal cursor-not-allowed border border-oflem-terracotta/20' 
+                                                            : mission.chat.status === 'rejected'
+                                                                ? 'bg-red-50 text-red-500 cursor-not-allowed border border-red-100'
+                                                                : 'bg-oflem-charcoal text-white hover:bg-black'
+                                                    }`}
                                                 >
-                                                    <MessageSquare size={18} className="inline" /> {t('Message Creator')}
+                                                    <MessageSquare size={18} className="inline" /> 
+                                                    {mission.chat.status === 'pending' ? t('Request Pending') : 
+                                                     mission.chat.status === 'rejected' ? t('Declined') : t('Message Creator')}
+                                                </button>
+                                            </div>
+                                        )}
+                                        {isAssigned && !mission.chat && (
+                                            <div className="space-y-4">
+                                                <button
+                                                    onClick={() => router.post(route('missions.start-work', mission.id))}
+                                                    className="w-full py-4 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white font-black rounded-full hover:opacity-90 transition-all shadow-xl flex items-center justify-center gap-3 group"
+                                                >
+                                                    <Hammer size={20} className="group-hover:rotate-12 transition-transform" /> {t('Start Work Now')}
+                                                </button>
+                                                <button
+                                                    onClick={async () => {
+                                                        const response = await axios.get(route('api.missions.chat', mission.id));
+                                                        router.reload(); // Refresh to see pending status
+                                                    }}
+                                                    className="w-full py-4 bg-oflem-charcoal text-white font-black rounded-full hover:bg-black transition-all flex items-center justify-center gap-3 group"
+                                                >
+                                                    <MessageSquare size={20} className="group-hover:scale-110 transition-transform" /> {t('Request Chat')}
                                                 </button>
                                             </div>
                                         )}
@@ -537,15 +576,17 @@ export default function Details({ mission, canSeeAddress }) {
                                         <p className="text-sm text-gray-muted font-bold mb-6">
                                             {isAssigned ? t('Finish the task and upload proof!') : t('The provider is currently working.')}
                                         </p>
-                                        <button
-                                            onClick={async () => {
-                                                const response = await axios.get(route('api.missions.chat', mission.id));
-                                                router.visit(route('messages', { chat_id: response.data.id }));
-                                            }}
-                                            className="w-full py-4 bg-oflem-charcoal text-white font-black rounded-full hover:bg-oflem-charcoal transition-all flex items-center justify-center gap-3 group"
-                                        >
-                                            <MessageSquare size={20} className="group-hover:scale-110 transition-transform" /> {isOwner ? t('Message Provider') : t('Message Creator')}
-                                        </button>
+                                        {(isOwner || mission.chat) && (
+                                            <button
+                                                onClick={async () => {
+                                                    const response = await axios.get(route('api.missions.chat', mission.id));
+                                                    router.visit(route('messages', { chat_id: response.data.id }));
+                                                }}
+                                                className="w-full py-4 bg-oflem-charcoal text-white font-black rounded-full hover:bg-oflem-charcoal transition-all flex items-center justify-center gap-3 group"
+                                            >
+                                                <MessageSquare size={20} className="group-hover:scale-110 transition-transform" /> {isOwner ? t('Message Provider') : t('Message Creator')}
+                                            </button>
+                                        )}
                                     </div>
                                 ) : isOwner ? (
                                     <>
@@ -554,7 +595,7 @@ export default function Details({ mission, canSeeAddress }) {
                                         </h2>
                                         <div className="space-y-6">
                                             {mission.offers.length > 0 ? mission.offers.map(offer => (
-                                                <div key={offer.id} className="p-5 bg-oflem-cream rounded-[24px] border border-gray-border">
+                                                <div key={offer.id} className="elegant-capsule mt-0 !p-5">
                                                     <div className="flex justify-between items-start mb-4">
                                                         <div>
                                                             <p className="font-black text-oflem-charcoal">{offer.user.name}</p>
@@ -629,13 +670,13 @@ export default function Details({ mission, canSeeAddress }) {
                                                         <TextInput
                                                             id="amount"
                                                             type="number"
-                                                            className="w-full pl-12"
+                                                            className="w-full !pl-[85px]"
                                                             placeholder="0.00"
                                                             value={offerForm.data.amount}
                                                             onChange={e => offerForm.setData('amount', e.target.value)}
                                                             required
                                                         />
-                                                        <span className="absolute left-5 top-1/2 -translate-y-1/2 font-black text-gray-muted">CHF</span>
+                                                        <span className="absolute left-6 top-1/2 -translate-y-1/2 font-black text-gray-muted/60">CHF</span>
                                                     </div>
                                                     <InputError message={offerForm.errors.amount} className="mt-2" />
                                                 </div>
@@ -816,6 +857,7 @@ function AnswerForm({ missionId, questionId, t }) {
     const submit = (e) => {
         e.preventDefault();
         post(route('missions.answer-question', { mission: missionId, question: questionId }), {
+            preserveScroll: true,
             onSuccess: () => reset(),
         });
     };

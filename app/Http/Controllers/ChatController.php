@@ -78,14 +78,35 @@ class ChatController extends Controller
     {
         $this->authorizeParticipant($chat);
         
+        $user = Auth::id();
+        
+        // If chat is pending and user is Provider, block sending
+        if ($chat->status === Chat::STATUS_PENDING && $user == $chat->mission->assigned_user_id) {
+            return response()->json([
+                'error' => 'Your message request is pending client approval.'
+            ], 403);
+        }
+
+        // If chat is pending and user is Client, activate it automatically
+        if ($chat->status === Chat::STATUS_PENDING && $user == $chat->mission->user_id) {
+            $chat->update(['status' => Chat::STATUS_ACTIVE]);
+        }
+        
+        // Block sending in rejected chats
+        if ($chat->status === Chat::STATUS_REJECTED) {
+            return response()->json([
+                'error' => 'This chat request has been declined.'
+            ], 403);
+        }
+
         $request->validate([
             'content' => 'required|string|max:2000',
         ]);
         
-        $user = Auth::user();
+        $fullUser = Auth::user();
         
         // Moderation Check
-        $check = $this->moderationService->checkMessage($request->content, $user);
+        $check = $this->moderationService->checkMessage($request->content, $fullUser);
         
         if (!$check['allowed']) {
              if ($check['reason'] === 'chat_suspended') {
@@ -97,7 +118,7 @@ class ChatController extends Controller
              
              // Blocked message (saved as blocked)
              $message = $chat->messages()->create([
-                 'user_id' => $user->id,
+                 'user_id' => $fullUser->id,
                  'content' => $request->content,
                  'is_blocked' => true,
                  'blocked_reason' => $check['violation_type'],
@@ -111,7 +132,7 @@ class ChatController extends Controller
         }
         
         $message = $chat->messages()->create([
-            'user_id' => $user->id,
+            'user_id' => $fullUser->id,
             'content' => $request->content,
         ]);
         
@@ -120,18 +141,12 @@ class ChatController extends Controller
         
         $chat->touch('last_message_at');
         
-        // Log before broadcasting
-        \Log::info('About to broadcast message:', ['message_id' => $message->id, 'chat_id' => $chat->id]);
-        
         // Broadcast to all users in the channel
         broadcast(new \App\Events\MessageSent($message));
         
-        // Log after broadcasting
-        \Log::info('Broadcast completed for message:', ['message_id' => $message->id]);
-
         // Notify other participants
         foreach ($chat->participant_ids as $participantId) {
-            if ($participantId != $user->id) {
+            if ($participantId != $fullUser->id) {
                 $participant = \App\Models\User::find($participantId);
                 if ($participant) {
                     $participant->notify(new \App\Notifications\NewMessageNotification($message));
@@ -139,15 +154,38 @@ class ChatController extends Controller
             }
         }
         
-        // Return message with user relationship loaded
         return response()->json($message);
+    }
+
+    public function accept(Chat $chat)
+    {
+        if (Auth::id() != $chat->mission->user_id) {
+            abort(403);
+        }
+
+        $chat->update(['status' => Chat::STATUS_ACTIVE]);
+
+        return response()->json(['message' => 'Chat request accepted']);
+    }
+
+    public function reject(Chat $chat)
+    {
+        if (Auth::id() != $chat->mission->user_id) {
+            abort(403);
+        }
+
+        $chat->update(['status' => Chat::STATUS_REJECTED]);
+
+        return response()->json(['message' => 'Chat request declined']);
     }
     
     // Create or get chat for a mission
     public function getMissionChat(Mission $mission)
     {
+        $userId = Auth::id();
+        
         // Use loose comparison (==) to handle string/int types from different DB drivers
-        if (Auth::id() != $mission->user_id && Auth::id() != $mission->assigned_user_id) {
+        if ($userId != $mission->user_id && $userId != $mission->assigned_user_id) {
             abort(403);
         }
 
@@ -157,24 +195,34 @@ class ChatController extends Controller
                 'error' => 'Chat cannot be created until a provider is assigned to this mission.'
             ], 422);
         }
-        
-        // Validate both participants exist
-        $participantIds = array_values(array_filter([$mission->user_id, $mission->assigned_user_id]));
-        
-        if (count($participantIds) !== 2) {
-            return response()->json([
-                'error' => 'Invalid mission state: missing participant information.'
-            ], 422);
+
+        // Check if chat already exists
+        $chat = Chat::where('mission_id', $mission->id)->first();
+
+        // If chat doesn't exist and user is the Provider, create as pending
+        if (!$chat && $userId == $mission->assigned_user_id) {
+            $chat = Chat::create([
+                'mission_id' => $mission->id,
+                'participant_ids' => array_values(array_filter([$mission->user_id, $mission->assigned_user_id])),
+                'status' => Chat::STATUS_PENDING,
+            ]);
+            
+            return response()->json($chat);
         }
         
-        $chat = Chat::firstOrCreate([
-            'mission_id' => $mission->id,
-        ], [
-            'participant_ids' => $participantIds,
-        ]);
+        // If chat doesn't exist and user is Client, create as active
+        if (!$chat && $userId == $mission->user_id) {
+            $chat = Chat::create([
+                'mission_id' => $mission->id,
+                'participant_ids' => array_values(array_filter([$mission->user_id, $mission->assigned_user_id])),
+                'status' => Chat::STATUS_ACTIVE,
+            ]);
+            
+            return response()->json($chat);
+        }
         
         // Ensure participants are correct and no nulls exist
-        if (!in_array(Auth::id(), $chat->participant_ids) || in_array(null, $chat->participant_ids, true)) {
+        if (!in_array($userId, $chat->participant_ids) || in_array(null, $chat->participant_ids, true)) {
              // Re-sync participants if needed
              $validParticipants = array_values(array_filter([$mission->user_id, $mission->assigned_user_id]));
              if (count($validParticipants) === 2) {

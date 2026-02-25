@@ -7,11 +7,11 @@ export default function RoleCard({ icon, emoji, title, description, selected, on
             onClick={onClick}
             className={`
                 w-full p-6 rounded-[24px]
-                border-2 transition-all duration-300
+                border-2 transition-all duration-500 ease-out
                 text-left
                 ${selected 
-                    ? 'border-oflem-terracotta bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/10 shadow-lg scale-[1.02]' 
-                    : 'border-gray-border/50 bg-white hover:border-oflem-terracotta/50 hover:shadow-md hover:-translate-y-1'
+                    ? 'border-oflem-terracotta bg-oflem-terracotta/5 shadow-elegant-glow scale-[1.02]' 
+                    : 'border-zinc-100 bg-white hover:border-oflem-terracotta/40 hover:shadow-elegant hover:-translate-y-1'
                 }
             `}
         >
@@ -33,9 +33,11 @@ export default function RoleCard({ icon, emoji, title, description, selected, on
                 </div>
                 {selected && (
                     <div className="flex-shrink-0">
-                        <svg className="w-6 h-6 text-oflem-terracotta" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                        </svg>
+                        <div className="w-7 h-7 bg-oflem-terracotta rounded-full flex items-center justify-center shadow-lg">
+                            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+                            </svg>
+                        </div>
                     </div>
                 )}
             </div>

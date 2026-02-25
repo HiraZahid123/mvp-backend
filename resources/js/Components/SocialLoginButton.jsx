@@ -43,12 +43,12 @@ export default function SocialLoginButton({ provider, type = 'login' }) {
             className="
                 w-full flex items-center justify-center gap-3
                 px-6 py-4
-                bg-white border-2 border-gray-border/50
+                bg-white border-2 border-zinc-100
                 rounded-[24px]
                 text-oflem-charcoal text-base font-bold
-                hover:border-oflem-terracotta hover:bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/5
-                hover:shadow-md hover:-translate-y-0.5
-                transition-all duration-300
+                hover:border-oflem-terracotta/40 hover:bg-zinc-50
+                hover:shadow-elegant hover:-translate-y-0.5
+                transition-all duration-500 ease-out
                 group
             "
         >

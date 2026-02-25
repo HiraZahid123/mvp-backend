@@ -68,7 +68,7 @@ export default function MissionSuccess({ mission, userRole }) {
                 </div>
 
                 {/* Next Steps */}
-                <div className="bg-oflem-cream rounded-3xl p-8 mb-8">
+                <div className="elegant-capsule !bg-oflem-cream !p-8 mb-8">
                     <h3 className="text-xl font-black text-oflem-charcoal mb-6">
                         {t('Next Steps')}
                     </h3>

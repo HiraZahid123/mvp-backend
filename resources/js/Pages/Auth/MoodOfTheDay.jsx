@@ -92,8 +92,8 @@ export default function MoodOfTheDay({ user, currentRole }) {
                 </PrimaryButton>
             </form>
 
-            <div className="mt-6 p-4 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/5 rounded-[24px] border border-oflem-terracotta/20">
-                <p className="text-xs text-gray-muted text-center">
+            <div className="elegant-capsule mt-6">
+                <p className="text-xs text-oflem-charcoal font-medium text-center">
                     {t('This selection determines your initial dashboard. You can change it at any time.')}
                 </p>
             </div>

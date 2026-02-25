@@ -46,7 +46,7 @@ export default function LoginManual({ canResetPassword, status }) {
             </div>
 
             {status && (
-                <div className="mb-6 font-medium text-sm text-green-600 bg-green-50 px-4 py-3 rounded-[24px] border border-green-100">
+                <div className="elegant-capsule-success mb-6">
                     {status}
                 </div>
             )}
@@ -113,11 +113,11 @@ export default function LoginManual({ canResetPassword, status }) {
             </div>
 
             {/* Forgot Password Modal/Info */}
-            <div className="mt-6 p-4 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/5 rounded-[24px] border border-oflem-terracotta/20">
+            <div className="elegant-capsule mt-6">
                 <p className="text-xs font-bold text-oflem-charcoal mb-1">
                     {t("A little memory gap?")}
                 </p>
-                <p className="text-xs text-gray-muted">
+                <p className="text-xs text-oflem-charcoal font-medium">
                     {t("Don't panic, we'll send you a reset link.")}
                 </p>
             </div>

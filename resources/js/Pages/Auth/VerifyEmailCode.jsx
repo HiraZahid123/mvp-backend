@@ -101,6 +101,11 @@ export default function VerifyEmailCode({ email }) {
             },
             onError: (errors) => {
                 console.error('Verification failed:', errors);
+                // If code is expired or invalid, immediately allow resend
+                if (errors.code) {
+                    setCanResend(true);
+                    setTimeLeft(0);
+                }
             },
         });
     };
@@ -188,9 +193,9 @@ export default function VerifyEmailCode({ email }) {
                 </PrimaryButton>
             </form>
 
-            <div className="mt-6 p-4 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/5 rounded-[24px] border border-oflem-terracotta/20">
-                <p className="text-xs text-gray-muted text-center">
-                    {t("The code will expire in ")}<span className="font-bold text-oflem-charcoal">{t("10 minutes")}</span>
+            <div className="elegant-capsule mt-8">
+                <p className="text-xs text-oflem-charcoal font-medium text-center">
+                    {t("The code will expire in ")}<span className="font-bold text-oflem-terracotta">{t("10 minutes")}</span>
                 </p>
             </div>
         </AuthSplitLayout>

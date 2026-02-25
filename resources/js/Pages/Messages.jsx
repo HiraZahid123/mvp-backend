@@ -117,6 +117,12 @@ export default function Messages({ chats: initialChats, selectedChatId }) {
         e.preventDefault();
         if (!newMessage.trim() || !activeChat) return;
 
+        // If chat is rejected, don't allow sending
+        if (activeChat.status === 'rejected') {
+            alert(t('This chat request has been declined.'));
+            return;
+        }
+
         const content = newMessage;
         setNewMessage('');
         handleTyping(false);
@@ -125,6 +131,13 @@ export default function Messages({ chats: initialChats, selectedChatId }) {
         axios.post(route('api.chats.messages.store', activeChat.id), { content })
             .then(response => {
                 console.log('Message sent successfully:', response.data);
+                
+                // If it was pending and user is owner, it's now active
+                if (activeChat.status === 'pending' && activeChat.mission?.user_id === auth.user.id) {
+                    setActiveChat(prev => ({ ...prev, status: 'active' }));
+                    setChats(prev => prev.map(c => c.id === activeChat.id ? { ...c, status: 'active' } : c));
+                }
+
                 // Add message immediately to UI
                 setMessages(prev => {
                     // Check if this message ID already exists
@@ -212,6 +225,21 @@ export default function Messages({ chats: initialChats, selectedChatId }) {
             });
     };
 
+    const handleAcceptChat = () => {
+        axios.post(route('api.chats.accept', activeChat.id)).then(() => {
+            setActiveChat(prev => ({ ...prev, status: 'active' }));
+            setChats(prev => prev.map(c => c.id === activeChat.id ? { ...c, status: 'active' } : c));
+        });
+    };
+
+    const handleRejectChat = () => {
+        if (!confirm(t('Are you sure you want to decline this chat request?'))) return;
+        axios.post(route('api.chats.reject', activeChat.id)).then(() => {
+            setActiveChat(prev => ({ ...prev, status: 'rejected' }));
+            setChats(prev => prev.map(c => c.id === activeChat.id ? { ...c, status: 'rejected' } : c));
+        });
+    };
+
     return (
         <AuthenticatedLayout 
             header={t('Messages')}
@@ -252,20 +280,32 @@ export default function Messages({ chats: initialChats, selectedChatId }) {
                                             <div className="w-12 h-12 rounded-full bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light flex items-center justify-center text-oflem-charcoal font-black shrink-0">
                                                 {other.name?.charAt(0)?.toUpperCase() || 'U'}
                                             </div>
-                                            <div className="flex-1 min-w-0">
-                                                <div className="flex items-center justify-between mb-1">
-                                                    <h3 className="font-black text-oflem-charcoal truncate">{other.name}</h3>
-                                                    <span className="text-[10px] text-gray-muted font-bold">
-                                                        {chat.last_message_at ? new Date(chat.last_message_at).toLocaleDateString() : ''}
-                                                    </span>
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="flex items-center justify-between mb-1">
+                                                        <h3 className="font-black text-oflem-charcoal truncate">{other.name}</h3>
+                                                        <span className="text-[10px] text-gray-muted font-bold">
+                                                            {chat.last_message_at ? new Date(chat.last_message_at).toLocaleDateString() : ''}
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex items-center justify-between">
+                                                        <p className="text-xs text-gray-muted font-bold truncate flex items-center gap-1.5">
+                                                            <FileText size={10} className="text-oflem-terracotta" /> {chat.mission?.title || t('Mission')}
+                                                        </p>
+                                                        {chat.status === 'pending' && (
+                                                            <span className="text-[10px] bg-oflem-terracotta/10 text-oflem-terracotta px-1.5 py-0.5 rounded font-black uppercase">
+                                                                {t('Pending')}
+                                                            </span>
+                                                        )}
+                                                        {chat.status === 'rejected' && (
+                                                            <span className="text-[10px] bg-red-100 text-red-500 px-1.5 py-0.5 rounded font-black uppercase">
+                                                                {t('Declined')}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <p className="text-xs text-gray-muted font-medium truncate mt-1">
+                                                        {chat.messages?.[0]?.content || t('Start a conversation')}
+                                                    </p>
                                                 </div>
-                                                <p className="text-xs text-gray-muted font-bold mb-1 truncate flex items-center gap-1.5">
-                                                    <FileText size={10} className="text-oflem-terracotta" /> {chat.mission?.title || t('Mission')}
-                                                </p>
-                                                <p className="text-xs text-gray-muted font-medium truncate">
-                                                    {chat.messages?.[0]?.content || t('Start a conversation')}
-                                                </p>
-                                            </div>
                                         </div>
                                     </button>
                                 );
@@ -298,7 +338,7 @@ export default function Messages({ chats: initialChats, selectedChatId }) {
                                 {messages.map((msg) => (
                                     msg.user_id === null || msg.is_system_message ? (
                                         <div key={msg.id} className="flex justify-center my-4">
-                                            <div className="bg-oflem-cream/50 border border-oflem-terracotta/30 px-6 py-3 rounded-2xl text-xs font-bold text-oflem-charcoal/70 text-center max-w-[80%]">
+                                            <div className="elegant-capsule !px-6 !py-3 !bg-oflem-cream/50 text-xs font-bold text-oflem-charcoal/70 text-center max-w-[80%]">
                                                 {msg.content}
                                             </div>
                                         </div>
@@ -342,28 +382,96 @@ export default function Messages({ chats: initialChats, selectedChatId }) {
                                 <div ref={messagesEndRef} />
                             </div>
 
-                            {/* Message Input */}
-                            <form onSubmit={sendMessage} className="p-6 bg-white border-t border-gray-border">
-                                <div className="flex items-center gap-3">
-                                    <input
-                                        type="text"
-                                        value={newMessage}
-                                        onChange={(e) => {
-                                            setNewMessage(e.target.value);
-                                            handleTyping(true);
-                                        }}
-                                        placeholder={t('Type your message...')}
-                                        className="flex-1 bg-oflem-cream border-gray-border rounded-full px-6 py-4 text-sm font-medium focus:ring-2 focus:ring-oflem-terracotta focus:border-transparent transition-all"
-                                    />
-                                    <button
-                                        type="submit"
-                                        disabled={!newMessage.trim()}
-                                        className="w-14 h-14 bg-oflem-charcoal text-white rounded-full flex items-center justify-center hover:bg-black transition-all disabled:opacity-30 shadow-lg group"
-                                    >
-                                        <Send size={24} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                                    </button>
-                                </div>
-                            </form>
+                            {/* Message Input / Request Actions */}
+                            <div className="p-6 bg-white border-t border-gray-border">
+                                {activeChat.status === 'pending' && activeChat.mission?.user_id === auth.user.id ? (
+                                    <div className="space-y-4">
+                                        <div className="flex items-center gap-3 p-4 bg-oflem-cream/30 rounded-2xl border border-gray-border/50">
+                                            <div className="w-10 h-10 bg-oflem-terracotta/10 text-oflem-terracotta rounded-full flex items-center justify-center shrink-0">
+                                                <Zap size={20} />
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-black text-oflem-charcoal">{t('Chat Request')}</p>
+                                                <p className="text-xs text-gray-muted font-medium">{t('The provider would like to chat about this mission.')}</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex gap-3">
+                                            <button
+                                                onClick={handleAcceptChat}
+                                                className="flex-1 py-4 bg-oflem-charcoal text-white font-black rounded-full hover:bg-black transition-all flex items-center justify-center gap-2"
+                                            >
+                                                <CheckCircle size={18} /> {t('Accept Request')}
+                                            </button>
+                                            <button
+                                                onClick={handleRejectChat}
+                                                className="px-8 py-4 bg-gray-100 text-gray-700 font-black rounded-full hover:bg-gray-200 transition-all"
+                                            >
+                                                {t('Decline')}
+                                            </button>
+                                        </div>
+                                        <div className="relative flex items-center py-2">
+                                            <div className="flex-grow border-t border-gray-border"></div>
+                                            <span className="flex-shrink mx-4 text-xs font-black text-gray-muted uppercase tracking-widest">{t('Or simply reply')}</span>
+                                            <div className="flex-grow border-t border-gray-border"></div>
+                                        </div>
+                                        <form onSubmit={sendMessage} className="flex items-center gap-3">
+                                            <input
+                                                type="text"
+                                                value={newMessage}
+                                                onChange={(e) => {
+                                                    setNewMessage(e.target.value);
+                                                    handleTyping(true);
+                                                }}
+                                                placeholder={t('Type your reply to automatically accept...')}
+                                                className="flex-1 bg-oflem-cream border-gray-border rounded-full px-6 py-4 text-sm font-medium focus:ring-2 focus:ring-oflem-terracotta focus:border-transparent transition-all"
+                                            />
+                                            <button
+                                                type="submit"
+                                                disabled={!newMessage.trim()}
+                                                className="w-14 h-14 bg-oflem-charcoal text-white rounded-full flex items-center justify-center hover:bg-black transition-all disabled:opacity-30 shadow-lg"
+                                            >
+                                                <Send size={24} />
+                                            </button>
+                                        </form>
+                                    </div>
+                                ) : activeChat.status === 'pending' && activeChat.mission?.user_id !== auth.user.id ? (
+                                    <div className="text-center p-6 bg-oflem-cream/30 rounded-2xl border border-gray-border/50">
+                                        <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mx-auto mb-3 text-oflem-terracotta/40">
+                                            <Clock size={24} />
+                                        </div>
+                                        <p className="text-sm font-black text-oflem-charcoal mb-1">{t('Request Pending')}</p>
+                                        <p className="text-xs text-gray-muted font-medium italic">{t('Waiting for the client to accept your chat request.')}</p>
+                                    </div>
+                                ) : activeChat.status === 'rejected' ? (
+                                    <div className="text-center p-6 bg-red-50 rounded-2xl border border-red-100">
+                                        <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mx-auto mb-3 text-red-500/40">
+                                            <Lock size={24} />
+                                        </div>
+                                        <p className="text-sm font-black text-red-600 mb-1">{t('Request Declined')}</p>
+                                        <p className="text-xs text-red-500/70 font-medium">{t('The client has declined this chat request.')}</p>
+                                    </div>
+                                ) : (
+                                    <form onSubmit={sendMessage} className="flex items-center gap-3">
+                                        <input
+                                            type="text"
+                                            value={newMessage}
+                                            onChange={(e) => {
+                                                setNewMessage(e.target.value);
+                                                handleTyping(true);
+                                            }}
+                                            placeholder={t('Type your message...')}
+                                            className="flex-1 bg-oflem-cream border-gray-border rounded-full px-6 py-4 text-sm font-medium focus:ring-2 focus:ring-oflem-terracotta focus:border-transparent transition-all"
+                                        />
+                                        <button
+                                            type="submit"
+                                            disabled={!newMessage.trim()}
+                                            className="w-14 h-14 bg-oflem-charcoal text-white rounded-full flex items-center justify-center hover:bg-black transition-all disabled:opacity-30 shadow-lg group"
+                                        >
+                                            <Send size={24} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                                        </button>
+                                    </form>
+                                )}
+                            </div>
                         </>
                     ) : (
                         <div className="flex-1 flex items-center justify-center">
@@ -437,7 +545,7 @@ export default function Messages({ chats: initialChats, selectedChatId }) {
 
                             {/* Active Offer Section */}
                             {getActiveOffer(activeChat) && (
-                                <div className="p-4 bg-oflem-cream/20 border border-oflem-terracotta/20 rounded-2xl space-y-3">
+                                <div className="elegant-capsule !p-4 !bg-oflem-cream/20 space-y-3">
                                     <div className="flex items-center justify-between">
                                         <p className="text-xs text-gray-muted font-black uppercase">{t('Pending Offer')}</p>
                                         <span className="px-2 py-0.5 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-oflem-charcoal text-[10px] font-black rounded text-uppercase">

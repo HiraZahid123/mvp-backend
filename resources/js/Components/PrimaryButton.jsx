@@ -13,7 +13,7 @@ export default function PrimaryButton({
             {...props}
             disabled={disabled || processing}
             className={
-                `inline-flex items-center justify-center px-8 py-3.5 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white rounded-rs font-black text-[14px] uppercase tracking-widest shadow-sho transition-all duration-300 hover:scale-[1.03] hover:shadow-sho-lg active:scale-[0.98] focus:outline-none focus:ring-4 focus:ring-oflem-terracotta/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none ` +
+                `inline-flex items-center justify-center px-8 py-3.5 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white rounded-rs font-black text-[14px] uppercase tracking-widest shadow-sho transition-all duration-500 ease-out hover:scale-[1.02] hover:shadow-elegant-glow active:scale-[0.98] focus:outline-none focus:ring-4 focus:ring-oflem-terracotta/20 disabled:from-zinc-100 disabled:to-zinc-100 disabled:text-zinc-400 disabled:shadow-none disabled:cursor-not-allowed disabled:transform-none ` +
                 className
             }
         >

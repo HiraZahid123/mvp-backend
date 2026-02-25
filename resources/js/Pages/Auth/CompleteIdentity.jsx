@@ -7,6 +7,7 @@ import PhotoUploader from '@/Components/PhotoUploader';
 import InputError from '@/Components/InputError';
 import PrimaryButton from '@/Components/PrimaryButton';
 import BackButton from '@/Components/BackButton';
+import useTranslation from '@/Hooks/useTranslation';
 
 export default function CompleteIdentity({ user }) {
     const { t } = useTranslation();
@@ -87,8 +88,8 @@ export default function CompleteIdentity({ user }) {
                 </PrimaryButton>
             </form>
 
-            <div className="mt-6 p-4 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/5 rounded-[24px] border border-oflem-terracotta/20">
-                <p className="text-xs text-gray-muted text-center">
+            <div className="elegant-capsule mt-6">
+                <p className="text-xs text-oflem-charcoal font-medium text-center">
                     {t("Your information remains private and secure.")}
                 </p>
             </div>

@@ -45,13 +45,3 @@ php artisan serve
 php artisan reverb:start
 npm run dev
 ```
-
----
-
-## 📞 Support
-
-- **Developer**: Hira Zahid
-- **Client**: Haykel Sahraoui
-
-**Built with ❤️ in Switzerland**
-

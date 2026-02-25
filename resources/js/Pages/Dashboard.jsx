@@ -673,7 +673,7 @@ function BothDashboard({ user, t }) {
     return (
         <div className="space-y-10">
             {/* Split Welcome */}
-            <div className="bg-gradient-to-br from-cream-accent to-white border border-oflem-terracotta/20 rounded-[32px] p-8 lg:p-12 relative overflow-hidden group">
+            <div className="elegant-capsule bg-gradient-to-br from-oflem-cream to-white border border-zinc-100 mt-0 !p-8 lg:!p-12 relative overflow-hidden group">
                 <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
                     <div>
                         <h3 className="text-3xl lg:text-4xl font-black text-oflem-charcoal mb-4 leading-tight">

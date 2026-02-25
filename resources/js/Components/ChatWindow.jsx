@@ -108,7 +108,7 @@ export default function ChatWindow({ chat, onClose }) {
                 {messages.map((msg) => (
                     msg.user_id === null || msg.is_system ? (
                         <div key={msg.id} className="flex justify-center my-2">
-                             <div className="bg-cream-accent/50 border border-oflem-terracotta/20 px-4 py-2 rounded-2xl text-[11px] font-bold text-oflem-charcoal/60 text-center max-w-[90%]">
+                             <div className="elegant-capsule !p-3 !bg-cream-accent/50 text-[11px] font-bold text-oflem-charcoal/60 text-center max-w-[90%]">
                                 {msg.content}
                              </div>
                         </div>

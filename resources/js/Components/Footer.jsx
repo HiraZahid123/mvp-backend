@@ -8,15 +8,15 @@ export default function Footer() {
 
     return (
         <footer className="w-full bg-zinc-50 border-t border-zinc-200 pt-16 pb-8 px-6 overflow-hidden relative">
-            <div className="max-w-[1248px] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 relative z-10 mb-12">
-                <div className="flex flex-col">
+            <div className="max-w-[1248px] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12 relative z-10 mb-12 text-center md:text-left">
+                <div className="flex flex-col items-center md:items-start">
                     <Link href="/" className="logo text-[28px] font-black tracking-[-0.8px] text-zinc-900 flex items-baseline mb-6 hover:scale-[1.02] transition-transform w-fit">
                         Oflem<span className="text-oflem-terracotta">.</span>
                     </Link>
                     <p className="text-zinc-500 text-[14px] font-medium leading-[1.7] mb-8 max-w-[260px]">
                         {t('Someone near you can take care of it. Verified providers, secure payment, French-speaking Switzerland.')}
                     </p>
-                    <div className="flex gap-3">
+                    <div className="flex gap-3 justify-center md:justify-start">
                         <div className="w-9 h-9 rounded-lg bg-white border border-zinc-200 flex items-center justify-center shadow-sm hover:border-oflem-terracotta transition-colors group cursor-pointer">
                             <Facebook className="w-4 h-4 text-zinc-400 group-hover:text-oflem-terracotta" />
                         </div>
@@ -29,7 +29,7 @@ export default function Footer() {
                     </div>
                 </div>
 
-                <div>
+                <div className="flex flex-col">
                     <h4 className="text-[15px] font-black text-zinc-900 mb-6">{t('Discover')}</h4>
                     <ul className="space-y-3">
                         <li><Link href={route('missions.active')} className="text-[13.5px] font-medium text-zinc-500 hover:text-oflem-terracotta hover:translate-x-1 transition-all inline-block">{t('All missions')}</Link></li>
@@ -39,7 +39,7 @@ export default function Footer() {
                     </ul>
                 </div>
 
-                <div>
+                <div className="flex flex-col">
                     <h4 className="text-[15px] font-black text-zinc-900 mb-6">{t('Help & Legal')}</h4>
                     <ul className="space-y-3">
                         <li><Link href="#" className="text-[13.5px] font-medium text-zinc-500 hover:text-oflem-terracotta hover:translate-x-1 transition-all inline-block">{t('Help Center')}</Link></li>
@@ -49,10 +49,10 @@ export default function Footer() {
                     </ul>
                 </div>
 
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col items-center md:items-start gap-4">
                     <h4 className="text-[15px] font-black text-zinc-900 mb-2">{t('Trust')}</h4>
-                    <div className="bg-white p-5 rounded-xl border border-zinc-200 shadow-sm">
-                        <div className="flex items-center gap-3 mb-3">
+                    <div className="bg-white p-5 rounded-xl border border-zinc-200 shadow-sm w-full max-w-[280px]">
+                        <div className="flex items-center gap-3 mb-3 justify-center md:justify-start">
                             <div className="w-8 h-8 rounded-full bg-oflem-green/10 flex items-center justify-center">
                                 <Check size={14} className="text-oflem-terracotta" />
                             </div>
@@ -62,7 +62,7 @@ export default function Footer() {
                             "{t('Your satisfaction or your money back.')}"
                         </p>
                     </div>
-                    <div className="flex gap-2 opacity-40 grayscale">
+                    <div className="flex gap-2 opacity-40 grayscale justify-center md:justify-start">
                         <div className="h-4 w-7 bg-zinc-300 rounded-sm" />
                         <div className="h-4 w-7 bg-zinc-300 rounded-sm" />
                         <div className="h-4 w-7 bg-zinc-300 rounded-sm" />

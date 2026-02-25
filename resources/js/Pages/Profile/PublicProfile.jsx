@@ -56,7 +56,7 @@ export default function PublicProfile({ user, reviews, ratingDistribution }) {
                                 </div>
                                 
                                 {user.email_verified_at && (
-                                    <div className="flex items-center gap-2 px-4 py-2 bg-green-50 rounded-full">
+                                    <div className="elegant-capsule-success !px-4 !py-2">
                                         <CheckCircle className="w-4 h-4 text-green-600" />
                                         <span className="text-xs font-black text-green-600 uppercase tracking-widest">
                                             Verified
@@ -167,7 +167,7 @@ export default function PublicProfile({ user, reviews, ratingDistribution }) {
                                 ))}
                             </div>
                         ) : (
-                            <div className="bg-white rounded-[32px] p-12 text-center border border-gray-border">
+                            <div className="elegant-capsule !p-12 text-center">
                                 <div className="w-16 h-16 bg-off-white-bg rounded-full flex items-center justify-center mx-auto mb-4">
                                     <Star className="w-8 h-8 text-gray-border" />
                                 </div>

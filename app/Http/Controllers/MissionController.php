@@ -25,12 +25,11 @@ class MissionController extends Controller
     protected $geocodingService;
 
     public function __construct(
-        ModerationService $moderationService, 
+        ModerationService $moderationService,
         \App\Services\TaskProcessingService $taskService,
         \App\Services\MatchmakingService $matchmakingService,
         \App\Services\GeocodingService $geocodingService
-    )
-    {
+    ) {
         $this->moderationService = $moderationService;
         $this->taskService = $taskService;
         $this->matchmakingService = $matchmakingService;
@@ -40,8 +39,8 @@ class MissionController extends Controller
     public function create(Request $request)
     {
         $prefillTitle = $request->query('title') ?? $request->query('search', '');
-        $aiTitle = $request->query('improved_title'); 
-        
+        $aiTitle = $request->query('improved_title');
+
         if (!$aiTitle && !empty($prefillTitle)) {
             $prompt = "You are an AI for Oflem, a friendly Swiss help platform.
             The user has provided a raw mission title: \"{$prefillTitle}\".
@@ -61,7 +60,7 @@ class MissionController extends Controller
             $aiResult = $this->taskService->generateContent($prompt);
             $aiTitle = is_array($aiResult) ? ($aiResult['improved_title'] ?? $aiResult['text'] ?? $prefillTitle) : ($aiResult ?: $prefillTitle);
         }
-        
+
         return Inertia::render('Missions/Create', [
             'prefillTitle' => $prefillTitle,
             'aiTitle' => $aiTitle,
@@ -81,7 +80,7 @@ class MissionController extends Controller
         ]);
 
         $draftDescription = $request->description ?? 'None';
-        
+
         $prompt = "You are an AI for Oflem, a friendly Swiss help platform.
         
         The user has provided a mission title and potentially a draft description.
@@ -115,12 +114,12 @@ class MissionController extends Controller
         // We'll use a raw prompt call if TaskProcessingService supports it, 
         // otherwise we'll adapt analyzeTask to handle this context.
         // For now, let's assume analyzeTask can be reused or we use a slightly more generic approach.
-        
+
         $aiResult = $this->taskService->generateContent($prompt);
-        
+
         // If the AI results are returned in the standard format, we might need to adjust.
         // But since we asked for specific keys in the prompt, let's try to extract them.
-        
+
         return response()->json([
             'improved_title' => $aiResult['improved_title'] ?? $request->title,
             'improved_description' => $aiResult['improved_description'] ?? ($aiResult['summary'] ?? "I need help with: " . $request->title),
@@ -186,7 +185,7 @@ class MissionController extends Controller
         // For guest users, we still need some basic enrichment
         // Set default category if not provided
         $data['category'] = $data['category'] ?? 'Other';
-        
+
         // Note: Full AI enrichment will happen in background after mission creation
         return $data;
     }
@@ -199,7 +198,7 @@ class MissionController extends Controller
         // Start with Fast check for speed
         $isClean = $this->moderationService->isCleanFast($content);
         $violations = $isClean ? [] : $this->moderationService->getViolations($content);
-        
+
         // If it passes fast check and content is long enough, do AI check
         $aiResult = null;
         if ($isClean && strlen($content) > 3) { // Lowered threshold to catch short titles like "clean"
@@ -230,7 +229,7 @@ class MissionController extends Controller
     {
         if (Auth::check() && session()->has('pending_mission')) {
             $data = session()->pull('pending_mission');
-            
+
             // Set default category if not provided
             $data['category'] = $data['category'] ?? 'Other';
 
@@ -249,7 +248,7 @@ class MissionController extends Controller
                     $user->location_lng = $data['lng'];
                     $user->location_address = $data['location'] ?? $data['exact_address'] ?? null;
                     // Default radius for clients
-                    $user->discovery_radius_km = 30; 
+                    $user->discovery_radius_km = 30;
                 }
             }
 
@@ -259,14 +258,14 @@ class MissionController extends Controller
                 'user_id' => $user->id,
                 'status' => Mission::STATUS_OUVERTE,
             ]));
-            
+
             // Dispatch background job for AI enrichment
             ProcessMissionEnrichment::dispatch($mission);
-            
+
             return redirect()->route('missions.matchmaking', $mission->id)
                 ->with('success', 'Mission created successfully! AI analysis is processing in the background.');
         }
-        
+
         return redirect()->route('dashboard');
     }
 
@@ -290,8 +289,8 @@ class MissionController extends Controller
             'lat' => $mission->lat,
             'lng' => $mission->lng,
             'radius' => 50 // Standard wide search for suggestions
-        ])->map(function($user) {
-             return [
+        ])->map(function ($user) {
+            return [
                 'id' => $user->id,
                 'name' => $user->name,
                 'profile_photo' => $user->profile_photo_url,
@@ -331,8 +330,8 @@ class MissionController extends Controller
             'lat' => $missionData['lat'] ?? null,
             'lng' => $missionData['lng'] ?? null,
             'radius' => 50
-        ])->map(function($user) {
-             return [
+        ])->map(function ($user) {
+            return [
                 'id' => $user->id,
                 'name' => $user->name,
                 'profile_photo' => $user->profile_photo_url,
@@ -357,12 +356,12 @@ class MissionController extends Controller
         $user = Auth::user();
         $lat = $user->location_lat;
         $lng = $user->location_lng;
-        
+
         // Get filter inputs
         $radius = $request->query('radius', $user->discovery_radius_km ?? 10);
-        
+
         $filters = $request->only(['search', 'budget_min', 'budget_max', 'start_date', 'end_date', 'categories', 'category']);
-        
+
         // Standardize category/categories
         if ($request->has('category') && !$request->has('categories')) {
             $filters['categories'] = [$request->category];
@@ -423,13 +422,13 @@ class MissionController extends Controller
 
     public function show(Mission $mission)
     {
-        $mission->load(['user', 'offers.user', 'questions.user']);
-        
+        $mission->load(['user', 'offers.user', 'questions.user', 'chat']);
+
         // Hide exact address if not assigned or not owner
         $canSeeAddress = $mission->canSeeFullAddress(Auth::user());
 
         $clientSecret = null;
-        
+
         // If mission is waiting for payment confirmation from owner
         if (Auth::id() === $mission->user_id && $mission->status === Mission::STATUS_EN_NEGOCIATION && $mission->payment_intent_id) {
             try {
@@ -441,7 +440,7 @@ class MissionController extends Controller
                 \Illuminate\Support\Facades\Log::warning("Could not retrieve Stripe PI for mission {$mission->id}: " . $e->getMessage());
             }
         }
-        
+
         return Inertia::render('Missions/Details', [
             'mission' => $mission,
             'canSeeAddress' => $canSeeAddress,
@@ -489,7 +488,7 @@ class MissionController extends Controller
 
         // Run moderation checks on updated content
         $content = $validated['title'] . ' ' . ($validated['description'] ?? '');
-        
+
         if (!$this->moderationService->isCleanFast($content)) {
             return back()->withErrors(['title' => 'Content violates keyword moderation rules.']);
         }
@@ -526,8 +525,10 @@ class MissionController extends Controller
         ];
 
         // Check if transition is allowed
-        if (!isset($allowedTransitions[$currentStatus]) || 
-            !in_array($newStatus, $allowedTransitions[$currentStatus])) {
+        if (
+            !isset($allowedTransitions[$currentStatus]) ||
+            !in_array($newStatus, $allowedTransitions[$currentStatus])
+        ) {
             return back()->withErrors([
                 'status' => 'Cannot change status from ' . $currentStatus . ' to ' . $newStatus
             ]);
@@ -537,14 +538,14 @@ class MissionController extends Controller
         if ($newStatus === Mission::STATUS_OUVERTE && $currentStatus !== Mission::STATUS_OUVERTE) {
             // Clear assignment when reopening
             $mission->assigned_user_id = null;
-            
+
             // Reject all pending offers
             $mission->offers()->where('status', 'pending')->update(['status' => 'rejected']);
         }
 
         // Store old status before transition
         $oldStatus = $mission->status;
-        
+
         $mission->transitionTo($newStatus);
 
         // Broadcast status update event with both mission and old status
@@ -561,26 +562,26 @@ class MissionController extends Controller
         ]);
 
         if ($mission->status !== Mission::STATUS_OUVERTE) {
-        return back()->withErrors(['mission' => 'This mission is no longer accepting offers.']);
-    }
+            return back()->withErrors(['mission' => 'This mission is no longer accepting offers.']);
+        }
 
-    /* 
+        /* 
     if ($mission->price_type !== 'open') {
             return back()->withErrors(['mission' => 'This mission has a fixed price.']);
         }
     */
-        
+
         // Prevent mission owner from submitting offers on their own mission
         if ($mission->user_id == Auth::id()) {
             return back()->withErrors(['mission' => 'You cannot submit an offer on your own mission.']);
         }
-        
+
         // Prevent duplicate offers from the same user
         $existingOffer = $mission->offers()
             ->where('user_id', Auth::id())
             ->where('status', '!=', 'rejected')
             ->first();
-            
+
         if ($existingOffer) {
             return back()->withErrors(['mission' => 'You have already submitted an offer for this mission.']);
         }
@@ -620,7 +621,7 @@ class MissionController extends Controller
 
         // Notify Mission Owner
         $mission->user->notify(new \App\Notifications\NewQuestionNotification($question));
-        
+
         // Dispatch Real-time Event
         event(new \App\Events\QuestionPosted($question));
 
@@ -643,7 +644,8 @@ class MissionController extends Controller
         }
 
         try {
-            \Illuminate\Support\Facades\DB::transaction(function () use ($mission, &$message) {
+            $chat = null; // Initialize $chat outside the transaction
+            \Illuminate\Support\Facades\DB::transaction(function () use ($mission, &$chat) {
                 $mission->transitionTo(Mission::STATUS_EN_NEGOCIATION);
                 $mission->assigned_user_id = Auth::id();
                 $mission->save();
@@ -657,20 +659,8 @@ class MissionController extends Controller
                     'participant_ids' => [$mission->user_id, Auth::id()],
                 ]);
 
-                // Send initial message from provider
-                $message = $chat->messages()->create([
-                    'user_id' => Auth::id(),
-                    'content' => "Hello! I've accepted your mission instantly. Looking forward to working together!",
-                ]);
-
                 $chat->touch('last_message_at');
             });
-
-            // Notify and Broadcast after transaction
-            if (isset($message)) {
-                broadcast(new \App\Events\MessageSent($message->load('user:id,name,avatar')));
-                $mission->user->notify(new \App\Notifications\NewMessageNotification($message));
-            }
 
             // Notify Mission Owner about assignment
             $mission->user->notify(new \App\Notifications\MissionAssignedNotification($mission));
@@ -708,13 +698,13 @@ class MissionController extends Controller
 
                 // Create Stripe payment intent (Escrow Hold)
                 $pi = app(\App\Services\StripeService::class)->createHold($mission);
-                
+
                 // Check if there's an offer from this user before updating
                 $existingOffer = $mission->offers()->where('user_id', $provider->id)->first();
                 if ($existingOffer) {
                     $existingOffer->update(['status' => 'accepted']);
                 }
-                
+
                 // Reject other offers
                 $mission->offers()->where('user_id', '!=', $provider->id)->update(['status' => 'rejected']);
             });
@@ -752,14 +742,16 @@ class MissionController extends Controller
 
         try {
             \Illuminate\Support\Facades\DB::transaction(function () use ($mission, $offer, &$pi) {
-                $mission->transitionTo(Mission::STATUS_EN_NEGOCIATION);
+                if ($mission->status !== Mission::STATUS_EN_NEGOCIATION) {
+                    $mission->transitionTo(Mission::STATUS_EN_NEGOCIATION);
+                }
                 $mission->assigned_user_id = $offer->user_id;
                 $mission->budget = $offer->amount; // Finalize budget based on offer
                 $mission->save();
 
                 // Create Stripe payment intent
                 $pi = app(\App\Services\StripeService::class)->createHold($mission);
-                
+
                 // Update offer statuses inside transaction
                 $offer->update(['status' => 'accepted']);
                 $mission->offers()->where('id', '!=', $offer->id)->update(['status' => 'rejected']);
@@ -773,7 +765,7 @@ class MissionController extends Controller
                 ->where('id', '!=', $offer->id)
                 ->whereNotNull('user_id')
                 ->get()
-                ->each(function($o) use ($mission) {
+                ->each(function ($o) use ($mission) {
                     $o->user->notify(new \App\Notifications\OfferRejectedNotification($mission));
                 });
 
@@ -813,20 +805,20 @@ class MissionController extends Controller
                 $isAuthorized = app(\App\Services\StripeService::class)->isAuthorized($mission->payment_intent_id);
                 if (!$isAuthorized) {
                     $pi = app(\App\Services\StripeService::class)->getPaymentIntent($mission->payment_intent_id);
-                     if ($pi->status !== 'requires_capture' && $pi->status !== 'succeeded') { 
-                         // Logic allows for specific statuses, but usually we want authorized
-                         // If not authorized, we might need to create a new one or return error
-                         // For now, if it exists but bad status, we might return error
-                         // Simplified: if not authorized, return current PI secret to finish it
-                         return back()
+                    if ($pi->status !== 'requires_capture' && $pi->status !== 'succeeded') {
+                        // Logic allows for specific statuses, but usually we want authorized
+                        // If not authorized, we might need to create a new one or return error
+                        // For now, if it exists but bad status, we might return error
+                        // Simplified: if not authorized, return current PI secret to finish it
+                        return back()
                             ->withErrors(['mission' => 'Payment hold is not confirmed. Please complete the payment first.'])
                             ->with('stripe_client_secret', $pi->client_secret);
                     }
                 }
             } else {
-                 // Create new payment hold if missing
-                 $pi = app(\App\Services\StripeService::class)->createHold($mission);
-                 return back()
+                // Create new payment hold if missing
+                $pi = app(\App\Services\StripeService::class)->createHold($mission);
+                return back()
                     ->with('success', 'Please complete the payment hold to confirm the assignment.')
                     ->with('stripe_client_secret', $pi->client_secret);
             }
@@ -943,7 +935,7 @@ class MissionController extends Controller
         }
 
         $mission->transitionTo(Mission::STATUS_TERMINEE);
-        
+
         // Update Provider Virtual Balance
         $payment = \App\Models\Payment::where('mission_id', $mission->id)->first();
         if ($payment && $mission->assignedUser) {
@@ -996,7 +988,7 @@ class MissionController extends Controller
         // Add explicit null checks for assigned_user_id
         $isOwner = Auth::id() == $mission->user_id;
         $isAssigned = $mission->assigned_user_id && Auth::id() == $mission->assigned_user_id;
-        
+
         if (!$isOwner && !$isAssigned) {
             abort(403);
         }
@@ -1144,9 +1136,9 @@ class MissionController extends Controller
         );
 
         // Filter out mission owner and load additional data
-        $nearbyProviders = $nearbyProviders->filter(function($user) use ($mission) {
+        $nearbyProviders = $nearbyProviders->filter(function ($user) use ($mission) {
             return $user->id !== $mission->user_id;
-        })->map(function($user) use ($mission) {
+        })->map(function ($user) use ($mission) {
             // Calculate distance
             if ($mission->lat && $mission->lng && $user->location_lat && $user->location_lng) {
                 $user->distance_km = $this->calculateDistance(
@@ -1158,14 +1150,14 @@ class MissionController extends Controller
             } else {
                 $user->distance_km = null;
             }
-            
+
             // Fix profile photo URL
             if ($user->profile_photo) {
                 $user->profile_photo_url = '/storage/' . $user->profile_photo;
             } else {
                 $user->profile_photo_url = null;
             }
-            
+
             return $user;
         })->values();
 
@@ -1229,11 +1221,11 @@ class MissionController extends Controller
         $dLat = deg2rad($lat2 - $lat1);
         $dLon = deg2rad($lon2 - $lon1);
 
-        $a = sin($dLat/2) * sin($dLat/2) +
-             cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
-             sin($dLon/2) * sin($dLon/2);
+        $a = sin($dLat / 2) * sin($dLat / 2) +
+            cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
+            sin($dLon / 2) * sin($dLon / 2);
 
-        $c = 2 * atan2(sqrt($a), sqrt(1-$a));
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
         $distance = $earthRadius * $c;
 
         return round($distance, 1);

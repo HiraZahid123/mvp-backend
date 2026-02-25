@@ -272,21 +272,21 @@ export default function Welcome({ missions: initialMissions, providers: initialP
                             </AnimatedSection>
 
                             <AnimatedSection delay="250ms">
-                                <h1 className="text-5xl md:text-7xl lg:text-[56px] font-black leading-[1.1] tracking-[-2px] mb-6">
+                                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[56px] font-black leading-[1.1] tracking-[-2px] mb-6">
                                     {t('What if you didn\'t have to')}<br />
                                     <span className="text-oflem-terracotta underline decoration-oflem-terracotta/20 underline-offset-8 italic font-serif">{t('do it all alone?')}</span>
                                 </h1>
                             </AnimatedSection>
 
                             <AnimatedSection delay="400ms">
-                                <p className="text-lg md:text-xl text-zinc-600 font-medium leading-[1.7] max-w-[560px] mb-10">
+                                <p className="text-base sm:text-lg md:text-xl text-zinc-600 font-medium leading-[1.7] max-w-[560px] mb-10">
                                     {t('Someone near you can take care of it.')} <strong className="text-oflem-charcoal font-extrabold">{t('Post for free')}</strong>, {t('receive offers from verified providers in French-speaking Switzerland.')}
                                 </p>
                             </AnimatedSection>
 
                             <AnimatedSection delay="550ms" className="max-w-xl">
-                                <form onSubmit={handleSearchSubmit} className="pub-bar flex items-stretch bg-white border-[2.5px] border-zinc-200 rounded-rl shadow-sh hover:border-oflem-terracotta/40 focus-within:border-oflem-terracotta focus-within:shadow-[0_12px_40px_rgba(255,107,53,0.20),0_0_0_4px_rgba(255,107,53,0.08)] transition-all duration-300 overflow-hidden">
-                                    <div className="flex items-center px-5 text-[#c0ccd8]">
+                                <form onSubmit={handleSearchSubmit} className="pub-bar flex flex-col sm:flex-row items-stretch bg-white border-[2.5px] border-zinc-200 rounded-rl shadow-sh hover:border-oflem-terracotta/40 focus-within:border-oflem-terracotta focus-within:shadow-[0_12px_40px_rgba(255,107,53,0.20),0_0_0_4px_rgba(255,107,53,0.08)] transition-all duration-300 overflow-hidden">
+                                    <div className="flex items-center px-5 py-4 sm:py-0 text-[#c0ccd8]">
                                         <Search className="w-6 h-6" />
                                     </div>
                                     <input 
@@ -294,17 +294,17 @@ export default function Welcome({ missions: initialMissions, providers: initialP
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
                                         placeholder={searchTerm ? '' : placeholder}
-                                        className="flex-1 border-none bg-transparent outline-none py-[22px] text-[17px] font-semibold text-oflem-charcoal placeholder:text-zinc-300 min-w-0"
+                                        className="flex-1 border-none bg-transparent outline-none px-5 sm:px-0 py-4 sm:py-[22px] text-[17px] font-semibold text-oflem-charcoal placeholder:text-zinc-300 min-w-0"
                                     />
                                     <button 
                                         type="submit"
                                         disabled={isChecking}
-                                        className="m-2 px-8 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white rounded-rs font-extrabold text-[15px] shadow-sho hover:scale-[1.03] transition-transform flex items-center gap-2 flex-shrink-0"
+                                        className="m-2 px-6 sm:px-8 py-4 sm:py-0 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white rounded-rs font-extrabold text-[15px] shadow-sho hover:scale-[1.03] transition-transform flex items-center justify-center gap-2 flex-shrink-0"
                                     >
                                         {isChecking ? '...' : <>{t('Post my request')} <ArrowRight size={16} className="inline ml-1" /></>}
                                     </button>
                                 </form>
-                                <div className="pub-bar-hint flex items-center flex-wrap gap-5 mt-4 text-[12.5px] font-bold text-zinc-500">
+                                <div className="pub-bar-hint flex items-center justify-center sm:justify-start flex-wrap gap-x-5 gap-y-2 mt-4 text-[12.5px] font-bold text-zinc-500">
                                     <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-oflem-green" /> {t('Free')}</span>
                                     <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-oflem-green" /> {t('No commitment')}</span>
                                     <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-oflem-green" /> {t('Commission displayed before payment')}</span>
@@ -315,7 +315,7 @@ export default function Welcome({ missions: initialMissions, providers: initialP
                                 )}
 
                                 {/* Hero Stamp */}
-                                <div className="flex items-center gap-3 mt-8 pt-4">
+                                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-3 mt-8 pt-4 text-center sm:text-left">
                                     <div className="flex -space-x-3">
                                         {[1,2,3,4].map(i => (
                                             <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-zinc-200 overflow-hidden shadow-sm">
@@ -331,8 +331,8 @@ export default function Welcome({ missions: initialMissions, providers: initialP
                                 </div>
                             </AnimatedSection>
 
-                            <AnimatedSection delay="700ms" className="mt-8 pt-8 border-t border-zinc-200/60">
-                                <div className="flex flex-wrap gap-x-10 gap-y-6">
+                             <AnimatedSection delay="700ms" className="mt-8 pt-8 border-t border-zinc-200/60">
+                                <div className="flex flex-col sm:flex-row flex-wrap gap-x-10 gap-y-6 items-start sm:items-center">
                                     <div className="flex items-center gap-3.5 group">
                                         <div className="w-11 h-11 rounded-full border-2 border-zinc-100 bg-white flex items-center justify-center text-oflem-charcoal shadow-sm group-hover:border-oflem-terracotta/30 group-hover:bg-orange-50 transition-all">
                                             <Shield className="w-5 h-5 text-oflem-terracotta" />
@@ -431,16 +431,16 @@ export default function Welcome({ missions: initialMissions, providers: initialP
             </section>
 
             {/* Trust Pillars */}
-            <section className="py-24 bg-white border-b border-zinc-100">
+             <section className="py-16 md:py-24 bg-white border-b border-zinc-100">
                 <div className="container mx-auto px-6">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {pillars.map((pillar, i) => (
-                            <AnimatedSection key={i} delay={`${200 * i}ms`} className="pillar-card p-10 bg-white border border-zinc-100 rounded-rl hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-500">
-                                <div className={`w-16 h-16 ${pillar.bg} rounded-full flex items-center justify-center mb-8 shadow-lg`}>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {pillars.slice(0, 3).map((pillar, i) => (
+                            <AnimatedSection key={i} delay={`${200 * i}ms`} className="pillar-card p-6 sm:p-8 lg:p-10 bg-white border border-zinc-100 rounded-rl hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-500">
+                                <div className={`w-14 h-14 sm:w-16 sm:h-16 ${pillar.bg} rounded-full flex items-center justify-center mb-6 sm:mb-8 shadow-lg`}>
                                     {pillar.icon}
                                 </div>
-                                <h3 className="text-xl font-black text-oflem-charcoal mb-4 tracking-tight">{pillar.title}</h3>
-                                <p className="text-[15px] text-zinc-600 leading-relaxed">{pillar.text}</p>
+                                <h3 className="text-lg sm:text-xl font-black text-oflem-charcoal mb-4 tracking-tight">{pillar.title}</h3>
+                                <p className="text-[14px] sm:text-[15px] text-zinc-600 leading-relaxed">{pillar.text}</p>
                             </AnimatedSection>
                         ))}
                     </div>
@@ -459,24 +459,24 @@ export default function Welcome({ missions: initialMissions, providers: initialP
                     </div>
 
                     <div className="tabs-wrap max-w-4xl mx-auto border-2 border-zinc-100 rounded-rl shadow-xl overflow-hidden">
-                        <div className="tabs-head flex bg-zinc-50 p-2 gap-2 border-b-2 border-zinc-100">
+                         <div className="tabs-head flex bg-zinc-50 p-1.5 sm:p-2 gap-1.5 sm:gap-2 border-b-2 border-zinc-100">
                             <button 
                                 onClick={() => setActiveTab('seek')}
-                                className={`flex-1 py-4 px-6 rounded-rs font-black text-sm uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-3 ${activeTab === 'seek' ? 'bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white shadow-sho scale-[1.02]' : 'bg-transparent text-zinc-500 hover:bg-zinc-100'}`}
+                                className={`flex-1 py-3 sm:py-4 px-3 sm:px-6 rounded-rs font-black text-[12px] sm:text-sm uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 sm:gap-3 ${activeTab === 'seek' ? 'bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white shadow-sho scale-[1.02]' : 'bg-transparent text-zinc-500 hover:bg-zinc-100'}`}
                             >
-                                <Users className="w-5 h-5" />
+                                <Users className="w-4 h-4 sm:w-5 sm:h-5 hidden xs:block" />
                                 {t('I seek help')}
                             </button>
                             <button 
                                 onClick={() => setActiveTab('offer')}
-                                className={`flex-1 py-4 px-6 rounded-rs font-black text-sm uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-3 ${activeTab === 'offer' ? 'bg-oflem-charcoal text-white shadow-sho scale-[1.02]' : 'bg-transparent text-zinc-500 hover:bg-zinc-100'}`}
+                                className={`flex-1 py-3 sm:py-4 px-3 sm:px-6 rounded-rs font-black text-[12px] sm:text-sm uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 sm:gap-3 ${activeTab === 'offer' ? 'bg-oflem-charcoal text-white shadow-sho scale-[1.02]' : 'bg-transparent text-zinc-500 hover:bg-zinc-100'}`}
                             >
-                                <Briefcase className="w-5 h-5" />
+                                <Briefcase className="w-4 h-4 sm:w-5 sm:h-5 hidden xs:block" />
                                 {t('I offer help')}
                             </button>
                         </div>
 
-                        <div className="tabs-body p-8 md:p-12">
+                        <div className="tabs-body p-6 sm:p-8 md:p-12">
                             {activeTab === 'seek' ? (
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center animate-in fade-in slide-in-from-left-4 duration-500">
                                     <div>
@@ -569,10 +569,10 @@ export default function Welcome({ missions: initialMissions, providers: initialP
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(255,107,53,0.12),transparent_50%),radial-gradient(circle_at_80%_50%,rgba(59,130,246,0.08),transparent_50%)]" />
                 <div className="container mx-auto px-6 relative z-10 text-center">
                     <AnimatedSection>
-                        <blockquote className="text-3xl md:text-[36px] font-black text-white leading-[1.35] tracking-tight max-w-[760px] mx-auto">
+                        <blockquote className="text-xl sm:text-2xl md:text-[36px] font-black text-white leading-[1.35] tracking-tight max-w-[760px] mx-auto">
                             {t('Oflem is the freedom to delegate what weighs you down to finally enjoy your free time.')}
                         </blockquote>
-                        <cite className="block mt-10 text-zinc-500 font-bold not-italic">{t('— The Oflem Switzerland Team')}</cite>
+                        <cite className="block mt-8 sm:mt-10 text-zinc-500 font-bold not-italic">{t('— The Oflem Switzerland Team')}</cite>
                     </AnimatedSection>
                 </div>
             </section>
@@ -647,12 +647,12 @@ export default function Welcome({ missions: initialMissions, providers: initialP
                             { name: t('Tutoring'), icon: <BookOpen className="w-6 h-6" />, desc: t('Language, school...') },
                             { name: t('Anything?'), icon: <Zap className="w-6 h-6" />, desc: t('If it\'s legal, post it.') },
                         ].map((cat, i) => (
-                            <AnimatedSection key={i} delay={`${50 * i}ms`} className="msv-item group border-r border-b border-zinc-700/50 p-7 hover:bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light transition-all duration-300 cursor-pointer">
-                                <div className="mb-4 text-zinc-400 group-hover:text-white transition-colors duration-300">
+                            <AnimatedSection key={i} delay={`${50 * i}ms`} className="msv-item group border-r border-b border-zinc-700/50 p-4 sm:p-7 hover:bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light transition-all duration-300 cursor-pointer">
+                                <div className="mb-3 sm:mb-4 text-zinc-400 group-hover:text-white transition-colors duration-300">
                                     {cat.icon}
                                 </div>
-                                <div className="text-[13px] font-black text-white uppercase tracking-wider mb-1 group-hover:text-white transition-colors">{cat.name}</div>
-                                <div className="text-[11px] text-zinc-500 font-bold group-hover:text-white/80 transition-colors line-clamp-1">{cat.desc}</div>
+                                <div className="text-[12px] sm:text-[13px] font-black text-white uppercase tracking-wider mb-1 group-hover:text-white transition-colors">{cat.name}</div>
+                                <div className="text-[10px] sm:text-[11px] text-zinc-500 font-bold group-hover:text-white/80 transition-colors line-clamp-1">{cat.desc}</div>
                             </AnimatedSection>
                         ))}
                     </div>
@@ -670,13 +670,13 @@ export default function Welcome({ missions: initialMissions, providers: initialP
                 <div className="container mx-auto px-6">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         {/* Provider Side */}
-                        <AnimatedSection className="p-12 bg-zinc-900 rounded-[32px] text-white relative overflow-hidden group shadow-2xl">
+                        <AnimatedSection className="p-6 sm:p-8 lg:p-12 bg-zinc-900 rounded-[32px] text-white relative overflow-hidden group shadow-2xl">
                             <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/5 rounded-full blur-3xl" />
                             <div className="flex justify-between items-start mb-10">
-                                <div className="w-16 h-16 bg-zinc-800 rounded-2xl flex items-center justify-center text-oflem-terracotta group-hover:scale-110 transition-transform">
-                                    <Zap className="w-8 h-8 fill-oflem-terracotta" />
+                                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-zinc-800 rounded-2xl flex items-center justify-center text-oflem-terracotta group-hover:scale-110 transition-transform">
+                                    <Zap className="w-6 h-6 sm:w-8 sm:h-8 fill-oflem-terracotta" />
                                 </div>
-                                <span className="px-4 py-1.5 bg-zinc-800 border border-zinc-700 rounded-full text-[10px] font-black uppercase tracking-widest text-zinc-400">For Providers</span>
+                                <span className="px-3 py-1 sm:px-4 sm:py-1.5 bg-zinc-800 border border-zinc-700 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-zinc-400">For Providers</span>
                             </div>
                             <h3 className="text-3xl font-black mb-6 tracking-tight">{t('Become a Provider.')}</h3>
                             <p className="text-zinc-400 font-medium leading-[1.7] mb-8 text-lg">
@@ -701,13 +701,13 @@ export default function Welcome({ missions: initialMissions, providers: initialP
                         </AnimatedSection>
 
                         {/* Client Side */}
-                        <AnimatedSection delay="200ms" className="p-12 bg-orange-50 border-2 border-oflem-terracotta/10 rounded-[32px] text-oflem-charcoal relative overflow-hidden group shadow-xl">
+                         <AnimatedSection delay="200ms" className="p-6 sm:p-8 lg:p-12 bg-orange-50 border-2 border-oflem-terracotta/10 rounded-[32px] text-oflem-charcoal relative overflow-hidden group shadow-xl">
                             <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/5 rounded-full blur-3xl" />
                             <div className="flex justify-between items-start mb-10">
-                                <div className="w-16 h-16 bg-white border border-orange-100 rounded-2xl flex items-center justify-center text-oflem-terracotta group-hover:scale-110 transition-transform">
-                                    <Users className="w-8 h-8" />
+                                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-white border border-orange-100 rounded-2xl flex items-center justify-center text-oflem-terracotta group-hover:scale-110 transition-transform">
+                                    <Users className="w-6 h-6 sm:w-8 sm:h-8" />
                                 </div>
-                                <span className="px-4 py-1.5 bg-white border border-orange-100 rounded-full text-[10px] font-black uppercase tracking-widest text-oflem-terracotta">For Clients</span>
+                                <span className="px-3 py-1 sm:px-4 sm:py-1.5 bg-white border border-orange-100 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-oflem-terracotta">For Clients</span>
                             </div>
                             <h3 className="text-3xl font-black mb-6 tracking-tight">{t('Stay a Client.')}</h3>
                             <p className="text-zinc-600 font-medium leading-[1.7] mb-8 text-lg">
@@ -784,10 +784,10 @@ export default function Welcome({ missions: initialMissions, providers: initialP
             {/* Final CTA */}
             <section className="py-24 bg-white">
                 <div className="container mx-auto px-6">
-                    <AnimatedSection className="bg-gradient-to-br from-oflem-charcoal via-oflem-navy-light to-oflem-charcoal rounded-[32px] p-12 md:p-20 text-center relative overflow-hidden group shadow-2xl">
+                    <AnimatedSection className="bg-gradient-to-br from-oflem-charcoal via-oflem-navy-light to-oflem-charcoal rounded-[32px] p-8 sm:p-12 md:p-20 text-center relative overflow-hidden group shadow-2xl">
                         <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,rgba(255,107,53,0.2),transparent_70%)]" />
                         <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/10 rounded-full blur-3xl animate-pulse-slow" />
-                        <h2 className="text-3xl md:text-5xl font-black text-white mb-10 relative z-10 leading-[1.1] tracking-tight">
+                        <h2 className="text-2xl sm:text-3xl md:text-5xl font-black text-white mb-10 relative z-10 leading-[1.1] tracking-tight">
                             {t('READY TO DELEGATE YOUR')}<br />
                             <span className="text-oflem-terracotta italic font-serif">{t('FIRST MISSION?')}</span>
                         </h2>

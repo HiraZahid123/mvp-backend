@@ -33,6 +33,7 @@ use Inertia\Inertia;
 
 use App\Http\Controllers\HomeController;
 /* ... */
+
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 
@@ -95,7 +96,7 @@ Route::middleware('guest')->group(function () {
     Route::post('/verify-otp/send', [OTPVerificationController::class, 'sendOTP'])->name('auth.verify-otp.send');
     Route::post('/verify-otp', [OTPVerificationController::class, 'store'])->name('auth.verify-otp.store')->middleware('throttle:6,1');
 
-/*
+    /*
     // Login OTP Verification
     Route::get('/login/verify-otp', [LoginOTPVerificationController::class, 'create'])->name('login.verify-otp');
     Route::post('/login/verify-otp', [LoginOTPVerificationController::class, 'store'])->name('login.verify-otp.store');
@@ -156,14 +157,14 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     // Dashboard
     Route::get('/dashboard', function () {
-        $user = auth()->user();
+        $user = Auth::user();
 
         // Client data
         $missions = \App\Models\Mission::with(['user', 'offers'])
             ->where('user_id', $user->id)
             ->latest()
             ->get();
-            
+
         $stats = [
             'open' => $missions->whereIn('status', [\App\Models\Mission::STATUS_OUVERTE, \App\Models\Mission::STATUS_EN_NEGOCIATION])->count(),
             'active' => $missions->whereIn('status', [\App\Models\Mission::STATUS_VERROUILLEE, \App\Models\Mission::STATUS_EN_COURS, \App\Models\Mission::STATUS_EN_VALIDATION, \App\Models\Mission::STATUS_EN_LITIGE])->count(),
@@ -214,7 +215,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/', [ProfileController::class, 'edit'])->name('edit');
         Route::patch('/', [ProfileController::class, 'update'])->name('update');
         Route::delete('/', [ProfileController::class, 'destroy'])->name('destroy');
-        
+
         // Notification Preferences
         Route::get('/notifications', [ProfileController::class, 'notificationPreferences'])->name('notifications');
         Route::patch('/notifications', [ProfileController::class, 'updateNotificationPreferences'])->name('notifications.update');
@@ -229,13 +230,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/chats/{chat}/messages', [\App\Http\Controllers\ChatController::class, 'show'])->name('api.chats.messages');
     Route::post('/chats/{chat}/messages', [\App\Http\Controllers\ChatController::class, 'store'])->name('api.chats.messages.store');
     Route::post('/chats/{chat}/typing', [\App\Http\Controllers\ChatController::class, 'typing'])->name('api.chats.typing');
+    Route::post('/chats/{chat}/accept', [\App\Http\Controllers\ChatController::class, 'accept'])->name('api.chats.accept');
+    Route::post('/chats/{chat}/reject', [\App\Http\Controllers\ChatController::class, 'reject'])->name('api.chats.reject');
     Route::get('/missions/{mission}/chat', [\App\Http\Controllers\ChatController::class, 'getMissionChat'])->name('api.missions.chat');
 
     // Wallet Routes
-Route::get('/wallet', [\App\Http\Controllers\WalletController::class, 'index'])->name('wallet.index');
-Route::get('/wallet/client', [\App\Http\Controllers\WalletController::class, 'clientIndex'])->name('wallet.client');
-Route::post('/wallet/withdraw', [\App\Http\Controllers\WalletController::class, 'requestWithdrawal'])->name('wallet.withdraw');
-Route::delete('/wallet/withdraw/{withdrawal}', [\App\Http\Controllers\WalletController::class, 'cancelWithdrawal'])->name('wallet.cancel');
+    Route::get('/wallet', [\App\Http\Controllers\WalletController::class, 'index'])->name('wallet.index');
+    Route::get('/wallet/client', [\App\Http\Controllers\WalletController::class, 'clientIndex'])->name('wallet.client');
+    Route::post('/wallet/withdraw', [\App\Http\Controllers\WalletController::class, 'requestWithdrawal'])->name('wallet.withdraw');
+    Route::delete('/wallet/withdraw/{withdrawal}', [\App\Http\Controllers\WalletController::class, 'cancelWithdrawal'])->name('wallet.cancel');
 
     // Provider Listing
     Route::get('/providers', [ProviderController::class, 'index'])->name('providers.index');
@@ -258,7 +261,7 @@ Route::middleware('auth')->group(function () {
         Route::patch('/{mission}', [MissionController::class, 'update'])->name('update');
         Route::post('/{mission}/update-status', [MissionController::class, 'updateStatus'])->name('update-status');
         Route::get('/{mission}/matchmaking', [MissionController::class, 'showMatchmaking'])->name('matchmaking');
-        
+
         // Mission Actions
         Route::post('/{mission}/hire/{provider}', [MissionController::class, 'hire'])->name('hire');
         Route::post('/{mission}/offer', [MissionController::class, 'submitOffer'])->name('submit-offer');
@@ -293,34 +296,34 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('admin')->group(function () {
         // Dashboard
         Route::get('/dashboard', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'index'])->name('dashboard');
-        
+
         // User Management
         Route::get('/users', [\App\Http\Controllers\Admin\AdminUserController::class, 'index'])->name('users.index');
         Route::get('/users/{user}', [\App\Http\Controllers\Admin\AdminUserController::class, 'show'])->name('users.show');
         Route::post('/users/{user}/suspend', [\App\Http\Controllers\Admin\AdminUserController::class, 'suspend'])->name('users.suspend');
         Route::post('/users/{user}/ban', [\App\Http\Controllers\Admin\AdminUserController::class, 'ban'])->name('users.ban');
-        
+
         // Withdrawal Management
         Route::get('/withdrawals', [\App\Http\Controllers\Admin\AdminWithdrawalController::class, 'index'])->name('withdrawals.index');
         Route::post('/withdrawals/{withdrawal}/approve', [\App\Http\Controllers\Admin\AdminWithdrawalController::class, 'approve'])->name('withdrawals.approve');
         Route::post('/withdrawals/{withdrawal}/reject', [\App\Http\Controllers\Admin\AdminWithdrawalController::class, 'reject'])->name('withdrawals.reject');
         Route::post('/withdrawals/{withdrawal}/complete', [\App\Http\Controllers\Admin\AdminWithdrawalController::class, 'complete'])->name('withdrawals.complete');
-        
+
         // Mission Oversight
         Route::get('/missions', [\App\Http\Controllers\Admin\AdminMissionController::class, 'index'])->name('missions.index');
         Route::get('/missions/{mission}', [\App\Http\Controllers\Admin\AdminMissionController::class, 'show'])->name('missions.show');
         Route::post('/missions/{mission}/resolve-dispute', [\App\Http\Controllers\Admin\AdminMissionController::class, 'resolveDispute'])->name('missions.resolve-dispute');
-        
+
         // Chat Moderation
         Route::get('/chat/flagged', [\App\Http\Controllers\Admin\AdminChatController::class, 'flaggedMessages'])->name('chat.flagged');
         Route::get('/chat/strikes', [\App\Http\Controllers\Admin\AdminChatController::class, 'userStrikes'])->name('chat.strikes');
         Route::post('/chat/users/{user}/clear-strikes', [\App\Http\Controllers\Admin\AdminChatController::class, 'clearStrikes'])->name('chat.clear-strikes');
-        
+
         // Payment Management
         Route::get('/payments', [\App\Http\Controllers\Admin\AdminPaymentController::class, 'index'])->name('payments.index');
         Route::get('/payments/{payment}', [\App\Http\Controllers\Admin\AdminPaymentController::class, 'show'])->name('payments.show');
         Route::post('/payments/{payment}/refund', [\App\Http\Controllers\Admin\AdminPaymentController::class, 'issueRefund'])->name('payments.refund');
-        
+
         // Logout
         Route::post('/logout', [AdminLoginController::class, 'destroy'])->name('logout');
 
@@ -343,5 +346,4 @@ Route::prefix('admin')->name('admin.')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-require __DIR__.'/auth.php';
-
+require __DIR__ . '/auth.php';

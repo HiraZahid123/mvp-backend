@@ -42,17 +42,21 @@ export default function RegistrationSuccess({ user }) {
     return (
         <AuthSplitLayout 
             heroImage="/images/illustrations/welcome-hero.svg"
-            bgAccentClass="bg-oflem-cream"
+            bgAccentClass="bg-cream-accent"
         >
             <Head title={t("Welcome!")} />
 
             <div className="text-center space-y-10">
-                {/* Success Icon */}
+                {/* Unified Role Icon */}
                 <div className="flex justify-center">
-                    <div className="w-24 h-24 rounded-[32px] bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/10 flex items-center justify-center rotate-6">
-                        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light flex items-center justify-center -rotate-6 shadow-xl">
-                            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+                    <div className="relative">
+                        <div className="w-24 h-24 rounded-[32px] bg-oflem-terracotta/10 flex items-center justify-center shadow-sm">
+                            {selectedIcon}
+                        </div>
+                        {/* Status Badge */}
+                        <div className="absolute -top-2 -right-2 w-8 h-8 rounded-xl bg-oflem-terracotta flex items-center justify-center shadow-elegant-glow border-2 border-white">
+                            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M5 13l4 4L19 7" />
                             </svg>
                         </div>
                     </div>
@@ -60,11 +64,6 @@ export default function RegistrationSuccess({ user }) {
 
                 {/* Title & Description */}
                 <div>
-                    <div className="flex justify-center mb-6">
-                        <div className="w-20 h-20 rounded-3xl bg-oflem-terracotta/10 flex items-center justify-center">
-                            {selectedIcon}
-                        </div>
-                    </div>
                     <h1 className="text-4xl lg:text-5xl font-black text-oflem-charcoal tracking-tight mb-4 leading-[0.95]">
                         {selectedContent.title}
                     </h1>
@@ -74,15 +73,15 @@ export default function RegistrationSuccess({ user }) {
                 </div>
 
                 {/* Next Steps / Quick Guide */}
-                <div className="text-left bg-white p-8 rounded-[32px] border border-gray-border shadow-sm space-y-4">
-                    <h3 className="text-xs font-black uppercase tracking-widest text-oflem-terracotta mb-2">{t('Next Steps')}</h3>
-                    <div className="space-y-4">
+                <div className="elegant-capsule !bg-oflem-cream/30 !p-8 !border-oflem-terracotta/10 space-y-4">
+                    <h3 className="text-xs font-black uppercase tracking-widest text-oflem-terracotta mb-2 text-left">{t('Next Steps')}</h3>
+                    <div className="space-y-4 text-left">
                         <div className="flex gap-4">
-                            <div className="w-8 h-8 rounded-full bg-oflem-cream flex items-center justify-center text-xs font-black">1</div>
+                            <div className="w-8 h-8 rounded-full bg-oflem-terracotta text-white flex items-center justify-center text-xs font-black shadow-sm">1</div>
                             <p className="text-sm font-bold text-oflem-charcoal">{userRole === 'provider' ? t('Your expertise is now visible on your public profile.') : t('Describe your first task with the "lazy search".')}</p>
                         </div>
                         <div className="flex gap-4">
-                            <div className="w-8 h-8 rounded-full bg-oflem-cream flex items-center justify-center text-xs font-black">2</div>
+                            <div className="w-8 h-8 rounded-full bg-oflem-terracotta text-white flex items-center justify-center text-xs font-black shadow-sm">2</div>
                             <p className="text-sm font-bold text-oflem-charcoal">{userRole === 'provider' ? t('Configure your discovery radius (currently 5km).') : t('Wait for Providers to send you their offers.')}</p>
                         </div>
                     </div>
@@ -90,8 +89,8 @@ export default function RegistrationSuccess({ user }) {
 
                 {/* CTA Button */}
                 <div className="pt-4">
-                    <Link href={selectedContent.route}>
-                        <PrimaryButton className="w-full py-5 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light hover:bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/90 text-white font-black uppercase tracking-widest rounded-full text-sm">
+                    <Link href={selectedContent.route} className="block">
+                        <PrimaryButton className="w-full py-5 btn-primary rounded-full text-sm">
                             {selectedContent.cta}
                         </PrimaryButton>
                     </Link>
