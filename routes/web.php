@@ -239,6 +239,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/wallet/client', [\App\Http\Controllers\WalletController::class, 'clientIndex'])->name('wallet.client');
     Route::post('/wallet/withdraw', [\App\Http\Controllers\WalletController::class, 'requestWithdrawal'])->name('wallet.withdraw');
     Route::delete('/wallet/withdraw/{withdrawal}', [\App\Http\Controllers\WalletController::class, 'cancelWithdrawal'])->name('wallet.cancel');
+    // Tier 2 — CSV Export + Saved Bank Accounts
+    Route::get('/wallet/export', [\App\Http\Controllers\WalletController::class, 'exportCsv'])->name('wallet.export');
+    Route::get('/wallet/client/export', [\App\Http\Controllers\WalletController::class, 'exportClientCsv'])->name('wallet.client.export');
+    Route::post('/wallet/bank-account', [\App\Http\Controllers\WalletController::class, 'saveBankAccount'])->name('wallet.save-bank');
+    Route::delete('/wallet/bank-account/{index}', [\App\Http\Controllers\WalletController::class, 'deleteBankAccount'])->name('wallet.delete-bank');
+    // Tier 3 — Tax Report
+    Route::get('/wallet/tax', [\App\Http\Controllers\WalletController::class, 'taxSummary'])->name('wallet.tax');
 
     // Provider Listing
     Route::get('/providers', [ProviderController::class, 'index'])->name('providers.index');

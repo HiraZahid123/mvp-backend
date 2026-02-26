@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Withdrawal;
+use App\Notifications\WithdrawalStatusNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -18,7 +19,7 @@ class AdminWithdrawalController extends Controller
         $status = $request->get('status', 'pending');
 
         $withdrawals = Withdrawal::with('user:id,name,email,username')
-            ->when($status !== 'all', function($query) use ($status) {
+            ->when($status !== 'all', function ($query) use ($status) {
                 $query->where('status', $status);
             })
             ->orderByDesc('created_at')
@@ -48,11 +49,14 @@ class AdminWithdrawalController extends Controller
         }
 
         $withdrawal->update([
-            'status' => Withdrawal::STATUS_APPROVED,
+            'status'       => Withdrawal::STATUS_APPROVED,
             'processed_by' => Auth::id(),
             'processed_at' => now(),
-            'admin_notes' => $request->input('admin_notes'),
+            'admin_notes'  => $request->input('admin_notes'),
         ]);
+
+        // ★ Tier 3 #14 — Notify provider
+        $withdrawal->user->notify(new WithdrawalStatusNotification($withdrawal->fresh()));
 
         return back()->with('success', 'Withdrawal approved successfully. Please process the bank transfer.');
     }
@@ -75,11 +79,14 @@ class AdminWithdrawalController extends Controller
         $user->decrement('pending_withdrawal', $withdrawal->amount);
 
         $withdrawal->update([
-            'status' => Withdrawal::STATUS_REJECTED,
+            'status'       => Withdrawal::STATUS_REJECTED,
             'processed_by' => Auth::id(),
             'processed_at' => now(),
-            'admin_notes' => $request->input('admin_notes'),
+            'admin_notes'  => $request->input('admin_notes'),
         ]);
+
+        // ★ Tier 3 #14 — Notify provider
+        $withdrawal->user->notify(new WithdrawalStatusNotification($withdrawal->fresh()));
 
         return back()->with('success', 'Withdrawal rejected. Amount returned to user\'s available balance.');
     }
@@ -100,9 +107,12 @@ class AdminWithdrawalController extends Controller
         $user->increment('total_withdrawn', $withdrawal->amount);
 
         $withdrawal->update([
-            'status' => Withdrawal::STATUS_COMPLETED,
+            'status'      => Withdrawal::STATUS_COMPLETED,
             'admin_notes' => $request->input('admin_notes', $withdrawal->admin_notes),
         ]);
+
+        // ★ Tier 3 #14 — Notify provider
+        $withdrawal->user->notify(new WithdrawalStatusNotification($withdrawal->fresh()));
 
         return back()->with('success', 'Withdrawal marked as completed.');
     }

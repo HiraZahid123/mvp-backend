@@ -156,11 +156,31 @@ export default function MissionLocationPicker({
             </div>
 
             {location && (
-                <div className="flex items-center gap-2 p-4 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light/5 rounded-[20px] border border-oflem-terracotta/10">
-                    <MapPinIcon className="w-5 h-5 text-oflem-terracotta flex-shrink-0" />
-                    <p className="text-xs font-bold text-gray-muted truncate">
-                        {address}
-                    </p>
+                <div className="flex items-center gap-3 p-4 bg-oflem-charcoal rounded-[24px] border border-oflem-charcoal/10 shadow-elegant-glow group/address transition-all hover:scale-[1.01] animate-in fade-in slide-in-from-bottom-2 duration-500">
+                    <div className="w-10 h-10 rounded-full bg-oflem-terracotta/20 flex items-center justify-center flex-shrink-0 group-hover/address:bg-oflem-terracotta/30 transition-colors">
+                        <MapPinIcon className="w-5 h-5 text-oflem-terracotta" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                        <p className="text-[10px] font-black uppercase tracking-wider text-oflem-terracotta mb-0.5">
+                            {t('Selected Location')}
+                        </p>
+                        <p className="text-sm font-bold text-white truncate leading-tight">
+                            {address}
+                        </p>
+                    </div>
+                    <button 
+                        onClick={() => {
+                            setLocation(null);
+                            setAddress('');
+                            onLocationSelect({ lat: null, lng: null, address: '', city: '' });
+                        }}
+                        className="p-2 hover:bg-white/10 rounded-full transition-colors"
+                        title={t('Clear location')}
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
                 </div>
             )}
         </div>

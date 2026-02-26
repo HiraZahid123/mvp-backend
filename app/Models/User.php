@@ -48,6 +48,7 @@ class User extends Authenticatable
         'pending_withdrawal',
         'total_withdrawn',
         'is_admin',
+        'saved_bank_accounts',
     ];
 
 
@@ -82,6 +83,7 @@ class User extends Authenticatable
             'balance' => 'decimal:2',
             'pending_withdrawal' => 'decimal:2',
             'total_withdrawn' => 'decimal:2',
+            'saved_bank_accounts' => 'array',
         ];
     }
 
