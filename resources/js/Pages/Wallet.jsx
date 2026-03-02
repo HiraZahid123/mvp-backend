@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Head, Link, useForm, router } from '@inertiajs/react';
+import { Head, Link, useForm, router, usePage } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import useTranslation from '@/Hooks/useTranslation';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -358,7 +358,39 @@ export default function Wallet({
                         {t('Tax Report')}
                     </Link>
                 </motion.div>
-
+ 
+                {/* ★ STRIPE CONNECT ONBOARDING ★ */}
+                <motion.div variants={cardVariants} className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden relative">
+                    <div className="flex items-center gap-4 relative z-10">
+                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${usePage().props.auth.user.stripe_connect_id ? 'bg-emerald-50 text-emerald-500' : 'bg-indigo-50 text-indigo-500'}`}>
+                            <ShieldCheck size={24} strokeWidth={2.5} />
+                        </div>
+                        <div>
+                            <h2 className="text-lg font-black text-[#0F172A]">{usePage().props.auth.user.stripe_connect_id ? t('Stripe Connected') : t('Automate your payouts')}</h2>
+                            <p className="text-slate-500 text-sm font-medium max-w-md">
+                                {usePage().props.auth.user.stripe_connect_id 
+                                    ? t('Your account is linked to Stripe. Payouts can now be automated.')
+                                    : t('Connect your Stripe account to receive earnings directly to your bank account without manual delays.')}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div className="relative z-10">
+                        {!usePage().props.auth.user.stripe_connect_id ? (
+                            <a href={route('stripe.connect.onboard')}
+                                className="inline-flex items-center gap-2 px-6 py-3 bg-[#0F172A] text-white font-black text-sm rounded-xl hover:bg-[#FF7F00] active:scale-[0.97] transition-all shadow-lg shadow-slate-200">
+                                <Landmark size={16} />
+                                {t('Connect with Stripe')}
+                            </a>
+                        ) : (
+                            <span className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-600 font-black text-xs uppercase tracking-widest rounded-lg border border-emerald-100">
+                                <CheckCircle2 size={14} />
+                                {t('Ready for Payouts')}
+                            </span>
+                        )}
+                    </div>
+                </motion.div>
+ 
                 {/* ── QUICK STATS STRIP ──────────────────────────────── */}
                 <motion.div variants={cardVariants} className="flex flex-wrap gap-3">
                     <StatPill label={t('Missions')} value={txCount} />

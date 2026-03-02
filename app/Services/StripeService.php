@@ -9,18 +9,18 @@ use Stripe\StripeClient;
 class StripeService
 {
     protected $stripe;
-    
+
     public function __construct()
     {
         $this->stripe = new StripeClient(config('services.stripe.secret'));
     }
-    
+
     public function createHold(Mission $mission): \Stripe\PaymentIntent
     {
         $amount = $mission->budget * 100; // Convert to cents
         $commissionPercent = config('services.stripe.commission_percent', 15);
         $commission = $amount * ($commissionPercent / 100);
-        
+
         try {
             $paymentIntent = $this->stripe->paymentIntents->create([
                 'amount' => $amount,
@@ -40,7 +40,7 @@ class StripeService
             \Illuminate\Support\Facades\Log::error('Stripe Hold Creation Failed: ' . $e->getMessage());
             throw new \Exception('Payment processing failed. Please try again.');
         }
-        
+
         // Track payment locally
         Payment::create([
             'mission_id' => $mission->id,
@@ -57,7 +57,7 @@ class StripeService
             'payment_intent_id' => $paymentIntent->id,
             'platform_commission' => $commission / 100,
         ]);
-        
+
         return $paymentIntent;
     }
     public function getPaymentIntent(string $id): \Stripe\PaymentIntent
@@ -74,7 +74,7 @@ class StripeService
             return false;
         }
     }
-    
+
     public function releaseFunds(Mission $mission): void
     {
         $payment = Payment::where('mission_id', $mission->id)->first();
@@ -84,10 +84,10 @@ class StripeService
             \Illuminate\Support\Facades\Log::error("Funds release failed: No Payment Intent ID found for mission {$mission->id}");
             throw new \Exception('Funds capture failed: No payment intent found.');
         }
-        
+
         try {
             $this->stripe->paymentIntents->capture($piId);
-            
+
             if ($payment) {
                 $payment->update([
                     'status' => 'captured',
@@ -102,17 +102,17 @@ class StripeService
             throw new \Exception('Funds capture failed: ' . $e->getMessage());
         }
     }
-    
+
     public function refund(Mission $mission, string $reason = null): void
     {
         $payment = Payment::where('mission_id', $mission->id)->firstOrFail();
-        
+
         try {
             $this->stripe->refunds->create([
                 'payment_intent' => $payment->payment_intent_id,
                 'reason' => 'requested_by_client',
             ]);
-            
+
             $payment->update([
                 'status' => 'refunded',
                 'refunded_at' => now(),
@@ -121,6 +121,49 @@ class StripeService
         } catch (\Stripe\Exception\ApiErrorException $e) {
             \Illuminate\Support\Facades\Log::error('Stripe Refund Failed: ' . $e->getMessage());
             throw new \Exception('Refund processing failed.');
+        }
+    }
+
+    /**
+     * Create a Stripe Express account for a provider.
+     */
+    public function createExpressAccount(\App\Models\User $user): \Stripe\Account
+    {
+        try {
+            return $this->stripe->accounts->create([
+                'type' => 'express',
+                'country' => 'CH', // Assuming Switzerland (CHF)
+                'email' => $user->email,
+                'capabilities' => [
+                    'card_payments' => ['requested' => true],
+                    'transfers' => ['requested' => true],
+                ],
+                'business_type' => 'individual',
+                'metadata' => [
+                    'user_id' => $user->id,
+                ],
+            ]);
+        } catch (\Stripe\Exception\ApiErrorException $e) {
+            \Illuminate\Support\Facades\Log::error('Stripe Connect Account Creation Failed: ' . $e->getMessage());
+            throw new \Exception('Failed to create payment account. ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Create an account link for Stripe onboarding.
+     */
+    public function createAccountLink(string $stripeAccountId): \Stripe\AccountLink
+    {
+        try {
+            return $this->stripe->accountLinks->create([
+                'account' => $stripeAccountId,
+                'refresh_url' => route('stripe.connect.refresh'),
+                'return_url' => route('stripe.connect.return'),
+                'type' => 'account_onboarding',
+            ]);
+        } catch (\Stripe\Exception\ApiErrorException $e) {
+            \Illuminate\Support\Facades\Log::error('Stripe Account Link Creation Failed: ' . $e->getMessage());
+            throw new \Exception('Failed to generate onboarding link. ' . $e->getMessage());
         }
     }
 }

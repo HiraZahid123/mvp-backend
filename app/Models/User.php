@@ -49,6 +49,7 @@ class User extends Authenticatable
         'total_withdrawn',
         'is_admin',
         'saved_bank_accounts',
+        'stripe_connect_id',
     ];
 
 

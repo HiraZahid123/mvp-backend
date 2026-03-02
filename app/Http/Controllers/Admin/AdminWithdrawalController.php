@@ -103,6 +103,7 @@ class AdminWithdrawalController extends Controller
         $user = $withdrawal->user;
 
         // Update user's withdrawal tracking
+        $user->decrement('balance', $withdrawal->amount);
         $user->decrement('pending_withdrawal', $withdrawal->amount);
         $user->increment('total_withdrawn', $withdrawal->amount);
 

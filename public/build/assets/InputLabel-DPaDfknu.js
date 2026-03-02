@@ -1,0 +1,1 @@
+import{j as s}from"./app-DGZpcoEf.js";function r({value:t,className:e="",children:o,...l}){return s.jsx("label",{...l,className:"block text-sm font-semibold text-oflem-charcoal ml-4 "+e,children:t||o})}export{r as I};

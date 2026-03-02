@@ -247,6 +247,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Tier 3 — Tax Report
     Route::get('/wallet/tax', [\App\Http\Controllers\WalletController::class, 'taxSummary'])->name('wallet.tax');
 
+    // Stripe Connect Onboarding
+    Route::prefix('stripe-connect')->name('stripe.connect.')->group(function () {
+        Route::get('/onboard', [\App\Http\Controllers\StripeConnectController::class, 'onboard'])->name('onboard');
+        Route::get('/return', [\App\Http\Controllers\StripeConnectController::class, 'return'])->name('return');
+        Route::get('/refresh', [\App\Http\Controllers\StripeConnectController::class, 'refresh'])->name('refresh');
+    });
+
     // Provider Listing
     Route::get('/providers', [ProviderController::class, 'index'])->name('providers.index');
 });
