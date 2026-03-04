@@ -102,6 +102,27 @@ class AdminWithdrawalController extends Controller
 
         $user = $withdrawal->user;
 
+        // ★ AUTOMATED PAYOUT: Trigger Stripe Transfer if linked
+        if ($user->stripe_connect_id) {
+            try {
+                $stripe = app(\App\Services\StripeService::class);
+
+                // ★ PRODUCT READY: Verify account status before transfer
+                $status = $stripe->getAccountStatus($user->stripe_connect_id);
+                if (!$status['is_verified']) {
+                    return back()->withErrors(['withdrawal' => 'Provider Stripe account is not fully verified or is restricted. Status: ' . $status['status']]);
+                }
+
+                $stripe->transferFunds(
+                    $user,
+                    $withdrawal->amount,
+                    $withdrawal->id
+                );
+            } catch (\Exception $e) {
+                return back()->withErrors(['withdrawal' => 'Automated Stripe Transfer Failed: ' . $e->getMessage()]);
+            }
+        }
+
         // Update user's withdrawal tracking
         $user->decrement('balance', $withdrawal->amount);
         $user->decrement('pending_withdrawal', $withdrawal->amount);
@@ -115,6 +136,6 @@ class AdminWithdrawalController extends Controller
         // ★ Tier 3 #14 — Notify provider
         $withdrawal->user->notify(new WithdrawalStatusNotification($withdrawal->fresh()));
 
-        return back()->with('success', 'Withdrawal marked as completed.');
+        return back()->with('success', 'Withdrawal completed' . ($user->stripe_connect_id ? ' and automated transfer triggered.' : '.'));
     }
 }

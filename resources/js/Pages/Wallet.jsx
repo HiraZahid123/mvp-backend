@@ -66,12 +66,12 @@ function buildMonthlyEarnings(transactions) {
 }
 
 /* ─── Custom Bar Tooltip ─────────────────────────────────────── */
-const EarningsTooltip = ({ active, payload, label }) => {
+const EarningsTooltip = ({ active, payload, label, currency }) => {
     if (!active || !payload?.length) return null;
     return (
         <div className="bg-[#0F172A] text-white px-4 py-3 rounded-lg shadow-2xl border border-white/10 text-sm">
             <p className="font-black mb-1">{label}</p>
-            <p className="text-emerald-400 font-bold">+ CHF {fmt(payload[0]?.value)}</p>
+            <p className="text-emerald-400 font-bold">+ {currency} {fmt(payload[0]?.value)}</p>
             {payload[0]?.payload?.count > 0 && (
                 <p className="text-white/50 text-xs mt-0.5">{payload[0].payload.count} missions</p>
             )}
@@ -80,12 +80,12 @@ const EarningsTooltip = ({ active, payload, label }) => {
 };
 
 /* ─── Custom Pie Tooltip ─────────────────────────────────────── */
-const CategoryTooltip = ({ active, payload }) => {
+const CategoryTooltip = ({ active, payload, currency }) => {
     if (!active || !payload?.length) return null;
     return (
         <div className="bg-[#0F172A] text-white px-4 py-3 rounded-lg shadow-2xl border border-white/10 text-sm">
             <p className="font-black mb-1">{payload[0].name}</p>
-            <p className="font-bold" style={{ color: payload[0].fill }}>CHF {fmt(payload[0].value)}</p>
+            <p className="font-bold" style={{ color: payload[0].fill }}>{currency} {fmt(payload[0].value)}</p>
         </div>
     );
 };
@@ -115,7 +115,7 @@ const StatPill = ({ label, value, accent }) => (
 );
 
 /* ─── Withdrawal Modal ───────────────────────────────────────── */
-function WithdrawalModal({ availableBalance, savedBankAccounts, onClose, t }) {
+function WithdrawalModal({ availableBalance, savedBankAccounts, onClose, t, currency, minWithdrawal }) {
     const saved = savedBankAccounts ?? [];
     const [useExisting, setUseExisting] = useState(saved.length > 0 ? 0 : -1);
 
@@ -159,7 +159,7 @@ function WithdrawalModal({ availableBalance, savedBankAccounts, onClose, t }) {
                     </div>
                     <h3 className="text-xl font-black text-[#0F172A]">{t('Withdraw Funds')}</h3>
                     <p className="text-slate-400 text-sm font-medium mt-1">
-                        {t('Available')}: <span className="text-[#0F172A] font-black">CHF {fmt(availableBalance)}</span>
+                        {t('Available')}: <span className="text-[#0F172A] font-black">{currency} {fmt(availableBalance)}</span>
                     </p>
                 </div>
 
@@ -195,8 +195,8 @@ function WithdrawalModal({ availableBalance, savedBankAccounts, onClose, t }) {
 
                 <form onSubmit={submit} className="space-y-4">
                     <div>
-                        <InputLabel value={t('Amount (CHF)')} className="font-black text-xs uppercase tracking-widest text-slate-400 mb-2" />
-                        <TextInput type="number" step="0.01" min="10" max={availableBalance}
+                        <InputLabel value={`${t('Amount')} (${currency})`} className="font-black text-xs uppercase tracking-widest text-slate-400 mb-2" />
+                        <TextInput type="number" step="0.01" min={minWithdrawal} max={availableBalance}
                             value={data.amount} onChange={(e) => setData('amount', e.target.value)}
                             className="w-full rounded-xl border-slate-200 text-xl font-black text-[#0F172A] placeholder:text-slate-200 focus:ring-2 focus:ring-[#FF7F00] focus:border-transparent"
                             placeholder="0.00" />
@@ -253,6 +253,7 @@ export default function Wallet({
     balance, availableBalance, pendingWithdrawal, totalWithdrawn,
     transactions, categoryBreakdown, pendingWithdrawals, withdrawalHistory,
     rating, reviewsCount, savedBankAccounts, earningsVelocity,
+    currency = 'CHF', minWithdrawal = 10, processingDaysLabel = '3–5 business days',
 }) {
     const { t } = useTranslation();
     const [showModal, setShowModal]           = useState(false);
@@ -339,7 +340,7 @@ export default function Wallet({
                     </div>
 
                     <button onClick={() => setShowModal(true)}
-                        disabled={parseFloat(availableBalance) < 10}
+                        disabled={parseFloat(availableBalance) < minWithdrawal}
                         className="group inline-flex items-center gap-2 px-5 py-2.5 bg-[#FF7F00] text-white font-bold text-sm rounded-xl hover:bg-[#e67300] active:scale-[0.97] transition-all shadow-md shadow-orange-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none">
                         <Banknote size={16} />
                         {t('Withdraw Funds')}
@@ -396,13 +397,13 @@ export default function Wallet({
                     <StatPill label={t('Missions')} value={txCount} />
                     <StatPill label={t('Withdrawn')} value={`${withdrawalRatio}%`} accent="text-emerald-600" />
                     {earningsVelocity?.perDay > 0 && (
-                        <StatPill label={t('CHF/day')} value={`CHF ${fmt(earningsVelocity.perDay, 0)}`} accent="text-emerald-600" />
+                        <StatPill label={`${currency}/day`} value={`${currency} ${fmt(earningsVelocity.perDay, 0)}`} accent="text-emerald-600" />
                     )}
                     {peakMonth.total > 0 && (
                         <StatPill label={t('Peak Month')} value={peakMonth.label} accent="text-[#FF7F00]" />
                     )}
                     {biggestEarning && (
-                        <StatPill label={t('Best Payout')} value={`CHF ${fmt(biggestEarning.provider_amount, 0)}`} accent="text-emerald-600" />
+                        <StatPill label={t('Best Payout')} value={`${currency} ${fmt(biggestEarning.provider_amount, 0)}`} accent="text-emerald-600" />
                     )}
                     {mDeltaPct !== null && (
                         <StatPill label={t('vs Last Month')}
@@ -426,7 +427,7 @@ export default function Wallet({
                                 <div>
                                     <p className="text-[10px] font-black uppercase tracking-widest text-white/40 mb-0.5">{t('Earnings Velocity')}</p>
                                     <div className="flex items-baseline gap-1">
-                                        <span className="text-3xl font-black text-white tracking-tight">CHF {fmt(earningsVelocity.perDay, 0)}</span>
+                                        <span className="text-3xl font-black text-white tracking-tight">{currency} {fmt(earningsVelocity.perDay, 0)}</span>
                                         <span className="text-white/40 text-sm font-bold">/{t('day')}</span>
                                     </div>
                                 </div>
@@ -434,11 +435,11 @@ export default function Wallet({
                             <div className="flex flex-wrap gap-8">
                                 <div>
                                     <p className="text-[10px] font-black uppercase tracking-widest text-white/40 mb-0.5">{t('This Month')}</p>
-                                    <p className="text-lg font-black text-emerald-400">+ CHF {fmt(earningsVelocity.currentMonth, 0)}</p>
+                                    <p className="text-lg font-black text-emerald-400">+ {currency} {fmt(earningsVelocity.currentMonth, 0)}</p>
                                 </div>
                                 <div>
                                     <p className="text-[10px] font-black uppercase tracking-widest text-white/40 mb-0.5">{t('30-Day Projection')}</p>
-                                    <p className="text-lg font-black text-white">CHF {fmt(earningsVelocity.projectedMonthly, 0)}</p>
+                                    <p className="text-lg font-black text-white">{currency} {fmt(earningsVelocity.projectedMonthly, 0)}</p>
                                 </div>
                                 <div>
                                     <p className="text-[10px] font-black uppercase tracking-widest text-white/40 mb-0.5">{t('Days Tracked')}</p>
@@ -492,7 +493,7 @@ export default function Wallet({
                                 </div>
                             ) : (
                                 <>
-                                    <span className="text-xl font-black text-[#0F172A]">CHF {fmt(goalAmount, 0)}</span>
+                                    <span className="text-xl font-black text-[#0F172A]">{currency} {fmt(goalAmount, 0)}</span>
                                     <button onClick={() => { setTempGoal(goalAmount); setIsEditingGoal(true); }}
                                         className="text-slate-300 hover:text-[#FF7F00] transition-colors">
                                         <Edit3 size={14} />
@@ -516,7 +517,7 @@ export default function Wallet({
                             </div>
                             <p className="text-xs font-bold text-white/50 uppercase tracking-widest mb-2">{t('Total Balance')}</p>
                             <div className="flex items-baseline gap-2 mb-1">
-                                <span className="text-base font-bold text-white/50">CHF</span>
+                                <span className="text-base font-bold text-white/50">{currency}</span>
                                 <span className="text-5xl font-black tracking-tighter leading-none text-[#FF7F00]">
                                     {fmt(balance, 0)}
                                 </span>
@@ -545,7 +546,7 @@ export default function Wallet({
                             </div>
                             <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">{t('Available to Withdraw')}</p>
                             <div className="flex items-baseline gap-1.5 mb-1">
-                                <span className="text-base font-bold text-slate-400">CHF</span>
+                                <span className="text-base font-bold text-slate-400">{currency}</span>
                                 <span className="text-4xl font-black text-[#0F172A] tracking-tighter">
                                     {fmt(availableBalance, 0)}
                                 </span>
@@ -554,7 +555,7 @@ export default function Wallet({
                         </div>
                         <div className="mt-auto pt-5 border-t border-slate-50">
                             <button onClick={() => setShowModal(true)}
-                                disabled={parseFloat(availableBalance) < 10}
+                                disabled={parseFloat(availableBalance) < minWithdrawal}
                                 className="w-full py-2.5 bg-[#0F172A] text-white font-black text-xs uppercase tracking-widest rounded-xl hover:bg-[#FF7F00] active:scale-[0.97] transition-all disabled:opacity-40 disabled:cursor-not-allowed">
                                 {t('Request Withdrawal')}
                             </button>
@@ -570,18 +571,18 @@ export default function Wallet({
                             </div>
                             <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">{t('Pending Clearance')}</p>
                             <div className="flex items-baseline gap-1.5 mb-1">
-                                <span className="text-base font-bold text-slate-400">CHF</span>
+                                <span className="text-base font-bold text-slate-400">{currency}</span>
                                 <span className="text-4xl font-black text-[#0F172A] tracking-tighter">
                                     {fmt(pendingWithdrawal, 0)}
                                 </span>
                             </div>
-                            <p className="text-slate-400 text-xs font-medium">{t('Processing 3–5 business days')}</p>
+                            <p className="text-slate-400 text-xs font-medium">{t('Processing')} {processingDaysLabel}</p>
                         </div>
 
                         <div className="border-t border-slate-50 pt-4 grid grid-cols-2 gap-4">
                             <div>
                                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-0.5">{t('Total Withdrawn')}</p>
-                                <p className="text-sm font-black text-[#0F172A]">CHF {fmt(totalWithdrawn, 0)}</p>
+                                <p className="text-sm font-black text-[#0F172A]">{currency} {fmt(totalWithdrawn, 0)}</p>
                             </div>
                             {/* ★ TIER 1 #3 — Rating in card ★ */}
                             <div>
@@ -624,7 +625,7 @@ export default function Wallet({
                                         <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{ fontSize: 11, fontWeight: 700, fill: '#94a3b8' }} />
                                         <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 700, fill: '#94a3b8' }}
                                             tickFormatter={(v) => v > 0 ? `${(v / 1000).toFixed(0)}k` : '0'} />
-                                        <Tooltip content={<EarningsTooltip />} cursor={{ fill: '#f8fafc', radius: 4 }} />
+                                        <Tooltip content={<EarningsTooltip currency={currency} />} cursor={{ fill: '#f8fafc', radius: 4 }} />
                                         <Bar dataKey="total" radius={[6, 6, 2, 2]}>
                                             {monthlyData.map((entry, i) => (
                                                 <Cell key={i}
@@ -654,7 +655,7 @@ export default function Wallet({
                                         {peakMonth.total > 0 ? peakMonth.label : '—'}
                                     </p>
                                     {peakMonth.total > 0 && (
-                                        <p className="text-emerald-400 text-sm font-black">+ CHF {fmt(peakMonth.total, 0)}</p>
+                                        <p className="text-emerald-400 text-sm font-black">+ {currency} {fmt(peakMonth.total, 0)}</p>
                                     )}
                                 </div>
                                 <div className="absolute -bottom-5 -right-5 w-20 h-20 bg-emerald-500/10 rounded-full" />
@@ -666,7 +667,7 @@ export default function Wallet({
                                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-0.5">{t('Biggest Single Earning')}</p>
                                 {biggestEarning ? (
                                     <>
-                                        <p className="text-2xl font-black text-emerald-600 mb-0.5">+ CHF {fmt(biggestEarning.provider_amount, 0)}</p>
+                                        <p className="text-2xl font-black text-emerald-600 mb-0.5">+ {currency} {fmt(biggestEarning.provider_amount, 0)}</p>
                                         <p className="text-xs text-slate-400 font-medium truncate">
                                             {biggestEarning.mission?.title ?? `Mission #${biggestEarning.mission_id}`}
                                         </p>
@@ -700,7 +701,7 @@ export default function Wallet({
                                                 <Cell key={i} fill={entry.fill} />
                                             ))}
                                         </Pie>
-                                        <Tooltip content={<CategoryTooltip />} />
+                                        <Tooltip content={<CategoryTooltip currency={currency} />} />
                                     </PieChart>
                                 </ResponsiveContainer>
 
@@ -716,7 +717,7 @@ export default function Wallet({
                                                 </div>
                                                 <div className="flex items-center gap-3 shrink-0">
                                                     <span className="text-xs font-bold text-slate-400">{pct}%</span>
-                                                    <span className="text-sm font-black text-[#0F172A]">CHF {fmt(entry.value, 0)}</span>
+                                                    <span className="text-sm font-black text-[#0F172A]">{currency} {fmt(entry.value, 0)}</span>
                                                 </div>
                                             </div>
                                         );
@@ -776,7 +777,7 @@ export default function Wallet({
                                                             <Clock size={17} strokeWidth={2.5} />
                                                         </div>
                                                         <div>
-                                                            <p className="font-black text-[#0F172A] text-sm">CHF {fmt(w.amount)}</p>
+                                                            <p className="font-black text-[#0F172A] text-sm">{currency} {fmt(w.amount)}</p>
                                                             <p className="text-xs text-slate-400 font-medium mt-0.5">
                                                                 {new Date(w.created_at).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}
                                                                 {w.bank_details?.iban && (
@@ -825,7 +826,7 @@ export default function Wallet({
                                                                 : <XCircle size={17} strokeWidth={2.5} />}
                                                         </div>
                                                         <div>
-                                                            <p className="font-black text-[#0F172A] text-sm">CHF {fmt(w.amount)}</p>
+                                                            <p className="font-black text-[#0F172A] text-sm">{currency} {fmt(w.amount)}</p>
                                                             <p className="text-xs text-slate-400 font-medium mt-0.5">
                                                                 {w.processed_at
                                                                     ? new Date(w.processed_at).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })
@@ -921,7 +922,7 @@ export default function Wallet({
                                             </div>
                                             <div className="md:col-span-2 flex items-center justify-between md:justify-end gap-3">
                                                 <p className="text-base font-black text-emerald-600 tracking-tight">
-                                                    + CHF {fmt(tx.provider_amount)}
+                                                    + {currency} {fmt(tx.provider_amount)}
                                                 </p>
                                                 <Link href={route('missions.show', tx.mission_id)}
                                                     className="w-8 h-8 shrink-0 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400 hover:bg-[#FF7F00] hover:text-white transition-all">
@@ -937,7 +938,7 @@ export default function Wallet({
                                         {txCount} {t('Earnings recorded')}
                                     </p>
                                     <p className="text-sm font-black text-emerald-600">
-                                        {t('Total')}: + CHF {fmt(transactions.reduce((s, tx) => s + parseFloat(tx.provider_amount || 0), 0))}
+                                        {t('Total')}: + {currency} {fmt(transactions.reduce((s, tx) => s + parseFloat(tx.provider_amount || 0), 0))}
                                     </p>
                                 </div>
                             </div>
@@ -978,12 +979,12 @@ export default function Wallet({
                 </motion.div>
 
                 {/* ── LOW BALANCE WARNING ────────────────────────────── */}
-                {parseFloat(availableBalance) < 10 && parseFloat(availableBalance) >= 0 && (
+                {parseFloat(availableBalance) < minWithdrawal && parseFloat(availableBalance) >= 0 && (
                     <motion.div variants={cardVariants}
                         className="flex items-start gap-4 bg-amber-50 border border-amber-100 rounded-2xl p-5">
                         <AlertCircle size={18} className="text-amber-500 shrink-0 mt-0.5" />
                         <div>
-                            <p className="font-black text-amber-700 text-sm mb-0.5">{t('Minimum withdrawal is CHF 10')}</p>
+                            <p className="font-black text-amber-700 text-sm mb-0.5">{t('Minimum withdrawal is')} {currency} {minWithdrawal}</p>
                             <p className="text-amber-600 text-xs font-medium">
                                 {t('Complete more missions to accumulate enough balance to request a withdrawal.')}
                             </p>
@@ -1000,6 +1001,8 @@ export default function Wallet({
                         savedBankAccounts={savedBankAccounts}
                         onClose={() => setShowModal(false)}
                         t={t}
+                        currency={currency}
+                        minWithdrawal={minWithdrawal}
                     />
                 )}
             </AnimatePresence>

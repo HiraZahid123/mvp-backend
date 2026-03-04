@@ -73,11 +73,20 @@ return [
     ],
 
     'stripe' => [
-        'key' => env('STRIPE_KEY'),
-        'secret' => env('STRIPE_SECRET'),
-        'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
+        'key'                => env('STRIPE_KEY'),
+        'secret'             => env('STRIPE_SECRET'),
+        'webhook_secret'     => env('STRIPE_WEBHOOK_SECRET'),
         'commission_percent' => env('PLATFORM_COMMISSION_PERCENT', 15),
-        'currency' => env('STRIPE_CURRENCY', 'chf'),
+        'currency'           => env('STRIPE_CURRENCY', 'chf'),
+        'account_country'    => env('STRIPE_ACCOUNT_COUNTRY', 'CH'),
+    ],
+
+    'wallet' => [
+        'min_withdrawal'          => env('WALLET_MIN_WITHDRAWAL', 10),
+        'rate_limit_hours'        => env('WALLET_WITHDRAWAL_RATE_LIMIT_HOURS', 24),
+        'max_saved_bank_accounts' => env('WALLET_MAX_SAVED_BANK_ACCOUNTS', 5),
+        'projection_days'         => env('WALLET_PROJECTION_DAYS', 30),
+        'processing_days_label'   => env('WALLET_PROCESSING_DAYS_LABEL', '3–5 business days'),
     ],
 
 ];

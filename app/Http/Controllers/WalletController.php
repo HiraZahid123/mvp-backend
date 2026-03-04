@@ -53,7 +53,8 @@ class WalletController extends Controller
         $currentMonthTotal = round($currentMonthTxs->sum('provider_amount'), 2);
         $dayOfMonth        = $now->day;
         $earningsPerDay    = $dayOfMonth > 0 ? round($currentMonthTotal / $dayOfMonth, 2) : 0;
-        $projectedMonthly  = round($earningsPerDay * 30, 2);
+        $projectionDays    = (int) config('services.wallet.projection_days', 30);
+        $projectedMonthly  = round($earningsPerDay * $projectionDays, 2);
 
         // Pending withdrawals
         $pendingWithdrawals = $user->withdrawals()
@@ -68,17 +69,21 @@ class WalletController extends Controller
             ->get();
 
         return Inertia::render('Wallet', [
-            'balance'             => $user->balance,
-            'availableBalance'    => $user->available_balance,
-            'pendingWithdrawal'   => $user->pending_withdrawal,
-            'totalWithdrawn'      => $user->total_withdrawn,
-            'transactions'        => $transactions,
-            'categoryBreakdown'   => $categoryBreakdown,
-            'pendingWithdrawals'  => $pendingWithdrawals,
-            'withdrawalHistory'   => $withdrawalHistory,
-            'rating'              => round((float) ($user->rating_cache ?? 0), 1),
-            'reviewsCount'        => (int) ($user->reviews_count_cache ?? 0),
-            'savedBankAccounts'   => $user->saved_bank_accounts ?? [],  // ★ Tier 2 #8
+            'balance'              => $user->balance,
+            'availableBalance'     => $user->available_balance,
+            'pendingWithdrawal'    => $user->pending_withdrawal,
+            'totalWithdrawn'       => $user->total_withdrawn,
+            'transactions'         => $transactions,
+            'categoryBreakdown'    => $categoryBreakdown,
+            'pendingWithdrawals'   => $pendingWithdrawals,
+            'withdrawalHistory'    => $withdrawalHistory,
+            'rating'               => round((float) ($user->rating_cache ?? 0), 1),
+            'reviewsCount'         => (int) ($user->reviews_count_cache ?? 0),
+            'savedBankAccounts'    => $user->saved_bank_accounts ?? [],
+            // Dynamic wallet config — consumed by the frontend
+            'currency'             => strtoupper(config('services.stripe.currency', 'CHF')),
+            'minWithdrawal'        => (float) config('services.wallet.min_withdrawal', 10),
+            'processingDaysLabel'  => config('services.wallet.processing_days_label', '3–5 business days'),
             // Tier 2 #7 — Earnings velocity
             'earningsVelocity'    => [
                 'currentMonth'     => $currentMonthTotal,
@@ -148,7 +153,9 @@ class WalletController extends Controller
             'payments'          => $payments,
             'issuePayments'     => $issuePayments,
             'totalRefunded'     => $totalRefunded,
-            'repeatProviders'   => $repeatProviders,   // ★ Tier 3 #13
+            'repeatProviders'   => $repeatProviders,
+            // Dynamic wallet config — consumed by the frontend
+            'currency'          => strtoupper(config('services.stripe.currency', 'CHF')),
         ]);
     }
 
@@ -214,14 +221,26 @@ class WalletController extends Controller
     {
         $user = Auth::user();
 
+        $minWithdrawal = config('services.wallet.min_withdrawal', 10);
+
         $validated = $request->validate([
-            'amount'                      => 'required|numeric|min:10|max:' . $user->available_balance,
+            'amount'                      => 'required|numeric|min:' . $minWithdrawal . '|max:' . $user->available_balance,
             'bank_details'                => 'required|array',
             'bank_details.account_holder' => 'required|string|max:255',
             'bank_details.iban'           => 'required|string|max:34',
             'bank_details.bank_name'      => 'nullable|string|max:255',
-            'save_bank_account'           => 'boolean',  // ★ Tier 2 #8
+            'save_bank_account'           => 'boolean',
         ]);
+
+        // Rate limit withdrawals based on configurable window
+        $rateLimitHours = (int) config('services.wallet.rate_limit_hours', 24);
+        $lastWithdrawal = $user->withdrawals()
+            ->where('created_at', '>', now()->subHours($rateLimitHours))
+            ->first();
+
+        if ($lastWithdrawal) {
+            return back()->withErrors(['amount' => "You can only request one withdrawal every {$rateLimitHours} hours."]);
+        }
 
         $user->withdrawals()->create([
             'amount'       => $validated['amount'],
@@ -239,12 +258,14 @@ class WalletController extends Controller
             $exists = collect($saved)->contains(fn($a) => strtoupper(preg_replace('/\s+/', '', $a['iban'] ?? '')) === $iban);
             if (!$exists) {
                 $saved[] = $validated['bank_details'];
-                $user->saved_bank_accounts = array_slice($saved, 0, 5);
+                $maxAccounts = (int) config('services.wallet.max_saved_bank_accounts', 5);
+                $user->saved_bank_accounts = array_slice($saved, 0, $maxAccounts);
                 $user->save();
             }
         }
 
-        return back()->with('success', 'Withdrawal request submitted! We will process it within 3–5 business days.');
+        $processingDaysLabel = config('services.wallet.processing_days_label', '3–5 business days');
+        return back()->with('success', "Withdrawal request submitted! We will process it within {$processingDaysLabel}.");
     }
 
     /**

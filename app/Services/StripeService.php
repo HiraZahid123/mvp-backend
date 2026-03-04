@@ -18,7 +18,7 @@ class StripeService
     public function createHold(Mission $mission): \Stripe\PaymentIntent
     {
         $amount = $mission->budget * 100; // Convert to cents
-        $commissionPercent = config('services.stripe.commission_percent', 15);
+        $commissionPercent = config('services.stripe.commission_percent');
         $commission = $amount * ($commissionPercent / 100);
 
         try {
@@ -131,9 +131,9 @@ class StripeService
     {
         try {
             return $this->stripe->accounts->create([
-                'type' => 'express',
-                'country' => 'CH', // Assuming Switzerland (CHF)
-                'email' => $user->email,
+                'type'          => 'express',
+                'country'       => config('services.stripe.account_country', 'CH'),
+                'email'         => $user->email,
                 'capabilities' => [
                     'card_payments' => ['requested' => true],
                     'transfers' => ['requested' => true],
@@ -164,6 +164,77 @@ class StripeService
         } catch (\Stripe\Exception\ApiErrorException $e) {
             \Illuminate\Support\Facades\Log::error('Stripe Account Link Creation Failed: ' . $e->getMessage());
             throw new \Exception('Failed to generate onboarding link. ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Transfer funds from the platform to a connected account.
+     */
+    public function transferFunds(\App\Models\User $provider, float $amount, string $withdrawalId): \Stripe\Transfer
+    {
+        if (!$provider->stripe_connect_id) {
+            throw new \Exception("Provider does not have a linked Stripe account.");
+        }
+
+        try {
+            return $this->stripe->transfers->create([
+                'amount' => $amount * 100, // Convert to cents
+                'currency' => config('services.stripe.currency', 'chf'),
+                'destination' => $provider->stripe_connect_id,
+                'metadata' => [
+                    'withdrawal_id' => $withdrawalId,
+                    'user_id' => $provider->id,
+                ],
+            ]);
+        } catch (\Stripe\Exception\ApiErrorException $e) {
+            \Illuminate\Support\Facades\Log::error("Stripe Transfer Failed for Withdrawal {$withdrawalId}: " . $e->getMessage());
+            throw new \Exception("Stripe Transfer Failed: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Get the status of a connected account.
+     */
+    public function getAccountStatus(string $stripeAccountId): array
+    {
+        try {
+            $account = $this->stripe->accounts->retrieve($stripeAccountId);
+            return [
+                'is_verified' => empty($account->requirements->currently_due) && $account->charges_enabled && $account->payouts_enabled,
+                'status' => $account->requirements->currently_due ? 'pending_requirements' : 'verified',
+                'details' => $account->toArray(),
+            ];
+        } catch (\Stripe\Exception\ApiErrorException $e) {
+            \Illuminate\Support\Facades\Log::error("Stripe Account Retrieval Failed: " . $e->getMessage());
+            return [
+                'is_verified' => false,
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+    /**
+     * Resolve a dispute by splitting funds between client and provider.
+     */
+    public function resolveDispute(Mission $mission, float $providerAmount, float $refundAmount): void
+    {
+        if ($mission->payment_intent_id) {
+            try {
+                // 1. Capture the partial amount for the provider
+                // Note: platform_commission should still be handled or adjusted
+                $this->stripe->paymentIntents->capture($mission->payment_intent_id, [
+                    'amount_to_capture' => $providerAmount * 100,
+                ]);
+
+                // 2. Refund the remaining amount is implied if not captured, 
+                // but for 'manual_capture' it just releases the rest eventually.
+                // To be explicit, Stripe doesn't have a 'partial_release' as a single call.
+                // Usually, the uncaptured amount is released automatically by the bank after 7 days.
+            } catch (\Stripe\Exception\ApiErrorException $e) {
+                \Illuminate\Support\Facades\Log::error("Stripe Dispute Resolution Failed: " . $e->getMessage());
+                throw new \Exception("Stripe Dispute Resolution Failed: " . $e->getMessage());
+            }
         }
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Mission;
 use App\Models\Payment;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Stripe\Webhook;
 
@@ -13,7 +14,7 @@ class StripeWebhookController extends Controller
     {
         $payload = $request->getContent();
         $sigHeader = $request->header('Stripe-Signature');
-        
+
         try {
             $event = Webhook::constructEvent(
                 $payload,
@@ -23,75 +24,112 @@ class StripeWebhookController extends Controller
         } catch (\Exception $e) {
             return response()->json(['error' => 'Invalid signature'], 400);
         }
-        
-        switch ($event->type) {
-            case 'payment_intent.succeeded':
-                $this->handlePaymentSucceeded($event->data->object);
-                break;
-            case 'payment_intent.payment_failed':
-                $this->handlePaymentFailed($event->data->object);
-                break;
-            case 'payment_intent.amount_capturable_updated':
-                $this->handlePaymentAuthorized($event->data->object);
-                break;
-            case 'charge.refunded':
-                $this->handleRefund($event->data->object);
-                break;
+
+        // ★ PRODUCT READY: Log the webhook event
+        $log = \App\Models\StripeWebhookLog::create([
+            'stripe_event_id' => $event->id,
+            'event_type' => $event->type,
+            'payload' => json_decode($payload, true),
+            'status' => 'pending',
+        ]);
+
+        try {
+            switch ($event->type) {
+                case 'payment_intent.succeeded':
+                    $this->handlePaymentSucceeded($event->data->object);
+                    break;
+                case 'payment_intent.payment_failed':
+                    $this->handlePaymentFailed($event->data->object);
+                    break;
+                case 'payment_intent.amount_capturable_updated':
+                    $this->handlePaymentAuthorized($event->data->object);
+                    break;
+                case 'charge.refunded':
+                    $this->handleRefund($event->data->object);
+                    break;
+                case 'account.updated':
+                    $this->handleAccountUpdated($event->data->object);
+                    break;
+            }
+
+            $log->update(['status' => 'processed']);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error("Webhook processing failed (Event: {$event->id}): " . $e->getMessage());
+            $log->update([
+                'status' => 'failed',
+                'error_message' => $e->getMessage(),
+            ]);
+            return response()->json(['error' => 'Internal server error during processing'], 500);
         }
-        
+
         return response()->json(['status' => 'success']);
     }
-    
+
     protected function handlePaymentSucceeded($paymentIntent)
     {
         // payment_intent.succeeded is for immediate capture
-        // We use it as a fallback or for direct payments if we ever add them
         $this->markAsHeld($paymentIntent);
     }
 
     protected function handlePaymentAuthorized($paymentIntent)
     {
         // This is specifically for manual capture (amount_capturable_updated)
-        // This is the status 'requires_capture'
         $this->markAsHeld($paymentIntent);
     }
 
     protected function markAsHeld($paymentIntent)
     {
         $payment = Payment::where('payment_intent_id', $paymentIntent->id)->first();
-        
-        if ($payment) {
+
+        if ($payment && $payment->status === Payment::STATUS_PENDING) {
             $payment->update([
                 'status' => Payment::STATUS_HELD,
                 'held_at' => now(),
             ]);
-            
-            $mission = $payment->mission;
-            
-            // If mission was waiting for payment to be secured
-            // Note: We don't auto-confirm yet, we let the user click "Confirm Assignment"
-            // but we could notify them or update UI state.
+
+            // Note: Mission status is updated when the user clicks "Confirm Assignment"
+            // which checks for this 'held' status.
         }
     }
-    
+
     protected function handlePaymentFailed($paymentIntent)
     {
-        // Handle failed payment (notify user, unlock mission logic if needed)
+        $payment = Payment::where('payment_intent_id', $paymentIntent->id)->first();
+        if ($payment) {
+            $payment->update(['status' => Payment::STATUS_FAILED]);
+
+            // Notify client that payment failed
+            $payment->mission->user->notify(new \App\Notifications\PaymentFailedNotification($payment->mission));
+        }
     }
-    
+
     protected function handleRefund($charge)
     {
-        // Handle refund logic
         if (isset($charge->payment_intent)) {
-             $payment = Payment::where('payment_intent_id', $charge->payment_intent)->first();
-             if ($payment) {
-                 $payment->update([
-                     'status' => 'refunded',
-                     'refunded_at' => now(),
-                 ]);
-                 
-                 // Potentially cancel mission or update status if not already
-             }
+            $payment = Payment::where('payment_intent_id', $charge->payment_intent)->first();
+            if ($payment) {
+                $payment->update([
+                    'status' => Payment::STATUS_REFUNDED,
+                    'refunded_at' => now(),
+                    'external_reference_id' => $charge->refunds->data[0]->id ?? null,
+                ]);
+            }
+        }
+    }
+
+    protected function handleAccountUpdated($account)
+    {
+        $user = User::where('stripe_connect_id', $account->id)->first();
+        if ($user) {
+            // Update user onboarding status based on requirements
+            $requirements = $account->requirements;
+            if (empty($requirements->currently_due) && $account->charges_enabled && $account->payouts_enabled) {
+                // Account is fully verified
+                // We could add a field to user table or log it
+                \Illuminate\Support\Facades\Log::info("User {$user->id} Stripe account fully verified.");
+            } else {
+                \Illuminate\Support\Facades\Log::warning("User {$user->id} Stripe account has pending requirements.");
+            }
         }
     }
 }

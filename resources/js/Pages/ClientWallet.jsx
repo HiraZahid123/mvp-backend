@@ -61,12 +61,12 @@ function buildMonthlyData(payments) {
 }
 
 /* ─── Custom Tooltips ────────────────────────────────────────── */
-const CustomTooltip = ({ active, payload, label }) => {
+const CustomTooltip = ({ active, payload, label, currency }) => {
     if (!active || !payload?.length) return null;
     return (
         <div className="bg-[#0F172A] text-white px-4 py-3 rounded-lg shadow-2xl border border-white/10 text-sm">
             <p className="font-black mb-1">{label}</p>
-            <p className="text-[#FF7F00] font-bold">CHF {fmt(payload[0]?.value)}</p>
+            <p className="text-[#FF7F00] font-bold">{currency} {fmt(payload[0]?.value)}</p>
             {payload[0]?.payload?.count > 0 && (
                 <p className="text-white/50 text-xs mt-0.5">{payload[0].payload.count} missions</p>
             )}
@@ -74,12 +74,12 @@ const CustomTooltip = ({ active, payload, label }) => {
     );
 };
 
-const CategoryTooltip = ({ active, payload }) => {
+const CategoryTooltip = ({ active, payload, currency }) => {
     if (!active || !payload?.length) return null;
     return (
         <div className="bg-[#0F172A] text-white px-4 py-3 rounded-lg shadow-2xl border border-white/10 text-sm">
             <p className="font-black mb-1">{payload[0].name}</p>
-            <p className="font-bold" style={{ color: payload[0].fill }}>CHF {fmt(payload[0].value)}</p>
+            <p className="font-bold" style={{ color: payload[0].fill }}>{currency} {fmt(payload[0].value)}</p>
         </div>
     );
 };
@@ -93,7 +93,7 @@ const StatPill = ({ label, value, accent }) => (
 );
 
 /* ─── MAIN ───────────────────────────────────────────────────── */
-export default function ClientWallet({ totalSpent, totalCommission, totalToProvider, categoryBreakdown, payments, issuePayments, totalRefunded, repeatProviders }) {
+export default function ClientWallet({ totalSpent, totalCommission, totalToProvider, categoryBreakdown, payments, issuePayments, totalRefunded, repeatProviders, currency = 'CHF' }) {
     const { t } = useTranslation();
     const [filter, setFilter] = useState('all');
 
@@ -165,12 +165,12 @@ export default function ClientWallet({ totalSpent, totalCommission, totalToProvi
                 {/* ── QUICK STATS STRIP ──────────────────────────────── */}
                 <motion.div variants={cardVariants} className="flex flex-wrap gap-3">
                     <StatPill label={t('Missions')} value={missionCount} />
-                    <StatPill label={t('Avg/Mission')} value={`CHF ${fmt(avgPerMission, 0)}`} />
+                    <StatPill label={t('Avg/Mission')} value={`${currency} ${fmt(avgPerMission, 0)}`} />
                     {peakMonth.total > 0 && (
                         <StatPill label={t('Peak Month')} value={peakMonth.label} accent="text-[#FF7F00]" />
                     )}
                     {biggestPayment && (
-                        <StatPill label={t('Biggest Pay')} value={`CHF ${fmt(biggestPayment.amount, 0)}`} />
+                        <StatPill label={t('Biggest Pay')} value={`${currency} ${fmt(biggestPayment.amount, 0)}`} />
                     )}
                     {mDeltaPct !== null && (
                         <StatPill label={t('vs Last Month')}
@@ -191,7 +191,7 @@ export default function ClientWallet({ totalSpent, totalCommission, totalToProvi
                             </div>
                             <p className="text-xs font-bold text-white/70 uppercase tracking-widest mb-2">{t('Total Spent')}</p>
                             <div className="flex items-baseline gap-2 mb-1">
-                                <span className="text-base font-bold text-white/80">CHF</span>
+                                <span className="text-base font-bold text-white/80">{currency}</span>
                                 <span className="text-5xl font-black tracking-tighter leading-none">{fmt(totalSpent, 0)}</span>
                             </div>
                             <p className="text-white/60 text-xs font-medium">{t('Across all your missions')}</p>
@@ -217,7 +217,7 @@ export default function ClientWallet({ totalSpent, totalCommission, totalToProvi
                             </div>
                             <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">{t('Avg. Per Mission')}</p>
                             <div className="flex items-baseline gap-1.5 mb-1">
-                                <span className="text-base font-bold text-slate-400">CHF</span>
+                                <span className="text-base font-bold text-slate-400">{currency}</span>
                                 <span className="text-4xl font-black text-[#0F172A] tracking-tighter">{fmt(avgPerMission, 0)}</span>
                             </div>
                             <p className="text-slate-400 text-xs font-medium">{t('Average investment per task')}</p>
@@ -268,7 +268,7 @@ export default function ClientWallet({ totalSpent, totalCommission, totalToProvi
                                 {t('Paid to Providers')}
                             </p>
                             <p className="text-2xl font-black text-emerald-600 mb-0.5">
-                                CHF {fmt(totalToProvider ?? 0, 0)}
+                                {currency} {fmt(totalToProvider ?? 0, 0)}
                             </p>
                             <p className="text-xs text-slate-400 font-medium">
                                 {totalSpent > 0
@@ -287,7 +287,7 @@ export default function ClientWallet({ totalSpent, totalCommission, totalToProvi
                                     {t('Platform Fee Paid')}
                                 </p>
                                 <p className="text-2xl font-black text-white mb-0.5">
-                                    CHF {fmt(totalCommission ?? 0, 0)}
+                                    {currency} {fmt(totalCommission ?? 0, 0)}
                                 </p>
                                 <p className="text-xs text-white/40 font-medium">
                                     {commissionRate}% {t('avg commission')}
@@ -305,7 +305,7 @@ export default function ClientWallet({ totalSpent, totalCommission, totalToProvi
                                 {t('Oflem Contribution')}
                             </p>
                             <p className="text-2xl font-black text-[#0F172A] mb-0.5">
-                                CHF {fmt(totalCommission ?? 0, 0)}
+                                {currency} {fmt(totalCommission ?? 0, 0)}
                             </p>
                             <p className="text-xs text-slate-400 font-medium leading-relaxed">
                                 {t('Powers platform security, escrow & support')}
@@ -317,19 +317,19 @@ export default function ClientWallet({ totalSpent, totalCommission, totalToProvi
                     {totalSpent > 0 && (
                         <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
                             <div className="flex items-center justify-between mb-2">
-                                <p className="text-xs font-black text-slate-400 uppercase tracking-widest">{t('How your CHF is split')}</p>
-                                <p className="text-xs font-black text-slate-500">CHF {fmt(totalSpent, 0)} {t('total')}</p>
+                                <p className="text-xs font-black text-slate-400 uppercase tracking-widest">{t(`How your ${currency} is split`)}</p>
+                                <p className="text-xs font-black text-slate-500">{currency} {fmt(totalSpent, 0)} {t('total')}</p>
                             </div>
                             <div className="w-full h-3 rounded-full overflow-hidden flex gap-0.5">
                                 <div
                                     className="h-full bg-emerald-500 rounded-l-full transition-all duration-700"
                                     style={{ width: `${((totalToProvider ?? 0) / totalSpent * 100).toFixed(1)}%` }}
-                                    title={`Provider: CHF ${fmt(totalToProvider, 0)}`}
+                                    title={`Provider: ${currency} ${fmt(totalToProvider, 0)}`}
                                 />
                                 <div
                                     className="h-full bg-[#FF7F00] rounded-r-full transition-all duration-700"
                                     style={{ width: `${((totalCommission ?? 0) / totalSpent * 100).toFixed(1)}%` }}
-                                    title={`Platform: CHF ${fmt(totalCommission, 0)}`}
+                                    title={`Platform: ${currency} ${fmt(totalCommission, 0)}`}
                                 />
                             </div>
                             <div className="flex items-center gap-5 mt-2">
@@ -378,7 +378,7 @@ export default function ClientWallet({ totalSpent, totalCommission, totalToProvi
                                         <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{ fontSize: 11, fontWeight: 700, fill: '#94a3b8' }} />
                                         <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 700, fill: '#94a3b8' }}
                                             tickFormatter={(v) => v > 0 ? `${(v / 1000).toFixed(0)}k` : '0'} />
-                                        <Tooltip content={<CustomTooltip />} cursor={{ fill: '#f8fafc', radius: 4 }} />
+                                        <Tooltip content={<CustomTooltip currency={currency} />} cursor={{ fill: '#f8fafc', radius: 4 }} />
                                         <Bar dataKey="total" radius={[6, 6, 2, 2]}>
                                             {monthlyData.map((entry, i) => (
                                                 <Cell key={i}
@@ -408,7 +408,7 @@ export default function ClientWallet({ totalSpent, totalCommission, totalToProvi
                                         {peakMonth.total > 0 ? peakMonth.label : '—'}
                                     </p>
                                     {peakMonth.total > 0 && (
-                                        <p className="text-[#FF7F00] text-sm font-black">CHF {fmt(peakMonth.total, 0)}</p>
+                                        <p className="text-[#FF7F00] text-sm font-black">{currency} {fmt(peakMonth.total, 0)}</p>
                                     )}
                                 </div>
                                 <div className="absolute -bottom-5 -right-5 w-20 h-20 bg-[#FF7F00]/10 rounded-full" />
@@ -420,7 +420,7 @@ export default function ClientWallet({ totalSpent, totalCommission, totalToProvi
                                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-0.5">{t('Biggest Payment')}</p>
                                 {biggestPayment ? (
                                     <>
-                                        <p className="text-2xl font-black text-[#0F172A] mb-0.5">CHF {fmt(biggestPayment.amount, 0)}</p>
+                                        <p className="text-2xl font-black text-[#0F172A] mb-0.5">{currency} {fmt(biggestPayment.amount, 0)}</p>
                                         <p className="text-xs text-slate-400 font-medium truncate">
                                             {biggestPayment.mission?.title ?? `Mission #${biggestPayment.mission_id}`}
                                         </p>
@@ -454,7 +454,7 @@ export default function ClientWallet({ totalSpent, totalCommission, totalToProvi
                                                 <Cell key={i} fill={entry.fill} />
                                             ))}
                                         </Pie>
-                                        <Tooltip content={<CategoryTooltip />} />
+                                        <Tooltip content={<CategoryTooltip currency={currency} />} />
                                     </PieChart>
                                 </ResponsiveContainer>
 
@@ -471,7 +471,7 @@ export default function ClientWallet({ totalSpent, totalCommission, totalToProvi
                                                     </div>
                                                     <div className="flex items-center gap-2 shrink-0">
                                                         <span className="text-xs font-bold text-slate-400">{pct}%</span>
-                                                        <span className="text-sm font-black text-[#0F172A]">CHF {fmt(entry.value, 0)}</span>
+                                                        <span className="text-sm font-black text-[#0F172A]">{currency} {fmt(entry.value, 0)}</span>
                                                     </div>
                                                 </div>
                                                 <div className="w-full h-1 bg-slate-100 rounded-full overflow-hidden">
@@ -592,7 +592,7 @@ export default function ClientWallet({ totalSpent, totalCommission, totalToProvi
                                             <div className="md:col-span-2 flex items-center justify-between md:justify-end gap-3">
                                                 <div className="text-right">
                                                     <p className="text-base font-black text-[#0F172A] tracking-tight">
-                                                        − CHF {fmt(payment.amount)}
+                                                        − {currency} {fmt(payment.amount)}
                                                     </p>
                                                     {payment.platform_commission > 0 && (
                                                         <p className="text-[10px] text-slate-400 font-medium">
@@ -615,10 +615,10 @@ export default function ClientWallet({ totalSpent, totalCommission, totalToProvi
                                     </p>
                                     <div className="text-right">
                                         <p className="text-sm font-black text-[#0F172A]">
-                                            {t('Total')}: CHF {fmt(filteredPayments.reduce((s, p) => s + parseFloat(p.amount || 0), 0))}
+                                            {t('Total')}: {currency} {fmt(filteredPayments.reduce((s, p) => s + parseFloat(p.amount || 0), 0))}
                                         </p>
                                         <p className="text-xs text-slate-400 font-medium">
-                                            {t('Provider received')}: CHF {fmt(filteredPayments.reduce((s, p) => s + parseFloat(p.provider_amount || 0), 0))}
+                                            {t('Provider received')}: {currency} {fmt(filteredPayments.reduce((s, p) => s + parseFloat(p.provider_amount || 0), 0))}
                                         </p>
                                     </div>
                                 </div>
@@ -652,7 +652,7 @@ export default function ClientWallet({ totalSpent, totalCommission, totalToProvi
                             <h2 className="text-lg font-black text-[#0F172A]">{t('Refunds & Disputes')}</h2>
                             {totalRefunded > 0 && (
                                 <span className="text-xs font-black text-emerald-600 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-lg">
-                                    + CHF {fmt(totalRefunded, 0)} {t('refunded')}
+                                    + {currency} {fmt(totalRefunded, 0)} {t('refunded')}
                                 </span>
                             )}
                         </div>
@@ -682,7 +682,7 @@ export default function ClientWallet({ totalSpent, totalCommission, totalToProvi
                                             <p className={`text-base font-black ${
                                                 p.status === 'refunded' ? 'text-emerald-600' : 'text-red-500'
                                             }`}>
-                                                {p.status === 'refunded' ? '+ ' : ''}CHF {fmt(p.amount)}
+                                                {p.status === 'refunded' ? '+ ' : ''}{currency} {fmt(p.amount)}
                                             </p>
                                             <span className={`inline-flex items-center px-2.5 py-1 text-[10px] font-black uppercase tracking-widest rounded-lg border ${
                                                 p.status === 'refunded'
@@ -735,7 +735,7 @@ export default function ClientWallet({ totalSpent, totalCommission, totalToProvi
                                         </p>
                                     </div>
                                     <div className="text-right">
-                                        <p className="text-sm font-black text-amber-600">CHF {fmt(provider.total_paid, 0)}</p>
+                                        <p className="text-sm font-black text-amber-600">{currency} {fmt(provider.total_paid, 0)}</p>
                                         <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{t('Total Paid')}</p>
                                     </div>
                                 </div>

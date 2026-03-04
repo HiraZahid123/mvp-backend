@@ -56,9 +56,15 @@ class AutoCompleteMissions extends Command
         foreach ($missions as $mission) {
             try {
                 $mission->transitionTo(Mission::STATUS_TERMINEE);
-                
+
                 // Release funds to provider
                 $this->stripeService->releaseFunds($mission);
+
+                // Update Provider Virtual Balance
+                $payment = \App\Models\Payment::where('mission_id', $mission->id)->first();
+                if ($payment && $mission->assignedUser) {
+                    $mission->assignedUser->increment('balance', $payment->provider_amount);
+                }
 
                 // Notify both parties
                 $mission->user->notify(new \App\Notifications\MissionAutoCompletedNotification($mission));
@@ -66,7 +72,7 @@ class AutoCompleteMissions extends Command
 
                 $this->info("✓ Mission #{$mission->id} auto-completed successfully.");
                 Log::info("Mission #{$mission->id} auto-completed after 72-hour validation period.");
-                
+
                 $completed++;
             } catch (\Exception $e) {
                 $this->error("✗ Failed to auto-complete mission #{$mission->id}: {$e->getMessage()}");
@@ -76,7 +82,7 @@ class AutoCompleteMissions extends Command
         }
 
         $this->info("\nSummary: {$completed} completed, {$failed} failed.");
-        
+
         return 0;
     }
 }

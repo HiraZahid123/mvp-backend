@@ -26,6 +26,8 @@ class Payment extends Model
         'platform_commission',
         'provider_amount',
         'currency',
+        'external_reference_id',
+        'platform_fee',
         'held_at',
         'captured_at',
         'refunded_at',
@@ -36,6 +38,7 @@ class Payment extends Model
     protected $casts = [
         'amount' => 'decimal:2',
         'platform_commission' => 'decimal:2',
+        'platform_fee' => 'decimal:2',
         'provider_amount' => 'decimal:2',
         'held_at' => 'datetime',
         'captured_at' => 'datetime',
