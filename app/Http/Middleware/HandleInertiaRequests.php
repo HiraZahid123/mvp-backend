@@ -49,10 +49,12 @@ class HandleInertiaRequests extends Middleware
                 'unread_notifications_count' => $request->user() ? $request->user()->unreadNotifications()->count() : 0,
             ],
             'locale' => $locale,
-            'translations' => array_merge(
-                json_decode(file_get_contents(base_path("lang/en.json")), true) ?: [],
-                json_decode(file_get_contents(base_path("lang/{$locale}.json")), true) ?: []
-            ),
+            'translations' => \Illuminate\Support\Facades\Cache::remember("translations_{$locale}", now()->addDay(), function () use ($locale) {
+                return array_merge(
+                    json_decode(file_get_contents(base_path("lang/en.json")), true) ?: [],
+                    json_decode(file_get_contents(base_path("lang/{$locale}.json")), true) ?: []
+                );
+            }),
             'flash' => [
                 'requires_auth' => fn () => $request->session()->get('requires_auth'),
                 'success' => fn () => $request->session()->get('success'),

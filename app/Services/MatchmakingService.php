@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\User;
 use App\Models\Skill;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class MatchmakingService
@@ -21,25 +22,15 @@ class MatchmakingService
         $skillNames = $requiredSkills->pluck('name')->map(fn($name) => strtolower($name))->toArray();
 
         // 2. Build Base Query
-        $creator = auth()->user();
+        $creator = Auth::user();
         $lat = $location['lat'] ?? ($creator?->location_lat) ?? null;
         $lng = $location['lng'] ?? ($creator?->location_lng) ?? null;
         $initialRadius = $location['radius'] ?? ($creator?->discovery_radius_km) ?? 20;
 
-        // Try different levels of matching:
-        // Level A: Local + Skills
-        // Level B: Local + Category
-        // Level C: Global + Skills
-        // Level D: Global + Category (Fallback)
-
+        // Level A/B: Try local search (20km - 100km)
         $candidates = $this->queryCandidates($skillNames, $category, $lat, $lng, $initialRadius, $limit);
 
-        // If no local matches, try broadening the search to 500km
-        if ($candidates->isEmpty() && $lat && $lng) {
-            $candidates = $this->queryCandidates($skillNames, $category, $lat, $lng, 500, $limit);
-        }
-
-        // If still no matches, try global (no location restriction)
+        // If no local matches, try broadening the search to any location (Global)
         if ($candidates->isEmpty()) {
             $candidates = $this->queryCandidates($skillNames, $category, null, null, null, $limit);
         }
@@ -127,13 +118,13 @@ class MatchmakingService
             }
         });
 
-        $results = $query->where('id', '!=', auth()->id())->take($limit)->get();
+        $results = $query->where('id', '!=', Auth::id())->take($limit)->get();
 
         // Final Fallback: If absolutely no filtered results, return any top performers (Global Fallback)
         if ($results->isEmpty()) {
             return User::where('role_type', '!=', 'client')
                 ->where('is_admin', false)
-                ->where('id', '!=', auth()->id())
+                ->where('id', '!=', Auth::id())
                 ->with(['skills', 'providerProfile'])
                 ->orderBy('rating_cache', 'desc')
                 ->take($limit)

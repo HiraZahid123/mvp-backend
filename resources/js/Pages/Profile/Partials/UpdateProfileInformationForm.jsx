@@ -21,6 +21,7 @@ export default function UpdateProfileInformation({
         useForm({
             name: user.name,
             email: user.email,
+            phone: user.phone || '',
             avatar: null,
             _method: 'PATCH',
         });
@@ -119,6 +120,20 @@ export default function UpdateProfileInformation({
                         placeholder={t('Enter your email address')}
                     />
                     <InputError className="mt-2" message={errors.email} />
+                </div>
+
+                <div className="space-y-1.5">
+                    <InputLabel htmlFor="phone" value={t('Phone Number')} />
+                    <TextInput
+                        id="phone"
+                        type="tel"
+                        className="mt-1 block w-full"
+                        value={data.phone}
+                        onChange={(e) => setData('phone', e.target.value)}
+                        autoComplete="tel"
+                        placeholder={t('Example: +41 79 123 45 67')}
+                    />
+                    <InputError className="mt-2" message={errors.phone} />
                 </div>
 
                 {mustVerifyEmail && user.email_verified_at === null && (

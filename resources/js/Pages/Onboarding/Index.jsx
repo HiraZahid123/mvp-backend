@@ -18,6 +18,7 @@ export default function Index({ existingProfile = null }) {
         description: '',
         bio: existingProfile?.bio || '',
         years_experience: existingProfile?.years_experience || 0,
+        hourly_rate: existingProfile?.hourly_rate || '',
         main_category: existingProfile?.main_category || '',
         skills: existingProfile?.skills?.map(s => ({ 
             name: s.name, 
@@ -161,6 +162,24 @@ export default function Index({ existingProfile = null }) {
                                         className="w-full bg-oflem-cream border-gray-border rounded-full px-6 py-4 text-sm font-bold focus:border-oflem-terracotta focus:ring-0"
                                     />
                                     <InputError message={errors.main_category} className="mt-2" />
+                                </div>
+                            </div>
+
+                            <div className="grid md:grid-cols-2 gap-6">
+                                {/* Hourly Rate */}
+                                <div>
+                                    <InputLabel htmlFor="hourly_rate" value={t('Hourly Rate (CHF)')} className="text-xs uppercase tracking-widest font-black mb-3" />
+                                    <input
+                                        type="number"
+                                        step="0.01"
+                                        id="hourly_rate"
+                                        value={data.hourly_rate}
+                                        onChange={(e) => setData('hourly_rate', e.target.value)}
+                                        className="w-full bg-oflem-cream border-gray-border rounded-full px-6 py-4 text-sm font-bold focus:border-oflem-terracotta focus:ring-0"
+                                        placeholder="0.00"
+                                        required
+                                    />
+                                    <InputError message={errors.hourly_rate} className="mt-2" />
                                 </div>
                             </div>
 

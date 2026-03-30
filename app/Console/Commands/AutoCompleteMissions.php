@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Mission;
 use App\Services\StripeService;
+use App\Services\MissionService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
@@ -24,11 +25,13 @@ class AutoCompleteMissions extends Command
     protected $description = 'Automatically complete missions that have been in validation for more than 72 hours';
 
     protected $stripeService;
+    protected $missionService;
 
-    public function __construct(StripeService $stripeService)
+    public function __construct(StripeService $stripeService, MissionService $missionService)
     {
         parent::__construct();
         $this->stripeService = $stripeService;
+        $this->missionService = $missionService;
     }
 
     /**
@@ -55,7 +58,7 @@ class AutoCompleteMissions extends Command
 
         foreach ($missions as $mission) {
             try {
-                $mission->transitionTo(Mission::STATUS_TERMINEE);
+                $this->missionService->transitionStatus($mission, Mission::STATUS_TERMINEE);
 
                 // Release funds to provider
                 $this->stripeService->releaseFunds($mission);

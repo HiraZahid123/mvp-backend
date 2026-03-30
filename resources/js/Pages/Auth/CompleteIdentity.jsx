@@ -15,6 +15,7 @@ export default function CompleteIdentity({ user }) {
 
     const { data, setData, post, processing, errors } = useForm({
         username: user?.username || user?.name || '',
+        phone: user?.phone || '',
         profile_photo: null,
     });
 
@@ -76,6 +77,21 @@ export default function CompleteIdentity({ user }) {
                         autoComplete="nickname"
                     />
                     <InputError message={errors.username} />
+                </div>
+
+                {/* Phone Number */}
+                <div className="space-y-1.5">
+                    <InputLabel htmlFor="phone" value={t("Phone number (required for verification)")} className="text-center lg:text-left" />
+                    <TextInput
+                        id="phone"
+                        type="tel"
+                        value={data.phone}
+                        onChange={(e) => setData('phone', e.target.value)}
+                        placeholder={t("+41 7x xxx xx xx")}
+                        autoComplete="tel"
+                        required
+                    />
+                    <InputError message={errors.phone} />
                 </div>
 
                 {/* Submit Button */}

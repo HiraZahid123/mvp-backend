@@ -14,6 +14,11 @@ use App\Http\Controllers\Auth\RoleSelectionController;
 use App\Http\Controllers\Auth\RoleSwitchController;
 use App\Http\Controllers\Auth\SocialAuthController;
 use App\Http\Controllers\MissionController;
+use App\Http\Controllers\MissionActionController;
+use App\Http\Controllers\MissionOfferController;
+use App\Http\Controllers\MissionQuestionController;
+use App\Http\Controllers\MissionMatchmakingController;
+use App\Http\Controllers\MissionReviewController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\ProviderController;
@@ -65,14 +70,14 @@ Route::get('/system-clear', function () {
 |--------------------------------------------------------------------------
 */
 
-Route::prefix('api')->name('api.')->group(function () {
+Route::prefix('api')->name('api.')->middleware('throttle:missions')->group(function () {
     Route::post('/missions', [MissionController::class, 'store'])->name('missions.store');
     Route::post('/moderation/check', [MissionController::class, 'checkModeration'])->name('moderation.check');
     Route::post('/missions/ai-rewrite', [MissionController::class, 'aiRewrite'])->name('missions.ai-rewrite');
 });
 
 Route::get('/missions/create', [MissionController::class, 'create'])->name('missions.create');
-Route::get('/missions/matchmaking-preview', [MissionController::class, 'guestMatchmakingPreview'])->name('missions.matchmaking-preview');
+Route::get('/missions/matchmaking-preview', [MissionMatchmakingController::class, 'guestMatchmakingPreview'])->name('missions.matchmaking-preview');
 
 /*
 |--------------------------------------------------------------------------
@@ -228,11 +233,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/chats', [\App\Http\Controllers\ChatController::class, 'index'])->name('api.chats.index');
     Route::get('/chats/{chat}', [\App\Http\Controllers\ChatController::class, 'show'])->name('api.chats.show');
     Route::get('/chats/{chat}/messages', [\App\Http\Controllers\ChatController::class, 'show'])->name('api.chats.messages');
-    Route::post('/chats/{chat}/messages', [\App\Http\Controllers\ChatController::class, 'store'])->name('api.chats.messages.store');
-    Route::post('/chats/{chat}/typing', [\App\Http\Controllers\ChatController::class, 'typing'])->name('api.chats.typing');
-    Route::post('/chats/{chat}/accept', [\App\Http\Controllers\ChatController::class, 'accept'])->name('api.chats.accept');
-    Route::post('/chats/{chat}/reject', [\App\Http\Controllers\ChatController::class, 'reject'])->name('api.chats.reject');
     Route::get('/missions/{mission}/chat', [\App\Http\Controllers\ChatController::class, 'getMissionChat'])->name('api.missions.chat');
+    // Chat messages throttled for security
+    Route::post('/chats/{chat}/messages', [\App\Http\Controllers\ChatController::class, 'store'])->name('api.chats.messages.store')->middleware('throttle:api');
 
     // Wallet Routes
     Route::get('/wallet', [\App\Http\Controllers\WalletController::class, 'index'])->name('wallet.index');
@@ -267,31 +270,38 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::prefix('missions')->name('missions.')->group(function () {
-        Route::get('/pending', [MissionController::class, 'handlePendingMission'])->name('pending');
+        Route::get('/pending', [MissionMatchmakingController::class, 'handlePendingMission'])->name('pending');
         Route::get('/active', [MissionController::class, 'active'])->name('active');
         Route::get('/search', [MissionController::class, 'search'])->name('search');
         Route::get('/{mission}', [MissionController::class, 'show'])->name('show');
         Route::get('/{mission}/edit', [MissionController::class, 'edit'])->name('edit');
         Route::patch('/{mission}', [MissionController::class, 'update'])->name('update');
         Route::post('/{mission}/update-status', [MissionController::class, 'updateStatus'])->name('update-status');
-        Route::get('/{mission}/matchmaking', [MissionController::class, 'showMatchmaking'])->name('matchmaking');
+        Route::get('/{mission}/matchmaking', [MissionMatchmakingController::class, 'showMatchmaking'])->name('matchmaking')->middleware('throttle:matchmaking');
 
-        // Mission Actions
-        Route::post('/{mission}/hire/{provider}', [MissionController::class, 'hire'])->name('hire');
-        Route::post('/{mission}/offer', [MissionController::class, 'submitOffer'])->name('submit-offer');
-        Route::post('/{mission}/question', [MissionController::class, 'askQuestion'])->name('ask-question');
-        Route::post('/{mission}/accept', [MissionController::class, 'acceptFixedPrice'])->name('accept');
-        Route::post('/{mission}/confirm-assignment', [MissionController::class, 'confirmAssignment'])->name('confirm-assignment');
-        Route::post('/{mission}/offers/{offer}/select', [MissionController::class, 'selectOffer'])->name('select-offer');
-        Route::post('/{mission}/questions/{question}/answer', [MissionController::class, 'answerQuestion'])->name('answer-question');
-        Route::post('/{mission}/start', [MissionController::class, 'startWork'])->name('start-work');
-        Route::post('/{mission}/submit-validation', [MissionController::class, 'submitForValidation'])->name('submit-validation');
-        Route::post('/{mission}/validate', [MissionController::class, 'validateCompletion'])->name('validate');
-        Route::post('/{mission}/dispute', [MissionController::class, 'initiateDispute'])->name('dispute');
-        Route::post('/{mission}/cancel', [MissionController::class, 'cancel'])->name('cancel');
-        Route::post('/{mission}/contact/{provider}', [MissionController::class, 'contactProvider'])->name('contact');
-        Route::get('/{mission}/nearby-providers', [MissionController::class, 'getNearbyProviders'])->name('nearby-providers');
-        Route::post('/{mission}/send-to-provider/{provider}', [MissionController::class, 'sendMissionToProvider'])->name('send-to-provider');
+        // Mission Actions & Lifecycle
+        Route::post('/{mission}/hire/{provider}', [MissionActionController::class, 'hire'])->name('hire');
+        Route::post('/{mission}/accept', [MissionActionController::class, 'acceptFixedPrice'])->name('accept');
+        Route::post('/{mission}/confirm-assignment', [MissionActionController::class, 'confirmAssignment'])->name('confirm-assignment');
+        Route::post('/{mission}/start', [MissionActionController::class, 'startWork'])->name('start-work');
+        Route::post('/{mission}/submit-validation', [MissionActionController::class, 'submitForValidation'])->name('submit-validation');
+        Route::post('/{mission}/validate', [MissionActionController::class, 'validateCompletion'])->name('validate');
+        Route::post('/{mission}/dispute', [MissionActionController::class, 'initiateDispute'])->name('dispute');
+        Route::post('/{mission}/cancel', [MissionActionController::class, 'cancel'])->name('cancel');
+
+        // Offers & Questions
+        Route::post('/{mission}/offer', [MissionOfferController::class, 'submitOffer'])->name('submit-offer');
+        Route::post('/{mission}/offers/{offer}/select', [MissionOfferController::class, 'selectOffer'])->name('select-offer');
+        Route::post('/{mission}/question', [MissionQuestionController::class, 'askQuestion'])->name('ask-question');
+        Route::post('/{mission}/questions/{question}/answer', [MissionQuestionController::class, 'answerQuestion'])->name('answer-question');
+
+        // Matchmaking & Invitations
+        Route::get('/{mission}/nearby-providers', [MissionMatchmakingController::class, 'getNearbyProviders'])->name('nearby-providers');
+        Route::post('/{mission}/send-to-provider/{provider}', [MissionMatchmakingController::class, 'sendMissionToProvider'])->name('send-to-provider');
+        Route::post('/{mission}/contact/{provider}', [MissionMatchmakingController::class, 'contactProvider'])->name('contact');
+
+        // Reviews
+        Route::post('/{mission}/review', [MissionReviewController::class, 'submitReview'])->name('submit-review');
     });
 });
 

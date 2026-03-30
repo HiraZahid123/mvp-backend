@@ -9,6 +9,15 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+/**
+ * @method bool isAdmin()
+ * @method bool isProvider()
+ * @property string $role_type
+ * @property float|null $location_lat
+ * @property float|null $location_lng
+ * @property int $discovery_radius_km
+ * @property int $balance
+ */
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */

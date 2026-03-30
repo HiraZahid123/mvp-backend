@@ -38,6 +38,7 @@ class ProfileCompletionController extends Controller
     {
         $request->validate([
             'username' => 'required|string|max:255',
+            'phone' => 'nullable|string|max:20',
             'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
@@ -63,6 +64,7 @@ class ProfileCompletionController extends Controller
 
         $user->update([
             'username' => $request->username,
+            'phone' => $request->phone,
             'profile_photo' => $photoPath,
         ]);
 

@@ -88,47 +88,11 @@ class Mission extends Model
 
     public function transitionTo(string $newStatus, bool $shouldBroadcast = true): bool
     {
-        if (!$this->canTransitionTo($newStatus)) {
-            throw new \Exception("Cannot transition from {$this->status} to {$newStatus}");
-        }
-
-        $oldStatus = $this->status;
-        $this->status = $newStatus;
-
-        // Set appropriate timestamps
-        switch ($newStatus) {
-            case self::STATUS_VERROUILLEE:
-                $this->locked_at = now();
-                break;
-            case self::STATUS_EN_COURS:
-                $this->started_at = now();
-                break;
-            case self::STATUS_EN_VALIDATION:
-                $this->validation_started_at = now();
-                break;
-            case self::STATUS_TERMINEE:
-                $this->completed_at = now();
-                break;
-            case self::STATUS_ANNULEE:
-                $this->cancelled_at = now();
-                break;
-        }
-
-        $this->save();
-
-        // Defer broadcast until after transaction commits to avoid race conditions
-        if ($shouldBroadcast) {
-            $missionId = $this->id;
-            \Illuminate\Support\Facades\DB::afterCommit(function () use ($missionId, $oldStatus) {
-                // Refresh model to prevent broadcasting stale data
-                $mission = self::find($missionId);
-                if ($mission) {
-                    broadcast(new \App\Events\MissionStatusUpdated($mission, $oldStatus))->toOthers();
-                }
-            });
-        }
-
-        return true;
+        // Proxy to MissionService for backward compatibility if needed, 
+        // but it's better to force using the service.
+        // For now, I'll keep it but mark as deprecated or calling the service if I can inject it (hard in model).
+        // Since I've updated all call sites, I can remove it.
+        return app(\App\Services\MissionService::class)->transitionStatus($this, $newStatus, $shouldBroadcast);
     }
 
     // Address visibility
@@ -155,38 +119,7 @@ class Mission extends Model
      */
     public function revealAddress(): void
     {
-        // Wrap in transaction to prevent race conditions and duplicate messages
-        DB::transaction(function () {
-            // Lock the row for update to prevent concurrent modifications
-            $mission = self::lockForUpdate()->find($this->id);
-
-            // Check if address was already revealed to prevent duplicate messages
-            if ($mission->address_revealed) {
-                return;
-            }
-
-            $mission->address_revealed = true;
-            $mission->save();
-
-            // Create system message in chat to notify both parties
-            $chat = Chat::firstOrCreate([
-                'mission_id' => $mission->id,
-            ], [
-                'participant_ids' => array_filter([$mission->user_id, $mission->assigned_user_id]),
-            ]);
-
-            $chat->messages()->create([
-                'user_id' => null, // System message
-                'content' => json_encode([
-                    'type' => 'address_revealed',
-                    'message' => '🔓 Full address revealed: ' . $mission->exact_address,
-                ]),
-                'is_system_message' => true,
-            ]);
-
-            // Update the current instance
-            $this->address_revealed = $mission->address_revealed;
-        });
+        app(\App\Services\MissionService::class)->revealAddress($this);
     }
 
     public function getApproximateLocation(): string
@@ -262,10 +195,13 @@ class Mission extends Model
         $query->whereBetween('lat', [$lat - $latDelta, $lat + $latDelta])
             ->whereBetween('lng', [$lng - $lngDelta, $lng + $lngDelta]);
 
-        $haversine = "(6371 * acos(cos(radians(?)) * cos(radians(lat)) * cos(radians(lng) - radians(?)) + sin(radians(?)) * sin(radians(lat))))";
+        $haversine = "(6371 * acos(LEAST(1, GREATEST(-1, cos(radians(?)) * cos(radians(lat)) * cos(radians(lng) - radians(?)) + sin(radians(?)) * sin(radians(lat))))))";
 
-        return $query->selectRaw("*, $haversine AS distance", [$lat, $lng, $lat])
-            ->having('distance', '<=', $radiusKm);
+        // Use whereRaw for the actual filter to support pagination count queries
+        $query->whereRaw("$haversine <= ?", [$lat, $lng, $lat, $radiusKm]);
+
+        // Keep selectRaw so the 'distance' attribute is available in the model
+        return $query->selectRaw("*, $haversine AS distance", [$lat, $lng, $lat]);
     }
 
     /**

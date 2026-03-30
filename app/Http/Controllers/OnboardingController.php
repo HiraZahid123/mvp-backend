@@ -51,6 +51,7 @@ class OnboardingController extends Controller
         $request->validate([
             'bio' => 'required|string',
             'years_experience' => 'integer|min:0',
+            'hourly_rate' => 'required|numeric|min:0',
             'main_category' => 'nullable|string',
             'skills' => 'array',
             'skills.*.name' => 'required|string',
@@ -67,6 +68,7 @@ class OnboardingController extends Controller
                 [
                     'bio' => $request->bio,
                     'years_experience' => $request->years_experience,
+                    'hourly_rate' => $request->hourly_rate,
                     'main_category' => $request->main_category,
                     'raw_ai_analysis' => $request->raw_analysis
                 ]
