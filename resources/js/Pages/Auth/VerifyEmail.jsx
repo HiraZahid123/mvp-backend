@@ -16,11 +16,11 @@ export default function VerifyEmail({ status }) {
 
     return (
         <AuthSplitLayout
-            heroHeading={t('Verify and Explore!')}
-            heroSubtext={t('Check your inbox to confirm your email and unlock all features.')}
+            heroHeading={t('auth.verify_email.hero_title')}
+            heroSubtext={t('auth.verify_email.hero_subtitle')}
             bgAccentClass="bg-cream-accent"
         >
-            <Head title={t('Email Verification')} />
+            <Head title={t('auth.verify_email.title')} />
             
             <div className="mb-8 lg:mb-10 text-center lg:text-left relative">
                 <BackButton 
@@ -28,9 +28,9 @@ export default function VerifyEmail({ status }) {
                     className="absolute -top-12 left-0" 
                 />
 
-                <h2 className="text-lg font-medium text-oflem-charcoal mb-1">{t('Oflem')}</h2>
-                <h1 className="text-[32px] lg:text-[40px] font-black text-oflem-charcoal tracking-tight mb-2">{t('Check Email')}</h1>
-                <p className="text-gray-muted text-sm font-medium italic">{t('Thanks for signing up!')}</p>
+                <h2 className="text-lg font-medium text-oflem-charcoal mb-1">{t('common.app_name')}</h2>
+                <h1 className="text-[32px] lg:text-[40px] font-black text-oflem-charcoal tracking-tight mb-2">{t('auth.verify_email.title')}</h1>
+                <p className="text-gray-muted text-sm font-medium italic">{t('auth.register.subtitle')}</p>
             </div>
 
             <div className="p-8 bg-white border border-gray-border rounded-[24px] mb-8 text-center sm:text-left">
@@ -40,19 +40,19 @@ export default function VerifyEmail({ status }) {
                     </svg>
                 </div>
                 <p className="text-sm text-gray-muted leading-relaxed font-bold">
-                    {t('Please verify your email address by clicking the link we just emailed to you. If you didn\'t receive it, we\'ll send another.')}
+                    {t('auth.verify_email.subtitle')}
                 </p>
             </div>
 
             {status === 'verification-link-sent' && (
                 <div className="mb-6 p-4 bg-green-50 text-green-700 rounded-[24px] text-sm font-bold border border-green-100 text-center">
-                    {t('A new verification link has been sent to your email.')}
+                    {t('auth.verify_email.sent_notice')}
                 </div>
             )}
 
             <form onSubmit={submit} className="space-y-6">
                 <PrimaryButton className="w-full" disabled={processing}>
-                    {t('Resend Verification Email')}
+                    {t('auth.verify_email.resend_button')}
                 </PrimaryButton>
                 
                 <div className="text-center pt-2">
@@ -62,7 +62,7 @@ export default function VerifyEmail({ status }) {
                         as="button"
                         className="text-sm text-gray-muted hover:text-oflem-charcoal transition-colors font-bold underline underline-offset-4 decoration-1"
                     >
-                        {t('Log Out')}
+                        {t('auth.verify_email.logout')}
                     </Link>
                 </div>
             </form>

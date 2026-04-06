@@ -111,11 +111,11 @@ export default function CompleteProfile() {
     return (
         <AuthSplitLayout
             heroImage="/images/illustrations/basic-profile.svg"
-            heroHeading={t("Welcome")}
-            heroSubtext={t("Oflem makes life easy by connecting people to hire help or earn money by completing tasks quickly and reliably.")}
+            heroHeading={t('auth.complete_profile.hero_title')}
+            heroSubtext={t('auth.complete_profile.hero_subtitle')}
             bgAccentClass="bg-cream-accent"
         >
-            <Head title={t("Complete Profile")} />
+            <Head title={t('auth.complete_profile.title')} />
             
             <div className="mb-8 lg:mb-10 text-center lg:text-left relative">
                  <BackButton 
@@ -123,9 +123,9 @@ export default function CompleteProfile() {
                     className="absolute -top-12 left-0" 
                 />
 
-                <h2 className="text-lg font-medium text-oflem-charcoal mb-1">{t('Promise, this is the last thing')}</h2>
+                <h2 className="text-lg font-medium text-oflem-charcoal mb-1">{t('auth.complete_profile.last_step')}</h2>
                 <h1 className="text-[32px] lg:text-[40px] font-black text-oflem-charcoal tracking-tight mb-2">
-                    {t('Just your area. After that, Oflem handles it.')}
+                    {t('auth.complete_profile.subtitle')}
                 </h1>
                 <div className="flex flex-col items-center w-full mt-6 mb-2">
                     <div className="relative mb-2">
@@ -154,7 +154,7 @@ export default function CompleteProfile() {
                         onClick={() => fileInputRef.current.click()}
                         className="text-xs font-black text-gray-muted hover:text-oflem-charcoal transition-colors"
                     >
-                        {t('Edit Profile')}
+                        {t('auth.complete_profile.edit_profile')}
                     </button>
                 </div>
                 </div>
@@ -162,13 +162,13 @@ export default function CompleteProfile() {
 
             <form onSubmit={submit} className="space-y-5 pb-8">
                 <div className="space-y-1.5">
-                    <InputLabel htmlFor="name" value={t('Full Name')} />
+                    <InputLabel htmlFor="name" value={t('auth.complete_profile.full_name')} />
                     <TextInput
                         id="name"
                         type="text"
                         value={data.name}
                         onChange={(e) => setData('name', e.target.value)}
-                        placeholder={t('Enter Your Name')}
+                        placeholder={t('auth.complete_profile.full_name_placeholder')}
                         autoComplete="name"
                         required
                     />
@@ -176,26 +176,26 @@ export default function CompleteProfile() {
                 </div>
 
                 <div className="space-y-1.5">
-                    <InputLabel htmlFor="zip_code" value={t('ZIP Code')} />
+                    <InputLabel htmlFor="zip_code" value={t('auth.complete_profile.zip_code')} />
                     <TextInput
                         id="zip_code"
                         type="text"
                         value={data.zip_code}
                         onChange={(e) => setData('zip_code', e.target.value)}
-                        placeholder={t("e.g. 10001")}
+                        placeholder={t('auth.complete_profile.zip_code_placeholder')}
                         required
                     />
                     <InputError message={errors.zip_code} />
                 </div>
 
                 <div className="space-y-1.5">
-                    <InputLabel htmlFor="location_address" value={t('Location')} />
+                    <InputLabel htmlFor="location_address" value={t('auth.complete_profile.location')} />
                     <TextInput
                         id="location_address"
                         type="text"
                         value={data.location_address}
                         onChange={(e) => setData('location_address', e.target.value)}
-                        placeholder={t("New York City, USA")}
+                        placeholder={t('auth.complete_profile.location_placeholder')}
                         required
                     />
                     <InputError message={errors.location_address} />
@@ -204,8 +204,8 @@ export default function CompleteProfile() {
                 <div className="space-y-4 pt-2">
                     <div className="flex justify-between items-center px-4">
                         <div>
-                            <InputLabel value={t('Radius')} className="ml-0" />
-                            <p className="text-[10px] text-gray-muted font-bold">{t('Pick a radius to make tasking easier')}</p>
+                            <InputLabel value={t('auth.complete_profile.radius')} className="ml-0" />
+                            <p className="text-[10px] text-gray-muted font-bold">{t('auth.complete_profile.radius_subtitle')}</p>
                         </div>
                         <span className="text-sm font-black text-oflem-charcoal">{radius} km</span>
                     </div>
@@ -257,7 +257,7 @@ export default function CompleteProfile() {
                             </GoogleMap>
                         ) : (
                             <div className="w-full h-[240px] bg-gray-100 flex items-center justify-center italic text-gray-400">
-                                {loadError ? t('Error loading maps') : t('Loading map...')}
+                                {loadError ? t('auth.complete_profile.map_error') : t('auth.complete_profile.map_loading')}
                             </div>
                         )}
                     </div>
@@ -268,7 +268,7 @@ export default function CompleteProfile() {
 
                 <div className="pt-4">
                     <PrimaryButton className="w-full" disabled={processing}>
-                        {t('Complete Profile')}
+                        {t('auth.complete_profile.button')}
                     </PrimaryButton>
                 </div>
             </form>

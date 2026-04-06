@@ -39,7 +39,9 @@ use Inertia\Inertia;
 use App\Http\Controllers\HomeController;
 /* ... */
 
-Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('welcome');
+Route::get('/about', [HomeController::class, 'about'])->name('about');
+Route::get('/legal/{section?}', [HomeController::class, 'legal'])->name('legal');
 
 
 // Public Profile Route
@@ -89,6 +91,8 @@ Route::get('/missions/matchmaking-preview', [MissionMatchmakingController::class
 Route::middleware('guest')->group(function () {
     // Manual Registration & Login
     Route::get('/register/manual', [RegisteredUserController::class, 'createManual'])->name('register.manual');
+    Route::get('/register-client', function () { return Inertia::render('Auth/ClientRegister'); })->name('register.client');
+    Route::post('/register-client', [RegisteredUserController::class, 'storeClient'])->name('register.client.post');
     Route::get('/login/manual', [AuthenticatedSessionController::class, 'createManual'])->name('login.manual');
 
     // Email Verification (for manual registration)

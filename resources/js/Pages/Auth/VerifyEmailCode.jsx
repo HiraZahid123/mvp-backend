@@ -124,14 +124,14 @@ export default function VerifyEmailCode({ email }) {
             heroImage="/images/illustrations/verify-email.svg"
             bgAccentClass="bg-cream-accent"
         >
-            <Head title={t("Verify Email")} />
+            <Head title={t('auth.verify_otp.title')} />
 
             <div className="text-center mb-8">
                 <h1 className="text-[32px] lg:text-[40px] font-serif font-bold text-oflem-charcoal tracking-tight mb-3 leading-tight">
-                    {t("Verify your email")}
+                    {t('auth.verify_otp.title')}
                 </h1>
                 <p className="text-gray-muted text-base font-medium">
-                    {t("We've sent a code to ")}<span className="font-bold text-oflem-charcoal">{email}</span>
+                    {t('auth.verify_otp.subtitle')}<span className="font-bold text-oflem-charcoal">{email}</span>
                 </p>
             </div>
 
@@ -174,11 +174,11 @@ export default function VerifyEmailCode({ email }) {
                             disabled={resending}
                             className="text-sm font-bold text-oflem-terracotta hover:underline disabled:opacity-50"
                         >
-                            {resending ? t('Sending...') : t('Resend code')}
+                            {resending ? t('auth.verify_otp.sending') : t('auth.verify_otp.resend_button')}
                         </button>
                     ) : (
                         <p className="text-sm text-gray-muted font-medium">
-                            {t("Resend code in ")}<span className="font-bold text-oflem-charcoal">{timeLeft}s</span>
+                            {t('auth.verify_otp.resend_notice')}<span className="font-bold text-oflem-charcoal">{timeLeft}s</span>
                         </p>
                     )}
                 </div>
@@ -189,13 +189,13 @@ export default function VerifyEmailCode({ email }) {
                     disabled={processing || code.join('').length !== 6}
                     processing={processing}
                 >
-                    {t('Verify')}
+                    {t('auth.verify_otp.button')}
                 </PrimaryButton>
             </form>
 
             <div className="elegant-capsule mt-8">
                 <p className="text-xs text-oflem-charcoal font-medium text-center">
-                    {t("The code will expire in ")}<span className="font-bold text-oflem-terracotta">{t("10 minutes")}</span>
+                    {t('auth.verify_otp.expiry_notice')}<span className="font-bold text-oflem-terracotta">{t('auth.verify_otp.expiry_time')}</span>
                 </p>
             </div>
         </AuthSplitLayout>

@@ -11,6 +11,7 @@ use App\Services\MissionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\MissionOffer;
 use Illuminate\Support\Facades\Log;
 
 class MissionActionController extends Controller
@@ -39,12 +40,26 @@ class MissionActionController extends Controller
         }
 
         try {
+            // Check if already applied
+            $existingOffer = $mission->offers()
+                ->where('user_id', Auth::id())
+                ->first();
+
+            if ($existingOffer) {
+                return back()->withErrors(['mission' => 'You have already accepted the price for this mission.']);
+            }
+
             $chat = null;
             DB::transaction(function () use ($mission, &$chat) {
-                $this->missionService->transitionStatus($mission, Mission::STATUS_EN_NEGOCIATION);
-                $mission->assigned_user_id = Auth::id();
-                $mission->save();
+                // Instead of direct assignment, create an offer at the fixed price
+                $offer = $mission->offers()->create([
+                    'user_id' => Auth::id(),
+                    'amount' => $mission->budget,
+                    'message' => 'I accept the fixed price for this mission.',
+                    'status' => 'pending',
+                ]);
 
+                // Create a chat between the provider and the client (interview stage)
                 $chat = Chat::firstOrCreate([
                     'mission_id' => $mission->id,
                 ], [
@@ -52,12 +67,13 @@ class MissionActionController extends Controller
                 ]);
 
                 $chat->touch('last_message_at');
+
+                // Notify client
+                $mission->user->notify(new \App\Notifications\NewOfferNotification($offer));
             });
 
-            $mission->user->notify(new \App\Notifications\MissionAssignedNotification($mission));
-
             return redirect()->route('missions.show', $mission->id)
-                ->with('success', 'Mission accepted! Waiting for owner confirmation to start.')
+                ->with('success', 'You have accepted the price! The client will review your profile and contact you.')
                 ->with('chat_id', $chat->id);
         } catch (\Exception $e) {
             Log::error('Accept Mission Failed: ' . $e->getMessage());

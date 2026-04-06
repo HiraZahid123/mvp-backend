@@ -28,20 +28,20 @@ export default function MoodOfTheDay({ user, currentRole }) {
         {
             key: 'client',
             icon: '/images/icons/battery-low.svg',
-            title: t('Client'),
-            description: t('I want to delegate and rest today.'),
+            title: t('auth.select_role.client_title'),
+            description: t('auth.mood_of_the_day.client_desc'),
         },
         {
             key: 'provider',
             icon: '/images/icons/battery-high.svg',
-            title: t('Provider'),
-            description: t("I'm ready to seize opportunities."),
+            title: t('auth.select_role.provider_title'),
+            description: t('auth.mood_of_the_day.provider_desc'),
         },
         {
             key: 'both',
             icon: '/images/icons/battery-medium.svg',
-            title: t('BOTH'),
-            description: t('Both! Multitask mode activated.'),
+            title: t('auth.mood_of_the_day.both_title'),
+            description: t('auth.mood_of_the_day.both_desc'),
         },
     ];
 
@@ -50,20 +50,20 @@ export default function MoodOfTheDay({ user, currentRole }) {
             heroImage="/images/illustrations/mood-of-the-day.svg"
             bgAccentClass="bg-cream-accent"
         >
-            <Head title={t("Mood of the Day")} />
+            <Head title={t('auth.mood_of_the_day.title')} />
             
             <div className="flex items-center mb-8">
                 <BackButton href="/" className="text-sm">
-                    {t('Back')}
+                    {t('common.back')}
                 </BackButton>
             </div>
 
             <div className="text-center mb-8">
                 <h1 className="text-[32px] lg:text-[40px] font-serif font-bold text-oflem-charcoal tracking-tight mb-3 leading-tight">
-                    {t("What's the mood of the day?")}
+                    {t('auth.mood_of_the_day.question')}
                 </h1>
                 <p className="text-gray-muted text-base font-medium">
-                    {t("Welcome")}, <span className="font-bold text-oflem-charcoal">{user?.display_name || user?.name}</span> !
+                    {t('auth.mood_of_the_day.welcome')}, <span className="font-bold text-oflem-charcoal">{user?.display_name || user?.name}</span> !
                 </p>
             </div>
 
@@ -88,13 +88,13 @@ export default function MoodOfTheDay({ user, currentRole }) {
                     disabled={processing || !selectedRole}
                     processing={processing}
                 >
-                    {t("Let's go!")}
+                    {t('auth.mood_of_the_day.button')}
                 </PrimaryButton>
             </form>
 
             <div className="elegant-capsule mt-6">
                 <p className="text-xs text-oflem-charcoal font-medium text-center">
-                    {t('This selection determines your initial dashboard. You can change it at any time.')}
+                    {t('auth.mood_of_the_day.footer_notice')}
                 </p>
             </div>
         </AuthSplitLayout>

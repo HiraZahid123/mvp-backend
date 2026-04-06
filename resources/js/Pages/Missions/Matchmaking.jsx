@@ -1,6 +1,6 @@
 import React from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import DashboardLayout from '@/Layouts/DashboardLayout';
 import useTranslation from '@/Hooks/useTranslation';
 import { Search, Check, Star } from 'lucide-react';
 
@@ -8,14 +8,12 @@ export default function Matchmaking({ mission, providers, isGuest = false }) {
     const { t } = useTranslation();
 
     return (
-        <AuthenticatedLayout 
+        <DashboardLayout 
             header={t('Match Providers')}
-            maxWidth="max-w-7xl"
-            showFooter={true}
         >
             <Head title={t('Match Providers')} />
 
-            <div className="py-16">
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
                 <div className="mb-12">
                     <h1 className="text-3xl font-black text-oflem-charcoal mb-3">
                         {t('Help found for')}: <span className="text-oflem-terracotta">{mission.title}</span>
@@ -67,7 +65,7 @@ export default function Matchmaking({ mission, providers, isGuest = false }) {
                     </div>
                 )}
             </div>
-        </AuthenticatedLayout>
+        </DashboardLayout>
     );
 }
 

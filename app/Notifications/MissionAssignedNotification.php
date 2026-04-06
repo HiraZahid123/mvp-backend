@@ -8,7 +8,9 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Notification;
 
-class MissionAssignedNotification extends Notification
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+
+class MissionAssignedNotification extends Notification implements ShouldQueue, ShouldBroadcast
 {
     use Queueable;
 

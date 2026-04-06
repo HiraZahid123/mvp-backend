@@ -81,7 +81,7 @@ export default function VerifyLoginOTP() {
             heroImage="/images/illustrations/otp-verify.svg"
             bgAccentClass="bg-cream-accent"
         >
-            <Head title={t('Verify Login')} />
+            <Head title={t('auth.verify_otp.title')} />
             
             <div className="mb-8 lg:mb-10 text-center lg:text-left relative">
                 <BackButton 
@@ -89,12 +89,12 @@ export default function VerifyLoginOTP() {
                     className="absolute -top-12 left-0" 
                 />
 
-                <h2 className="text-lg font-medium text-oflem-charcoal mb-1">{t('Oflem')}</h2>
+                <h2 className="text-lg font-medium text-oflem-charcoal mb-1">{t('common.app_name')}</h2>
                 <h1 className="text-[32px] lg:text-[40px] font-black text-oflem-charcoal tracking-tight mb-2">
-                    {t("Verify Login")}
+                    {t('auth.verify_otp.title')}
                 </h1>
                 <p className="text-gray-muted text-sm font-medium">
-                    {t("Enter the code received by email.")}
+                    {t('auth.verify_otp.subtitle')}
                 </p>
             </div>
 
@@ -105,7 +105,7 @@ export default function VerifyLoginOTP() {
 
                 <form onSubmit={submit} className="space-y-8">
                     <div className="space-y-2">
-                        <label className="text-sm font-black text-oflem-charcoal block text-center">{t('One-time password')}</label>
+                        <label className="text-sm font-black text-oflem-charcoal block text-center">{t('auth.verify_otp.code_placeholder')}</label>
                         <div className="flex justify-between gap-1 sm:gap-2 max-w-sm mx-auto">
                             {otp.map((digit, index) => (
                                 <input
@@ -130,13 +130,13 @@ export default function VerifyLoginOTP() {
                         processing={processing}
                         className="w-full"
                     >
-                        {t('Log In')}
+                        {t('auth.login.button')}
                     </PrimaryButton>
 
                     <div className="text-center">
                         <p className="text-sm text-gray-muted font-bold">
                             <div className="flex items-center justify-center gap-1">
-                                <span className="text-gray-muted">{t("Didn't receive code?")}</span>
+                                <span className="text-gray-muted">{t('auth.verify_otp.resend_notice')}</span>
                                 <button
                                     type="button"
                                     onClick={resendOTP}
@@ -145,11 +145,11 @@ export default function VerifyLoginOTP() {
                                 >
                                     {!canResend ? (
                                         <>
-                                            <span className="hidden lg:inline">{t('Resend in')} {formatTime(timeLeft)}</span>
-                                            <span className="lg:hidden">{t('Resend in')} {formatTime(timeLeft)}</span>
+                                            <span className="hidden lg:inline">{t('auth.verify_otp.resend_notice')} {formatTime(timeLeft)}</span>
+                                            <span className="lg:hidden">{t('auth.verify_otp.resend_notice')} {formatTime(timeLeft)}</span>
                                         </>
                                     ) : (
-                                        t('Resend Code')
+                                        t('auth.verify_otp.resend_button')
                                     )}
                                 </button>
                             </div>

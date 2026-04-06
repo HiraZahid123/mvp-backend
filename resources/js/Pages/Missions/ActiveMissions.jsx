@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Head, Link, usePage, router } from '@inertiajs/react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import DashboardLayout from '@/Layouts/DashboardLayout';
 import useTranslation from '@/Hooks/useTranslation';
 import FilterSidebar from '@/Components/Missions/FilterSidebar';
 import FilterChips from '@/Components/Missions/FilterChips';
@@ -50,14 +50,12 @@ export default function ActiveMissions({ missions, userLocation, currentFilters,
     };
 
     return (
-        <AuthenticatedLayout 
+        <DashboardLayout 
             header={t('Active Missions')}
-            maxWidth="max-w-[1400px]"
-            showFooter={true}
         >
             <Head title={t('Active Missions')} />
 
-            <div className="py-16">
+            <div className="py-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
                 <div className="flex flex-col lg:flex-row gap-12">
                     {/* Sidebar */}
                     <FilterSidebar 
@@ -234,6 +232,6 @@ export default function ActiveMissions({ missions, userLocation, currentFilters,
                     </div>
                 </div>
             </div>
-        </AuthenticatedLayout>
+        </DashboardLayout>
     );
 }

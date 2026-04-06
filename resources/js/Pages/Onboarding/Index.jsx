@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Head, useForm, router } from '@inertiajs/react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import DashboardLayout from '@/Layouts/DashboardLayout';
 import useTranslation from '@/Hooks/useTranslation';
 import InputLabel from '@/Components/InputLabel';
 import InputError from '@/Components/InputError';
@@ -70,14 +70,12 @@ export default function Index({ existingProfile = null }) {
     };
 
     return (
-        <AuthenticatedLayout 
+        <DashboardLayout 
             header={existingProfile ? t('Edit Provider Profile') : t('Provider Onboarding')}
-            maxWidth="max-w-3xl"
-            showFooter={true}
         >
             <Head title={t('Provider Onboarding')} />
 
-            <div className="py-16">
+            <div className="max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
                 <div className="bg-white rounded-[40px] p-8 md:p-12 shadow-sm border border-gray-border">
                     <div className="mb-10 text-center">
                         <h2 className="text-3xl font-black text-oflem-charcoal mb-3">
@@ -231,6 +229,6 @@ export default function Index({ existingProfile = null }) {
                     )}
                 </div>
             </div>
-        </AuthenticatedLayout>
+        </DashboardLayout>
     );
 }

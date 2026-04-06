@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Head, useForm, usePage, Link } from '@inertiajs/react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import DashboardLayout from '@/Layouts/DashboardLayout';
 import useTranslation from '@/Hooks/useTranslation';
 import TextInput from '@/Components/TextInput';
 import InputLabel from '@/Components/InputLabel';
@@ -77,14 +77,13 @@ export default function Edit({ mission }) {
     };
 
     return (
-        <AuthenticatedLayout 
+        <DashboardLayout 
             header={t('Edit Mission')}
-            maxWidth="max-w-3xl"
-            showFooter={true}
         >
             <Head title={t('Edit Mission')} />
 
-            <div className="bg-white rounded-[40px] p-8 md:p-12 shadow-sm border border-gray-border">
+            <div className="max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
+                <div className="bg-white rounded-[40px] p-8 md:p-12 shadow-sm border border-gray-border">
                 <div className="mb-10">
                     <div className="flex items-center justify-between mb-4">
                         <h2 className="text-2xl font-black text-oflem-charcoal">{t('Edit Your Mission')}</h2>
@@ -220,6 +219,7 @@ export default function Edit({ mission }) {
                     </div>
                 </form>
             </div>
-        </AuthenticatedLayout>
+            </div>
+        </DashboardLayout>
     );
 }

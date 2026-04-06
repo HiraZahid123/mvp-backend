@@ -1,7 +1,7 @@
 import { Head, router } from '@inertiajs/react';
 import React, { useState } from 'react';
 import useTranslation from '@/Hooks/useTranslation';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import DashboardLayout from '@/Layouts/DashboardLayout';
 import TypewriterEffect from '@/Components/TypewriterEffect';
 import axios from 'axios';
 import { 
@@ -60,14 +60,12 @@ export default function Search() {
     };
 
     return (
-        <AuthenticatedLayout 
+        <DashboardLayout 
             header={t('Post a Mission')}
-            maxWidth="max-w-4xl"
-            showFooter={true}
         >
             <Head title={t('Search Mission')} />
 
-            <div className="py-20 text-center">
+            <div className="max-w-4xl mx-auto py-12 text-center animate-in fade-in slide-in-from-bottom-4 duration-700">
                 <h1 className="text-4xl md:text-5xl font-black text-oflem-charcoal tracking-tight leading-tight mb-6">
                     {t('What can we')} <span className="text-oflem-terracotta">{t('do for you?')}</span>
                 </h1>
@@ -133,6 +131,6 @@ export default function Search() {
                     ))}
                 </div>
             </div>
-        </AuthenticatedLayout>
+        </DashboardLayout>
     );
 }

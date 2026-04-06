@@ -1,6 +1,6 @@
 import React from 'react';
 import { Head, Link } from '@inertiajs/react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import DashboardLayout from '@/Layouts/DashboardLayout';
 import useTranslation from '@/Hooks/useTranslation';
 import { 
     CheckCircle, 
@@ -20,13 +20,12 @@ export default function MissionSuccess({ mission, userRole }) {
     const isClient = userRole === 'client';
 
     return (
-        <AuthenticatedLayout
-            maxWidth="max-w-3xl"
-            showFooter={true}
+        <DashboardLayout
+            header={t('Mission Published')}
         >
             <Head title={t('Mission Published')} />
 
-            <div className="py-12">
+            <div className="max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
                 {/* Success Icon */}
                 <div className="text-center mb-10">
                     <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
@@ -202,6 +201,6 @@ export default function MissionSuccess({ mission, userRole }) {
                     </Link>
                 </div>
             </div>
-        </AuthenticatedLayout>
+        </DashboardLayout>
     );
 }

@@ -104,4 +104,19 @@ class HomeController extends Controller
             'categories' => $displayCategories,
         ]);
     }
+
+    public function about()
+    {
+        return redirect()->route('legal', ['section' => 'about']);
+    }
+
+    public function legal($section = 'cgu')
+    {
+        $validSections = ['cgu', 'mentions', 'privacy', 'cookies', 'about'];
+        if (!in_array($section, $validSections)) {
+            $section = 'cgu';
+        }
+
+        return Inertia::render('Legal', ['section' => $section]);
+    }
 }

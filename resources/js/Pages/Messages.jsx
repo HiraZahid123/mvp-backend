@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Head, usePage, Link } from '@inertiajs/react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import DashboardLayout from '@/Layouts/DashboardLayout';
 import useTranslation from '@/Hooks/useTranslation';
 import axios from 'axios';
 import useNotificationSound from '@/Hooks/useNotificationSound';
@@ -241,14 +241,12 @@ export default function Messages({ chats: initialChats, selectedChatId }) {
     };
 
     return (
-        <AuthenticatedLayout 
+        <DashboardLayout 
             header={t('Messages')}
-            maxWidth="max-w-full"
-            paddingY="py-0"
         >
             <Head title={t('Messages')} />
             
-            <div className="flex h-[calc(100vh-144px)] bg-oflem-cream -mx-4 sm:-mx-6 lg:-mx-8">
+            <div className="flex h-[calc(100vh-180px)] bg-oflem-cream -mx-8 -my-8 overflow-hidden rounded-br-[32px]">
                 {/* Left Sidebar - Conversations */}
                 <div className="w-1/4 bg-white border-r border-gray-border flex flex-col">
                     <div className="p-6 border-b border-gray-border">
@@ -623,6 +621,6 @@ export default function Messages({ chats: initialChats, selectedChatId }) {
                     router.reload();
                 }}
             />
-        </AuthenticatedLayout>
+        </DashboardLayout>
     );
 }

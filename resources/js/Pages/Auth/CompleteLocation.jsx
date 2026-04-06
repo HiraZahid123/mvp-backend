@@ -38,11 +38,11 @@ export default function CompleteLocation({ user, role }) {
             heroImage="/images/illustrations/login-hero.svg"
             bgAccentClass="bg-cream-accent"
         >
-            <Head title={t("Location")} />
+            <Head title={t('auth.complete_location.title')} />
 
             <div className="flex items-center mb-8">
                 <BackButton href={route('auth.select-role')} className="text-sm">
-                    {t('Back')}
+                    {t('common.back')}
                 </BackButton>
             </div>
 
@@ -64,13 +64,13 @@ export default function CompleteLocation({ user, role }) {
                     disabled={processing || !locationData}
                     processing={processing}
                 >
-                    {t('Confirm my area')}
+                    {t('auth.complete_location.button')}
                 </PrimaryButton>
             </form>
 
             <div className="elegant-capsule mt-6">
                 <p className="text-xs text-oflem-charcoal font-medium text-center">
-                    {t("Your location is only used to connect you with local opportunities.")}
+                    {t('auth.complete_location.privacy_notice')}
                 </p>
             </div>
         </AuthSplitLayout>

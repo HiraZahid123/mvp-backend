@@ -1,6 +1,6 @@
 import React from 'react';
 import { Head, Link, router } from '@inertiajs/react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import DashboardLayout from '@/Layouts/DashboardLayout';
 import useTranslation from '@/Hooks/useTranslation';
 import { motion } from 'framer-motion';
 import { MapPin, X, Mail, BellOff } from 'lucide-react';
@@ -21,14 +21,12 @@ export default function Index({ notifications }) {
     };
 
     return (
-        <AuthenticatedLayout
+        <DashboardLayout
             header={t('Notifications')}
-            maxWidth="max-w-4xl"
-            showFooter={true}
         >
             <Head title={t('Notifications')} />
 
-            <div className="py-16">
+            <div className="max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
                 <div className="flex items-center justify-between mb-12">
                     <div>
                         <h2 className="text-3xl font-black text-oflem-charcoal mb-2">{t('Notifications')}</h2>
@@ -133,6 +131,6 @@ export default function Index({ notifications }) {
                     </div>
                 )}
             </div>
-        </AuthenticatedLayout>
+        </DashboardLayout>
     );
 }

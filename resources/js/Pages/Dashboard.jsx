@@ -1,4 +1,4 @@
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, usePage, Link } from '@inertiajs/react';
 import React, { useState, useEffect } from 'react';
 import useTranslation from '@/Hooks/useTranslation';
@@ -83,10 +83,8 @@ export default function Dashboard({ missions, stats, providerMissions, providerO
     };
 
     return (
-        <AuthenticatedLayout 
+        <DashboardLayout 
             header={t('Dashboard')}
-            maxWidth="max-w-7xl"
-            showFooter={true}
         >
             <Head title={t('Dashboard')} />
             
@@ -100,7 +98,7 @@ export default function Dashboard({ missions, stats, providerMissions, providerO
                     onClose={() => setActiveChat(null)} 
                 />
             )}
-        </AuthenticatedLayout>
+        </DashboardLayout>
     );
 }
 
@@ -116,29 +114,13 @@ function ClientDashboard({ user, missions, stats, t }) {
     });
 
     return (
-        <div className="space-y-8 pb-12">
-            {/* Header / Welcome */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-2">
-                <div>
-                    <h3 className="text-3xl font-black text-oflem-charcoal mb-2">
-                        {t('My Workspace')}
-                    </h3>
-                    <p className="text-zinc-500 font-bold text-sm">
-                        {t('Welcome back')}, <span className="text-oflem-terracotta">{user.name}</span>. {t('You have')} <span className="text-oflem-charcoal font-black">{stats.open + stats.active}</span> {t('active tasks right now.')}
-                    </p>
-                </div>
-                <Link 
-                    href={route('missions.create')} 
-                    className="bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white px-8 py-3.5 rounded-rs font-black shadow-sho hover:scale-[1.02] active:scale-[0.98] transition-all text-center"
-                >
-                    + {t('Post a New Mission')}
-                </Link>
-            </div>
+        <div className="space-y-6 pb-12">
+            {/* Header / Welcome - Removed as it's now in DashboardLayout */}
 
             {/* Stats Bar */}
             <DashboardStats stats={stats} t={t} />
 
-            {/* Missions Section */}
+            {/* Mission Management Container */}
             <div className="bg-white border border-zinc-100 rounded-[32px] p-6 lg:p-10 shadow-sm relative overflow-hidden">
                 {/* Decorative glow */}
                 <div className="absolute top-0 right-0 w-64 h-64 bg-oflem-terracotta/5 rounded-full blur-3xl -mr-32 -mt-32"></div>
@@ -362,85 +344,39 @@ function ProviderDashboard({ user, providerMissions, providerOffers, providerRev
     };
 
     return (
-        <div className="space-y-8 pb-12">
-            {/* 1. Hero Welcome Banner */}
-            <div className="bg-oflem-charcoal rounded-[32px] p-8 lg:p-12 text-white relative overflow-hidden group">
-                <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
-                    <div className="max-w-2xl">
-                        <div className="flex items-center gap-3 mb-4">
-                            <h3 className="text-3xl lg:text-4xl font-black leading-tight">
-                                {t('Welcome back')}, {user.name.split(' ')[0]}!
-                            </h3>
-                            {providerStats.avg_rating > 0 && (
-                                <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full">
-                                    <Star size={14} className="text-amber-400 fill-amber-400" />
-                                    <span className="text-sm font-black">{Number(providerStats.avg_rating).toFixed(1)}</span>
-                                </div>
-                            )}
-                        </div>
-                        <p className="text-white/60 text-lg font-bold">
-                            {providerStats.active > 0
-                                ? <>{t('You have')} <span className="text-oflem-terracotta font-black">{providerStats.active}</span> {t('active missions. Keep up the great work!')}</>
-                                : t('Browse available missions nearby and start earning.')
-                            }
-                        </p>
-                        <div className="flex flex-wrap gap-3 mt-8">
-                            <Link href={route('missions.active')} className="bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-oflem-charcoal font-black py-3 px-8 rounded-full hover:opacity-90 transition-all shadow-md flex items-center gap-2">
-                                <Compass size={18} />
-                                {t('Browse Missions')}
-                            </Link>
-                            <Link href={route('profile.edit')} className="bg-white/10 backdrop-blur-sm text-white font-black py-3 px-6 rounded-full hover:bg-white/20 transition-all flex items-center gap-2">
-                                <Eye size={18} />
-                                {t('View Profile')}
-                            </Link>
-                        </div>
-                    </div>
-
-                    {/* Mini summary on hero */}
-                    <div className="hidden lg:flex flex-col gap-3 min-w-[180px]">
-                        <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 text-center">
-                            <p className="text-2xl font-black">{providerStats.offers_sent || 0}</p>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-white/50">{t('Offers sent')}</p>
-                        </div>
-                        <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 text-center">
-                            <p className="text-2xl font-black">{providerStats.balance || 0} <span className="text-sm">CHF</span></p>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-white/50">{t('Balance')}</p>
-                        </div>
-                    </div>
-                </div>
-                {/* Decorative circle */}
-                <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-white opacity-5 rounded-full group-hover:scale-110 transition-transform duration-1000"></div>
-                <div className="absolute bottom-0 left-0 -ml-10 -mb-10 w-40 h-40 bg-oflem-terracotta/10 rounded-full blur-3xl"></div>
-            </div>
-
-            {/* 2. Stats Row */}
+        <div className="space-y-6 pb-12">
+            {/* Stats Row */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {statCards.map((stat, index) => (
                     <div 
                         key={index} 
-                        className="bg-white border border-zinc-100 rounded-[24px] p-6 shadow-sm hover:shadow-md transition-all group"
+                        className="bg-white border border-zinc-100 rounded-[28px] p-6 shadow-sm hover:shadow-lg hover:border-oflem-terracotta/20 transition-all group relative overflow-hidden"
                     >
-                        <div className="flex items-center gap-4">
-                            <div className={`w-12 h-12 rounded-xl ${stat.bg} ${stat.color} flex items-center justify-center transition-transform group-hover:scale-110`}>
-                                <stat.icon size={24} />
+                        <div className="relative z-10 flex items-center gap-4">
+                            <div className={`w-12 h-12 rounded-2xl ${stat.bg} ${stat.color} flex items-center justify-center transition-transform group-hover:scale-110 shadow-inner`}>
+                                <stat.icon size={22} />
                             </div>
                             <div>
-                                <p className="text-[12px] font-black text-zinc-400 uppercase tracking-widest">
+                                <p className="text-[10px] font-black text-zinc-400 uppercase tracking-[2px] mb-0.5">
                                     {stat.label}
                                 </p>
-                                <h4 className="text-2xl font-black text-oflem-charcoal">
+                                <h4 className="text-2xl font-black text-oflem-charcoal tracking-tight">
                                     {stat.value}
                                 </h4>
                             </div>
                         </div>
-                        <p className="mt-4 text-[11px] font-bold text-zinc-400 italic">
-                            {stat.description}
-                        </p>
+                        <div className="relative z-10 mt-4 flex items-center justify-between">
+                            <p className="text-[11px] font-bold text-zinc-400 italic">
+                                {stat.description}
+                            </p>
+                            <div className={`w-1.5 h-1.5 rounded-full ${stat.color.replace('text-', 'bg-')} animate-pulse`}></div>
+                        </div>
+                        <div className={`absolute bottom-0 left-0 h-1 w-0 group-hover:w-full transition-all duration-500 ${stat.color.replace('text-', 'bg-')}`}></div>
                     </div>
                 ))}
             </div>
 
-            {/* 3. My Active Missions */}
+            {/* My Active Missions */}
             <div className="bg-white border border-zinc-100 rounded-[32px] p-6 lg:p-10 shadow-sm relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl -mr-32 -mt-32"></div>
 
@@ -671,24 +607,8 @@ function ProviderDashboard({ user, providerMissions, providerOffers, providerRev
 
 function BothDashboard({ user, t }) {
     return (
-        <div className="space-y-10">
-            {/* Split Welcome */}
-            <div className="elegant-capsule bg-gradient-to-br from-oflem-cream to-white border border-zinc-100 mt-0 !p-8 lg:!p-12 relative overflow-hidden group">
-                <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
-                    <div>
-                        <h3 className="text-3xl lg:text-4xl font-black text-oflem-charcoal mb-4 leading-tight">
-                            {t('Hi')} {user.name.split(' ')[0]}, {t('Dual Power!')} <Rocket size={28} className="inline ml-1" />
-                        </h3>
-                        <p className="text-gray-muted text-lg font-bold">
-                            {t("Manage your tasks and bookings all in one place. You're set for both worlds.")}
-                        </p>
-                    </div>
-                    <div className="flex gap-4">
-                        <Link href={route('missions.create')} className="bg-oflem-charcoal text-white font-black py-3 px-6 rounded-full hover:opacity-90 transition-all text-sm shadow-md">{t('Post Task')}</Link>
-                        <button className="bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-oflem-charcoal font-black py-3 px-8 rounded-full hover:opacity-90 transition-all text-sm shadow-md">{t('Available Tasks')}</button>
-                    </div>
-                </div>
-            </div>
+        <div className="space-y-6">
+            {/* Split Welcome - Removed redundancy */}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="bg-white border border-gray-border rounded-[32px] p-8">

@@ -31,22 +31,35 @@
         "yes": "Ja",
         "no": "Nein",
         "or": "oder",
-        "and": "und"
+        "and": "und",
+        "app_name": "Oflem"
     },
     "auth": {
         "login": {
-            "title": "Anmelden",
-            "subtitle": "Melden Sie sich an, um dort weiterzumachen, wo Sie aufgehört haben",
-            "email": "E-Mail-Adresse",
-            "email_placeholder": "Geben Sie Ihre E-Mail ein",
-            "password": "Passwort",
-            "password_placeholder": "Geben Sie Ihr Passwort ein",
-            "remember_me": "Angemeldet bleiben",
+            "title": "Anmelden — Oflem",
+            "greeting": "Schön, Sie wiederzusehen.",
+            "subtitle": "Machen Sie dort weiter, wo Sie aufgehört haben. Ihr Dashboard wartet.",
+            "client_space": "Kundenbereich",
+            "client_space_sub": "Meine Missionen und erhaltene Angebote verwalten",
+            "provider_space": "Anbieterbereich",
+            "provider_space_sub": "Meine Möglichkeiten und Einnahmen einsehen",
+            "manual_divider": "oder manuell anmelden",
+            "email_label": "E-Mail-Adresse",
+            "email_placeholder": "ihre@email.ch",
+            "password_label": "Passwort",
+            "password_placeholder": "Ihr Passwort",
             "forgot_password": "Passwort vergessen?",
+            "button": "Anmelden",
+            "back_to_home": "Zurück zur Startseite",
+            "encrypted_connection": "Verschlüsselte Verbindung",
+            "data_in_switzerland": "Daten in der Schweiz",
+            "nlpd_compliant": "nLPD-konform",
             "no_account": "Noch kein Konto?",
-            "sign_up": "Registrieren",
-            "or_login_with": "Oder anmelden mit",
-            "button": "Anmelden"
+            "sign_up": "Registrieren →",
+            "manual_title": "Sie kennen das Prozedere.",
+            "manual_subtitle": "Ihr Zugang, sicher.",
+            "memory_gap": "Eine kleine Gedächtnislücke?",
+            "no_panic": "Keine Panik, wir senden Ihnen einen Link zum Zurücksetzen."
         },
         "register": {
             "title": "Registrieren",
@@ -62,62 +75,125 @@
             "already_member": "Bereits Mitglied?",
             "sign_in": "Anmelden",
             "or_signup_with": "Oder registrieren mit",
-            "button": "Registrieren"
+            "button": "Registrieren",
+            "manual_hero_title": "Eine Registrierung,",
+            "manual_hero_subtitle": "ohne Verhör.",
+            "manual_subtext": "Das absolute Minimum für eine vertrauenswürdige Verbindung."
+        },
+        "select_role": {
+            "title": "Wählen Sie Ihre Rolle",
+            "subtitle": "Wie möchten Sie OFLEM nutzen?",
+            "client_title": "Kunde",
+            "client_desc": "Ich delegiere. Meine Zeit ist kostbar.",
+            "provider_title": "Anbieter",
+            "provider_desc": "Ich erledige. Bereit, meine Verfügbarkeit zu monetarisieren.",
+            "button": "Weiter",
+            "switch_notice": "Sie können Ihre Rolle jederzeit ändern. Anbieter können auch Missionen als Kunden veröffentlichen."
         },
         "forgot_password": {
-            "title": "Keine Sorge!",
-            "subtitle": "Wir helfen Ihnen, schnell wieder Zugang zu Ihrem Konto zu erhalten.",
-            "email": "E-Mail-Adresse",
+            "title": "Passwort vergessen?",
+            "subtitle": "Kein Problem. Nennen Sie uns Ihre E-Mail-Adresse und wir senden Ihnen einen Link zum Zurücksetzen.",
+            "hero_title": "Keine Sorge!",
+            "hero_subtitle": "Wir helfen Ihnen, im Handumdrehen wieder Zugriff auf Ihr Konto zu erhalten.",
+            "email_label": "E-Mail-Adresse",
             "email_placeholder": "Geben Sie Ihre E-Mail ein",
-            "button": "Reset-Link senden",
-            "back_to_login": "Zurück zur Anmeldung",
-            "description": "Wir senden Ihnen einen Link zum Zurücksetzen des Passworts per E-Mail."
+            "button": "Link zum Zurücksetzen senden"
         },
         "reset_password": {
-            "title": "Zurücksetzen abgeschlossen?",
-            "subtitle": "Erstellen Sie ein sicheres neues Passwort und legen Sie wieder los.",
-            "new_password": "Neues Passwort",
-            "new_password_placeholder": "Neues Passwort eingeben",
-            "confirm_password": "Neues Passwort bestätigen",
-            "confirm_password_placeholder": "Neues Passwort bestätigen",
+            "title": "Neues Passwort",
+            "subtitle": "Erstellen Sie ein sicheres neues Passwort für Ihr Konto.",
+            "hero_title": "Fast fertig!",
+            "hero_subtitle": "Erstellen Sie ein starkes Passwort und kehren Sie zum Wesentlichen zurück.",
+            "email_label": "E-Mail-Adresse",
+            "password_label": "Neues Passwort",
+            "password_placeholder": "Geben Sie Ihr neues Passwort ein",
+            "confirm_password_label": "Neues Passwort bestätigen",
+            "confirm_password_placeholder": "Bestätigen Sie Ihr neues Passwort",
             "button": "Passwort zurücksetzen"
         },
-        "verify_email": {
-            "title": "Überprüfen und erkunden!",
-            "subtitle": "Überprüfen Sie Ihren Posteingang, um Ihre E-Mail zu bestätigen und alle Funktionen freizuschalten.",
-            "description": "Bitte verifizieren Sie Ihre E-Mail-Adresse, indem Sie den 6-stelligen Code eingeben, den wir Ihnen gerade gesendet haben.",
-            "resend": "Verifizierungscode erneut senden",
-            "resent": "Ein neuer Verifizierungscode wurde an Ihre E-Mail gesendet.",
-            "button": "Code verifizieren"
+        "confirm_password": {
+            "title": "Passwort bestätigen",
+            "subtitle": "Dies ist ein sicherer Bereich. Bitte bestätigen Sie Ihr Passwort, bevor Sie fortfahren.",
+            "hero_title": "Sicherer Zugriff",
+            "hero_subtitle": "Bitte bestätigen Sie Ihre Identität, um auf diesen sensiblen Bereich zuzugreifen.",
+            "password_label": "Passwort",
+            "password_placeholder": "Geben Sie Ihr Passwort ein",
+            "button": "Bestätigen"
         },
-        "onboarding": {
-            "welcome_title": "Willkommen bei OFLEM",
-            "welcome_subtitle": "Die erste Plattform zum Delegieren.",
-            "role_selection_title": "Was möchten Sie auf Oflem machen?",
-            "role_selection_subtitle": "Wählen Sie, was am besten zu Ihnen passt. Sie können es später ändern.",
-            "role_flemmard": "Client",
-            "role_motivated": "Provider",
-            "role_both": "Beides",
-            "location_title": "Nur Ihre Zone. Danach kümmert sich Oflem.",
-            "location_subtitle": "Ihr Standort wird nur verwendet, um Sie mit lokalen Möglichkeiten zu verbinden.",
+        "verify_email": {
+            "title": "E-Mail verifizieren",
+            "subtitle": "Vielen Dank für Ihre Anmeldung! Bevor Sie beginnen, könnten Sie Ihre E-Mail-Adresse verifizieren, indem Sie auf den Link klicken, den wir Ihnen gerade gesendet haben?",
+            "hero_title": "Verifizieren und Entdecken!",
+            "hero_subtitle": "Prüfen Sie Ihren Posteingang, um Ihre E-Mail zu bestätigen und alle Funktionen freizuschalten.",
+            "sent_notice": "Ein neuer Verifizierungslink wurde an die E-Mail-Adresse gesendet, die Sie bei der Registrierung angegeben haben.",
+            "resend_button": "Verifizierungs-E-Mail erneut senden",
+            "logout": "Abmelden"
+        },
+        "verify_otp": {
+            "title": "Code verifizieren",
+            "subtitle": "Wir haben einen Code gesendet an ",
+            "hero_title": "Verifizierung läuft",
+            "hero_subtitle": "Ein letzter Schritt, um Ihren Zugang zu sichern.",
+            "code_placeholder": "6-stelliger Code",
+            "resend_notice": "Code erneut senden in ",
+            "resend_button": "Code erneut senden",
+            "sending": "Wird gesendet...",
+            "expiry_notice": "Der Code läuft ab in ",
+            "expiry_time": "10 Minuten",
+            "button": "Verifizieren"
+        },
+        "complete_profile": {
+            "title": "Profil vervollständigen",
+            "hero_title": "Willkommen",
+            "hero_subtitle": "Oflem macht das Leben einfacher, indem es Menschen verbindet, um Hilfe zu mieten oder Geld zu verdienen, indem Aufgaben schnell und zuverlässig erledigt werden.",
+            "last_step": "Versprochen, das ist das Letzte.",
+            "subtitle": "Nur Ihre Region. Danach kümmert sich Oflem um alles.",
+            "edit_profile": "Profil bearbeiten",
+            "full_name": "Vollständiger Name",
+            "full_name_placeholder": "Geben Sie Ihren Namen ein",
             "zip_code": "Postleitzahl",
-            "zip_code_placeholder": "z.B.: 8001",
-            "get_location": "Meinen Standort abrufen",
-            "locating": "Standortermittlung...",
+            "zip_code_placeholder": "z.B.: 1211",
+            "location": "Standort",
+            "location_placeholder": "Genf, Schweiz",
             "radius": "Radius",
-            "radius_subtitle": "Wählen Sie einen Radius für einfachere Aufgaben",
-            "complete_profile": "Profil vervollständigen",
-            "mood_title": "Stimmung des Tages",
-            "mood_subtitle": "Wählen Sie Ihren Modus",
-            "mood_flemmard": "Ich möchte heute delegieren und mich ausruhen.",
-            "mood_motivated": "Ich bin bereit, Chancen zu ergreifen.",
-            "mood_both": "Beides! Multitasking-Modus aktiviert."
+            "radius_subtitle": "Wählen Sie einen Radius, um Ihre Missionen zu erleichtern.",
+            "map_error": "Fehler beim Laden der Karte.",
+            "map_loading": "Karte wird geladen...",
+            "button": "Mein Profil vervollständigen"
+        },
+        "mood_of_the_day": {
+            "title": "Stimmung des Tages",
+            "question": "Wie ist Ihre Stimmung heute?",
+            "welcome": "Willkommen",
+            "client_desc": "Ich möchte heute delegieren und mich ausruhen.",
+            "provider_desc": "Ich bin bereit, Gelegenheiten zu ergreifen.",
+            "both_title": "BEIDES",
+            "both_desc": "Beides! Multitasking-Modus aktiviert.",
+            "button": "Los geht's!",
+            "footer_notice": "Diese Auswahl bestimmt Ihr ursprüngliches Dashboard. Sie können es jederzeit ändern."
+        },
+        "complete_identity": {
+            "title": "Profil",
+            "nice_to_meet": "Schön, Sie kennenzulernen!",
+            "almost_ready": "Fast fertig...",
+            "subtitle": "Fügen Sie ein Foto hinzu und personalisieren Sie Ihren Benutzernamen, if Sie möchten.",
+            "name_notice": "Andernfalls verwenden wir Ihren Namen.",
+            "display_name": "Anzeigename (optional)",
+            "display_name_placeholder": "Leer lassen, um Ihren aktuellen Namen zu verwenden",
+            "phone": "Telefonnummer (für Verifizierung erforderlich)",
+            "phone_placeholder": "+41 7x xxx xx xx",
+            "privacy_notice": "Ihre Informationen bleiben privat und sicher."
+        },
+        "complete_location": {
+            "title": "Standort",
+            "button": "Meinen Bereich bestätigen",
+            "privacy_notice": "Ihr Standort wird nur verwendet, um Sie mit lokalen Gelegenheiten zu verbinden."
         }
     },
     "mission": {
         "create": {
             "title": "Mission erstellen",
-            "title_field": "Missionstitel",
+            "title_field": "Titel der Mission",
             "description_field": "Beschreibung",
             "location_field": "Standort",
             "date_time": "Datum und Uhrzeit",
@@ -126,8 +202,8 @@
             "additional_details": "Zusätzliche Details",
             "button": "Mission erstellen",
             "ai_help": "Hilf mir beim Schreiben",
-            "checking_moderation": "Überprüfen...",
-            "submit_button": "Mission einreichen"
+            "checking_moderation": "Überprüfung...",
+            "submit_button": "Mission absenden"
         },
         "list": {
             "title": "Missionen",
@@ -141,7 +217,7 @@
             "title": "Missionsdetails",
             "status": "Status",
             "customer": "Kunde",
-            "performer": "Ausführender",
+            "performer": "Anbieter",
             "budget": "Budget",
             "location": "Standort",
             "date_time": "Datum und Uhrzeit",
@@ -150,173 +226,237 @@
             "no_offers": "Noch keine Angebote",
             "accept_offer": "Angebot annehmen",
             "reject_offer": "Angebot ablehnen",
-            "submit_offer": "Angebot einreichen",
+            "submit_offer": "Angebot abgeben",
             "your_offer": "Ihr Angebot",
             "offer_amount": "Angebotsbetrag",
             "offer_message": "Nachricht",
-            "validate_completion": "Validieren und Zahlung freigeben",
+            "validate_completion": "Abschluss validieren und Zahlung freigeben",
             "open_dispute": "Streitfall eröffnen",
             "completion_proof": "Abschlussnachweis",
             "completion_notes": "Abschlussnotizen",
-            "auto_complete_notice": "Automatische Validierung in 72 Stunden, wenn keine Aktion erfolgt"
-        },
-        "status": {
-            "open": "Offen",
-            "in_negotiation": "In Verhandlung",
-            "locked": "Gesperrt",
-            "in_progress": "In Bearbeitung",
-            "in_validation": "In Validierung",
-            "completed": "Abgeschlossen",
-            "cancelled": "Abgebrochen",
-            "disputed": "Umstritten"
-        },
-        "published": {
-            "title": "Mission veröffentlicht!",
-            "subtitle": "Ihre Mission ist jetzt live und für Provider sichtbar",
-            "next_steps": "Nächste Schritte",
-            "wait_offers": "Auf Angebote warten",
-            "wait_offers_desc": "Provider werden Ihnen Angebote senden. Sie erhalten Benachrichtigungen.",
-            "review_chat": "Prüfen und chatten",
-            "review_chat_desc": "Prüfen Sie Angebote, chatten Sie mit Providern und wählen Sie die beste Übereinstimmung.",
-            "accept_pay": "Akzeptieren und bezahlen",
-            "accept_pay_desc": "Akzeptieren Sie ein Angebot und bezahlen Sie sicher. Gelder werden bis zur Fertigstellung hinterlegt.",
-            "view_mission": "Mission ansehen",
-            "go_dashboard": "Zum Dashboard"
+            "auto_complete_notice": "Automatische Validierung in 72 Stunden, falls keine Aktion erfolgt"
         }
-    },
-    "profile": {
-        "title": "Profil",
-        "edit": "Profil bearbeiten",
-        "information": "Profilinformationen",
-        "full_name": "Vollständiger Name",
-        "email": "E-Mail-Adresse",
-        "change_photo": "Foto ändern",
-        "photo_requirements": "JPG, GIF oder PNG. Max 1 MB.",
-        "save_changes": "Änderungen speichern",
-        "saved": "Erfolgreich gespeichert!",
-        "email_unverified": "Ihre E-Mail-Adresse ist nicht verifiziert.",
-        "resend_verification": "Klicken Sie hier, um erneut zu senden.",
-        "verification_sent": "Ein neuer Verifizierungslink wurde gesendet!",
-        "update_password": "Passwort aktualisieren",
-        "password_description": "Stellen Sie sicher, dass Ihr Konto ein langes, zufälliges Passwort verwendet, um sicher zu bleiben.",
-        "current_password": "Aktuelles Passwort",
-        "new_password": "Neues Passwort",
-        "confirm_password": "Neues Passwort bestätigen",
-        "password_updated": "Passwort aktualisiert!",
-        "delete_account": "Konto löschen",
-        "delete_warning": "Sobald Ihr Konto gelöscht ist, werden alle seine Ressourcen und Daten dauerhaft gelöscht.",
-        "delete_confirm": "Sind Sie sicher, dass Sie Ihr Konto löschen möchten?"
-    },
-    "notification": {
-        "title": "Benachrichtigungen",
-        "mark_read": "Als gelesen markieren",
-        "mark_all_read": "Alle als gelesen markieren",
-        "clear_all": "Alle löschen",
-        "no_notifications": "Keine Benachrichtigungen",
-        "preferences": "Benachrichtigungseinstellungen",
-        "quiet_hours": "Ruhezeiten",
-        "quiet_hours_enabled": "Ruhezeiten aktivieren",
-        "quiet_hours_start": "Startzeit",
-        "quiet_hours_end": "Endzeit",
-        "channels": "Benachrichtigungskanäle",
-        "email_enabled": "E-Mail-Benachrichtigungen",
-        "push_enabled": "Push-Benachrichtigungen",
-        "in_app_enabled": "In-App-Benachrichtigungen",
-        "types": {
-            "new_mission_nearby": "Neue Mission in der Nähe",
-            "new_offer_received": "Neues Angebot erhalten",
-            "offer_accepted": "Angebot angenommen",
-            "offer_rejected": "Angebot abgelehnt",
-            "mission_updated": "Mission aktualisiert",
-            "mission_cancelled": "Mission abgebrochen",
-            "new_question": "Neue Frage",
-            "question_answered": "Frage beantwortet",
-            "chat_message": "Chat-Nachrichten",
-            "moderation_warning": "Moderationswarnung",
-            "moderation_suspension": "Chat-Sperre"
-        }
-    },
-    "chat": {
-        "title": "Chat",
-        "chatting": "Chatten",
-        "type_message": "Nachricht eingeben...",
-        "is_typing": "tippt...",
-        "send": "Senden",
-        "no_messages": "Noch keine Nachrichten",
-        "start_conversation": "Gespräch beginnen"
-    },
-    "admin": {
-        "dashboard": "Dashboard",
-        "users": "Benutzer",
-        "missions": "Missionen",
-        "payments": "Zahlungen",
-        "chat_moderation": "Chat-Moderation",
-        "user_management": "Benutzerverwaltung",
-        "mission_management": "Missionsverwaltung",
-        "payment_management": "Zahlungsverwaltung",
-        "manage_users": "Alle Plattformbenutzer verwalten",
-        "monitor_missions": "Alle Plattform-Missionen überwachen und verwalten",
-        "monitor_payments": "Transaktionen überwachen und Rückerstattungen bearbeiten",
-        "search_placeholder": "Nach Name oder E-Mail suchen...",
-        "all_roles": "Alle Rollen",
-        "all_statuses": "Alle Status",
-        "filter": "Filtern",
-        "user": "Benutzer",
-        "role": "Rolle",
-        "status": "Status",
-        "joined": "Beigetreten",
-        "actions": "Aktionen",
-        "active": "Aktiv",
-        "suspended": "Gesperrt",
-        "banned": "Gesperrt",
-        "unverified": "Nicht verifiziert",
-        "view": "Ansehen",
-        "ban": "Sperren",
-        "suspend": "Sperren",
-        "no_users_found": "Keine Benutzer gefunden",
-        "no_missions_found": "Keine Missionen gefunden",
-        "try_adjusting": "Versuchen Sie, Ihre Suche oder Filter anzupassen",
-        "clear_filters": "Filter löschen",
-        "showing": "Zeige",
-        "to": "bis",
-        "of": "von",
-        "total_revenue": "Gesamtumsatz",
-        "commission": "Provision",
-        "held": "Gehalten",
-        "refunded": "Erstattet",
-        "transaction": "Transaktion",
-        "amount": "Betrag",
-        "refund": "Rückerstattung",
-        "no_payments": "Noch keine Zahlungen",
-        "payments_appear": "Zahlungen werden hier angezeigt, sobald Missionen abgeschlossen sind"
     },
     "homepage": {
+        "nav": {
+            "how_it_works": "Wie es funktioniert",
+            "missions": "Missionen",
+            "audience": "Kunden & Anbieter",
+            "faq": "FAQ",
+            "about": "Über uns",
+            "login": "Anmelden",
+            "register": "Registrieren"
+        },
         "hero": {
-            "tagline": "Plattform Schweizer Qualität",
-            "title": "Alles, was du willst. Wirklich.",
-            "subtitle": "Oflem ist keine Kategorienliste. Beschreibe deine Aufgabe und wir finden den richtigen Provider.",
-            "search_prefix": "Ich bin zu faul, um...",
-            "search_placeholder": "meinen Hund ausführen",
-            "search_button": "Suche starten",
-            "role_flemmard": "Ich bin ein Faulenzer",
-            "role_motivated": "Ich bin motiviert"
+            "title_tag": "Oflem — Was wäre, wenn Sie nicht alles allein tun müssten?",
+            "badge": "Schweizer Plattform",
+            "line1": "Was wäre, wenn Sie",
+            "line2": "nicht alles",
+            "line3": "selbst tun müssten?",
+            "mantra": "Jemand in Ihrer Nähe",
+            "mantra_sub": "kann sich darum kümmern.",
+            "description": "Hunde ausführen, Möbelmontage, Gartenarbeit, administrative Hilfe, große Projekte oder kleine Alltagsnotfälle – veröffentlichen Sie Ihren Bedarf kostenlos. Seriöse und verifizierte Personen in Ihrer Nähe werden antworten. Zahlung ist",
+            "protected": "durch Treuhand geschützt",
+            "pub_button": "Meine Anfrage veröffentlichen →",
+            "pub_hints": {
+                "free": "Kostenlos",
+                "no_commitment": "Ohne Verpflichtung",
+                "commission": "Provision vor der Zahlung angezeigt"
+            },
+            "cta_provider": "Ich bin ein Anbieter →",
+            "cta_provider_sub": "Geld verdienen mit Ihren Fähigkeiten",
+            "trust": {
+                "payment": "Zahlung",
+                "secure": "sicher",
+                "providers": "Anbieter",
+                "verified": "verifiziert",
+                "data": "Daten",
+                "swiss": "in der Schweiz"
+            },
+            "stamp": {
+                "made_in": "Entwickelt in der Westschweiz",
+                "hosting": "Daten bei Infomaniak gehostet",
+                "about": "Über uns"
+            },
+            "phone_mock": {
+                "online": "● ONLINE",
+                "label": "Ihre Anfrage",
+                "title": "Dringende Besorgungen — Babywindeln",
+                "meta": "Lausanne · Vor 18:30 Uhr",
+                "budget": "Budget: CHF 25.–",
+                "offers_received": "3 Angebote erhalten",
+                "badges": {
+                    "closest": "Am nächsten",
+                    "fast": "Schnell",
+                    "available": "Verfügbar"
+                }
+            },
+            "examples": [
+                "Ex: Dringende Besorgungen, Hund ausführen, Möbel montieren...",
+                "Hilfe für meine Waadtländer Steuererklärung",
+                "Mit Sperrmüll zum Recyclinghof fahren",
+                "Übersetzung eines deutschen Vertrags ins Französische",
+                "Benötige 2 Personen für einen Umzug in Genf"
+            ]
+        },
+        "categories_section": {
+            "label": "Was Menschen auf Oflem veröffentlichen können",
+            "title": "Vielleicht erkennen Sie sich hier wieder.",
+            "subtitle": "Dies ist keine feste Liste. Oflem ist keine Plattform, die auf eine einzige Dienstleistungsart spezialisiert ist, sondern ein Raum, in dem Sie Ihren Bedarf frei beschreiben.",
+            "items": {
+                "pets": { "title": "Gassi gehen & Haustiere", "sub": "Ihr Hund muss raus. Sie nicht unbedingt." },
+                "bricolage": { "title": "Montage & Handwerk", "sub": "Dieses zerlegte Möbelstück, das schon zu lange wartet." },
+                "cleaning": { "title": "Reinigung & Pflege", "sub": "Weil es alles verändert, in einen sauberen Raum zurückzukehren." },
+                "gardening": { "title": "Gartenarbeit & Außenbereich", "sub": "Hohes Gras, überall Blätter, eine kleine Auffrischung." },
+                "daily": { "title": "Alltagshilfe", "sub": "Ein Paket abholen, eine Besorgung machen, zum Recyclinghof gehen." },
+                "admin": { "title": "Administrative Hilfe", "sub": "Steuern, offizielle Briefe, Schweizer Verfahren: ein Mensch, der Ihre Situation versteht." },
+                "remote": { "title": "Remote-Einsätze", "sub": "Übersetzungen, Dokumente, Organisation, Schreiben. Alles wird von zu Hause aus erledigt." },
+                "other": { "title": "Etwas anderes?", "sub": "Wenn es legal ist und Ihr Leben vereinfacht, veröffentlichen Sie es." }
+            }
+        },
+        "how_it_works": {
+            "label": "Wie es funktioniert",
+            "title": "Drei Schritte. Nicht mehr.",
+            "steps": {
+                "step1": { "title": "Beschreiben Sie, was Sie brauchen", "desc": "Ein Satz genügt. „Hilfe für meine Waadtländer Steuererklärung“ oder „Jemand, der am Samstagmorgen in Montreux einen Kleiderschrank aufbaut“. Geben Sie Ihr Budget an. Die Veröffentlichung ist kostenlos und unverbindlich." },
+                "step2": { "title": "Verifizierte Anbieter antworten Ihnen", "desc": "Personen in Ihrer Nähe, verifiziert durch Oflem, sehen Ihre Anfrage ein und machen einen Vorschlag. Sie vergleichen, Sie wählen, ohne Druck." },
+                "step3": { "title": "Sie zahlen erst, wenn alles fertig ist", "desc": "Der Betrag wird sicher hinterlegt. Der Anbieter wird erst nach Ihrer Validierung bezahlt. Bei Problemen greift unser Team ein." }
+            },
+            "map": {
+                "center_title": "Ihre Anfrage",
+                "center_meta": "Lausanne · Radius 15 km",
+                "badge_closest": "Am nächsten",
+                "cat_courses": "Besorgungen und Lieferung",
+                "cat_bricolage": "Handwerker",
+                "avail_now": "Sofort verfügbar",
+                "avail_fast": "Antwortet in 5 Min",
+                "caption_title": "Wir kümmern uns um alles.",
+                "caption_sub": "Oflem scannt Anbieter in Ihrer Nähe und präsentiert Ihnen die besten Angebote."
+            }
+        },
+        "pillars_section": {
+            "label": "Warum Oflem",
+            "title": "Eine Anzeige aufgeben, das kann funktionieren.",
+            "title_sub": "Außer wenn es schief geht.",
+            "description": "Eine Anzeige zwischen Privatpersonen aufzugeben oder den Freund eines Freundes anzurufen, kann funktionieren. Aber wenn es schief geht, sind Sie allein. Oflem ist die zusätzliche Zuverlässigkeit.",
+            "items": {
+                "verified": { "title": "Verifizierte Anbieter", "text": "Ausweisprüfung, Arbeitsrecht in der Schweiz, verifizierte Qualifikationen falls nötig. Kein Fremder ohne Vorgeschichte: jemand, den die Plattform validiert hat." },
+                "escrow": { "title": "Geld durch Treuhand geschützt", "text": "Sie zahlen nicht im Voraus ins Leere. Die Gelder werden blockiert und erst überwiesen, wenn Sie bestätigen, dass die Arbeit erledigt ist. Keine Vorauszahlung. Keine bösen Überraschungen." },
+                "local": { "title": "Immer jemand in Ihrer Nähe", "text": "Jeder Anbieter, der auf Ihre Anfrage antwortet, lebt in Ihrer Region. Nicht jemand 200 km entfernt. Keine ausländische Plattform. Eine verfügbare Person in Ihrer Nähe, die Ihre Gegend kennt." },
+                "mediation": { "title": "Mediation im Streitfall", "text": "Wenn etwas schief geht (und das passiert), sind Sie nicht allein gegen einen Fremden. Unser Team greift ein, die Gelder bleiben bis zur Lösung blockiert." }
+            }
+        },
+        "pricing": {
+            "label": "Tarife",
+            "title": "Eine einfache Provision, vor der Zahlung angezeigt",
+            "description": "Veröffentlichen ist kostenlos. Kein Abonnement. Eine Provision wird zum Preis des Anbieters plus der Oflem-Provision hinzugefügt, vor der Bestätigung sichtbar.",
+            "tiers": {
+                "small": { "label": "Kleine Missionen", "range": "Bis CHF 149", "example": "Anbieter: CHF 40 → Sie zahlen: CHF 50" },
+                "medium": { "label": "Gängige Missionen", "badge": "Am häufigsten", "range": "CHF 150 bis CHF 499", "example": "Anbieter: CHF 200 → Sie zahlen: CHF 240" },
+                "large": { "label": "Große Projekte", "badge": "Bester Satz", "range": "Ab CHF 500", "example": "Anbieter: CHF 600 → Sie zahlen: CHF 672" }
+            },
+            "info": {
+                "providers": { "title": "Für Anbieter", "text": "Der Anbieter erhält 100% dessen, was er vorgeschlagen hat. Die Provision liegt auf der Kundenseite: Seine Vergütung ist von Anfang an netto." },
+                "purpose": { "title": "Wofür sie dient", "text": "Überprüfung der Anbieter, Zahlungsschutz durch Treuhand, Unterstützung im Streitfall. Nicht nur eine Anzeigenwand." }
+            }
+        },
+        "audience": {
+            "label": "Für wen",
+            "title": "Oflem richtet sich an alle.",
+            "subtitle": "Und wir sagen das ohne ein verlegenes Lächeln.",
+            "client": {
+                "tag": "👤 Sie haben einen Bedarf",
+                "title": "Eine helfende Hand. Ohne Komplikationen.",
+                "description": "Es gibt Tage, an denen Delegieren kein Luxus ist, sondern einfach praktisch. Ob es sich um einen kleinen Dienst oder eine echte Hilfe handelt, Ihnen wird von jemandem geholfen, der zuverlässig und in Ihrer Nähe ist.",
+                "bullets": [
+                    "Kostenlose Veröffentlichung, ohne Verpflichtung",
+                    "Verifizierte Anbieter in Ihrer Region",
+                    "Geld geschützt bis zur Validierung",
+                    "Unterstützung bei Bedarf"
+                ],
+                "button": "Meine Anfrage veröffentlichen, es ist kostenlos"
+            },
+            "provider": {
+                "tag": "🛠️ Sie haben Kompetenzen",
+                "title": "Ihr Talent verdient es, bezahlt zu werden.",
+                "description": "Sie haben Know-how, eine Fähigkeit oder einfach Zeit. In Ihrer Umgebung suchen Menschen genau nach dem, was Sie können, im Alltag wie bei größeren Projekten.",
+                "bullets": [
+                    "Kostenlose Registrierung",
+                    "Sie erhalten 100% Ihres Angebotsbetrags",
+                    "Garantierte Zahlung vor Beginn",
+                    "Ihre persönliche Oflem-Seite zum Teilen"
+                ],
+                "button": "Mein Anbieterprofil erstellen"
+            }
+        },
+        "remote_missions": {
+            "label": "Remote-Missionen",
+            "title": "Manche Dinge brauchen kein Reisen.",
+            "description": "Steuererklärungen, Dokumentenübersetzung, Hilfe beim Verständnis offizieller Post, Korrekturlesen einer Akte, professionelles Layout. Diese Missionen werden vollständig online durchgeführt.",
+            "examples": [
+                "Hilfe für meine Waadtländer Steuererklärung, unabhängiges Regime",
+                "Übersetzung eines deutschen Vertrags ins Französische",
+                "Überarbeitung meines Lebenslaufs für eine Stelle in der Deutschschweiz",
+                "Erklären Sie mir meine Krankenkassenabrechnung"
+            ],
+            "client": {
+                "title": "Sie haben einen Remote-Bedarf",
+                "description": "Beschreiben Sie Ihre Anfrage frei. Ein qualifizierter Anbieter arbeitet von zu Hause aus und liefert Ihnen das Ergebnis. Geschützte Zahlung, wie bei jeder Oflem-Mission.",
+                "button": "Eine Remote-Mission veröffentlichen"
+            },
+            "provider": {
+                "title": "Sie bieten Ihre Kompetenzen aus der Ferne an",
+                "description": "Die „Nur Remote“-Anbieter durchlaufen eine vereinfachte Identitätsprüfung. Im Gegenzug greifen sie nur auf Remote-Missionen zu. Für jeden direkten Kontakt mit einem Kunden ist eine vollständige Verifizierung obligatorisch.",
+                "bullets": [
+                    { "text": "Vereinfachte Registrierung, nur Identität", "active": true },
+                    { "text": "Missionen von zu Hause aus, in Ihrem Tempo", "active": true },
+                    { "text": "100% Ihres Angebots kommen zu Ihnen zurück", "active": true },
+                    { "text": "Eingeschränkter Zugriff nur auf Remote-Missionen", "active": false }
+                ],
+                "button": "Mein Anbieterprofil erstellen"
+            }
+        },
+        "cookies": {
+            "text": "Oflem verwendet notwendige Cookies.",
+            "learn_more": "Mehr erfahren",
+            "accept": "Akzeptieren",
+            "decline": "Ablehnen"
+        },
+        "faq": {
+            "title": "Häufig gestellte Fragen",
+            "subtitle": "Alles, was Sie wissen müssen, bevor Sie loslegen.",
+            "label": "FAQ",
+            "categories": {
+                "clients": "Für Kunden",
+                "providers": "Für Anbieter",
+                "general": "Allgemein"
+            },
+            "items": {
+                "escrow": {
+                    "q": "Wie funktioniert Treuhand?",
+                    "a": "Stellen Sie sich vor, Sie vertrauen Ihr Geld einem vertrauenswürdigen Schiedsrichter an. Er bewahrt es sicher auf, bis die Arbeit erledigt ist und Sie zufrieden sind. Wenn alles gut geht, gibt er es dem Anbieter. Wenn etwas schief geht, wartet er, bis eine Lösung gefunden ist. Ganz einfach."
+                },
+                "cost_client": {
+                    "q": "Wie viel kostet es für einen Kunden?",
+                    "a": "Das Veröffentlichen einer Anfrage ist kostenlos. Wenn Sie ein Angebot annehmen, zahlen Sie den vom Anbieter vorgeschlagenen Betrag zuzüglich der Oflem-Provision, die vor der Bestätigung klar angezeigt wird. Keine versteckten Kosten, kein Kleingedrucktes."
+                }
+            }
+        },
+        "cta": {
+            "ready": "Bereit loszulegen?",
+            "time": "Ihre Zeit zählt.",
+            "energy": "Ihre Energie auch.",
+            "rest": "Lassen Sie Oflem den Rest erledigen.",
+            "skill": "Und wenn Sie eine Fähigkeit, ein Talent oder einfach nur den Wunsch zu helfen haben:<br>Jemand in Ihrer Nähe braucht es.",
+            "btn_client": "Anfrage veröffentlichen, es ist kostenlos",
+            "btn_provider": "Anbieter werden"
         },
         "stats": {
-            "happy_lazy": "Glückliche Clients",
-            "active_motivated": "Aktive Provider",
+            "happy_lazy": "Glückliche Kunden",
+            "active_motivated": "Aktive Anbieter",
             "missions_done": "Erledigte Missionen",
             "last_mission": "Letzte Mission",
             "trust_index": "Vertrauensindex"
-        },
-        "how_it_works": {
-            "title": "Wie es funktioniert",
-            "description": "Drei einfache Schritte, um deine Aufgaben in Freizeit oder zusätzliches Einkommen zu verwandeln.",
-            "step1_title": "Erkläre deinen Bedarf",
-            "step1_desc": "Beschreibe deine Mission in wenigen Worten, lege deinen Preis fest oder frage nach Angeboten.",
-            "step2_title": "Wähle deine Hilfe",
-            "step2_desc": "Erhalte Angebote von zertifizierten Motivierten und wähle den passenden aus.",
-            "step3_title": "Lächle, es ist erledigt",
-            "step3_desc": "Bezahle sicher über die Plattform, sobald die Mission abgeschlossen und validiert ist."
         },
         "guarantees": {
             "title": "Was Oflem garantiert",
@@ -327,19 +467,193 @@
             "full_rewards": "100% Belohnungen",
             "full_rewards_desc": "Provider erhalten den vollen vereinbarten Preis.",
             "swiss_quality": "Schweizer Qualität",
-            "swiss_quality_desc": "Eine Plattform von Hilfesuchenden für Hilfesuchende gebaut."
+            "swiss_quality_desc": "Eine Plattform von Hilfesuchenden für Hilfesuchenden gebaut."
         },
         "testimonials": {
             "title": "Was unsere Kunden sagen",
             "see_all": "Alle Bewertungen ansehen"
+        },
+        "header": {
+            "dashboard": "Dashboard",
+            "users": "Benutzer",
+            "withdrawals": "Auszahlungen",
+            "missions": "Missionen",
+            "find_missions": "Einsätze finden",
+            "messages": "Nachrichten",
+            "my_wallet": "Meine Brieftasche",
+            "find_helpers": "Hilfe finden",
+            "why_us": "Warum wir?",
+            "become_provider": "Als Anbieter registrieren",
+            "help_needed": "Ich suche Hilfe",
+            "faq": "FAQ",
+            "profile_settings": "Profileinstellungen",
+            "payments": "Zahlungen",
+            "notifications": "Benachrichtigungen",
+            "post_mission": "Mission veröffentlichen",
+            "account_balance": "Kontostand",
+            "switch_to_client": "In Client-Modus wechseln",
+            "switch_to_provider": "In Anbieter-Modus wechseln",
+            "log_out": "Abmelden",
+            "log_in": "Anmelden",
+            "get_started": "Registrieren",
+            "language": "Sprache"
+        },
+        "footer": {
+            "description": "Die Schweizer Plattform zum Delegieren, von der Express-Hilfe bis zum qualifizierten Handwerker.",
+            "trust": {
+                "escrow": "🔒 Sichere Zahlung über Treuhand",
+                "swiss_data": "🇨🇭 Daten in der Schweiz gehostet",
+                "lausanne": "📍 Sitz in Lausanne",
+                "nlpd": "✓ nLPD-konform"
+            },
+            "col": {
+                "platform": "Plattform",
+                "company": "Unternehmen",
+                "legal": "Rechtliches"
+            },
+            "links": {
+                "publish": "Anfrage veröffentlichen",
+                "provider": "Anbieter werden",
+                "how": "Wie es funktioniert",
+                "examples": "Missionsbeispiele",
+                "faq": "FAQ",
+                "about": "Über uns",
+                "contact": "Kontakt",
+                "mentions": "Impressum",
+                "cgu": "AGB",
+                "privacy": "Datenschutz",
+                "cookies": "Cookie-Richtlinie"
+            },
+            "bottom": {
+                "copy": "© 2026 Oflem · Schweiz",
+                "made_in": "Hergestellt in der Schweiz"
+            }
         }
     },
-    "validation": {
-        "required": "Dieses Feld ist erforderlich",
-        "email": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
-        "min_length": "Muss mindestens {min} Zeichen lang sein",
-        "max_length": "Darf {max} Zeichen nicht überschreiten",
-        "password_match": "Passwörter müssen übereinstimmen",
-        "invalid_format": "Ungültiges Format"
+    "onboarding": {
+        "provider_title": "Treten Sie Oflem bei",
+        "provider_terrain": "Erstellen Sie Ihr Vor-Ort-Profil",
+        "provider_remote": "Erstellen Sie Ihr Remote-Profil",
+        "choose_mode": "Wählen Sie zuerst, wie Sie Ihre Dienste anbieten möchten.",
+        "complete_dossier": "Vervollständigen Sie Ihre Unterlagen, um Angebote zu erhalten.",
+        "inscription_label": "Anbieterregistrierung",
+        "join_title": "Bei Oflem mitmachen",
+        "which_type": "Wie möchten Sie Oflem nutzen?",
+        "gateway_client_title": "Ich suche Hilfe",
+        "gateway_client_desc": "Ich möchte Aufträge ausschreiben, zuverlässige Anbieter finden und sicher bezahlen.",
+        "mode_impact": "Ihre Wahl bestimmt die zugänglichen Missionen und erforderlichen Dokumente.",
+        "prestataire_terrain": "Anbieter vor Ort",
+        "terrain_desc": "Sie reisen zu Ihren Kunden. Heimwerken, Reinigung, Gartenarbeit, Lieferungen...",
+        "all_categories": "Alle Kategorien",
+        "local_remote_missions": "Lokale und Remote-Missionen",
+        "docs_required": "Ausweis + Wohnsitz + IBAN erforderlich",
+        "choose_profile": "Dieses Profil wählen →",
+        "prestataire_remote": "Remote-Anbieter",
+        "remote_desc": "Sie arbeiten von zu Hause aus. Übersetzung, Verwaltungshilfe, Schreiben...",
+        "simplified_reg": "Vereinfachte Registrierung",
+        "work_anywhere": "Von überall aus arbeiten",
+        "remote_only_missions": "Nur Remote-Missionen",
+        "no_docs_required": "Keine Dokumente erforderlich",
+        "remote_notice_label": "Remote-Anbieter:",
+        "remote_notice_desc": "Sie haben nur Zugriff auf Missionen, die vollständig online durchgeführt werden – ohne physischen Kontakt mit dem Kunden. Wenn Sie eines Tages Vor-Ort-Dienste anbieten möchten, können Sie Ihre Verifizierung in Ihrem Bereich vervollständigen.",
+        "your_info": "Ihre Informationen",
+        "first_name": "Vorname",
+        "last_name": "Nachname",
+        "email": "E-Mail",
+        "phone": "Telefon",
+        "phone_hint": "Wird nur zur Verifizierung Ihres Kontos verwendet.",
+        "main_city": "Haupteinsatzort",
+        "select": "Auswählen...",
+        "services_skills": "Ihre Dienste & Fähigkeiten",
+        "main_category": "Hauptkategorie",
+        "experience": "Erfahrung",
+        "radius": "Einsatzradius",
+        "bio_professional": "Professionelle Bio",
+        "bio_placeholder": "Beschreiben Sie Ihre Tätigkeit, Ihre Stärken, was Sie unterscheidet...",
+        "id_verification": "Identitätsprüfung",
+        "why_docs": "Warum wir nach diesen Dokumenten fragen",
+        "why_docs_desc": "Diese Informationen bestätigen Ihre Identität und Ihr Recht, in der Schweiz zu arbeiten – um ein sicheres Umfeld für die gesamte Oflem-Gemeinschaft zu gewährleisten.",
+        "simplified_remote_box": "Vereinfachte Registrierung — Remote-Anbieter",
+        "simplified_remote_desc": "Da Sie vollständig remote arbeiten, ist kein Identitätsdokument erforderlich. Ihr Foto, Ihre E-Mail und Ihre Telefonnummer reichen aus, um Ihr Konto einzurichten.",
+        "profile_photo": "Profilfoto",
+        "change_photo": "Foto ändern",
+        "upload_photo": "Foto hochladen",
+        "id_piece": "Ausweisdokument",
+        "doc_selected": "Dokument ausgewählt",
+        "id_upload_hint": "Zum Hochladen klicken (ID/Reisepass)",
+        "address_proof": "Wohnsitznachweis",
+        "upload": "Hochladen",
+        "permit_ch": "Schweizer Bewilligung",
+        "iban_label": "Schweizer IBAN (Zahlungsdetails)",
+        "iban_hint": "Verschlüsselt gespeichert. Es werden nur Schweizer Banken akzeptiert.",
+        "finalization": "Finalisierung",
+        "recap": "Zusammenfassung",
+        "mode_label": "Modus",
+        "terrain": "Vor Ort",
+        "remote": "Remote",
+        "password": "Passwort",
+        "pass_hint": "Mindestens 8 Zeichen",
+        "accept_terms_start": "Ich akzeptiere die",
+        "accept_terms_end": "und die",
+        "cgu": "AGB",
+        "privacy": "Datenschutzbestimmungen",
+        "legal_confirm": " Ich bestätige, als Selbstständiger oder Unternehmen tätig zu sein.",
+        "create_profile_btn": "Mein Profil erstellen →",
+        "client_title": "Konto erstellen — Kunde",
+        "your_request": "Ihre Anfrage",
+        "your_account": "Ihr Konto",
+        "verification": "Verifizierung",
+        "create_account": "Konto erstellen",
+        "age_confirmed": "Vollendetes 18. Lebensjahr",
+        "age_start": "Ich bestätige, dass ich",
+        "age_end": "bin und in der Schweiz rechtlich vertragsfähig bin.",
+        "terms_start": "Durch Erstellen eines Kontos akzeptieren Sie unsere",
+        "terms_and": "und",
+        "create_account_btn": "Mein Konto erstellen →",
+        "otp_title": "OTP-Verifizierung",
+        "otp_verify_email": "Verifizieren Sie Ihre E-Mail",
+        "otp_sent_to": "Code gesendet an",
+        "otp_verify_btn": "Verifizieren →",
+        "otp_not_received": "Nicht erhalten?",
+        "otp_resend": "Code erneut senden",
+        "otp_resent_alert": "Ein neuer Code wurde gesendet.",
+        "success_title": "Anfrage veröffentlicht — Oflem",
+        "success_heading": "Anfrage veröffentlicht!",
+        "success_desc": "Ihre Anfrage ist online! Wir benachrichtigen verifizierte Anbieter in Ihrer Umgebung.",
+        "go_to_dashboard": "Zum Dashboard",
+        "categories": {
+            "daily_services": "Alttagsservice",
+            "delivery": "Besorgungen & Lieferung",
+            "pets": "Gassi gehen",
+            "personal_aid": "Personenhilfe",
+            "cleaning": "Reinigung",
+            "craft_tech": "Handwerk & Technik",
+            "painting": "Malen",
+            "plumbing": "Sanitär",
+            "electricity": "Elektrik",
+            "carpentry": "Schreinerei",
+            "gardening": "Gartenarbeit",
+            "renovation": "Renovierung",
+            "logistics": "Logistik",
+            "moving": "Umzug",
+            "furniture": "Möbelmontage",
+            "transport": "Transport & Transportmittel",
+            "other": "Andere",
+            "multi_service": "Multi-Service",
+            "other_bio": "Andere (in Bio präzisieren)",
+            "admin_legal": "Verwaltung & Recht",
+            "taxes": "Steuererklärungshilfe",
+            "official_letters": "Verfassen offizieller Briefe",
+            "online_aid": "Online-Hilfe",
+            "digital_tech": "Digital & Tech",
+            "remote_it": "Remote-IT-Hilfe",
+            "web_dev": "Website-Erstellung"
+        },
+        "experience_levels": {
+            "less_2": "Weniger als 2 Jahre",
+            "2_5": "2–5 Jahre",
+            "5_10": "5–10 Jahre",
+            "more_10": "Mehr als 10 Jahre"
+        }
     }
 }

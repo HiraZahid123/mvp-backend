@@ -126,7 +126,7 @@ class OTPVerificationController extends Controller
             // Log the user in
             Auth::login($user);
 
-            return redirect()->route('auth.select-role');
+            return redirect()->route('auth.registration-success');
 
         } catch (\Exception $e) {
             return back()->withErrors(['general' => 'Verification failed. Please try again.']);

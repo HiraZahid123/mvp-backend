@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Head, useForm } from '@inertiajs/react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import DashboardLayout from '@/Layouts/DashboardLayout';
 import useTranslation from '@/Hooks/useTranslation';
 import { Bell, Clock, Mail, Smartphone, Monitor, Save, Volume2 } from 'lucide-react';
 
@@ -65,14 +65,12 @@ export default function NotificationPreferences({ preferences }) {
     );
 
     return (
-        <AuthenticatedLayout
+        <DashboardLayout
             header={t('Notification Preferences')}
-            maxWidth="max-w-4xl"
-            showFooter={true}
         >
             <Head title={t('Notification Preferences')} />
 
-            <div className="py-12">
+            <div className="max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
                 <div className="mb-10">
                     <h1 className="text-4xl font-black text-oflem-charcoal mb-2">
                         {t('Notification Preferences')}
@@ -271,6 +269,6 @@ export default function NotificationPreferences({ preferences }) {
                     </div>
                 </form>
             </div>
-        </AuthenticatedLayout>
+        </DashboardLayout>
     );
 }

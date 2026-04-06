@@ -9,7 +9,7 @@ export default function MissionFilterTabs({ activeTab, setActiveTab, t, counts }
     ];
 
     return (
-        <div className="flex flex-wrap items-center gap-2 mb-6">
+        <div className="flex flex-wrap items-center gap-2">
             {tabs.map((tab) => (
                 <button
                     key={tab.id}

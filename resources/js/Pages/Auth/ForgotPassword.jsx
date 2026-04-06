@@ -21,22 +21,22 @@ export default function ForgotPassword({ status }) {
 
     return (
         <AuthSplitLayout
-            heroHeading={t('No worries!')}
-            heroSubtext={t("We'll help you get back into your account in no time.")}
+            heroHeading={t('auth.forgot_password.hero_title')}
+            heroSubtext={t('auth.forgot_password.hero_subtitle')}
             bgAccentClass="bg-cream-accent"
         >
-            <Head title={t('Forget Password?')} />
+            <Head title={t('auth.forgot_password.title')} />
             
             <div className="mb-10 lg:mb-12 text-center lg:text-left relative">
                 <BackButton 
                     href={route('login')} 
                     className="absolute -top-12 left-0" 
-                    children={t('Back to login')}
+                    children={t('common.back')}
                 />
 
-                <h2 className="text-lg font-medium text-oflem-charcoal mb-1">{t('Oflem')}</h2>
-                <h1 className="text-[32px] lg:text-[40px] font-black text-oflem-charcoal mb-2 tracking-tight">{t('Reset Password')}</h1>
-                <p className="text-gray-muted text-sm font-medium">{t("We'll send a password reset link to your email to help you regain access.")}</p>
+                <h2 className="text-lg font-medium text-oflem-charcoal mb-1">{t('common.app_name')}</h2>
+                <h1 className="text-[32px] lg:text-[40px] font-black text-oflem-charcoal mb-2 tracking-tight">{t('auth.forgot_password.title')}</h1>
+                <p className="text-gray-muted text-sm font-medium">{t('auth.forgot_password.subtitle')}</p>
             </div>
 
             {status && (
@@ -47,13 +47,13 @@ export default function ForgotPassword({ status }) {
 
             <form onSubmit={submit} className="space-y-6">
                 <div className="space-y-1.5">
-                    <InputLabel htmlFor="email" value={t('Email Address')} />
+                    <InputLabel htmlFor="email" value={t('auth.forgot_password.email_label')} />
                     <TextInput
                         id="email"
                         type="email"
                         value={data.email}
                         onChange={(e) => setData('email', e.target.value)}
-                        placeholder={t('Enter your email')}
+                        placeholder={t('auth.forgot_password.email_placeholder')}
                         required
                         autoFocus
                     />
@@ -62,7 +62,7 @@ export default function ForgotPassword({ status }) {
 
                 <div className="space-y-6">
                     <PrimaryButton className="w-full" disabled={processing}>
-                        {t('Email Reset Link')}
+                        {t('auth.forgot_password.button')}
                     </PrimaryButton>
                 </div>
             </form>

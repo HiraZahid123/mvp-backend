@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import DashboardLayout from '@/Layouts/DashboardLayout';
 import useTranslation from '@/Hooks/useTranslation';
 import lodash from 'lodash';
 import { Search, RefreshCw, MapPin, Star } from 'lucide-react';
@@ -34,14 +34,12 @@ export default function Index({ providers, filters: initialFilters }) {
     };
 
     return (
-        <AuthenticatedLayout 
+        <DashboardLayout 
             header={t('Find Helpers')}
-            maxWidth="max-w-7xl"
-            showFooter={true}
         >
             <Head title={t('Find Expert Help')} />
 
-            <div className="py-16">
+            <div className="max-w-7xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
                 <div className="mb-12">
                     <p className="text-gray-muted font-bold text-lg">
                         {t('Browse our community of talented local helpers and find the perfect match for your next mission.')}
@@ -106,7 +104,7 @@ export default function Index({ providers, filters: initialFilters }) {
                     </div>
                 )}
             </div>
-        </AuthenticatedLayout>
+        </DashboardLayout>
     );
 }
 

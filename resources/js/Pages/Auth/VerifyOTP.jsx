@@ -1,68 +1,17 @@
-import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
+import { Head, Link, useForm, router } from '@inertiajs/react';
 import useTranslation from '@/Hooks/useTranslation';
-import axios from 'axios';
-import AuthSplitLayout from '@/Layouts/AuthSplitLayout';
-import PrimaryButton from '@/Components/PrimaryButton';
-import InputError from '@/Components/InputError';
-import BackButton from '@/Components/BackButton';
+import '../../../css/oflem-home.css';
+import '../../../css/oflem-register.css';
 
-export default function VerifyOTP() {
+export default function VerifyOTP({ email = 'votre@email.ch' }) {
     const { t } = useTranslation();
-    const { email = '', phone = '' } = usePage().props;
-    const [timeLeft, setTimeLeft] = useState(30);
-    const [canResend, setCanResend] = useState(false);
-    const [otpSent, setOtpSent] = useState(false);
-    const [selectedMethod, setSelectedMethod] = useState(null);
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
+    const inputs = useRef([]);
 
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, post, processing, errors } = useForm({
         code: '',
     });
-
-    useEffect(() => {
-        if (otpSent && timeLeft > 0) {
-            const timer = setInterval(() => setTimeLeft(prev => prev - 1), 1000);
-            return () => clearInterval(timer);
-        } else if (timeLeft === 0) {
-            setCanResend(true);
-        }
-    }, [otpSent, timeLeft]);
-
-    const formatTime = (seconds) => {
-        const mins = Math.floor(seconds / 60);
-        const secs = seconds % 60;
-        return `${mins}:${secs.toString().padStart(2, '0')}`;
-    };
-
-    const sendOTP = (method) => {
-        setSelectedMethod(method);
-        setOtpSent(true);
-        setTimeLeft(30);
-        setCanResend(false);
-
-        axios.post(route('auth.verify-otp.send'), { method })
-            .catch(() => setOtpSent(false));
-    };
-
-    const handlePaste = (e) => {
-        e.preventDefault();
-        const pastedData = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
-        
-        if (!pastedData) return;
-
-        const newOtp = [...otp];
-        for (let i = 0; i < pastedData.length; i++) {
-            newOtp[i] = pastedData[i];
-        }
-        
-        setOtp(newOtp);
-        setData('code', newOtp.join(''));
-
-        const nextIndex = Math.min(pastedData.length, 5);
-        const element = document.getElementById(`otp-${nextIndex}`);
-        if (element) element.focus();
-    };
 
     const handleOtpChange = (value, index) => {
         if (isNaN(value)) return;
@@ -72,174 +21,124 @@ export default function VerifyOTP() {
         setData('code', newOtp.join(''));
 
         if (value && index < 5) {
-            document.getElementById(`otp-${index + 1}`).focus();
+            inputs.current[index + 1].focus();
+        }
+    };
+
+    const handlePaste = (e) => {
+        e.preventDefault();
+        const pastedData = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+        if (!pastedData) return;
+
+        const newOtp = [...otp];
+        for (let i = 0; i < pastedData.length; i++) {
+            newOtp[i] = pastedData[i];
+        }
+        setOtp(newOtp);
+        setData('code', newOtp.join(''));
+
+        const nextIndex = Math.min(pastedData.length, 5);
+        inputs.current[nextIndex].focus();
+    };
+
+    const handleKeyDown = (e, index) => {
+        if (e.key === 'Backspace' && !otp[index] && index > 0) {
+            inputs.current[index - 1].focus();
         }
     };
 
     const submit = (e) => {
         e.preventDefault();
-        post(route('auth.verify-otp'));
+        post(route('auth.verify-otp.store'));
+    };
+
+    const resendCode = () => {
+        router.post(route('auth.verify-otp.send'), {}, {
+            onSuccess: () => alert(t('onboarding.otp_resent_alert')),
+        });
     };
 
     return (
-        <AuthSplitLayout 
-            heroImage={!otpSent ? "/images/illustrations/otp-selection.svg" : "/images/illustrations/otp-verify.svg"}
-            bgAccentClass="bg-cream-accent"
-        >
-            <Head title={t('Verify OTP')} />
-            
-            <div className="mb-8 lg:mb-10 text-center lg:text-left relative">
-                <BackButton 
-                    href={otpSent ? "#" : route('login')} 
-                    onClick={otpSent ? (e) => { e.preventDefault(); setOtpSent(false); } : undefined}
-                    className="absolute -top-12 left-0" 
-                />
+        <div className="oflem-home-page">
+            <Head title={t('onboarding.otp_title')} />
 
-                <h2 className="text-lg font-medium text-oflem-charcoal mb-1">{t('Oflem')}</h2>
-                <h1 className="text-[32px] lg:text-[40px] font-black text-oflem-charcoal tracking-tight mb-2">
-                    {!otpSent ? t("One small code to go") : t("Almost done")}
-                </h1>
-                <p className="text-gray-muted text-sm font-medium">
-                    {!otpSent 
-                        ? t("We'll send you a code by email to continue.")
-                        : t("Enter the code received by email.")}
-                </p>
-            </div>
+            <header className="oflem-header">
+                <div className="oflem-container">
+                    <nav className="oflem-nav">
+                        <Link href={route('welcome')} className="oflem-logo">Oflem<span className="oflem-logo-dot">.</span></Link>
+                        <Link href={route('register')} className="oflem-nav-btn-login">← {t('common.back')}</Link>
+                    </nav>
+                </div>
+            </header>
 
-            <div className="space-y-6">
-                {!otpSent ? (
-                    <div className="space-y-4">
-                        <div
-                            onClick={() => setSelectedMethod('email')}
-                            className={`p-5 bg-white border rounded-[24px] cursor-pointer transition-all flex items-center justify-between group ${
-                                selectedMethod === 'email' ? 'border-oflem-terracotta ring-1 ring-oflem-terracotta' : 'border-gray-border hover:border-oflem-terracotta'
-                            }`}
-                        >
-                            <div className="flex items-center space-x-4">
-                                <div className="w-12 h-12 rounded-full bg-cream-accent flex items-center justify-center text-oflem-terracotta transition-colors group-hover:bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light group-hover:text-white">
-                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h3 className="font-black text-oflem-charcoal">{t('Send code to email :')}</h3>
-                                    <p className="text-sm text-gray-muted font-bold">{email}</p>
-                                </div>
-                            </div>
-                            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
-                                selectedMethod === 'email' ? 'border-oflem-terracotta' : 'border-gray-border group-hover:border-oflem-terracotta'
-                            }`}>
-                                <div className={`w-3 h-3 rounded-full transition-colors ${
-                                    selectedMethod === 'email' ? 'bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light' : 'bg-transparent'
-                                }`}></div>
-                            </div>
-                        </div>
-
-                        <div
-                            onClick={() => setSelectedMethod('phone')}
-                            className={`p-5 bg-white border rounded-[24px] cursor-pointer transition-all flex items-center justify-between group ${
-                                selectedMethod === 'phone' ? 'border-oflem-terracotta ring-1 ring-oflem-terracotta' : 'border-gray-border hover:border-oflem-terracotta'
-                            }`}
-                        >
-                            <div className="flex items-center space-x-4">
-                                <div className="w-12 h-12 rounded-full bg-cream-accent flex items-center justify-center text-oflem-terracotta transition-colors group-hover:bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light group-hover:text-white">
-                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h3 className="font-black text-oflem-charcoal">{t('Send code to phone number :')}</h3>
-                                    <p className="text-sm text-gray-muted font-bold">{phone}</p>
-                                </div>
-                            </div>
-                            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
-                                selectedMethod === 'phone' ? 'border-oflem-terracotta' : 'border-gray-border group-hover:border-oflem-terracotta'
-                            }`}>
-                                <div className={`w-3 h-3 rounded-full transition-colors ${
-                                    selectedMethod === 'phone' ? 'bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light' : 'bg-transparent'
-                                }`}></div>
-                            </div>
-                        </div>
-
-                        <PrimaryButton 
-                            onClick={() => sendOTP(selectedMethod)}
-                            disabled={!selectedMethod}
-                            processing={false}
-                            className="w-full mt-6"
-                        >
-                            {t('Verify Account')}
-                        </PrimaryButton>
+            <section className="oflem-section" style={{ paddingTop: '50px' }}>
+                <div className="oflem-container" style={{ maxWidth: '480px', textAlign: 'center' }}>
+                    
+                    <div style={{ width: '72px', height: '72px', borderRadius: '50%', background: 'linear-gradient(135deg,var(--o),var(--ol))', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', boxShadow: '0 10px 30px var(--og)' }}>
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round">
+                            <rect x="2" y="4" width="20" height="16" rx="2"/>
+                            <polyline points="22 4 12 13 2 4"/>
+                        </svg>
                     </div>
-                ) : (
-                    <>
-                        <div className="mb-6">
-                             <p className="text-oflem-charcoal font-black text-center">{selectedMethod === 'email' ? email : phone}</p>
+
+                    <div className="progress-bar-wrap" style={{ marginBottom: '16px' }}>
+                        <div className="progress-step-item">
+                            <div className="progress-step-circle done">✓</div>
+                            <div className="progress-step-label">{t('onboarding.your_request')}</div>
+                        </div>
+                        <div className="progress-connector done"></div>
+                        <div className="progress-step-item">
+                            <div className="progress-step-circle done">✓</div>
+                            <div className="progress-step-label">{t('onboarding.your_account')}</div>
+                        </div>
+                        <div className="progress-connector done"></div>
+                        <div className="progress-step-item">
+                            <div className="progress-step-circle active">3</div>
+                            <div className="progress-step-label active">{t('onboarding.verification')}</div>
+                        </div>
+                    </div>
+
+                    <h2 className="oflem-section-title" style={{ fontSize: '32px' }}>{t('onboarding.otp_verify_email')}</h2>
+                    <p style={{ color: 'var(--g500)', fontSize: '15px', marginBottom: '30px' }}>
+                        {t('onboarding.otp_sent_to')} <strong style={{ color: 'var(--n)' }}>{email}</strong>
+                    </p>
+
+                    <form onSubmit={submit} style={{ background: '#fff', border: '1px solid var(--g300)', borderRadius: 'var(--rl)', padding: '36px', boxShadow: 'var(--sh)' }}>
+                        <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginBottom: '24px' }}>
+                            {otp.map((digit, index) => (
+                                <input
+                                    key={index}
+                                    type="text"
+                                    maxLength="1"
+                                    inputMode="numeric"
+                                    className="otp-digit"
+                                    value={digit}
+                                    ref={el => inputs.current[index] = el}
+                                    onChange={(e) => handleOtpChange(e.target.value, index)}
+                                    onPaste={handlePaste}
+                                    onKeyDown={(e) => handleKeyDown(e, index)}
+                                    style={{ width: '52px', height: '62px', textAlign: 'center', fontSize: '24px', fontWeight: 900, border: '2px solid var(--g300)', borderRadius: 'var(--rs)', transition: 'all .25s' }}
+                                />
+                            ))}
                         </div>
 
-                        <form onSubmit={submit} className="space-y-8">
-                            <div className="space-y-2">
-                                <label className="text-sm font-black text-oflem-charcoal block text-center">{t('Enter the code received by email.')}</label>
-                                <div className="flex justify-between gap-1 sm:gap-2 max-w-sm mx-auto">
-                                    {otp.map((digit, index) => (
-                                        <input
-                                            key={index}
-                                            id={`otp-${index}`}
-                                            type="text"
-                                            maxLength="1"
-                                            value={digit}
-                                            onChange={(e) => handleOtpChange(e.target.value, index)}
-                                            onPaste={handlePaste}
-                                            className="w-10 h-10 sm:w-12 sm:h-12 text-center text-xl font-black bg-input-bg border border-gray-border focus:ring-1 focus:ring-oflem-terracotta focus:border-oflem-terracotta rounded-full outline-none transition-all"
-                                        />
-                                    ))}
-                                </div>
+                        {(errors.code || errors.general) && (
+                            <div style={{ color: '#e53e3e', fontSize: '13px', marginBottom: '16px', fontWeight: 'bold', background: '#fff5f5', border: '1px solid #fed7d7', borderRadius: '8px', padding: '10px 14px' }}>
+                                {errors.code || errors.general}
                             </div>
+                        )}
 
-                            <InputError message={errors.code} className="text-center ml-0" />
+                        <button type="submit" className="oflem-btn oflem-btn-primary" style={{ width: '100%', fontSize: '17px', padding: '18px' }} disabled={processing || data.code.length !== 6}>
+                            {processing ? '...' : t('onboarding.otp_verify_btn')}
+                        </button>
 
-                            <PrimaryButton
-                                type="submit"
-                                disabled={processing || data.code.length !== 6}
-                                processing={processing}
-                                className="w-full"
-                            >
-                                {t('Verify Code')}
-                            </PrimaryButton>
+                        <p style={{ textAlign: 'center', marginTop: '18px', fontSize: '13px', color: 'var(--g500)' }}>
+                            {t('onboarding.otp_not_received')} <a onClick={resendCode} style={{ color: 'var(--o)', fontWeight: 700, cursor: 'pointer' }}>{t('onboarding.otp_resend')}</a>
+                        </p>
+                    </form>
 
-                            <div className="text-center space-y-4">
-                                <p className="text-sm text-gray-muted font-bold">
-                                    <div className="flex items-center justify-center gap-1">
-                                        <span className="text-gray-muted">{t("Didn't receive code?")}</span>
-                                        <button
-                                            type="button"
-                                            onClick={() => sendOTP(selectedMethod)}
-                                            disabled={timeLeft > 0}
-                                            className={`font-black transition-colors ${timeLeft > 0 ? 'text-gray-400 cursor-not-allowed' : 'text-oflem-charcoal underline hover:text-oflem-terracotta'}`}
-                                        >
-                                            {timeLeft > 0 ? (
-                                                <>
-                                                    <span className="hidden lg:inline">{t('Resend Code in')} {formatTime(timeLeft)}</span>
-                                                    <span className="lg:hidden">{t('Resend in')} {formatTime(timeLeft)}</span>
-                                                </>
-                                            ) : (
-                                                t('Resend Code')
-                                            )}
-                                        </button>
-                                    </div>
-                                </p>
-                                
-                                <button 
-                                    type="button" 
-                                    onClick={() => setOtpSent(false)} 
-                                    className="text-xs text-gray-muted font-black hover:text-oflem-charcoal transition-colors"
-                                >
-                                    {t('Change Method')}
-                                </button>
-                            </div>
-                        </form>
-                    </>
-                )}
-            </div>
-        </AuthSplitLayout>
+                </div>
+            </section>
+        </div>
     );
 }

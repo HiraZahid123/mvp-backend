@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Head, useForm, usePage, Link, router } from '@inertiajs/react';
 import useTranslation from '@/Hooks/useTranslation';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import DashboardLayout from '@/Layouts/DashboardLayout';
 import TextInput from '@/Components/TextInput';
 import InputLabel from '@/Components/InputLabel';
 import InputError from '@/Components/InputError';
@@ -132,14 +132,12 @@ export default function Details({ mission, canSeeAddress }) {
     };
 
     return (
-        <AuthenticatedLayout
+        <DashboardLayout
             header={mission.title}
-            maxWidth="max-w-6xl"
-            showFooter={true}
         >
             <Head title={`${mission.title} - Oflem`} />
 
-            <div className="py-16 px-6">
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
                 <div className="grid lg:grid-cols-3 gap-12">
                     {/* Left Column: Mission Info */}
                     <div className="lg:col-span-2 space-y-8">
@@ -200,6 +198,28 @@ export default function Details({ mission, canSeeAddress }) {
                                 </div>
                             </div>
                         </section>
+                        
+                        {/* Provider Official Information - Only for Mission Owner after assignment */}
+                        {isOwner && mission.assigned_user && mission.assigned_user.provider_profile && (
+                            <section className="bg-white rounded-[40px] p-8 md:p-10 shadow-sm border-2 border-oflem-terracotta/10">
+                                <h2 className="text-xl font-black text-oflem-charcoal mb-6 flex items-center gap-3">
+                                    <ShieldCheck className="text-oflem-terracotta" size={24} /> {t('Provider Official Information')}
+                                </h2>
+                                <div className="grid md:grid-cols-2 gap-6">
+                                    <DetailItem 
+                                        icon={<User size={18} className="text-oflem-terracotta" />} 
+                                        label={t('Full Name')} 
+                                        value={mission.assigned_user.name} 
+                                    />
+                                    <DetailItem 
+                                        icon={<ShieldCheck size={18} className="text-oflem-terracotta" />} 
+                                        label={t('onboarding.avs_number_label')} 
+                                        value={mission.assigned_user.provider_profile.avs_number || t('Pending verification')} 
+                                        subValue={t('Required for your employer obligations in Switzerland.')}
+                                    />
+                                </div>
+                            </section>
+                        )}
 
                         {/* Questions Section */}
                         <section className="bg-white rounded-[40px] p-8 md:p-12 shadow-sm border border-gray-border">
@@ -591,7 +611,7 @@ export default function Details({ mission, canSeeAddress }) {
                                 ) : isOwner ? (
                                     <>
                                         <h2 className="text-xl font-black text-oflem-charcoal mb-6 flex items-center gap-3">
-                                            <Tag className="text-oflem-terracotta" size={24} /> {t('Offers')}
+                                            <Tag className="text-oflem-terracotta" size={24} /> {mission.price_type === 'fixed' ? t('Interested Providers') : t('Offers')}
                                         </h2>
                                         <div className="space-y-6">
                                             {mission.offers.length > 0 ? mission.offers.map(offer => (
@@ -640,21 +660,21 @@ export default function Details({ mission, canSeeAddress }) {
                                             {mission.price_type === 'fixed' && (
                                                 <div className="space-y-6 pb-6 border-b border-gray-border">
                                                     <div className="text-center pb-6 border-b border-gray-border">
-                                                        <p className="text-xs font-black text-zinc-400 uppercase tracking-widest mb-1">{t('Fixed Price')}</p>
+                                                        <p className="text-xs font-black text-zinc-400 uppercase tracking-widest mb-1">{t('Fixed Price Offer')}</p>
                                                         <p className="text-4xl font-black text-oflem-charcoal">CHF {mission.budget}</p>
                                                     </div>
                                                     <button
                                                         onClick={() => {
-                                                            if (confirm(t('Are you sure you want to accept this mission? You will be committing to complete it for the fixed price shown.'))) {
+                                                            if (confirm(t('Accept this fixed price and send your application? The client will review your profile to confirm.'))) {
                                                                 acceptMission();
                                                             }
                                                         }}
                                                         className="w-full py-5 bg-oflem-charcoal text-white font-black rounded-full hover:bg-black transition-all shadow-xl text-lg flex items-center justify-center gap-3 group"
                                                     >
-                                                        <Zap size={24} className="text-oflem-terracotta group-hover:scale-110 transition-transform" /> {t('Accept Instantly')}
+                                                        <Zap size={24} className="text-oflem-terracotta group-hover:scale-110 transition-transform" /> {t('Accept Price & Apply')}
                                                     </button>
                                                     <p className="text-[10px] text-gray-muted font-bold text-center leading-relaxed">
-                                                        {t('By accepting, you commit to completing this mission for the fixed price shown.')}
+                                                        {t('By accepting, you express interest in completing this mission for the fixed price shown.')}
                                                     </p>
                                                 </div>
                                             )}
@@ -729,7 +749,7 @@ export default function Details({ mission, canSeeAddress }) {
                     }
                 }}
             />
-        </AuthenticatedLayout>
+        </DashboardLayout>
     );
 }
 

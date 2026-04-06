@@ -24,11 +24,11 @@ export default function ConfirmPassword() {
 
     return (
         <AuthSplitLayout
-            heroHeading={t('Secure Access')}
-            heroSubtext={t('Please confirm your password to proceed to this sensitive area.')}
+            heroHeading={t('auth.confirm_password.hero_title')}
+            heroSubtext={t('auth.confirm_password.hero_subtitle')}
             bgAccentClass="bg-cream-accent"
         >
-            <Head title={t('Confirm Password')} />
+            <Head title={t('auth.confirm_password.title')} />
 
             <div className="mb-8 lg:mb-10 text-center lg:text-left relative">
                 <BackButton 
@@ -36,21 +36,21 @@ export default function ConfirmPassword() {
                     className="absolute -top-12 left-0" 
                 />
 
-                <h2 className="text-lg font-medium text-oflem-charcoal mb-1">{t('Oflem')}</h2>
-                <h1 className="text-[32px] lg:text-[40px] font-black text-oflem-charcoal mb-2 tracking-tight">{t('Confirm Password')}</h1>
-                <p className="text-gray-muted text-sm font-medium">{t('This is a secure area. Please confirm your password before continuing.')}</p>
+                <h2 className="text-lg font-medium text-oflem-charcoal mb-1">{t('common.app_name')}</h2>
+                <h1 className="text-[32px] lg:text-[40px] font-black text-oflem-charcoal mb-2 tracking-tight">{t('auth.confirm_password.title')}</h1>
+                <p className="text-gray-muted text-sm font-medium">{t('auth.confirm_password.subtitle')}</p>
             </div>
 
             <form onSubmit={submit} className="space-y-6">
                 <div className="space-y-1.5">
-                    <InputLabel htmlFor="password" value={t('Password')} />
+                    <InputLabel htmlFor="password" value={t('auth.confirm_password.password_label')} />
                     <TextInput
                         id="password"
                         type="password"
                         name="password"
                         value={data.password}
                         onChange={(e) => setData('password', e.target.value)}
-                        placeholder={t('Enter your password')}
+                        placeholder={t('auth.confirm_password.password_placeholder')}
                         required
                         autoFocus
                     />
@@ -59,7 +59,7 @@ export default function ConfirmPassword() {
 
                 <div className="pt-4">
                     <PrimaryButton className="w-full" disabled={processing}>
-                        {t('Confirm')}
+                        {t('auth.confirm_password.button')}
                     </PrimaryButton>
                 </div>
             </form>

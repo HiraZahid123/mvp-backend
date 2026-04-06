@@ -1,7 +1,7 @@
 import React from 'react';
 import { Head } from '@inertiajs/react';
 import { Star, MapPin, Award, CheckCircle, Briefcase, UserCircle } from 'lucide-react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import DashboardLayout from '@/Layouts/DashboardLayout';
 import useTranslation from '@/Hooks/useTranslation';
 import ReviewCard from '@/Components/ReviewCard';
 import RatingDistribution from '@/Components/RatingDistribution';
@@ -24,14 +24,12 @@ export default function PublicProfile({ user, reviews, ratingDistribution }) {
     };
 
     return (
-        <AuthenticatedLayout 
+        <DashboardLayout 
             header={`${user.name}`}
-            maxWidth="max-w-6xl"
-            showFooter={true}
         >
             <Head title={`${user.name} - Profile`} />
 
-            <div className="py-16">
+            <div className="max-w-6xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
                 {/* Profile Header */}
                 <div className="bg-white rounded-[40px] p-8 md:p-12 shadow-sm border border-gray-border mb-8">
                     <div className="flex flex-col md:flex-row items-start gap-8">
@@ -182,6 +180,6 @@ export default function PublicProfile({ user, reviews, ratingDistribution }) {
                     </div>
                 </div>
             </div>
-        </AuthenticatedLayout>
+        </DashboardLayout>
     );
 }

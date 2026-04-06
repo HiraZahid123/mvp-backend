@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import DashboardLayout from '@/Layouts/DashboardLayout';
 import useTranslation from '@/Hooks/useTranslation';
 import { motion } from 'framer-motion';
 import {
@@ -40,12 +40,12 @@ export default function TaxReport({ taxData, providerName, year: currentYear }) 
     const handlePrint = () => window.print();
 
     return (
-        <AuthenticatedLayout header={t('Tax Report')} maxWidth="max-w-5xl" showFooter={true}>
+        <DashboardLayout header={t('Tax Report')}>
             <Head title={t('Tax & Earnings Report')} />
 
             <motion.div initial="hidden" animate="visible"
                 variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.07 } } }}
-                className="py-6 px-2 sm:px-0 space-y-8">
+                className="max-w-5xl mx-auto py-6 px-2 sm:px-0 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
 
                 {/* ── HEADER ─────────────────────────────────────── */}
                 <motion.div variants={cardVariants}
@@ -238,6 +238,6 @@ export default function TaxReport({ taxData, providerName, year: currentYear }) 
                 )}
 
             </motion.div>
-        </AuthenticatedLayout>
+        </DashboardLayout>
     );
 }

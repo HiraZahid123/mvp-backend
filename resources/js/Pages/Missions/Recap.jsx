@@ -1,7 +1,7 @@
 import React from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import useTranslation from '@/Hooks/useTranslation';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import DashboardLayout from '@/Layouts/DashboardLayout';
 import PrimaryButton from '@/Components/PrimaryButton';
 import SecondaryButton from '@/Components/SecondaryButton';
 import { MapPin, Calendar, DollarSign, FileText, ArrowLeft, CheckCircle2 } from 'lucide-react';
@@ -21,14 +21,12 @@ export default function MissionRecap({ mission }) {
     };
 
     return (
-        <AuthenticatedLayout 
+        <DashboardLayout 
             header={t('Mission Recap')}
-            maxWidth="max-w-4xl"
-            showFooter={true}
         >
             <Head title={t('Mission Recap')} />
 
-            <div className="py-12">
+            <div className="max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
                 {/* Header */}
                 <div className="mb-12">
                     <Link
@@ -187,6 +185,6 @@ export default function MissionRecap({ mission }) {
                     </p>
                 </div>
             </div>
-        </AuthenticatedLayout>
+        </DashboardLayout>
     );
 }

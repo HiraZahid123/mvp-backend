@@ -106,7 +106,7 @@ class MissionController extends Controller
 
         $sortBy = $request->query('sort_by', 'distance');
         $query = Mission::where('status', Mission::STATUS_OUVERTE)
-            ->where('user_id', '!=', auth()->id())
+            ->where('user_id', '!=', Auth::id())
             ->filter($filters);
 
         if ($lat && $lng) {
@@ -141,7 +141,7 @@ class MissionController extends Controller
 
     public function show(Mission $mission)
     {
-        $mission->load(['user', 'offers.user', 'questions.user', 'chat']);
+        $mission->load(['user', 'offers.user', 'questions.user', 'chat', 'assignedUser.providerProfile']);
         $canSeeAddress = $mission->canSeeFullAddress(Auth::user());
         $clientSecret = null;
 

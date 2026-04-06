@@ -36,21 +36,21 @@ export default function CompleteIdentity({ user }) {
             heroImage="/images/illustrations/verify-email.svg"
             bgAccentClass="bg-cream-accent"
         >
-            <Head title={t("Profile")} />
+            <Head title={t('auth.complete_identity.title')} />
 
             <div className="flex items-center mb-8">
                 <BackButton href={route('auth.select-role')} className="text-sm">
-                    {t("Back")}
+                    {t('common.back')}
                 </BackButton>
             </div>
 
             <div className="text-center mb-8">
                 <h1 className="text-[32px] lg:text-[40px] font-serif font-bold text-oflem-charcoal tracking-tight mb-3 leading-tight">
-                    {t("Nice to meet you!")}<br />{t("Almost ready...")}
+                    {t('auth.complete_identity.nice_to_meet')}<br />{t('auth.complete_identity.almost_ready')}
                 </h1>
                 <p className="text-gray-muted text-base font-medium px-4">
-                    {t("Add a photo and customize your username if you wish.")}<br />
-                    {t("Otherwise, we'll use your name.")}
+                    {t('auth.complete_identity.subtitle')}<br />
+                    {t('auth.complete_identity.name_notice')}
                 </p>
             </div>
 
@@ -67,13 +67,13 @@ export default function CompleteIdentity({ user }) {
 
                 {/* Username/Display Name */}
                 <div className="space-y-1.5">
-                    <InputLabel htmlFor="username" value={t("Display name (optional)")} className="text-center lg:text-left" />
+                    <InputLabel htmlFor="username" value={t('auth.complete_identity.display_name')} className="text-center lg:text-left" />
                     <TextInput
                         id="username"
                         type="text"
                         value={data.username}
                         onChange={(e) => setData('username', e.target.value)}
-                        placeholder={t("Leave empty to use your name")}
+                        placeholder={t('auth.complete_identity.display_name_placeholder')}
                         autoComplete="nickname"
                     />
                     <InputError message={errors.username} />
@@ -81,13 +81,13 @@ export default function CompleteIdentity({ user }) {
 
                 {/* Phone Number */}
                 <div className="space-y-1.5">
-                    <InputLabel htmlFor="phone" value={t("Phone number (required for verification)")} className="text-center lg:text-left" />
+                    <InputLabel htmlFor="phone" value={t('auth.complete_identity.phone')} className="text-center lg:text-left" />
                     <TextInput
                         id="phone"
                         type="tel"
                         value={data.phone}
                         onChange={(e) => setData('phone', e.target.value)}
-                        placeholder={t("+41 7x xxx xx xx")}
+                        placeholder={t('auth.complete_identity.phone_placeholder')}
                         autoComplete="tel"
                         required
                     />
@@ -100,13 +100,13 @@ export default function CompleteIdentity({ user }) {
                     disabled={processing}
                     processing={processing}
                 >
-                    {t("Continue")}
+                    {t('auth.select_role.button')}
                 </PrimaryButton>
             </form>
 
             <div className="elegant-capsule mt-6">
                 <p className="text-xs text-oflem-charcoal font-medium text-center">
-                    {t("Your information remains private and secure.")}
+                    {t('auth.complete_identity.privacy_notice')}
                 </p>
             </div>
         </AuthSplitLayout>

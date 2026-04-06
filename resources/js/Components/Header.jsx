@@ -9,7 +9,7 @@ import {
     ChevronDown, LayoutDashboard, Users, Wallet, ClipboardList, 
     Home, UserCircle, RefreshCw, LogOut, Compass, MessageSquare,
     PlusCircle, Search, Briefcase, Settings, Bell, Star, 
-    Menu, X, ArrowRight
+    Menu, X, ArrowRight, Shield
 } from 'lucide-react';
 
 export default function Header() {
@@ -45,32 +45,35 @@ export default function Header() {
 
     const navLinks = {
         admin: [
-            { name: t('Dashboard'), href: '/admin/dashboard', icon: LayoutDashboard },
-            { name: t('Users'), href: '/admin/users', icon: Users },
-            { name: t('Withdrawals'), href: '/admin/withdrawals', icon: Wallet },
-            { name: t('Missions'), href: '/admin/missions', icon: ClipboardList },
+            { name: t('homepage.header.dashboard'), href: '/admin/dashboard', icon: LayoutDashboard },
+            { name: t('homepage.header.users'), href: '/admin/users', icon: Users },
+            { name: t('homepage.header.withdrawals'), href: '/admin/withdrawals', icon: Wallet },
+            { name: t('homepage.header.missions'), href: '/admin/missions', icon: ClipboardList },
         ],
         provider: [
-            { name: t('Dashboard'), href: route('dashboard'), icon: Home },
-            { name: t('Find Missions'), href: route('missions.active'), icon: Compass },
-            { name: t('Messages'), href: route('messages'), icon: MessageSquare },
-            { name: t('My Wallet'), href: route('wallet.index'), icon: Wallet },
+            { name: t('homepage.header.dashboard'), href: route('dashboard'), icon: Home },
+            { name: t('homepage.header.find_missions'), href: route('missions.active'), icon: Compass },
+            { name: t('homepage.header.messages'), href: route('messages'), icon: MessageSquare },
+            { name: t('homepage.header.my_wallet'), href: route('wallet.index'), icon: Wallet },
         ],
         client: [
-            { name: t('Dashboard'), href: route('dashboard'), icon: Home },
-            { name: t('Find Helpers'), href: route('providers.index'), icon: Search },
-            { name: t('Messages'), href: route('messages'), icon: MessageSquare },
-            { name: t('My Wallet'), href: route('wallet.client'), icon: Wallet },
+            { name: t('homepage.header.dashboard'), href: route('dashboard'), icon: Home },
+            { name: t('homepage.header.find_helpers'), href: route('providers.index'), icon: Search },
+            { name: t('homepage.header.messages'), href: route('messages'), icon: MessageSquare },
+            { name: t('homepage.header.payments'), href: route('wallet.client'), icon: Wallet },
         ],
         both: [
-            { name: t('Dashboard'), href: route('dashboard'), icon: Home },
-            { name: t('Missions'), href: route('missions.active'), icon: Compass },
-            { name: t('Messages'), href: route('messages'), icon: MessageSquare },
-            { name: t('My Wallet'), href: route('wallet.index'), icon: Wallet },
+            { name: t('homepage.header.dashboard'), href: route('dashboard'), icon: Home },
+            { name: t('homepage.header.missions'), href: route('missions.active'), icon: Compass },
+            { name: t('homepage.header.messages'), href: route('messages'), icon: MessageSquare },
+            { name: t('homepage.header.my_wallet'), href: route('wallet.index'), icon: Wallet },
         ],
         guest: [
-            { name: t('How it works'), href: '/#how-it-works', icon: Star },
-            { name: t('Find Helpers'), href: route('providers.index'), icon: Search },
+            { name: t('homepage.header.missions'), href: '/#categories', icon: Compass },
+            { name: t('homepage.header.why_us'), href: '/#why-oflem', icon: Shield },
+            { name: t('homepage.header.become_provider'), href: route('register', { role: 'provider' }), icon: PlusCircle },
+            { name: t('homepage.header.help_needed'), href: route('register', { role: 'client' }), icon: Search },
+            { name: t('homepage.header.faq'), href: '/#faq', icon: MessageSquare },
         ]
     };
 
@@ -84,19 +87,19 @@ export default function Header() {
     };
 
     const dropdownLinks = [
-        { name: t('Dashboard'), href: route('dashboard'), icon: Home },
-        { name: t('Profile Settings'), href: route('profile.edit'), icon: UserCircle },
+        { name: t('homepage.header.dashboard'), href: route('dashboard'), icon: Home },
+        { name: t('homepage.header.profile_settings'), href: route('profile.edit'), icon: UserCircle },
         ...(userRole === 'provider' || userRole === 'both' 
-            ? [{ name: t('My Wallet'), href: route('wallet.index'), icon: Wallet }] 
-            : [{ name: t('Payments'), href: route('wallet.client'), icon: Wallet }]
+            ? [{ name: t('homepage.header.my_wallet'), href: route('wallet.index'), icon: Wallet }] 
+            : [{ name: t('homepage.header.payments'), href: route('wallet.client'), icon: Wallet }]
         ),
-        { name: t('Notifications'), href: route('profile.notifications'), icon: Bell },
+        { name: t('homepage.header.notifications'), href: route('profile.notifications'), icon: Bell },
     ];
 
     const ctaButton = () => {
         if (isAdminRoute) return null;
         if (userRole === 'client' || userRole === 'both') {
-            return { label: t('Post a mission'), href: route('missions.create'), style: 'terracotta' };
+            return { label: t('homepage.header.post_mission'), href: route('missions.create'), style: 'terracotta' };
         }
         return null;
     };
@@ -104,32 +107,36 @@ export default function Header() {
     const cta = ctaButton();
 
     return (
-        <nav className={`bg-white/95 backdrop-blur-xl border-b sticky top-0 z-[100] transition-all duration-300 ${
-            scrolled ? 'border-zinc-200/80 shadow-[0_4px_24px_rgba(0,0,0,0.06)]' : 'border-zinc-100'
-        }`}>
-            <div className="max-w-[1280px] mx-auto px-4 sm:px-6">
-                <div className="flex justify-between h-[68px] items-center">
+        <nav className={`header sticky top-0 z-[100] transition-all duration-300 ${
+            scrolled ? 'scrolled' : ''
+        }`} style={{
+            background: 'rgba(255, 255, 255, 0.92)',
+            backdropFilter: 'saturate(200%) blur(20px)',
+            WebkitBackdropFilter: 'saturate(200%) blur(20px)',
+            padding: '16px 0',
+            borderBottom: '1px solid rgba(0,0,0,0.05)'
+        }}>
+            <div className="container">
+                <div className="flex justify-between items-center">
                     {/* Brand & Desktop Nav */}
-                    <div className="flex items-center gap-8">
-                        <Link href="/" className="logo text-[28px] font-black tracking-[-0.8px] text-zinc-900 flex items-baseline group hover:scale-[1.03] transition-transform duration-200">
-                            Oflem<span className="text-oflem-terracotta">.</span>
+                    <div className="flex items-center gap-12">
+                        <Link href="/" className="logo" style={{ fontSize: '24px', fontWeight: 900, letterSpacing: '-1px' }}>
+                            Oflem<span className="logo-dot">.</span>
                         </Link>
 
-                        <div className="hidden lg:flex items-center gap-1">
+                        <div className="hidden lg:flex items-center gap-6">
                             {currentLinks.map((link) => {
-                                const Icon = link.icon;
                                 const active = isActive(link.href);
                                 return (
                                     <Link
                                         key={link.name + link.href}
                                         href={link.href}
-                                        className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-[13px] font-bold transition-all duration-200 ${
+                                        className={`text-[14px] font-extrabold tracking-tight transition-all duration-250 ${
                                             active
-                                                ? 'bg-oflem-terracotta/8 text-oflem-terracotta'
-                                                : 'text-zinc-500 hover:text-zinc-800 hover:bg-zinc-50'
+                                                ? 'text-oflem-terracotta'
+                                                : 'text-zinc-500 hover:text-zinc-900'
                                         }`}
                                     >
-                                        <Icon size={15} className={active ? 'text-oflem-terracotta' : ''} />
                                         {link.name}
                                     </Link>
                                 );
@@ -138,28 +145,28 @@ export default function Header() {
                     </div>
 
                     {/* Right Side Actions */}
-                    <div className="hidden sm:flex items-center gap-3">
+                    <div className="hidden sm:flex items-center gap-4">
                         {/* Language Switcher */}
-                        <div className="flex items-center bg-zinc-50 rounded-lg p-0.5 border border-zinc-100">
+                        <div className="flex items-center gap-1">
                             {['FR', 'EN', 'DE', 'IT'].map((lang, i) => (
                                 <React.Fragment key={lang}>
                                     <button 
                                         onClick={() => router.post(route('language.switch'), { locale: lang.toLowerCase() })}
-                                        className={`text-[11px] font-black px-2.5 py-1.5 rounded-md transition-all duration-200 ${
+                                        className={`lang-opt ${
                                             usePage().props.locale?.toUpperCase() === lang 
-                                                ? 'bg-white text-oflem-terracotta shadow-sm' 
-                                                : 'text-zinc-400 hover:text-zinc-600'
+                                                ? 'active' 
+                                                : ''
                                         }`}
                                     >
                                         {lang}
                                     </button>
-                                    {i < 3 && <div className="w-px h-3 bg-zinc-200" />}
+                                    {i < 3 && <div className="lang-sep" />}
                                 </React.Fragment>
                             ))}
                         </div>
 
                         {auth.user ? (
-                            <div className="flex items-center gap-2.5">
+                            <div className="flex items-center gap-4">
                                 <NotificationBell />
                                 
                                 {/* User Dropdown */}
@@ -175,7 +182,7 @@ export default function Header() {
                                             </div>
                                             <div className="flex flex-col items-start leading-none">
                                                 <span className="text-[12px] font-black text-oflem-charcoal hidden md:block">{auth.user.name.split(' ')[0]}</span>
-                                                <span className="text-[9px] font-bold text-oflem-terracotta uppercase tracking-wider">{t(userRole)}</span>
+                                                <span className="text-[10px] font-bold text-oflem-terracotta uppercase tracking-wider">{t(userRole)}</span>
                                             </div>
                                             <ChevronDown className="w-3.5 h-3.5 text-zinc-400" />
                                         </button>
@@ -183,7 +190,7 @@ export default function Header() {
                                     <Dropdown.Content contentClasses="py-1 bg-white rounded-2xl shadow-2xl border border-zinc-100 w-60 overflow-hidden">
                                         {/* Balance header */}
                                         <div className="px-4 py-3 bg-gradient-to-br from-zinc-900 to-zinc-800 text-white">
-                                            <div className="text-[9px] font-black uppercase tracking-widest text-white/50 mb-1">{t('Account Balance')}</div>
+                                            <div className="text-[9px] font-black uppercase tracking-widest text-white/50 mb-1">{t('homepage.header.account_balance')}</div>
                                             <div className="text-xl font-black">
                                                 CHF {parseFloat(auth.user.balance || 0).toFixed(2)}
                                             </div>
@@ -213,7 +220,7 @@ export default function Header() {
                                                     className="flex items-center gap-2.5 w-full px-4 py-2.5 text-left text-[13px] font-bold text-zinc-600 hover:bg-zinc-50 transition-colors"
                                                 >
                                                     <RefreshCw size={15} className="text-zinc-400" />
-                                                    {userRole === 'provider' ? t('Switch to Client') : t('Switch to Provider')}
+                                                    {userRole === 'provider' ? t('homepage.header.switch_to_client') : t('homepage.header.switch_to_provider')}
                                                 </button>
                                             </>
                                         )}
@@ -222,7 +229,7 @@ export default function Header() {
                                         <Dropdown.Link href={route('logout')} method="post" as="button">
                                             <span className="flex items-center gap-2.5 text-[13px] text-red-500">
                                                 <LogOut size={15} />
-                                                {t('Log out')}
+                                                {t('homepage.header.log_out')}
                                             </span>
                                         </Dropdown.Link>
                                     </Dropdown.Content>
@@ -232,28 +239,22 @@ export default function Header() {
                                 {cta && (
                                     <Link 
                                         href={cta.href} 
-                                        className={`px-5 py-2 rounded-xl text-[13px] font-black text-white shadow-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] flex items-center gap-1.5 ${
-                                            cta.style === 'charcoal' 
-                                                ? 'bg-oflem-charcoal hover:bg-zinc-800' 
-                                                : 'bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light'
-                                        }`}
+                                        className="nav-btn-signup"
                                     >
-                                        {cta.style === 'charcoal' ? <Compass size={14} /> : <PlusCircle size={14} />}
                                         {cta.label}
                                     </Link>
                                 )}
                             </div>
                         ) : (
-                            <div className="flex items-center gap-3">
-                                <Link href={route('login')} className="text-[13px] font-black text-zinc-700 bg-white border border-zinc-200 px-5 py-2 rounded-xl hover:border-zinc-300 hover:shadow-sm transition-all">
-                                    {t('Log in')}
+                            <div className="flex items-center gap-4">
+                                <Link href={route('login')} className="nav-btn-login">
+                                    {t('homepage.header.log_in')}
                                 </Link>
                                 <Link 
                                     href={route('register')} 
-                                    className="text-[13px] font-black text-white bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light px-5 py-2 rounded-xl shadow-sm hover:shadow-md active:scale-[0.98] transition-all flex items-center gap-1.5"
+                                    className="nav-btn-signup"
                                 >
-                                    {t('Sign up')}
-                                    <ArrowRight size={14} />
+                                    {t('homepage.header.get_started')}
                                 </Link>
                             </div>
                         )}
@@ -264,13 +265,14 @@ export default function Header() {
                         {auth.user && <NotificationBell />}
                         <button
                             onClick={() => setShowingNavigationDropdown(!showingNavigationDropdown)}
-                            className="p-2 rounded-xl text-zinc-700 hover:bg-zinc-100 transition-all"
+                            className="mobile-menu-btn"
                         >
                             {showingNavigationDropdown ? <X size={22} /> : <Menu size={22} />}
                         </button>
                     </div>
                 </div>
             </div>
+
 
             {/* Mobile Menu */}
             <div className={`${showingNavigationDropdown ? 'block' : 'hidden'} sm:hidden bg-white border-t border-zinc-100`}>
@@ -381,14 +383,14 @@ export default function Header() {
                                         className="flex items-center gap-3 w-full px-4 py-2.5 rounded-xl text-[13px] font-bold text-zinc-600 hover:bg-zinc-50 transition-colors"
                                     >
                                         <RefreshCw size={16} className="text-zinc-400" />
-                                        {userRole === 'provider' ? t('Switch to Client') : t('Switch to Provider')}
+                                        {userRole === 'provider' ? t('homepage.header.switch_to_client') : t('homepage.header.switch_to_provider')}
                                     </button>
                                 )}
                                 
                                 {/* Language Selector (Mobile) */}
                                 <div className="pt-4 pb-2 border-t border-zinc-100 mb-2">
                                     <div className="px-4 mb-3 text-[11px] font-black uppercase text-zinc-400 tracking-wider">
-                                        {t('Language')}
+                                        {t('homepage.header.language')}
                                     </div>
                                     <div className="flex px-2 gap-2">
                                         {[
@@ -429,7 +431,7 @@ export default function Header() {
                                         className="flex items-center justify-center gap-2 py-3 bg-red-50 rounded-xl font-black text-[12px] text-red-500 hover:bg-red-100 transition-all"
                                     >
                                         <LogOut size={14} />
-                                        {t('Logout')}
+                                        {t('homepage.header.log_out')}
                                     </Link>
                                 </div>
                             </div>
@@ -460,14 +462,14 @@ export default function Header() {
                                         onClick={() => setShowingNavigationDropdown(false)}
                                         className="flex items-center justify-center py-3.5 bg-zinc-50 border border-zinc-200 rounded-xl font-black text-zinc-900 text-[14px]"
                                     >
-                                        {t('Log in')}
+                                        {t('homepage.header.log_in')}
                                     </Link>
                                     <Link 
                                         href={route('register')} 
                                         onClick={() => setShowingNavigationDropdown(false)}
                                         className="flex items-center justify-center gap-2 py-3.5 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white rounded-xl font-black text-[14px] shadow-sm"
                                     >
-                                        {t('Get Started')}
+                                        {t('homepage.header.get_started')}
                                         <ArrowRight size={14} />
                                     </Link>
                                 </div>

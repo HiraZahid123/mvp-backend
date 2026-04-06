@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Head, Link, useForm, router, usePage } from '@inertiajs/react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import DashboardLayout from '@/Layouts/DashboardLayout';
 import useTranslation from '@/Hooks/useTranslation';
 import { motion, AnimatePresence } from 'framer-motion';
 import InputLabel from '@/Components/InputLabel';
@@ -315,11 +315,12 @@ export default function Wallet({
     [categoryBreakdown]);
 
     return (
-        <AuthenticatedLayout header={t('My Earnings')} maxWidth="max-w-6xl" showFooter={true}>
+        <DashboardLayout 
+            header={t('My Earnings')}
+        >
             <Head title={t('Wallet & Earnings')} />
 
-            <motion.div initial="hidden" animate="visible" variants={containerVariants}
-                className="py-6 px-2 sm:px-0 space-y-8">
+            <div className="max-w-6xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
 
                 {/* ── HEADER ─────────────────────────────────────────── */}
                 <motion.div variants={cardVariants}
@@ -992,7 +993,7 @@ export default function Wallet({
                     </motion.div>
                 )}
 
-            </motion.div>
+            </div>
 
             <AnimatePresence>
                 {showModal && (
@@ -1006,6 +1007,6 @@ export default function Wallet({
                     />
                 )}
             </AnimatePresence>
-        </AuthenticatedLayout>
+        </DashboardLayout>
     );
 }

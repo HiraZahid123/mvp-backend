@@ -28,27 +28,27 @@ export default function ResetPassword({ token, email }) {
 
     return (
         <AuthSplitLayout
-            heroHeading={t('Reset Done?')}
-            heroSubtext={t('Create a secure new password and jump back into action.')}
+            heroHeading={t('auth.reset_password.hero_title')}
+            heroSubtext={t('auth.reset_password.hero_subtitle')}
             bgAccentClass="bg-cream-accent"
         >
-            <Head title={t('Reset Password')} />
+            <Head title={t('auth.reset_password.title')} />
             
             <div className="mb-10 lg:mb-12 text-center lg:text-left relative">
                 <BackButton 
                     href={route('login')} 
                     className="absolute -top-12 left-0" 
-                    children={t('Back to login')}
+                    children={t('common.back')}
                 />
 
-                <h2 className="text-lg font-medium text-oflem-charcoal mb-1">{t('Oflem')}</h2>
-                <h1 className="text-[32px] lg:text-[40px] font-black text-oflem-charcoal mb-2 tracking-tight">{t('New Password')}</h1>
-                <p className="text-gray-muted text-sm font-medium">{t('Create a secure new password for your account.')}</p>
+                <h2 className="text-lg font-medium text-oflem-charcoal mb-1">{t('common.app_name')}</h2>
+                <h1 className="text-[32px] lg:text-[40px] font-black text-oflem-charcoal mb-2 tracking-tight">{t('auth.reset_password.title')}</h1>
+                <p className="text-gray-muted text-sm font-medium">{t('auth.reset_password.subtitle')}</p>
             </div>
 
             <form onSubmit={submit} className="space-y-5 pb-8">
                 <div className="space-y-1.5">
-                    <InputLabel htmlFor="email" value={t('Email Address')} />
+                    <InputLabel htmlFor="email" value={t('auth.reset_password.email_label')} />
                     <TextInput
                         id="email"
                         type="email"
@@ -61,14 +61,14 @@ export default function ResetPassword({ token, email }) {
                 </div>
 
                 <div className="space-y-1.5">
-                    <InputLabel htmlFor="password" value={t('New Password')} />
+                    <InputLabel htmlFor="password" value={t('auth.reset_password.password_label')} />
                     <div className="relative">
                         <TextInput
                             id="password"
                             type={showPassword ? 'text' : 'password'}
                             value={data.password}
                             onChange={(e) => setData('password', e.target.value)}
-                            placeholder={t('Enter new password')}
+                            placeholder={t('auth.reset_password.password_placeholder')}
                             required
                             autoFocus
                         />
@@ -93,13 +93,13 @@ export default function ResetPassword({ token, email }) {
                 </div>
 
                 <div className="space-y-1.5">
-                    <InputLabel htmlFor="password_confirmation" value={t('Confirm New Password')} />
+                    <InputLabel htmlFor="password_confirmation" value={t('auth.reset_password.confirm_password_label')} />
                     <TextInput
                         id="password_confirmation"
                         type="password"
                         value={data.password_confirmation}
                         onChange={(e) => setData('password_confirmation', e.target.value)}
-                        placeholder={t('Confirm new password')}
+                        placeholder={t('auth.reset_password.confirm_password_placeholder')}
                         required
                     />
                     <InputError message={errors.password_confirmation} />
@@ -107,7 +107,7 @@ export default function ResetPassword({ token, email }) {
 
                 <div className="pt-4">
                     <PrimaryButton className="w-full" disabled={processing}>
-                        {t('Reset Password')}
+                        {t('auth.reset_password.button')}
                     </PrimaryButton>
                 </div>
             </form>

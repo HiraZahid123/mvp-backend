@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Head, useForm, usePage, Link, router } from '@inertiajs/react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import DashboardLayout from '@/Layouts/DashboardLayout';
 import useTranslation from '@/Hooks/useTranslation';
 import Modal from '@/Components/Modal';
 import TextInput from '@/Components/TextInput';
@@ -110,14 +110,13 @@ export default function Create({ prefillTitle = '', aiTitle = null }) {
     const quickPrices = [10, 20, 30];
 
     return (
-        <AuthenticatedLayout 
+        <DashboardLayout 
             header={t('Post a Mission')}
-            maxWidth="max-w-2xl"
-            showFooter={true}
         >
             <Head title={t('Create Mission')} />
 
-            <div className="bg-white rounded-[40px] p-8 md:p-12 shadow-sm border border-gray-border">
+            <div className="max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
+                <div className="bg-white rounded-[40px] p-8 md:p-12 shadow-sm border border-gray-border">
                 <div className="mb-8 text-center">
                     <p className="text-gray-muted font-medium">{t('Quick and simple.')}</p>
                 </div>
@@ -321,7 +320,8 @@ export default function Create({ prefillTitle = '', aiTitle = null }) {
                         </p>
                     </div>
                 </form>
+                </div>
             </div>
-        </AuthenticatedLayout>
+        </DashboardLayout>
     );
 }

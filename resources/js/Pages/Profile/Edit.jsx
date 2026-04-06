@@ -1,4 +1,4 @@
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head } from '@inertiajs/react';
 import useTranslation from '@/Hooks/useTranslation';
 import DeleteUserForm from './Partials/DeleteUserForm';
@@ -10,18 +10,12 @@ export default function Edit({ mustVerifyEmail, status }) {
     const { t } = useTranslation();
 
     return (
-        <AuthenticatedLayout
+        <DashboardLayout
             header={t('Profile Settings')}
-            maxWidth="max-w-4xl"
-            showFooter={true}
         >
             <Head title={t('Profile')} />
 
-            <div className="py-12">
-                <BackButton href={route('dashboard')} />
-            </div>
-
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 space-y-8">
+            <div className="max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 space-y-6">
                 <UpdateProfileInformationForm
                     mustVerifyEmail={mustVerifyEmail}
                     status={status}
@@ -31,6 +25,6 @@ export default function Edit({ mustVerifyEmail, status }) {
 
                 <DeleteUserForm />
             </div>
-        </AuthenticatedLayout>
+        </DashboardLayout>
     );
 }

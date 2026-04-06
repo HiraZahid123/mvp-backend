@@ -29,14 +29,14 @@ export default function SelectRole({ user }) {
         {
             key: 'client',
             icon: '/images/icons/battery-low.svg',
-            title: t('Client'),
-            description: t('I delegate. My time is precious.'),
+            title: t('auth.select_role.client_title'),
+            description: t('auth.select_role.client_desc'),
         },
         {
             key: 'provider',
             icon: '/images/icons/battery-high.svg',
-            title: t('Provider'),
-            description: t('I manage. Ready to monetize my availability.'),
+            title: t('auth.select_role.provider_title'),
+            description: t('auth.select_role.provider_desc'),
         },
     ];
 
@@ -45,22 +45,22 @@ export default function SelectRole({ user }) {
             heroImage="/images/illustrations/role-selection.svg"
             bgAccentClass="bg-cream-accent"
         >
-            <Head title={t("Choose a role")} />
+            <Head title={t('auth.select_role.title')} />
 
             {/* Back Button & Progress */}
             <div className="flex items-center justify-between mb-8">
                 <BackButton href={route('register')} className="text-sm">
-                    {t('Back')}
+                    {t('common.back')}
                 </BackButton>
                 <ProgressIndicator currentStep={2} totalSteps={5} />
             </div>
 
             <div className="text-center mb-8 lg:mb-10">
                 <h1 className="text-[32px] lg:text-[40px] font-serif font-bold text-oflem-charcoal tracking-tight mb-3 leading-tight">
-                    {t("Choose your role")}
+                    {t('auth.select_role.title')}
                 </h1>
                 <p className="text-gray-muted text-base font-medium">
-                    {t("How do you want to use OFLEM?")}
+                    {t('auth.select_role.subtitle')}
                 </p>
             </div>
 
@@ -85,13 +85,13 @@ export default function SelectRole({ user }) {
                     disabled={processing || !selectedRole}
                     processing={processing}
                 >
-                    {t('Continue')}
+                    {t('auth.select_role.button')}
                 </PrimaryButton>
             </form>
 
             <div className="elegant-capsule mt-8">
                 <p className="text-xs text-oflem-charcoal font-medium text-center">
-                    {t("You can switch roles anytime. Providers can also post missions as Clients.")}
+                    {t('auth.select_role.switch_notice')}
                 </p>
             </div>
         </AuthSplitLayout>

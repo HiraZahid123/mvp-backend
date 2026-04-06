@@ -11,8 +11,13 @@ class ProviderProfile extends Model
         'bio',
         'years_experience',
         'main_category',
+        'avs_number',
         'hourly_rate',
         'raw_ai_analysis',
+        'iban_encrypted',
+        'id_document_path',
+        'address_proof_path',
+        'work_permit_path',
     ];
 
     protected $casts = [
