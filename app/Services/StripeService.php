@@ -85,6 +85,12 @@ class StripeService
             throw new \Exception('Funds capture failed: No payment intent found.');
         }
 
+        // Idempotency: if the local record already shows captured, the Stripe call already
+        // succeeded on a prior attempt — skip it so a retry does not hit charge_already_captured.
+        if ($payment && $payment->status === Payment::STATUS_CAPTURED) {
+            return;
+        }
+
         try {
             $this->stripe->paymentIntents->capture($piId);
 
@@ -98,6 +104,16 @@ class StripeService
                 $mission->update(['status' => Mission::STATUS_TERMINEE]);
             }
         } catch (\Stripe\Exception\ApiErrorException $e) {
+            // Stripe-side capture already happened but our DB record was not updated
+            // (e.g. the previous request died between the Stripe call and the DB write).
+            // Treat it as success and sync the local record so the caller can proceed.
+            if ($e->getError()->code === 'charge_already_captured') {
+                \Illuminate\Support\Facades\Log::warning("Stripe reported charge_already_captured for mission {$mission->id} — syncing local record.");
+                if ($payment) {
+                    $payment->update(['status' => 'captured', 'captured_at' => now()]);
+                }
+                return;
+            }
             \Illuminate\Support\Facades\Log::error('Stripe Capture Failed: ' . $e->getMessage());
             throw new \Exception('Funds capture failed: ' . $e->getMessage());
         }
@@ -177,15 +193,18 @@ class StripeService
         }
 
         try {
-            return $this->stripe->transfers->create([
-                'amount' => $amount * 100, // Convert to cents
-                'currency' => config('services.stripe.currency', 'chf'),
-                'destination' => $provider->stripe_connect_id,
-                'metadata' => [
-                    'withdrawal_id' => $withdrawalId,
-                    'user_id' => $provider->id,
+            return $this->stripe->transfers->create(
+                [
+                    'amount'      => (int) round($amount * 100),
+                    'currency'    => config('services.stripe.currency', 'chf'),
+                    'destination' => $provider->stripe_connect_id,
+                    'metadata'    => [
+                        'withdrawal_id' => $withdrawalId,
+                        'user_id'       => $provider->id,
+                    ],
                 ],
-            ]);
+                ['idempotency_key' => 'withdrawal_' . $withdrawalId]
+            );
         } catch (\Stripe\Exception\ApiErrorException $e) {
             \Illuminate\Support\Facades\Log::error("Stripe Transfer Failed for Withdrawal {$withdrawalId}: " . $e->getMessage());
             throw new \Exception("Stripe Transfer Failed: " . $e->getMessage());
@@ -219,22 +238,45 @@ class StripeService
      */
     public function resolveDispute(Mission $mission, float $providerAmount, float $refundAmount): void
     {
-        if ($mission->payment_intent_id) {
-            try {
-                // 1. Capture the partial amount for the provider
-                // Note: platform_commission should still be handled or adjusted
-                $this->stripe->paymentIntents->capture($mission->payment_intent_id, [
-                    'amount_to_capture' => $providerAmount * 100,
-                ]);
+        if (!$mission->payment_intent_id) {
+            return;
+        }
 
-                // 2. Refund the remaining amount is implied if not captured, 
-                // but for 'manual_capture' it just releases the rest eventually.
-                // To be explicit, Stripe doesn't have a 'partial_release' as a single call.
-                // Usually, the uncaptured amount is released automatically by the bank after 7 days.
-            } catch (\Stripe\Exception\ApiErrorException $e) {
-                \Illuminate\Support\Facades\Log::error("Stripe Dispute Resolution Failed: " . $e->getMessage());
-                throw new \Exception("Stripe Dispute Resolution Failed: " . $e->getMessage());
+        try {
+            // 1. Retrieve current PI status to make capture idempotent.
+            //    If already 'succeeded', the capture was completed on a prior attempt — skip it.
+            $pi = $this->stripe->paymentIntents->retrieve($mission->payment_intent_id);
+            if ($pi->status !== 'succeeded') {
+                $this->stripe->paymentIntents->capture($mission->payment_intent_id, [
+                    'amount_to_capture' => (int) round($providerAmount * 100),
+                ]);
             }
+
+            // 2. Explicit refund for the client's share.
+            //    Idempotency key ensures a retry cannot issue a second refund.
+            if ($refundAmount > 0) {
+                $this->stripe->refunds->create(
+                    [
+                        'payment_intent' => $mission->payment_intent_id,
+                        'amount'         => (int) round($refundAmount * 100),
+                        'reason'         => 'requested_by_client',
+                    ],
+                    ['idempotency_key' => 'dispute_refund_' . $mission->id]
+                );
+            }
+
+            // 3. Update the local payment record to reflect the resolved amounts.
+            $payment = Payment::where('mission_id', $mission->id)->first();
+            if ($payment) {
+                $payment->update([
+                    'status'          => Payment::STATUS_CAPTURED,
+                    'captured_at'     => now(),
+                    'provider_amount' => $providerAmount,
+                ]);
+            }
+        } catch (\Stripe\Exception\ApiErrorException $e) {
+            \Illuminate\Support\Facades\Log::error("Stripe Dispute Resolution Failed: " . $e->getMessage());
+            throw new \Exception("Stripe Dispute Resolution Failed: " . $e->getMessage());
         }
     }
 }

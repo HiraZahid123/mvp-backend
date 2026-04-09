@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\RateLimiter;
 
 class MissionController extends Controller
 {
@@ -42,9 +43,22 @@ class MissionController extends Controller
         $aiTitle = $request->query('improved_title');
 
         if (!$aiTitle && !empty($prefillTitle)) {
-            $prompt = "You are an AI for Oflem, a friendly Swiss help platform. The user has provided a raw mission title: \"{$prefillTitle}\". Create a simple, clear, and human version (max 3-5 words).";
-            $aiResult = $this->taskService->generateContent($prompt);
-            $aiTitle = is_array($aiResult) ? ($aiResult['improved_title'] ?? $aiResult['text'] ?? $prefillTitle) : ($aiResult ?: $prefillTitle);
+            $prefillTitle = mb_substr($prefillTitle, 0, 255, 'UTF-8');
+
+            // Rate-limit AI title generation to prevent API quota exhaustion.
+            $rateLimitKey = 'ai_title_gen:' . (Auth::id() ?? $request->ip());
+            if (!RateLimiter::tooManyAttempts($rateLimitKey, 20)) {
+                RateLimiter::hit($rateLimitKey, 60);
+
+                // Reject flagged content before spending an API token on it.
+                if ($this->moderationService->isCleanFast($prefillTitle)) {
+                    // Strip quotes to prevent prompt injection via the query-string title.
+                    $safePrefill = str_replace(['"', '\\'], ['', ''], $prefillTitle);
+                    $prompt = "You are an AI for Oflem, a Swiss help platform. The user typed: \"{$safePrefill}\". Return ONLY a JSON object: {\"improved_title\": \"<polished version, max 5 words, same language as input>\"}";
+                    $aiResult = $this->taskService->generateContent($prompt);
+                    $aiTitle = $aiResult['improved_title'] ?? $prefillTitle;
+                }
+            }
         }
 
         return Inertia::render('Missions/Create', [
@@ -232,19 +246,51 @@ class MissionController extends Controller
 
     public function aiRewrite(Request $request)
     {
-        $request->validate(['title' => 'required|string', 'description' => 'nullable|string']);
-        $prompt = "Rewrite this mission for Oflem. Title: \"{$request->title}\", Description: \"{$request->description}\". Return JSON: {improved_title, improved_description}.";
+        $request->validate([
+            'title'       => 'required|string|max:255',
+            'description' => 'nullable|string|max:2000',
+        ]);
+
+        // Per-user rate limit: max 10 AI rewrites per minute to control API cost.
+        $rateLimitKey = 'ai_rewrite:' . Auth::id();
+        if (RateLimiter::tooManyAttempts($rateLimitKey, 10)) {
+            return response()->json(['error' => 'Too many requests. Please wait before trying again.'], 429);
+        }
+        RateLimiter::hit($rateLimitKey, 60);
+
+        // Moderation gate: reject abusive content before spending an AI token on it.
+        $combined = $request->title . ' ' . ($request->description ?? '');
+        if (!$this->moderationService->isCleanFast($combined)) {
+            return response()->json(['error' => 'Content violates moderation rules.'], 422);
+        }
+
+        $title       = mb_substr($request->title, 0, 255, 'UTF-8');
+        $description = mb_substr($request->description ?? '', 0, 1000, 'UTF-8');
+
+        // Strip quotes to prevent prompt injection through user-controlled fields.
+        $safeTitle       = str_replace(['"', '\\'], ['', ''], $title);
+        $safeDescription = str_replace(['"', '\\'], ['', ''], $description);
+
+        $prompt = "Rewrite this mission for Oflem. Title: \"{$safeTitle}\", Description: \"{$safeDescription}\". Return JSON: {improved_title, improved_description}.";
         $aiResult = $this->taskService->generateContent($prompt);
 
         return response()->json([
-            'improved_title' => $aiResult['improved_title'] ?? $request->title,
+            'improved_title'       => $aiResult['improved_title'] ?? $request->title,
             'improved_description' => $aiResult['improved_description'] ?? ($aiResult['summary'] ?? "I need help with: " . $request->title),
         ]);
     }
 
     public function checkModeration(Request $request)
     {
-        $request->validate(['content' => 'required|string']);
+        $request->validate(['content' => 'required|string|max:5000']);
+
+        // Per-user rate limit: max 30 fast moderation checks per minute.
+        $rateLimitKey = 'check_moderation:' . Auth::id();
+        if (RateLimiter::tooManyAttempts($rateLimitKey, 30)) {
+            return response()->json(['error' => 'Too many requests.'], 429);
+        }
+        RateLimiter::hit($rateLimitKey, 60);
+
         $isClean = $this->moderationService->isCleanFast($request->content);
         $violations = $isClean ? [] : $this->moderationService->getViolations($request->content);
 

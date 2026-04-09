@@ -108,6 +108,15 @@ class StripeWebhookController extends Controller
         if (isset($charge->payment_intent)) {
             $payment = Payment::where('payment_intent_id', $charge->payment_intent)->first();
             if ($payment) {
+                // Do not overwrite a CAPTURED payment with REFUNDED.
+                // A CAPTURED status means resolveDispute() performed a partial capture and
+                // issued a partial refund — the charge.refunded webhook fires for that partial
+                // refund but the payment is legitimately captured for the provider's share.
+                // Overwriting it would break any downstream balance-credit check on STATUS_CAPTURED.
+                if ($payment->status === Payment::STATUS_CAPTURED) {
+                    return;
+                }
+
                 $payment->update([
                     'status' => Payment::STATUS_REFUNDED,
                     'refunded_at' => now(),

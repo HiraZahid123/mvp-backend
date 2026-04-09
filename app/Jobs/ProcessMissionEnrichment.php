@@ -66,9 +66,10 @@ class ProcessMissionEnrichment implements ShouldQueue
             $aiSummary = $aiAnalysis['summary'] ?? '';
             $requirementsJson = json_encode($requirements);
 
-            // Build additional details
-            $additionalDetails = ($this->mission->additional_details ?? '') . 
-                "\n\nAI Summary: " . $aiSummary . 
+            // Build additional details — strip any prior enrichment block before appending
+            $base = preg_replace('/\n*AI Summary:.*?\n*\[REQUIREMENTS\].*?\[\/REQUIREMENTS\]/s', '', $this->mission->additional_details ?? '');
+            $additionalDetails = rtrim($base) .
+                "\n\nAI Summary: " . $aiSummary .
                 "\n\n[REQUIREMENTS]{$requirementsJson}[/REQUIREMENTS]";
 
             // Step 5: Update mission with enriched data
@@ -125,7 +126,8 @@ class ProcessMissionEnrichment implements ShouldQueue
             'category' => 'Other'
         ]);
 
-        $additionalDetails = ($this->mission->additional_details ?? '') . 
+        $base = preg_replace('/\n*AI Summary:.*?\n*\[REQUIREMENTS\].*?\[\/REQUIREMENTS\]/s', '', $this->mission->additional_details ?? '');
+        $additionalDetails = rtrim($base) .
             "\n\n[REQUIREMENTS]{$fallbackRequirements}[/REQUIREMENTS]";
 
         $this->mission->update([

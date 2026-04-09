@@ -60,7 +60,8 @@ export default function Dashboard({ missions, stats, providerMissions, providerO
     }, [chatWith, missionId]);
 
     const renderDashboardContent = () => {
-        const activeRole = user.last_selected_role || user.role_type;
+        const roleParam = urlParams.get('role');
+        const activeRole = roleParam || user.last_selected_role || user.role_type;
         
         // If the active role is specifically set, use that dashboard
         if (activeRole === 'client') {

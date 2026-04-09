@@ -63,7 +63,6 @@ class OTPVerification extends Model
     {
         $this->update([
             'verified_at' => now(),
-            'attempts' => $this->attempts + 1
         ]);
     }
 

@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\AdminActivityLog;
 use App\Models\Withdrawal;
 use App\Notifications\WithdrawalStatusNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class AdminWithdrawalController extends Controller
@@ -55,7 +57,14 @@ class AdminWithdrawalController extends Controller
             'admin_notes'  => $request->input('admin_notes'),
         ]);
 
-        // ★ Tier 3 #14 — Notify provider
+        AdminActivityLog::create([
+            'admin_id'     => Auth::id(),
+            'action'       => 'withdrawal_approved',
+            'subject_type' => Withdrawal::class,
+            'subject_id'   => $withdrawal->id,
+            'metadata'     => ['amount' => $withdrawal->amount, 'user_id' => $withdrawal->user_id],
+        ]);
+
         $withdrawal->user->notify(new WithdrawalStatusNotification($withdrawal->fresh()));
 
         return back()->with('success', 'Withdrawal approved successfully. Please process the bank transfer.');
@@ -74,18 +83,35 @@ class AdminWithdrawalController extends Controller
             'admin_notes' => 'required|string|max:500',
         ]);
 
-        // Return amount to user's available balance
         $user = $withdrawal->user;
-        $user->decrement('pending_withdrawal', $withdrawal->amount);
+        $adminId = Auth::id();
 
-        $withdrawal->update([
-            'status'       => Withdrawal::STATUS_REJECTED,
-            'processed_by' => Auth::id(),
-            'processed_at' => now(),
-            'admin_notes'  => $request->input('admin_notes'),
+        // Both mutations must succeed or fail together: a partial failure would leave
+        // pending_withdrawal decremented while the withdrawal still shows PENDING,
+        // allowing a second approval/rejection on the same record.
+        DB::transaction(function () use ($user, $withdrawal, $request, $adminId) {
+            $user->decrement('pending_withdrawal', $withdrawal->amount);
+
+            $withdrawal->update([
+                'status'       => Withdrawal::STATUS_REJECTED,
+                'processed_by' => $adminId,
+                'processed_at' => now(),
+                'admin_notes'  => $request->input('admin_notes'),
+            ]);
+        });
+
+        AdminActivityLog::create([
+            'admin_id'     => Auth::id(),
+            'action'       => 'withdrawal_rejected',
+            'subject_type' => Withdrawal::class,
+            'subject_id'   => $withdrawal->id,
+            'metadata'     => [
+                'amount'      => $withdrawal->amount,
+                'user_id'     => $withdrawal->user_id,
+                'admin_notes' => $request->input('admin_notes'),
+            ],
         ]);
 
-        // ★ Tier 3 #14 — Notify provider
         $withdrawal->user->notify(new WithdrawalStatusNotification($withdrawal->fresh()));
 
         return back()->with('success', 'Withdrawal rejected. Amount returned to user\'s available balance.');
@@ -123,17 +149,30 @@ class AdminWithdrawalController extends Controller
             }
         }
 
-        // Update user's withdrawal tracking
-        $user->decrement('balance', $withdrawal->amount);
-        $user->decrement('pending_withdrawal', $withdrawal->amount);
-        $user->increment('total_withdrawn', $withdrawal->amount);
+        // Wrap all DB mutations atomically — if any step fails the whole block rolls back
+        DB::transaction(function () use ($user, $withdrawal, $request) {
+            $user->decrement('balance', $withdrawal->amount);
+            $user->decrement('pending_withdrawal', $withdrawal->amount);
+            $user->increment('total_withdrawn', $withdrawal->amount);
 
-        $withdrawal->update([
-            'status'      => Withdrawal::STATUS_COMPLETED,
-            'admin_notes' => $request->input('admin_notes', $withdrawal->admin_notes),
-        ]);
+            $withdrawal->update([
+                'status'      => Withdrawal::STATUS_COMPLETED,
+                'admin_notes' => $request->input('admin_notes', $withdrawal->admin_notes),
+            ]);
 
-        // ★ Tier 3 #14 — Notify provider
+            AdminActivityLog::create([
+                'admin_id'     => Auth::id(),
+                'action'       => 'withdrawal_completed',
+                'subject_type' => Withdrawal::class,
+                'subject_id'   => $withdrawal->id,
+                'metadata'     => [
+                    'amount'              => $withdrawal->amount,
+                    'user_id'             => $withdrawal->user_id,
+                    'stripe_transfer_used' => (bool) $user->stripe_connect_id,
+                ],
+            ]);
+        });
+
         $withdrawal->user->notify(new WithdrawalStatusNotification($withdrawal->fresh()));
 
         return back()->with('success', 'Withdrawal completed' . ($user->stripe_connect_id ? ' and automated transfer triggered.' : '.'));

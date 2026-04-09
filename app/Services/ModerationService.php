@@ -69,35 +69,23 @@ class ModerationService
         '/\b(كلب|حمار|عاهرة|لعنة)\b/u',
         // Urdu: Common profanity
         '/\b(کتا|گدھا|حرامی|کمینہ)\b/u',
+
+        // ========== OFF-PLATFORM CONTACT (bypass attempts) ==========
+        // Messaging apps — catches leetspeak/normalized forms e.g. "wh4tsapp", "t3legram"
+        '/\b(whatsapp|whats\s*app|telegram|signal|viber|snapchat|discord|wechat|we\s*chat|line\s*app)\b/iu',
+        // Generic contact-request phrases
+        '/\b(call\s+me\s+(at|on)|text\s+me\s+(at|on|via)|dm\s+me|message\s+me\s+(at|on)|my\s+(phone|number|cell|mobile)\s+is|find\s+me\s+on|contact\s+me\s+(at|on|via|outside))\b/iu',
+
+        // ========== OFF-PLATFORM PAYMENT (bypass attempts) ==========
+        '/\b(paypal|pay\s*pal|venmo|cashapp|cash\s*app|zelle|wire\s*transfer|bank\s*transfer|iban|swift\s*code|bitcoin|btc|ethereum|eth|crypto|cryptocurrency)\b/iu',
+        // Payment-outside-platform phrases
+        '/\b(pay\s+(me|you|us)\s+(directly|outside|cash|via)|cash\s+(only|payment|deal)|off[\s\-]?platform)\b/iu',
     ];
 
-    /**
-     * Multilingual whitelist of legitimate phrases.
-     * Prevents false positives for common everyday tasks.
-     */
-    protected array $whitelistedPhrases = [
-        // English
-        'walk my dog', 'dog walking', 'pet sitting', 'feed my cat', 'clean my house',
-        'grocery shopping', 'buy groceries', 'help with moving', 'garden work',
-        
-        // French
-        'promener mon chien', 'sortir le chien', 'garde d\'animaux', 'nourrir mon chat',
-        'nettoyer ma maison', 'faire les courses', 'aide au déménagement', 'jardinage',
-        
-        // Spanish
-        'pasear mi perro', 'cuidar mascotas', 'alimentar mi gato', 'limpiar mi casa',
-        'hacer compras', 'ayuda con mudanza', 'trabajo de jardín',
-        
-        // German
-        'hund spazieren', 'haustierbetreuung', 'katze füttern', 'haus putzen',
-        'einkaufen gehen', 'umzugshilfe', 'gartenarbeit',
-        
-        // Arabic
-        'تنظيف المنزل', 'التسوق', 'رعاية الحيوانات', 'العمل في الحديقة',
-        
-        // Urdu
-        'گھر کی صفائی', 'خریداری', 'پالتو جانوروں کی دیکھ بھال', 'باغبانی',
-    ];
+    // Whitelist removed: it was a bypass vector. A phrase like "walk my dog buy cocaine"
+    // matched "walk my dog" and returned true before forbidden patterns were checked.
+    // The legitimate phrases in the old whitelist don't overlap with any forbidden pattern,
+    // so removing the early-return does not cause false positives.
 
     /**
      * Detect the primary language of the content.
@@ -148,30 +136,55 @@ class ModerationService
     }
 
     /**
+     * Normalize text to defeat obfuscation: zero-width chars, unicode homoglyphs,
+     * leetspeak substitution (0→o, 3→e, 4→a, …), and spaced/dotted letters (w h a t s a p p).
+     *
+     * Applied before pattern matching so "wh4ts4pp", "t.e.l.e.g.r.a.m", and
+     * "ƒuck" are all caught by the same regex as their plain forms.
+     */
+    protected function normalize(string $content): string
+    {
+        // 1. Strip zero-width and invisible Unicode chars that hide words from pattern matching.
+        $content = preg_replace('/[\x{200B}-\x{200D}\x{FEFF}\x{00AD}\x{2060}]/u', '', $content);
+
+        // 2. NFKC normalization: collapses compatibility variants (e.g. ＷｈａｔｓＡｐｐ → WhatsApp,
+        //    cursive/script Unicode letters → ASCII equivalents where possible).
+        if (function_exists('normalizer_normalize')) {
+            $content = normalizer_normalize($content, \Normalizer::NFKC) ?: $content;
+        }
+
+        // 3. Collapse single separator characters between letters: "w h a t s" → "whats",
+        //    "t.e.l.e.g.r.a.m" → "telegram". Only strips isolated separators (one char wide).
+        $content = preg_replace('/(?<=\w)([\s\.\-\_\*](?=\w))+/u', '', $content);
+
+        // 4. Leetspeak substitution — map common digit/symbol substitutions back to letters.
+        $leet = [
+            '0' => 'o', '1' => 'i', '3' => 'e', '4' => 'a',
+            '5' => 's', '6' => 'g', '7' => 't', '8' => 'b',
+            '@' => 'a', '$' => 's', '!' => 'i', '+' => 't',
+        ];
+        $content = strtr($content, $leet);
+
+        return $content;
+    }
+
+    /**
      * Rapid check using regex. Good for real-time typing.
-     * Now supports multilingual prohibited word detection.
+     * Runs patterns against BOTH the original and normalized content so obfuscated
+     * variants (spaces, dots, leetspeak, unicode) cannot bypass the filters.
      */
     public function isCleanFast(string $content): bool
     {
         if (empty($content)) return true;
-        
-        // Check whitelist first - if it matches a known legitimate phrase, allow it
-        $contentLower = mb_strtolower($content, 'UTF-8');
-        foreach ($this->whitelistedPhrases as $phrase) {
-            if (mb_stripos($contentLower, mb_strtolower($phrase, 'UTF-8')) !== false) {
-                return true;
-            }
-        }
-        
-        // Normalize content for better regex matching (strip spaces/dots/dashes between letters)
-        $normalized = preg_replace('/(?<=\w)[\s\.\-\_]+(?=\w)/u', '', $content);
-        
+
+        $normalized = $this->normalize($content);
+
         foreach ($this->forbiddenPatterns as $pattern) {
             if (preg_match($pattern, $content) || preg_match($pattern, $normalized)) {
                 return false;
             }
         }
-        
+
         return true;
     }
 
@@ -182,6 +195,13 @@ class ModerationService
     public function isCleanAI(string $content): array
     {
         if (empty($content)) return ['is_clean' => true, 'improved_title' => null];
+
+        // Hard cap: only send the first 600 chars to the AI to control token cost.
+        // Moderation decisions are reliable on a short excerpt; long inputs waste quota.
+        $content = mb_substr($content, 0, 600, 'UTF-8');
+
+        // Strip characters that could allow prompt injection through the interpolated string.
+        $content = str_replace(['"', '\\'], ['', ''], $content);
 
         // Detect language for better AI context
         $detectedLang = $this->detectLanguage($content);
@@ -228,7 +248,9 @@ class ModerationService
         }";
 
         try {
-            $result = $this->taskService->generateContent($prompt);
+            // Short TTL (5 min) — moderation results should not be cached long.
+            // A banned phrase could get a stale "is_clean: true" for hours with the default 1h TTL.
+            $result = $this->taskService->generateContent($prompt, cacheTtlSeconds: 300);
             
             Log::debug('AI Multilingual Moderation & Title Gen:', [
                 'content' => $content,
@@ -236,20 +258,28 @@ class ModerationService
                 'result' => $result
             ]);
 
-            // Fail-open strategy: If result is empty or indicates a service error/timeout, allow but log
+            // Fail-closed: empty or malformed response blocks the content and flags for manual review.
             if (empty($result)) {
+                Log::warning('AI Moderation empty response — content blocked pending review', ['content' => $content]);
                 return [
-                    'is_clean' => true,
+                    'is_clean' => false,
                     'improved_title' => null,
                     'category' => 'Other',
-                    'reason' => 'AI Service Timeout/Empty Response - Defaulting to Clean',
+                    'reason' => 'AI Service Timeout/Empty Response - Content blocked pending review',
                     'risk_level' => 'low',
+                    'needs_manual_review' => true,
                     'detected_language' => $langName
                 ];
             }
-            
+
+            // Strict schema validation: is_clean must be a boolean (not a string "true").
+            // A missing or non-boolean value is treated as false (fail-closed).
+            $isClean = isset($result['is_clean']) && is_bool($result['is_clean'])
+                ? $result['is_clean']
+                : false;
+
             return [
-                'is_clean' => (bool) ($result['is_clean'] ?? true), // Changed default to true
+                'is_clean' => $isClean,
                 'improved_title' => $result['improved_title'] ?? null,
                 'category' => $result['category'] ?? 'Other',
                 'reason' => $result['reason'] ?? null,
@@ -259,11 +289,14 @@ class ModerationService
         } catch (\Exception $e) {
             Log::error("AI Multilingual Moderation failed: " . $e->getMessage());
             
-            // Fail-open strategy: Allow content but flag for manual review
-            // This prevents service outages from blocking legitimate users
+            // Fail-closed: block content on exception and flag for manual review.
+            // Service outages must not become a bypass vector.
             return [
-                'is_clean' => true, 
+                'is_clean' => false,
                 'improved_title' => null,
+                'category' => 'Other',
+                'reason' => 'AI service error - content blocked pending review',
+                'risk_level' => 'low',
                 'needs_manual_review' => true,
                 'ai_error' => true,
                 'detected_language' => $langName
@@ -285,10 +318,14 @@ class ModerationService
             8 => 'violence', 9 => 'violence', 10 => 'violence', 11 => 'violence',  // Violence
             12 => 'illegal_activity', 13 => 'illegal_activity', 14 => 'illegal_activity', 15 => 'illegal_activity',  // Illegal
             16 => 'profanity', 17 => 'profanity', 18 => 'profanity', 19 => 'profanity',  // Profanity
+            20 => 'off_platform_contact', 21 => 'off_platform_contact',  // Messaging platforms + contact phrases
+            22 => 'off_platform_payment', 23 => 'off_platform_payment',  // Payment methods + payment phrases
         ];
 
+        $normalized = $this->normalize($content);
+
         foreach ($this->forbiddenPatterns as $index => $pattern) {
-            if (preg_match($pattern, $content)) {
+            if (preg_match($pattern, $content) || preg_match($pattern, $normalized)) {
                 $category = $patternCategories[$index] ?? 'unknown';
                 if (!in_array($category, $violations)) {
                     $violations[] = $category;

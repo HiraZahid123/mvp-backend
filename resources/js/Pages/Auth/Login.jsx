@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, router } from '@inertiajs/react';
 import useTranslation from '@/Hooks/useTranslation';
 import '../../../css/oflem-login.css';
 
@@ -62,7 +62,7 @@ export default function Login({ canResetPassword, status }) {
                         <button
                             type="button"
                             className={`login-choice-btn client-choice${role === 'client' ? ' active' : ''}`}
-                            onClick={() => setRole(role === 'client' ? null : 'client')}
+                            onClick={() => { setRole('client'); router.visit('/dashboard?role=client'); }}
                         >
                             <div className="login-choice-icon" style={{ background: 'rgba(255,107,53,.15)' }}>
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,107,53,1)" strokeWidth="2" strokeLinecap="round">
@@ -77,7 +77,7 @@ export default function Login({ canResetPassword, status }) {
                         <button
                             type="button"
                             className={`login-choice-btn provider-choice${role === 'provider' ? ' active' : ''}`}
-                            onClick={() => setRole(role === 'provider' ? null : 'provider')}
+                            onClick={() => { setRole('provider'); router.visit('/dashboard?role=provider'); }}
                         >
                             <div className="login-choice-icon" style={{ background: 'rgba(102,126,234,.15)' }}>
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(102,126,234,1)" strokeWidth="2" strokeLinecap="round">

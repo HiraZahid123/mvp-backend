@@ -519,17 +519,37 @@ export default function Welcome({ missions: initialMissions, providers: initialP
                             <div className="oflem-pub-bar-wrap">
                                 <form onSubmit={handleSearchSubmit} className="oflem-pub-bar">
                                     <div className="oflem-pub-bar-icon"><Search size={22} /></div>
-                                    <input 
-                                        type="text" 
+                                    <input
+                                        type="text"
                                         value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        onChange={(e) => { setSearchTerm(e.target.value); if (errorMessage) setErrorMessage(''); }}
                                         placeholder={placeholder}
-                                        className="oflem-pub-bar-input"
+                                        className={`oflem-pub-bar-input${errorMessage ? ' border-red-400' : ''}`}
                                     />
                                     <button type="submit" disabled={isChecking} className="oflem-pub-bar-btn">
                                         {isChecking ? '...' : t('homepage.hero.pub_button')}
                                     </button>
                                 </form>
+
+                                {errorMessage && (
+                                    <div style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '8px',
+                                        marginTop: '10px',
+                                        padding: '10px 14px',
+                                        background: '#fff1f0',
+                                        border: '1px solid #fca5a5',
+                                        borderRadius: '10px',
+                                        fontSize: '13px',
+                                        fontWeight: 600,
+                                        color: '#b91c1c',
+                                    }}>
+                                        <span style={{ fontSize: '15px' }}>⚠️</span>
+                                        {errorMessage}
+                                    </div>
+                                )}
+
                                 <div className="oflem-pub-bar-hint">
                                     <span><span className="oflem-pub-hint-check">✓</span> {t('homepage.hero.pub_hints.free')}</span>
                                     <span><span className="oflem-pub-hint-check">✓</span> {t('homepage.hero.pub_hints.no_commitment')}</span>

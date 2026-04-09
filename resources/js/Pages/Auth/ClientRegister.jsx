@@ -30,10 +30,10 @@ export default function ClientRegister() {
     const swissCities = ['Genève', 'Lausanne', 'Fribourg', 'Neuchâtel', 'Sion', 'Montreux', 'Nyon', 'Morges', 'Vevey', 'Yverdon-les-Bains'];
 
     return (
-        <div className="oflem-home-page">
+        <div className="oflem-home-page" style={{ background: 'var(--g50)', minHeight: '100vh' }}>
             <Head title={t('onboarding.client_title')} />
 
-            <header className="oflem-header">
+            <header className="oflem-header" style={{ background: '#fff' }}>
                 <div className="oflem-container">
                     <nav className="oflem-nav">
                         <Link href={route('welcome')} className="oflem-logo">Oflem<span className="oflem-logo-dot">.</span></Link>
@@ -42,8 +42,8 @@ export default function ClientRegister() {
                 </div>
             </header>
 
-            <section className="oflem-section" style={{ paddingTop: '50px' }}>
-                <div className="oflem-container" style={{ maxWidth: '520px' }}>
+            <section className="oflem-section" style={{ paddingTop: '50px', paddingBottom: '80px' }}>
+                <div className="oflem-container animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ maxWidth: '600px' }}>
                     
                     <div style={{ textAlign: 'center', marginBottom: '40px' }}>
                         <div className="progress-bar-wrap">
@@ -62,20 +62,21 @@ export default function ClientRegister() {
                                 <div className="progress-step-label">{t('onboarding.verification')}</div>
                             </div>
                         </div>
-                        <h2 className="oflem-section-title" style={{ fontSize: '36px' }}>{t('onboarding.create_account')}</h2>
+                        <h2 className="section-title" style={{ fontSize: '36px' }}>{t('onboarding.create_account')}</h2>
+                        <p style={{ color: 'var(--g500)', fontSize: '15px' }}>{t('onboarding.register_subtitle')}</p>
                     </div>
 
-                    <form onSubmit={submit} style={{ background: '#fff', border: '1px solid var(--g300)', borderRadius: 'var(--rl)', padding: '36px', boxShadow: 'var(--sh)' }}>
+                    <form onSubmit={submit} style={{ background: '#fff', border: '1px solid var(--g300)', borderRadius: 'var(--rl)', padding: '40px', boxShadow: 'var(--sh)' }}>
 
                         {/* Name Row */}
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '24px' }}>
                             <div>
                                 <label htmlFor="client-first-name" style={labelStyle}>{t('onboarding.first_name')}</label>
                                 <input
                                     type="text"
                                     id="client-first-name"
                                     required
-                                    placeholder="Jean"
+                                    placeholder={t('onboarding.first_name_placeholder')}
                                     value={data.first_name}
                                     onChange={e => setData('first_name', e.target.value)}
                                     style={inputStyle}
@@ -88,7 +89,7 @@ export default function ClientRegister() {
                                     type="text"
                                     id="client-last-name"
                                     required
-                                    placeholder="Dupont"
+                                    placeholder={t('onboarding.last_name_placeholder')}
                                     value={data.last_name}
                                     onChange={e => setData('last_name', e.target.value)}
                                     style={inputStyle}
@@ -98,7 +99,7 @@ export default function ClientRegister() {
                         </div>
 
                         {/* City */}
-                        <div style={{ marginBottom: '20px' }}>
+                        <div style={{ marginBottom: '24px' }}>
                             <label htmlFor="client-city" style={labelStyle}>{t('onboarding.main_city')}</label>
                             <select
                                 id="client-city"
@@ -113,44 +114,42 @@ export default function ClientRegister() {
                             {errors.city && <span style={errorStyle}>{errors.city}</span>}
                         </div>
 
-                        {/* Email */}
-                        <div style={{ marginBottom: '20px' }}>
-                            <label htmlFor="client-email" style={labelStyle}>{t('onboarding.email')}</label>
-                            <input 
-                                type="email" 
-                                id="client-email" 
-                                required 
-                                placeholder="votre@email.ch" 
-                                value={data.email}
-                                onChange={e => setData('email', e.target.value)}
-                                style={inputStyle}
-                            />
-                            {errors.email && <span style={errorStyle}>{errors.email}</span>}
-                        </div>
-
-                        {/* Phone */}
-                        <div style={{ marginBottom: '20px' }}>
-                            <label htmlFor="client-phone" style={labelStyle}>{t('onboarding.phone')}</label>
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <span style={{ padding: '16px 12px', background: 'var(--g50)', border: '2px solid var(--g300)', borderRight: 'none', borderRadius: 'var(--rs) 0 0 var(--rs)', fontSize: '15px', fontWeight: 700, color: 'var(--g500)', whiteSpace: 'nowrap' }}>🇨🇭 +41</span>
+                        {/* Contact Row */}
+                        <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '20px', marginBottom: '24px' }}>
+                            <div>
+                                <label htmlFor="client-email" style={labelStyle}>{t('onboarding.email')}</label>
                                 <input 
-                                    type="tel" 
-                                    id="client-phone" 
+                                    type="email" 
+                                    id="client-email" 
                                     required 
-                                    placeholder="79 123 45 67" 
-                                    value={data.phone}
-                                    onChange={e => setData('phone', e.target.value)}
-                                    maxLength="14" 
-                                    style={{ flex: 1, padding: '16px', border: '2px solid var(--g300)', borderLeft: 'none', borderRadius: '0 var(--rs) var(--rs) 0', fontSize: '16px', minWidth: 0 }} 
+                                    placeholder="votre@email.ch" 
+                                    value={data.email}
+                                    onChange={e => setData('email', e.target.value)}
+                                    style={inputStyle}
                                 />
+                                {errors.email && <span style={errorStyle}>{errors.email}</span>}
                             </div>
-                            <p style={{ fontSize: '11px', color: 'var(--g500)', marginTop: '4px' }}>{t('onboarding.phone_hint')}</p>
-                            {errors.phone && <span style={errorStyle}>{errors.phone}</span>}
+                            <div>
+                                <label htmlFor="client-phone" style={labelStyle}>{t('onboarding.phone')}</label>
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    <span style={{ padding: '16px 12px', background: 'var(--g50)', border: '2px solid var(--g300)', borderRight: 'none', borderRadius: 'var(--rs) 0 0 var(--rs)', fontSize: '15px', fontWeight: 700, color: 'var(--g500)', whiteSpace: 'nowrap', height: '58px', display: 'flex', alignItems: 'center' }}>🇨🇭 +41</span>
+                                    <input 
+                                        type="tel" 
+                                        id="client-phone" 
+                                        required 
+                                        placeholder="79 123 45 67" 
+                                        value={data.phone}
+                                        onChange={e => setData('phone', e.target.value)}
+                                        maxLength="14" 
+                                        style={{ flex: 1, padding: '16px', border: '2px solid var(--g300)', borderLeft: 'none', borderRadius: '0 var(--rs) var(--rs) 0', fontSize: '16px', minWidth: 0, height: '58px' }} 
+                                    />
+                                </div>
+                                {errors.phone && <span style={errorStyle}>{errors.phone}</span>}
+                            </div>
                         </div>
 
-                        {/* Password */}
                         {/* Password Row */}
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '24px' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '32px' }}>
                             <div>
                                 <label htmlFor="client-password" style={labelStyle}>{t('onboarding.password')}</label>
                                 <input 
@@ -166,7 +165,7 @@ export default function ClientRegister() {
                                 {errors.password && <span style={errorStyle}>{errors.password}</span>}
                             </div>
                             <div>
-                                <label htmlFor="client-password-confirmation" style={labelStyle}>{t('auth.register.confirm_password')}</label>
+                                <label htmlFor="client-password-confirmation" style={labelStyle}>{t('onboarding.confirm_password')}</label>
                                 <input 
                                     type="password" 
                                     id="client-password-confirmation" 
@@ -181,36 +180,49 @@ export default function ClientRegister() {
                         </div>
 
                         {/* Age & Terms */}
-                        <div style={{ marginBottom: '20px' }}>
-                            <label style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', cursor: 'pointer' }}>
+                        <div style={{ marginBottom: '32px', background: 'var(--g50)', padding: '20px', borderRadius: '16px', border: '1px solid var(--g100)' }}>
+                            <label style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', cursor: 'pointer' }}>
                                 <input 
                                     type="checkbox" 
                                     id="client-age" 
                                     required 
                                     checked={data.age_confirmed}
                                     onChange={e => setData('age_confirmed', e.target.checked)}
-                                    style={{ marginTop: '3px', accentColor: 'var(--o)', width: '18px', height: '18px', flexShrink: 0 }} 
+                                    style={{ marginTop: '4px', accentColor: 'var(--o)', width: '20px', height: '20px', flexShrink: 0 }} 
                                 />
-                                <span style={{ fontSize: '13px', color: 'var(--g700)', lineHeight: 1.5 }}>
+                                <span style={{ fontSize: '13px', color: 'var(--g700)', lineHeight: 1.6 }}>
                                     {t('onboarding.age_start')} <strong>{t('onboarding.age_confirmed')}</strong> {t('onboarding.age_end')}
                                 </span>
                             </label>
                         </div>
 
                         {errors.general && (
-                            <div style={{ color: '#e53e3e', fontSize: '13px', marginBottom: '16px', background: '#fff5f5', border: '1px solid #fed7d7', borderRadius: '8px', padding: '10px 14px' }}>
+                            <div style={{ color: '#e53e3e', fontSize: '13px', marginBottom: '20px', background: '#fff5f5', border: '1px solid #fed7d7', borderRadius: '12px', padding: '12px 16px' }}>
                                 {errors.general}
                             </div>
                         )}
 
-                        <button type="submit" className="oflem-btn oflem-btn-primary" style={{ width: '100%', fontSize: '17px', padding: '18px' }} disabled={processing}>
-                            {processing ? '...' : t('onboarding.create_account_btn')}
+                        <button type="submit" className="oflem-btn-primary" style={{ width: '100%', fontSize: '18px', padding: '20px', borderRadius: '999px', fontWeight: 900, border: 'none', cursor: 'pointer', transition: 'all .2s' }} disabled={processing}>
+                            {processing ? <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin inline-block"></span> : t('onboarding.create_account_btn')}
                         </button>
 
-                        <p style={{ textAlign: 'center', fontSize: '12px', color: 'var(--g500)', marginTop: '14px' }}>
-                            {t('onboarding.terms_start')} <a href="#" style={{ color: 'var(--o)', cursor: 'pointer', textDecoration: 'underline' }}>{t('onboarding.cgu')}</a> {t('onboarding.terms_and')} <a href="#" style={{ color: 'var(--o)', cursor: 'pointer', textDecoration: 'underline' }}>{t('onboarding.privacy')}</a>.
+                        <p style={{ textAlign: 'center', fontSize: '12px', color: 'var(--g500)', marginTop: '20px' }}>
+                            {t('onboarding.terms_start')} <a href="#" style={{ color: 'var(--o)', fontWeight: 700, textDecoration: 'underline' }}>{t('onboarding.cgu')}</a> {t('onboarding.terms_and')} <a href="#" style={{ color: 'var(--o)', fontWeight: 700, textDecoration: 'underline' }}>{t('onboarding.privacy')}</a>.
                         </p>
                     </form>
+
+                    {/* Trust Indicators */}
+                    <div style={{ marginTop: '40px', display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '24px', opacity: 0.7 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: 700, color: 'var(--g500)' }}>
+                            <span style={{ fontSize: '16px' }}>🇨🇭</span> {t('auth.login.data_in_switzerland')}
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: 700, color: 'var(--g500)' }}>
+                            <span style={{ fontSize: '16px' }}>🔒</span> {t('auth.login.encrypted_connection')}
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: 700, color: 'var(--g500)' }}>
+                            <span style={{ fontSize: '16px' }}>✓</span> {t('auth.login.nlpd_compliant')}
+                        </div>
+                    </div>
                 </div>
             </section>
         </div>

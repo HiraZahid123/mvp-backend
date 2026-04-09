@@ -28,18 +28,16 @@ class OTPService
      */
     public function sendOTP(string $identifier, string $type, ?User $user = null): OTPVerification
     {
-        // Check for existing active OTP
-        $existingOTP = OTPVerification::findActiveByIdentifier($identifier, $type);
-        if ($existingOTP) {
-            // Check rate limiting (5 requests per hour)
-            $recentOTPs = OTPVerification::where('identifier', $identifier)
-                ->where('type', $type)
-                ->where('created_at', '>', now()->subHour())
-                ->count();
+        // Rate limit: max 5 pending (unverified) OTP requests per hour per identifier.
+        // Verified OTPs are excluded so legitimate multi-step flows are not blocked.
+        $recentOTPs = OTPVerification::where('identifier', $identifier)
+            ->where('type', $type)
+            ->where('created_at', '>', now()->subHour())
+            ->whereNull('verified_at')
+            ->count();
 
-            if ($recentOTPs >= 5) {
-                throw new \Exception('Too many OTP requests. Please wait before requesting another code.');
-            }
+        if ($recentOTPs >= 5) {
+            throw new \Exception('Too many OTP requests. Please wait before requesting another code.');
         }
 
         // Generate new OTP

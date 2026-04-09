@@ -49,6 +49,22 @@ export default function Details({ mission, canSeeAddress }) {
     const [clientSecret, setClientSecret] = useState(flash?.stripe_client_secret || usePage().props.stripe_client_secret || null);
     const [showPaymentModal, setShowPaymentModal] = useState(!!clientSecret);
 
+    // Chat navigation helper — shared by all "Message" buttons
+    const [chatError, setChatError] = useState(null);
+    const openChat = async (reload = false) => {
+        setChatError(null);
+        try {
+            const response = await axios.get(route('api.missions.chat', mission.id));
+            if (reload) {
+                router.reload();
+            } else {
+                router.visit(route('messages', { chat_id: response.data.id }));
+            }
+        } catch (err) {
+            setChatError(t('Could not open chat. Please try again.'));
+        }
+    };
+
     // Watch for flashed client secret (from accept/select offer)
     useEffect(() => {
         if (flash?.stripe_client_secret) {
@@ -329,11 +345,11 @@ export default function Details({ mission, canSeeAddress }) {
                                 </div>
 
                                 <div className="mt-4">
+                                    {chatError && (
+                                        <p className="text-red-500 text-sm font-bold mb-2 text-center">{chatError}</p>
+                                    )}
                                     <button
-                                        onClick={async () => {
-                                            const response = await axios.get(route('api.missions.chat', mission.id));
-                                            router.visit(route('messages', { chat_id: response.data.id }));
-                                        }}
+                                        onClick={() => openChat()}
                                         className="w-full py-4 bg-oflem-charcoal text-white font-black rounded-full hover:bg-oflem-charcoal transition-all flex items-center justify-center gap-2"
                                     >
                                         <MessageSquare size={18} className="inline" /> {t('Message Provider')}
@@ -565,10 +581,7 @@ export default function Details({ mission, canSeeAddress }) {
                                                     <Hammer size={20} className="group-hover:rotate-12 transition-transform" /> {t('Start Work Now')}
                                                 </button>
                                                 <button
-                                                    onClick={async () => {
-                                                        const response = await axios.get(route('api.missions.chat', mission.id));
-                                                        router.reload(); // Refresh to see pending status
-                                                    }}
+                                                    onClick={() => openChat(true)}
                                                     className="w-full py-4 bg-oflem-charcoal text-white font-black rounded-full hover:bg-black transition-all flex items-center justify-center gap-3 group"
                                                 >
                                                     <MessageSquare size={20} className="group-hover:scale-110 transition-transform" /> {t('Request Chat')}

@@ -39,20 +39,30 @@ export default function Create({ prefillTitle = '', aiTitle = null }) {
         lng: auth.user?.location_lng || '',
         exact_address: '',
         date_time: '',
-        budget: '',
-        price_type: 'fixed', // Default price type
-        additional_details: '',
+        budget: '50',
+        price_type: 'fixed',
+        first_name: '',
+        city: '',
     });
 
+    const [totalWithCommission, setTotalWithCommission] = useState(60); // 50 + 20%
+    const [commission, setCommission] = useState(10);
+
+    useEffect(() => {
+        const b = parseFloat(data.budget) || 0;
+        const comm = Math.round(b * 0.20);
+        setCommission(comm);
+        setTotalWithCommission(b + comm);
+    }, [data.budget]);
+
     // Auto-generate description when title changes (debounced)
-    // Manual description generation
     const handleGenerateDescription = async () => {
         if (!data.title) return;
         
         setIsGeneratingDescription(true);
         setAiGenerationError('');
         try {
-            const response = await axios.post(route('api.missions.ai-rewrite'), { 
+            const response = await axios.post(route('missions.ai-rewrite'), { 
                 title: data.title, 
                 description: data.description 
             });
@@ -72,7 +82,7 @@ export default function Create({ prefillTitle = '', aiTitle = null }) {
         setIsModerating(true);
         setModerationError('');
         try {
-            const response = await axios.post(route('api.moderation.check'), { content });
+            const response = await axios.post(route('moderation.check'), { content });
             if (!response.data.is_clean) {
                 setModerationError(t('Content violates moderation rules.'));
                 return false;
@@ -89,7 +99,7 @@ export default function Create({ prefillTitle = '', aiTitle = null }) {
         e.preventDefault();
         
         // Validate location is provided
-        if (!data.location && !data.lat && !data.lng) {
+        if (!data.location && !data.lat && !data.lng && !data.city) {
             setModerationError(t('Please select a location for your mission.'));
             return;
         }
@@ -98,6 +108,11 @@ export default function Create({ prefillTitle = '', aiTitle = null }) {
         if (!isClean) return;
 
         if (!auth.user) {
+            // For guests, we ensure name/city are filled
+            if (!data.first_name || !data.city) {
+                setModerationError(t('Please provide your name and city.'));
+                return;
+            }
             router.post(route('api.missions.store'), data);
             return;
         }
@@ -107,220 +122,200 @@ export default function Create({ prefillTitle = '', aiTitle = null }) {
         });
     };
 
-    const quickPrices = [10, 20, 30];
+    const swissCities = ['Genève', 'Lausanne', 'Fribourg', 'Neuchâtel', 'Sion', 'Montreux', 'Nyon', 'Morges', 'Vevey', 'Yverdon-les-Bains'];
 
-    return (
-        <DashboardLayout 
-            header={t('Post a Mission')}
-        >
-            <Head title={t('Create Mission')} />
+    const renderProgressBar = () => (
+        <div className="progress-bar-wrap">
+            <div className="progress-step-item">
+                <div className="progress-step-circle active">1</div>
+                <div className="progress-step-label active">{t('onboarding.your_request')}</div>
+            </div>
+            <div className="progress-connector"></div>
+            <div className="progress-step-item">
+                <div className="progress-step-circle">2</div>
+                <div className="progress-step-label">{t('onboarding.your_account')}</div>
+            </div>
+            <div className="progress-connector"></div>
+            <div className="progress-step-item">
+                <div className="progress-step-circle">3</div>
+                <div className="progress-step-label">{t('onboarding.verification')}</div>
+            </div>
+        </div>
+    );
 
-            <div className="max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
-                <div className="bg-white rounded-[40px] p-8 md:p-12 shadow-sm border border-gray-border">
-                <div className="mb-8 text-center">
-                    <p className="text-gray-muted font-medium">{t('Quick and simple.')}</p>
+    const formContent = (
+        <div className={auth.user ? "max-w-2xl mx-auto" : "max-w-[720px] mx-auto py-12"}>
+            {!auth.user && (
+                <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+                    {renderProgressBar()}
+                    <h2 className="section-title" style={{ fontSize: '36px' }}>{t('onboarding.configure_request')}</h2>
+                    <p style={{ color: 'var(--g500)', fontSize: '15px' }}>{t('onboarding.precision_hint')}</p>
+                </div>
+            )}
+
+            <form onSubmit={handleSubmit} style={{ background: '#fff', border: '1px solid var(--g300)', borderRadius: 'var(--rl)', padding: auth.user ? '32px' : '36px', boxShadow: 'var(--sh)' }} className="space-y-6">
+                {/* Need Title */}
+                <div style={{ marginBottom: '24px' }}>
+                    <label style={{ fontSize: '14px', fontWeight: 900, color: 'var(--n)', display: 'block', marginBottom: '8px' }}>{t('onboarding.your_need')}</label>
+                    <input 
+                        type="text" 
+                        readOnly={!!data.title}
+                        value={data.title}
+                        onChange={e => setData('title', e.target.value)}
+                        style={{ width: '100%', padding: '14px 16px', border: '2px solid var(--g300)', borderRadius: 'var(--rs)', fontSize: '16px', fontWeight: 600, color: 'var(--n)', background: data.title ? 'var(--g50)' : '#fff' }} 
+                    />
+                    <InputError message={errors.title || moderationError} className="mt-2" />
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
-                    {/* Title */}
-                    <div>
-                        <InputLabel htmlFor="title" value={t('What do you need help with?')} className="text-sm font-bold mb-3" />
-                        <TextInput
-                            id="title"
-                            type="text"
-                            value={data.title}
-                            className="w-full text-lg"
-                            onChange={(e) => setData('title', e.target.value)}
-                            placeholder={t('e.g. Take out my trash')}
-                            required
-                        />
-                        <InputError message={errors.title || moderationError} className="mt-2" />
-                    </div>
-
-                    {/* Quick Price Buttons */}
-                    <div>
-                        <InputLabel value={t('How much are you offering?')} className="text-sm font-bold mb-3" />
-                        <div className="flex flex-wrap gap-3 mb-4">
-                            {quickPrices.map((amount) => (
-                                <button
-                                    key={amount}
-                                    type="button"
-                                    onClick={() => {
-                                        setData('budget', amount.toString());
-                                        setPriceInputMode('quick');
-                                    }}
-                                    className={`px-6 py-3 rounded-full text-sm font-bold transition-all border-2 ${
-                                        data.budget === amount.toString() && priceInputMode === 'quick'
-                                            ? 'border-oflem-charcoal bg-oflem-charcoal text-white shadow-md scale-105'
-                                            : 'border-gray-border bg-white text-gray-700 hover:border-gray-400'
-                                    }`}
-                                >
-                                    {amount} CHF
-                                </button>
-                            ))}
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    setPriceInputMode('custom');
-                                    // Don't clear budget if it's already a custom value
-                                }}
-                                className={`px-6 py-3 rounded-full text-sm font-bold transition-all border-2 ${
-                                    priceInputMode === 'custom'
-                                        ? 'border-oflem-charcoal bg-oflem-charcoal text-white shadow-md scale-105'
-                                        : 'border-gray-border bg-white text-gray-700 hover:border-gray-400'
-                                }`}
-                            >
-                                {t('Other')}
-                            </button>
+                {/* Guest Details: Name & City */}
+                {!auth.user && (
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '24px' }}>
+                        <div>
+                            <label style={{ fontSize: '14px', fontWeight: 900, color: 'var(--n)', display: 'block', marginBottom: '8px' }}>{t('onboarding.first_name')}</label>
+                            <input 
+                                type="text" 
+                                required 
+                                placeholder={t('onboarding.first_name_placeholder')} 
+                                value={data.first_name}
+                                onChange={e => setData('first_name', e.target.value)}
+                                style={{ width: '100%', padding: '14px 16px', border: '2px solid var(--g300)', borderRadius: 'var(--rs)', fontSize: '15px' }} 
+                            />
+                            <InputError message={errors.first_name} className="mt-2" />
                         </div>
-
-                        {priceInputMode === 'custom' && (
-                            <div className="relative max-w-xs">
-                                <input
-                                    id="budget"
-                                    type="number"
-                                    value={data.budget}
-                                    className="w-full bg-white border-2 border-gray-border rounded-2xl py-3 pl-14 pr-6 text-lg font-bold text-oflem-charcoal focus:border-oflem-charcoal focus:ring-0 transition-all"
-                                    onChange={(e) => setData('budget', e.target.value)}
-                                    placeholder="0"
-                                    required
-                                />
-                                <span className="absolute left-5 top-1/2 -translate-y-1/2 font-bold text-gray-muted text-sm">CHF</span>
-                            </div>
-                        )}
-                        <InputError message={errors.budget} className="mt-2" />
+                        <div>
+                            <label style={{ fontSize: '14px', fontWeight: 900, color: 'var(--n)', display: 'block', marginBottom: '8px' }}>{t('onboarding.main_city')}</label>
+                            <select 
+                                required 
+                                value={data.city}
+                                onChange={e => {
+                                    setData('city', e.target.value);
+                                    setData('location', e.target.value);
+                                }}
+                                style={{ width: '100%', padding: '14px 16px', border: '2px solid var(--g300)', borderRadius: 'var(--rs)', fontSize: '15px', background: '#fff' }}
+                            >
+                                <option value="">{t('onboarding.select')}</option>
+                                {swissCities.map(c => <option key={c} value={c}>{c}</option>)}
+                            </select>
+                            <InputError message={errors.city} className="mt-2" />
+                        </div>
                     </div>
+                )}
 
-                    {/* Location (Auto-filled) */}
-                    <div>
-                        <InputLabel value={t('Where?')} className="text-sm font-bold mb-3" />
-                        <MissionLocationPicker 
-                            onLocationSelect={(loc) => {
-                                setData(prev => ({
-                                    ...prev,
-                                    location: loc.city,
-                                    lat: loc.lat,
-                                    lng: loc.lng,
-                                    exact_address: loc.address
-                                }));
-                            }}
-                            initialAddress={data.exact_address || data.location}
+                {/* Description */}
+                <div style={{ marginBottom: '24px' }}>
+                    <label style={{ fontSize: '14px', fontWeight: 900, color: 'var(--n)', display: 'block', marginBottom: '8px' }}>{t('onboarding.detailed_description')}</label>
+                    <div className="relative">
+                        <textarea 
+                            rows="4" 
+                            placeholder={t('onboarding.desc_placeholder')} 
+                            value={data.description}
+                            onChange={(e) => setData('description', e.target.value)}
+                            style={{ width: '100%', padding: '14px 16px', border: '2px solid var(--g300)', borderRadius: 'var(--rs)', fontSize: '15px', resize: 'vertical', fontFamily: 'inherit', lineHeight: '1.6' }} 
                         />
-                        <InputError message={errors.location || errors.lat || errors.lng} className="mt-2" />
-                    </div>
-
-                    {/* More Options (Collapsible) */}
-                    <div className="pt-4">
                         <button
                             type="button"
-                            onClick={() => setShowMoreOptions(!showMoreOptions)}
-                            className="text-sm font-bold text-zinc-500 hover:text-oflem-charcoal transition-colors flex items-center gap-2 group"
+                            onClick={handleGenerateDescription}
+                            disabled={isGeneratingDescription || !data.title}
+                            className="absolute bottom-3 right-3 text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-full font-bold transition-all flex items-center gap-2 border border-gray-200"
                         >
-                            <span className="group-hover:translate-y-0.5 transition-transform">
-                                {showMoreOptions ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-                            </span>
-                            {t('More options')}
+                            {isGeneratingDescription ? <span className="w-3 h-3 border-2 border-gray-400 border-t-oflem-charcoal rounded-full animate-spin"></span> : <><Sparkles size={14} className="text-oflem-terracotta" /> {t('Auto-fill')}</>}
                         </button>
-
-                        {showMoreOptions && (
-                            <div className="mt-6 space-y-6 p-6 bg-gray-50 rounded-3xl">
-                                {/* Description */}
-                                <div>
-                                    <InputLabel htmlFor="description" value={t('Description (optional)')} className="text-sm font-bold mb-3" />
-                                    <div className="relative">
-                                        <textarea
-                                            id="description"
-                                            value={data.description}
-                                            className="w-full bg-white border-gray-border rounded-2xl p-4 text-sm font-medium focus:border-oflem-charcoal focus:ring-0 min-h-[120px] transition-all"
-                                            onChange={(e) => setData('description', e.target.value)}
-                                            placeholder={t('Add more details if needed...')}
-                                        />
-                                        
-                                        {/* AI Generation Button inside textarea */}
-                                        <button
-                                            type="button"
-                                            onClick={handleGenerateDescription}
-                                            disabled={isGeneratingDescription || !data.title}
-                                            className="absolute bottom-3 right-3 text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-full font-bold transition-all flex items-center gap-2 border border-gray-200"
-                                            title={t('Generate description with AI')}
-                                        >
-                                            {isGeneratingDescription ? (
-                                                <>
-                                                    <span className="w-3 h-3 border-2 border-gray-400 border-t-oflem-charcoal rounded-full animate-spin"></span>
-                                                    {t('Generating...')}
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <Sparkles size={14} className="text-oflem-terracotta" /> {t('Auto-fill')}
-                                                </>
-                                            )}
-                                        </button>
-                                    </div>
-                                    <InputError message={errors.description} className="mt-2" />
-                                </div>
-
-                                {/* Date & Time */}
-                                <div>
-                                    <InputLabel htmlFor="date_time" value={t('When? (optional)')} className="text-sm font-bold mb-3" />
-                                    <TextInput
-                                        id="date_time"
-                                        type="datetime-local"
-                                        value={data.date_time}
-                                        className="w-full"
-                                        min={new Date().toISOString().slice(0, 16)}
-                                        onChange={(e) => setData('date_time', e.target.value)}
-                                    />
-                                    <InputError message={errors.date_time} className="mt-2" />
-                                </div>
-
-                                {/* Exact Address */}
-                                <div>
-                                    <InputLabel htmlFor="exact_address" value={t('Exact address (optional)')} className="text-sm font-bold mb-3" />
-                                    <TextInput
-                                        id="exact_address"
-                                        type="text"
-                                        value={data.exact_address}
-                                        className="w-full"
-                                        onChange={(e) => setData('exact_address', e.target.value)}
-                                        placeholder={t('Street, number, apartment...')}
-                                    />
-                                    <p className="mt-2 text-xs text-zinc-400 font-bold flex items-center gap-1.5">
-                                        <Lock size={12} className="text-oflem-terracotta" /> {t('Only shared with your Provider after confirmation')}
-                                    </p>
-                                    <InputError message={errors.exact_address} className="mt-2" />
-                                </div>
-                            </div>
-                        )}
                     </div>
-
-                    {/* Submit Button */}
-                    <div className="pt-6">
-                        <button
-                            type="submit"
-                            disabled={processing || isModerating || !data.title.trim() || !data.budget}
-                            className={`w-full py-5 font-black rounded-full transition-all shadow-xl text-lg flex items-center justify-center gap-3 active:scale-[0.98] ${
-                                !data.title.trim() || !data.budget || processing || isModerating
-                                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none'
-                                    : 'bg-oflem-charcoal text-white hover:bg-black'
-                            }`}
-                        >
-                            {processing || isModerating ? (
-                                <span className="w-6 h-6 border-4 border-oflem-terracotta border-t-white rounded-full animate-spin"></span>
-                            ) : (
-                                <>
-                                    <span>{t('Find a Provider')}</span>
-                                    <Rocket size={20} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-                                </>
-                            )}
-                        </button>
-                        
-                        {/* Reassurance Text */}
-                        <p className="mt-4 text-center text-xs text-zinc-400 font-bold flex items-center justify-center gap-1.5">
-                            <ShieldCheck size={14} className="text-oflem-green" /> {t('Your payment is protected. You only pay when the job is done.')}
-                        </p>
-                    </div>
-                </form>
+                    <InputError message={errors.description} className="mt-2" />
                 </div>
+
+                {/* Budget & Commission */}
+                <div style={{ marginBottom: '24px' }}>
+                    <label style={{ fontSize: '14px', fontWeight: 900, color: 'var(--n)', display: 'block', marginBottom: '6px' }}>{t('onboarding.your_budget')} (CHF)</label>
+                    <div style={{ position: 'relative' }}>
+                        <span style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', fontSize: '16px', fontWeight: 900, color: 'var(--g500)' }}>CHF</span>
+                        <input 
+                            type="number" 
+                            min="10" 
+                            step="5" 
+                            value={data.budget}
+                            onChange={(e) => setData('budget', e.target.value)}
+                            style={{ width: '100%', padding: '16px 16px 16px 56px', border: '2px solid var(--g300)', borderRadius: 'var(--rs)', fontSize: '18px', fontWeight: 900, color: 'var(--n)' }} 
+                        />
+                    </div>
+                    
+                    {/* Commission Preview Card */}
+                    <div style={{ marginTop: '12px', padding: '14px 16px', background: '#fff8f5', border: '1px solid rgba(255,107,53,0.15)', borderRadius: '10px' }}>
+                        <div style={{ fontSize: '11px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '1.5px', color: 'var(--o)', marginBottom: '10px' }}>{t('onboarding.payment_summary')}</div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: 'var(--g700)' }}><span>{t('onboarding.mission_price')}</span><span style={{ fontWeight: 700 }}>CHF {data.budget}.–</span></div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: 'var(--o)' }}>
+                                <span>+ {t('onboarding.commission')} (20%)</span>
+                                <span style={{ fontWeight: 700 }}>+CHF {commission}.–</span>
+                            </div>
+                            <div style={{ height: '1px', background: 'rgba(255,107,53,0.1)', margin: '4px 0' }}></div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '15px', fontWeight: 900, color: 'var(--n)' }}><span>{t('onboarding.total_to_pay')}</span><span style={{ fontWeight: 900 }}>CHF {totalWithCommission}.–</span></div>
+                        </div>
+                    </div>
+                    <InputError message={errors.budget} className="mt-2" />
+                </div>
+
+                {/* Date & Time Row */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '24px' }}>
+                    <div>
+                        <label style={{ fontSize: '14px', fontWeight: 900, color: 'var(--n)', display: 'block', marginBottom: '8px' }}>{t('onboarding.desired_date')}</label>
+                        <input 
+                            type="date" 
+                            value={data.date_time?.split('T')[0] || ''}
+                            onChange={(e) => setData('date_time', e.target.value + 'T12:00')}
+                            style={{ width: '100%', padding: '14px 16px', border: '2px solid var(--g300)', borderRadius: 'var(--rs)', fontSize: '15px', color: 'var(--n)', background: '#fff' }} 
+                        />
+                    </div>
+                    <div>
+                        <label style={{ fontSize: '14px', fontWeight: 900, color: 'var(--n)', display: 'block', marginBottom: '8px' }}>{t('onboarding.desired_time')}</label>
+                        <select style={{ width: '100%', padding: '14px 16px', border: '2px solid var(--g300)', borderRadius: 'var(--rs)', fontSize: '15px', background: '#fff', color: 'var(--n)' }}>
+                            <option value="">{t('onboarding.flexible')}</option>
+                            <option>08:00</option><option>10:00</option><option>12:00</option><option>14:00</option><option>16:00</option><option>18:00</option>
+                        </select>
+                    </div>
+                </div>
+
+                {/* Submit Button */}
+                <div className="pt-6">
+                    <button
+                        type="submit"
+                        disabled={processing}
+                        className={`w-full py-5 font-black rounded-full transition-all shadow-xl text-lg flex items-center justify-center gap-3 active:scale-[0.98] bg-oflem-charcoal text-white hover:bg-black`}
+                    >
+                        {processing ? <span className="w-6 h-6 border-4 border-oflem-terracotta border-t-white rounded-full animate-spin"></span> : <span>{t('onboarding.find_provider')}</span>}
+                    </button>
+                    <p className="mt-4 text-center text-xs text-zinc-400 font-bold flex items-center justify-center gap-1.5">
+                        <ShieldCheck size={14} className="text-oflem-green" /> {t('onboarding.payment_secured')}
+                    </p>
+                </div>
+            </form>
+        </div>
+    );
+
+    if (!auth.user) {
+        return (
+            <div className="oflem-home-page" style={{ background: 'var(--g50)', minHeight: '100vh' }}>
+                <Head title={t('onboarding.configure_request')} />
+                <header className="oflem-header" style={{ background: '#fff' }}>
+                    <div className="oflem-container">
+                        <nav className="oflem-nav">
+                            <Link href={route('welcome')} className="oflem-logo">Oflem<span className="oflem-logo-dot">.</span></Link>
+                            <Link href={route('welcome')} className="oflem-nav-btn-login">← {t('common.back')}</Link>
+                        </nav>
+                    </div>
+                </header>
+                <div className="oflem-container animate-in fade-in duration-700">
+                    {formContent}
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <DashboardLayout header={t('Post a Mission')}>
+            <Head title={t('Create Mission')} />
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+                {formContent}
             </div>
         </DashboardLayout>
     );

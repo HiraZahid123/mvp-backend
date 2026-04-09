@@ -64,16 +64,16 @@ class OTPVerificationController extends Controller
         }
 
         try {
-            $identifier = $request->method === 'email' ? $user->email : $user->phone;
-            $otp = $this->otpService->sendOTP($identifier, $request->method, $user);
+            $identifier = $request->input('method') === 'email' ? $user->email : $user->phone;
+            $otp = $this->otpService->sendOTP($identifier, $request->input('method'), $user);
 
             // Store the OTP token in session
             Session::put("otp_token", $otp->token);
-            Session::put("otp_method", $request->method);
+            Session::put("otp_method", $request->input('method'));
 
             return response()->json([
                 'message' => 'OTP sent successfully',
-                'method' => $request->method,
+                'method' => $request->input('method'),
                 'identifier' => $identifier,
             ]);
 
@@ -125,6 +125,11 @@ class OTPVerificationController extends Controller
 
             // Log the user in
             Auth::login($user);
+
+            // Redirect to pending mission handler if exists, otherwise to success page
+            if (Session::has('pending_mission')) {
+                return redirect()->route('pending');
+            }
 
             return redirect()->route('auth.registration-success');
 

@@ -40,14 +40,16 @@ class Mission extends Model
     ];
 
     protected $casts = [
-        'date_time' => 'datetime',
-        'locked_at' => 'datetime',
-        'started_at' => 'datetime',
+        'date_time'            => 'datetime',
+        'locked_at'            => 'datetime',
+        'started_at'           => 'datetime',
         'validation_started_at' => 'datetime',
-        'completed_at' => 'datetime',
-        'cancelled_at' => 'datetime',
-        'dispute_resolved_at' => 'datetime',
-        'address_revealed' => 'boolean',
+        'completed_at'         => 'datetime',
+        'cancelled_at'         => 'datetime',
+        'dispute_resolved_at'  => 'datetime',
+        'address_revealed'     => 'boolean',
+        'lat'                  => 'decimal:7',
+        'lng'                  => 'decimal:7',
     ];
 
     // State machine constants

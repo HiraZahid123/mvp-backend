@@ -102,7 +102,16 @@ class MissionActionController extends Controller
                 $mission->assigned_user_id = $provider->id;
                 $mission->save();
 
-                $pi = $this->stripeService->createHold($mission);
+                // Re-read the mission under a lock to get the authoritative payment_intent_id.
+                // The $mission variable captured in the closure reflects pre-transaction state;
+                // transitionStatus() works on an internal copy and does not update it.
+                $fresh = Mission::lockForUpdate()->find($mission->id);
+
+                if ($fresh->payment_intent_id) {
+                    $pi = $this->stripeService->getPaymentIntent($fresh->payment_intent_id);
+                } else {
+                    $pi = $this->stripeService->createHold($fresh);
+                }
 
                 $existingOffer = $mission->offers()->where('user_id', $provider->id)->first();
                 if ($existingOffer) {
@@ -142,14 +151,12 @@ class MissionActionController extends Controller
 
         try {
             if ($mission->payment_intent_id) {
-                $isAuthorized = $this->stripeService->isAuthorized($mission->payment_intent_id);
-                if (!$isAuthorized) {
-                    $pi = $this->stripeService->getPaymentIntent($mission->payment_intent_id);
-                    if ($pi->status !== 'requires_capture' && $pi->status !== 'succeeded') {
-                        return back()
-                            ->withErrors(['mission' => 'Payment hold is not confirmed. Please complete the payment first.'])
-                            ->with('stripe_client_secret', $pi->client_secret);
-                    }
+                // Single fetch — avoids a race between two consecutive API calls
+                $pi = $this->stripeService->getPaymentIntent($mission->payment_intent_id);
+                if ($pi->status !== 'requires_capture' && $pi->status !== 'succeeded') {
+                    return back()
+                        ->withErrors(['mission' => 'Payment hold is not confirmed. Please complete the payment first.'])
+                        ->with('stripe_client_secret', $pi->client_secret);
                 }
             } else {
                 $pi = $this->stripeService->createHold($mission);
@@ -234,18 +241,44 @@ class MissionActionController extends Controller
             return back()->withErrors(['mission' => 'This mission cannot be validated in its current state.']);
         }
 
+        $alreadyCompleted = false;
         try {
+            // Stripe capture runs OUTSIDE the DB transaction so no row lock is held during
+            // the external HTTP call. releaseFunds() is idempotent: if the payment is already
+            // marked captured locally it returns immediately; if Stripe reports
+            // charge_already_captured it syncs the local record and returns.
             $this->stripeService->releaseFunds($mission);
+
+            // Short DB-only transaction: lock, verify state, transition, credit balance.
+            DB::transaction(function () use ($mission, &$alreadyCompleted) {
+                $locked = Mission::lockForUpdate()->find($mission->id);
+
+                if ($locked->status === Mission::STATUS_TERMINEE) {
+                    $alreadyCompleted = true;
+                    throw new \RuntimeException('__already_completed__');
+                }
+
+                $this->missionService->transitionStatus($locked, Mission::STATUS_TERMINEE);
+
+                $payment = Payment::where('mission_id', $locked->id)->first();
+                // Only credit balance after confirming Stripe capture succeeded
+                if ($payment && $payment->status === Payment::STATUS_CAPTURED && $locked->assignedUser) {
+                    $locked->assignedUser->increment('balance', $payment->provider_amount);
+                    Log::info("Balance credited for mission {$locked->id}", [
+                        'provider_id' => $locked->assignedUser->id,
+                        'amount' => $payment->provider_amount,
+                    ]);
+                }
+            });
+        } catch (\RuntimeException $e) {
+            if ($alreadyCompleted) {
+                return back()->with('success', 'Mission has already been validated.');
+            }
+            Log::error("Completion failed for mission {$mission->id}: " . $e->getMessage());
+            return back()->withErrors(['mission' => 'Payment release failed. Please try again or contact support.']);
         } catch (\Exception $e) {
-            Log::error("Capture failed during validation for mission {$mission->id}: " . $e->getMessage());
-            return back()->withErrors(['mission' => 'Funds capture failed. ' . $e->getMessage()]);
-        }
-
-        $this->missionService->transitionStatus($mission, Mission::STATUS_TERMINEE);
-
-        $payment = Payment::where('mission_id', $mission->id)->first();
-        if ($payment && $mission->assignedUser) {
-            $mission->assignedUser->increment('balance', $payment->provider_amount);
+            Log::error("Completion failed for mission {$mission->id}: " . $e->getMessage());
+            return back()->withErrors(['mission' => 'Payment release failed. Please try again or contact support.']);
         }
 
         if ($mission->assignedUser) {

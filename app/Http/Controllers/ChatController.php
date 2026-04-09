@@ -81,14 +81,14 @@ class ChatController extends Controller
         $user = Auth::id();
         
         // If chat is pending and user is Provider, block sending
-        if ($chat->status === Chat::STATUS_PENDING && $user == $chat->mission->assigned_user_id) {
+        if ($chat->status === Chat::STATUS_PENDING && (int) $user === (int) $chat->mission->assigned_user_id) {
             return response()->json([
                 'error' => 'Your message request is pending client approval.'
             ], 403);
         }
 
         // If chat is pending and user is Client, activate it automatically
-        if ($chat->status === Chat::STATUS_PENDING && $user == $chat->mission->user_id) {
+        if ($chat->status === Chat::STATUS_PENDING && (int) $user === (int) $chat->mission->user_id) {
             $chat->update(['status' => Chat::STATUS_ACTIVE]);
         }
         
@@ -116,17 +116,16 @@ class ChatController extends Controller
                  ], 403);
              }
              
-             // Blocked message (saved as blocked)
-             $message = $chat->messages()->create([
+             // Record the violation without returning the message content to the sender
+             $chat->messages()->create([
                  'user_id' => $fullUser->id,
                  'content' => $request->content,
                  'is_blocked' => true,
                  'blocked_reason' => $check['violation_type'],
              ]);
-             
+
              return response()->json([
                  'error' => 'Message blocked: Contact information detected.',
-                 'message' => $message,
                  'violation' => true
              ], 422);
         }
@@ -146,7 +145,7 @@ class ChatController extends Controller
         
         // Notify other participants
         foreach ($chat->participant_ids as $participantId) {
-            if ($participantId != $fullUser->id) {
+            if ((int) $participantId !== (int) $fullUser->id) {
                 $participant = \App\Models\User::find($participantId);
                 if ($participant) {
                     $participant->notify(new \App\Notifications\NewMessageNotification($message));
@@ -189,8 +188,8 @@ class ChatController extends Controller
             abort(403);
         }
 
-        // Ensure mission has been assigned before creating chat
-        if (!$mission->assigned_user_id) {
+        // Both participants must exist before a chat can be created
+        if (!$mission->assigned_user_id || !$mission->user_id) {
             return response()->json([
                 'error' => 'Chat cannot be created until a provider is assigned to this mission.'
             ], 422);
@@ -200,24 +199,24 @@ class ChatController extends Controller
         $chat = Chat::where('mission_id', $mission->id)->first();
 
         // If chat doesn't exist and user is the Provider, create as pending
-        if (!$chat && $userId == $mission->assigned_user_id) {
+        if (!$chat && (int) $userId === (int) $mission->assigned_user_id) {
             $chat = Chat::create([
                 'mission_id' => $mission->id,
-                'participant_ids' => array_values(array_filter([$mission->user_id, $mission->assigned_user_id])),
+                'participant_ids' => [$mission->user_id, $mission->assigned_user_id],
                 'status' => Chat::STATUS_PENDING,
             ]);
-            
+
             return response()->json($chat);
         }
-        
+
         // If chat doesn't exist and user is Client, create as active
-        if (!$chat && $userId == $mission->user_id) {
+        if (!$chat && (int) $userId === (int) $mission->user_id) {
             $chat = Chat::create([
                 'mission_id' => $mission->id,
-                'participant_ids' => array_values(array_filter([$mission->user_id, $mission->assigned_user_id])),
+                'participant_ids' => [$mission->user_id, $mission->assigned_user_id],
                 'status' => Chat::STATUS_ACTIVE,
             ]);
-            
+
             return response()->json($chat);
         }
         
@@ -253,7 +252,7 @@ class ChatController extends Controller
 
     protected function authorizeParticipant(Chat $chat)
     {
-        if (!in_array(Auth::id(), $chat->participant_ids)) {
+        if (!in_array((int) Auth::id(), array_map('intval', $chat->participant_ids), true)) {
             abort(403);
         }
     }
