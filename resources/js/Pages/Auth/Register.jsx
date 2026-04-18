@@ -61,8 +61,9 @@ export default function Register() {
         } else if (current === 2) {
             if (!data.category || !data.bio || !data.hourly_rate) return;
         } else if (current === 3) {
-            if (mode === 'standard' && (!data.photo || !data.id_document || !data.address_proof || !data.iban)) return;
-            if (mode === 'remote' && !data.photo) return;
+            // Document validation relaxed for test phase as per user request
+            // if (mode === 'standard' && (!data.photo || !data.id_document || !data.address_proof || !data.iban)) return;
+            // if (mode === 'remote' && !data.photo) return;
         }
         setStep(current + 1);
         window.scrollTo(0, 0);
@@ -436,7 +437,7 @@ export default function Register() {
                                 )}
 
                                 <div style={{ marginBottom: '24px' }}>
-                                    <label style={{ fontSize: '13px', fontWeight: 900, color: 'var(--n)', display: 'block', marginBottom: '6px' }}>{t('onboarding.profile_photo')} <span style={{ color: 'var(--o)' }}>*</span></label>
+                                    <label style={{ fontSize: '13px', fontWeight: 900, color: 'var(--n)', display: 'block', marginBottom: '6px' }}>{t('onboarding.profile_photo')} <span style={{ color: 'var(--g500)', fontSize: '11px', fontWeight: 'normal' }}>({t('common.optional')})</span></label>
                                     <input type="file" ref={fileInputs.photo} style={{ display: 'none' }} accept="image/*" onChange={(e) => handleFileChange(e, 'photo')} />
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                                         <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'var(--g100)', border: data.photo ? '3px solid var(--g)' : '3px dashed var(--g300)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden' }}>
@@ -457,7 +458,7 @@ export default function Register() {
                                 {mode === 'standard' && (
                                     <>
                                         <div style={{ marginBottom: '24px' }}>
-                                            <label style={{ fontSize: '13px', fontWeight: 900, color: 'var(--n)', display: 'block', marginBottom: '6px' }}>{t('onboarding.id_piece')} <span style={{ color: 'var(--o)' }}>*</span></label>
+                                            <label style={{ fontSize: '13px', fontWeight: 900, color: 'var(--n)', display: 'block', marginBottom: '6px' }}>{t('onboarding.id_piece')} <span style={{ color: 'var(--g500)', fontSize: '11px', fontWeight: 'normal' }}>({t('common.optional')})</span></label>
                                             <input type="file" ref={fileInputs.id} style={{ display: 'none' }} accept=".pdf,image/*" onChange={(e) => handleFileChange(e, 'id')} />
                                             <div onClick={() => handleFileUpload('id')} style={{ border: errors.id_document ? '2px solid #e53e3e' : data.id_document ? '2px solid var(--g)' : '2px dashed var(--g300)', borderRadius: '10px', padding: '20px', textAlign: 'center', cursor: 'pointer', background: data.id_document ? '#ecfdf5' : '#fff' }}>
                                                 {data.id_document ? <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--g)' }}>✓ {data.id_document.name}</div> : <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--g700)' }}>{t('onboarding.id_upload_hint')}</div>}
@@ -467,7 +468,7 @@ export default function Register() {
 
                                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '24px' }}>
                                             <div>
-                                                <label style={{ fontSize: '13px', fontWeight: 900, color: 'var(--n)', display: 'block', marginBottom: '6px' }}>{t('onboarding.address_proof')} <span style={{ color: 'var(--o)' }}>*</span></label>
+                                                <label style={{ fontSize: '13px', fontWeight: 900, color: 'var(--n)', display: 'block', marginBottom: '6px' }}>{t('onboarding.address_proof')} <span style={{ color: 'var(--g500)', fontSize: '11px', fontWeight: 'normal' }}>({t('common.optional')})</span></label>
                                                 <input type="file" ref={fileInputs.domicile} style={{ display: 'none' }} accept=".pdf,image/*" onChange={(e) => handleFileChange(e, 'domicile')} />
                                                 <div onClick={() => handleFileUpload('domicile')} style={{ border: errors.address_proof ? '2px solid #e53e3e' : data.address_proof ? '2px solid var(--g)' : '2px dashed var(--g300)', borderRadius: '10px', padding: '16px', textAlign: 'center', cursor: 'pointer', background: data.address_proof ? '#ecfdf5' : '#fff' }}>
                                                     <div style={{ fontSize: '12px', fontWeight: 700, color: data.address_proof ? 'var(--g)' : 'var(--g700)' }}>{data.address_proof ? '✓ ' + data.address_proof.name : t('onboarding.upload')}</div>
@@ -484,7 +485,7 @@ export default function Register() {
                                         </div>
 
                                         <div style={{ marginBottom: '24px' }}>
-                                            <label style={{ fontSize: '13px', fontWeight: 900, color: 'var(--n)', display: 'block', marginBottom: '6px' }}>{t('onboarding.avs_number_label')} {mode === 'standard' && <span style={{ color: 'var(--o)' }}>*</span>}</label>
+                                            <label style={{ fontSize: '13px', fontWeight: 900, color: 'var(--n)', display: 'block', marginBottom: '6px' }}>{t('onboarding.avs_number_label')} <span style={{ color: 'var(--g500)', fontSize: '11px', fontWeight: 'normal' }}>({t('common.optional')})</span></label>
                                             <input 
                                                 type="text" 
                                                 required={mode === 'standard'}
@@ -498,7 +499,7 @@ export default function Register() {
                                         </div>
 
                                         <div style={{ marginBottom: '24px' }}>
-                                            <label style={{ fontSize: '13px', fontWeight: 900, color: 'var(--n)', display: 'block', marginBottom: '6px' }}>{t('onboarding.iban_label')} <span style={{ color: 'var(--o)' }}>*</span></label>
+                                            <label style={{ fontSize: '13px', fontWeight: 900, color: 'var(--n)', display: 'block', marginBottom: '6px' }}>{t('onboarding.iban_label')} <span style={{ color: 'var(--g500)', fontSize: '11px', fontWeight: 'normal' }}>({t('common.optional')})</span></label>
                                             <input type="text" required value={data.iban} onChange={e => setData('iban', e.target.value)} placeholder="CH56 0483 5012 3456 7800 9" style={{ width: '100%', padding: '14px', border: errors.iban ? '2px solid #e53e3e' : '2px solid var(--g300)', borderRadius: 'var(--rs)', fontSize: '15px' }} />
                                             {errors.iban && <span style={errorStyle}>{errors.iban}</span>}
                                             <p style={{ fontSize: '11px', color: 'var(--g500)', marginTop: '4px' }}>{t('onboarding.iban_hint')}</p>
@@ -506,9 +507,10 @@ export default function Register() {
                                     </>
                                 )}
 
-                                <div style={{ display: 'flex', gap: '12px' }}>
-                                    <button type="button" className="oflem-btn oflem-btn-secondary" style={{ flex: 1, padding: '16px' }} onClick={() => prevStep(3)}>← {t('common.back')}</button>
-                                    <button type="button" className="oflem-btn oflem-btn-primary" style={{ flex: 2, padding: '16px' }} onClick={() => nextStep(3)}>{t('common.continue')} →</button>
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
+                                    <button type="button" className="oflem-btn oflem-btn-secondary" style={{ flex: '1 1 120px', padding: '16px' }} onClick={() => prevStep(3)}>← {t('common.back')}</button>
+                                    <button type="button" className="oflem-btn" style={{ flex: '1 1 160px', padding: '16px', background: 'var(--g50)', color: 'var(--g700)', border: '1px solid var(--g300)', fontWeight: 800 }} onClick={() => nextStep(3)}>{t('onboarding.skip_step') || 'Passer pour l\'instant'}</button>
+                                    <button type="button" className="oflem-btn oflem-btn-primary" style={{ flex: '2 1 200px', padding: '16px' }} onClick={() => nextStep(3)}>{t('common.continue')} →</button>
                                 </div>
                             </div>
                         )}

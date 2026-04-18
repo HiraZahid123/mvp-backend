@@ -336,14 +336,12 @@
         },
         "pillars_section": {
             "label": "Why Oflem",
-            "title": "Posting an ad might work.",
-            "title_sub": "Except when it goes wrong.",
-            "description": "Posting an ad between individuals or calling a friend of a friend might work. But when it goes wrong, you're alone. Oflem is the extra reliability.",
+            "title": "A clear framework for your services",
+            "description": "Transparency, security, and simple rules — for both clients and providers.",
             "items": {
-                "verified": { "title": "Verified providers", "text": "ID check, right to work in Switzerland, verified qualifications if necessary. Not a stranger without history: someone the platform has validated." },
-                "escrow": { "title": "Money protected by escrow", "text": "You don't pay in advance into a void. Funds are blocked and only transferred when you confirm the work is done. No advances. No bad surprises." },
-                "local": { "title": "Always someone near you", "text": "Each provider who answers your request lives in your region. Not someone 200 km away. Not a foreign platform. A nearby, available person who knows your area." },
-                "mediation": { "title": "Mediation in case of dispute", "text": "When something goes wrong (and it happens), you're not alone against a stranger. Our team intervenes, and funds remain blocked until resolution." }
+                "transparency": { "title": "Total transparency", "text": "The price displayed is the final price. No hidden fees. No surprises. That's the rule." },
+                "escrow": { "title": "Escrow payment", "text": "The money is held until the mission is completed. You validate, then it's released. Not before." },
+                "profiles": { "title": "Verified profiles", "text": "Identity confirmed. Visible reviews. Searchable history. You know who you are trusting." }
             }
         },
         "pricing": {

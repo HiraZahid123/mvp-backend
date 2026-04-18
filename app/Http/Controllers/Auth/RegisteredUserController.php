@@ -83,9 +83,9 @@ class RegisteredUserController extends Controller
         $request->validate([
             'first_name' => 'required|string|max:100',
             'last_name'  => 'required|string|max:100',
-            'city'       => 'required|string|max:150',
+            'city'       => 'nullable|string|max:150',
             'email'      => 'required|string|lowercase|email|max:255|unique:'.User::class,
-            'phone'      => 'required|string',
+            'phone'      => 'nullable|string',
             'password'   => ['required', 'confirmed', 'min:8'],
         ]);
 
@@ -139,11 +139,11 @@ class RegisteredUserController extends Controller
             'radius' => 'required|integer|min:5|max:100',
             'bio' => 'required|string',
             'hourly_rate' => 'required|numeric|min:0',
-            'avs_number' => 'required_if:mode,standard|nullable|string|regex:/^756\.\d{4}\.\d{4}\.\d{2}$/',
+            'avs_number' => 'nullable|string|regex:/^756\.\d{4}\.\d{4}\.\d{2}$/',
             'iban' => 'nullable|string',
-            'photo' => 'required|image|max:10240',
-            'id_document' => 'required_if:mode,standard|nullable|file|mimes:pdf,jpg,jpeg,png|max:10240',
-            'address_proof' => 'required_if:mode,standard|nullable|file|mimes:pdf,jpg,jpeg,png|max:10240',
+            'photo' => 'nullable|image|max:10240',
+            'id_document' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:10240',
+            'address_proof' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:10240',
             'work_permit' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:10240',
         ]);
 
@@ -166,7 +166,7 @@ class RegisteredUserController extends Controller
         $photoPath = $idPath = $addressPath = $permitPath = null;
         try {
             // Handle profile photo
-            $photoPath = $request->file('photo')->store('profile_photos', 'public');
+            $photoPath = $request->hasFile('photo') ? $request->file('photo')->store('profile_photos', 'public') : null;
 
             $user = User::create([
                 'name' => trim($request->first_name . ' ' . $request->last_name),

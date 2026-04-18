@@ -341,21 +341,23 @@ export default function LocationPicker({
                                             draggable={true}
                                             onDragEnd={handleMapClick}
                                         />
-                                        <Circle
-                                            key={`circle-${radius}`}
-                                            center={selectedLocation}
-                                            radius={radius * 1000}
-                                            options={{
-                                                strokeColor: '#FF6B35',
-                                                strokeOpacity: 0.8,
-                                                strokeWeight: 2,
-                                                fillColor: '#FF6B35',
-                                                fillOpacity: 0.15,
-                                                clickable: false,
-                                                editable: false,
-                                                draggable: false,
-                                            }}
-                                        />
+                                        {role === 'provider' && (
+                                            <Circle
+                                                key={`circle-${radius}`}
+                                                center={selectedLocation}
+                                                radius={radius * 1000}
+                                                options={{
+                                                    strokeColor: '#FF6B35',
+                                                    strokeOpacity: 0.8,
+                                                    strokeWeight: 2,
+                                                    fillColor: '#FF6B35',
+                                                    fillOpacity: 0.15,
+                                                    clickable: false,
+                                                    editable: false,
+                                                    draggable: false,
+                                                }}
+                                            />
+                                        )}
                                     </>
                                 )}
                             </GoogleMap>
@@ -366,27 +368,29 @@ export default function LocationPicker({
                         )}
                     </div>
 
-                    {/* Radius Slider */}
-                    <div className="space-y-2">
-                        <label className="block text-sm font-bold text-oflem-charcoal">
-                            {t('Rayon de découverte:')} <span className="text-oflem-terracotta">{radius} km</span>
-                        </label>
-                        <input
-                            type="range"
-                            min="5"
-                            max="50"
-                            value={radius}
-                            onChange={(e) => setRadius(parseInt(e.target.value))}
-                            className="w-full h-2 bg-zinc-100 rounded-full appearance-none cursor-pointer slider"
-                            style={{
-                                background: `linear-gradient(to right, #FF6B35 0%, #FF6B35 ${((radius - 5) / 45) * 100}%, #edf2f7 ${((radius - 5) / 45) * 100}%, #edf2f7 100%)`
-                            }}
-                        />
-                        <div className="flex justify-between text-xs text-gray-muted font-medium">
-                            <span>5 km</span>
-                            <span>50 km</span>
+                    {/* Radius Slider - Only for Providers */}
+                    {role === 'provider' && (
+                        <div className="space-y-2">
+                            <label className="block text-sm font-bold text-oflem-charcoal">
+                                {t('Rayon de découverte:')} <span className="text-oflem-terracotta">{radius} km</span>
+                            </label>
+                            <input
+                                type="range"
+                                min="5"
+                                max="50"
+                                value={radius}
+                                onChange={(e) => setRadius(parseInt(e.target.value))}
+                                className="w-full h-2 bg-zinc-100 rounded-full appearance-none cursor-pointer slider"
+                                style={{
+                                    background: `linear-gradient(to right, #FF6B35 0%, #FF6B35 ${((radius - 5) / 45) * 100}%, #edf2f7 ${((radius - 5) / 45) * 100}%, #edf2f7 100%)`
+                                }}
+                            />
+                            <div className="flex justify-between text-xs text-gray-muted font-medium">
+                                <span>5 km</span>
+                                <span>50 km</span>
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             )}
         </div>

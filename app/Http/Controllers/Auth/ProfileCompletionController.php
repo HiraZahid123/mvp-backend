@@ -37,7 +37,7 @@ class ProfileCompletionController extends Controller
     public function storeIdentity(Request $request)
     {
         $request->validate([
-            'username' => 'required|string|max:255',
+            'username' => 'nullable|string|max:255',
             'phone' => 'nullable|string|max:20',
             'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
@@ -63,7 +63,7 @@ class ProfileCompletionController extends Controller
         }
 
         $user->update([
-            'username' => $request->username,
+            'username' => $request->username ?? $user->name,
             'phone' => $request->phone,
             'profile_photo' => $photoPath,
         ]);
@@ -99,12 +99,12 @@ class ProfileCompletionController extends Controller
     public function storeLocation(Request $request, \App\Services\GeocodingService $geocodingService)
     {
         $request->validate([
-            'method' => 'required|in:gps,zipcode,address',
-            'location_lat' => 'required_if:method,gps,address|nullable|numeric|between:-90,90',
-            'location_lng' => 'required_if:method,gps,address|nullable|numeric|between:-180,180',
-            'zip_code' => 'required_if:method,zipcode|nullable|string|max:10',
+            'method' => 'nullable|in:gps,zipcode,address',
+            'location_lat' => 'nullable|numeric|between:-90,90',
+            'location_lng' => 'nullable|numeric|between:-180,180',
+            'zip_code' => 'nullable|string|max:10',
             'location_address' => 'nullable|string|max:500',
-            'discovery_radius_km' => 'required|integer|min:5|max:50', // Updated max to match slider
+            'discovery_radius_km' => 'nullable|integer|min:5|max:50',
         ]);
 
         $user = Auth::user();
@@ -136,8 +136,8 @@ class ProfileCompletionController extends Controller
             'location_lat' => $lat,
             'location_lng' => $lng,
             'location_address' => $address,
-            'zip_code' => $request->method === 'zipcode' ? $request->zip_code : null,
-            'discovery_radius_km' => $request->discovery_radius_km,
+            'zip_code' => ($request->method === 'zipcode' && $request->zip_code) ? $request->zip_code : null,
+            'discovery_radius_km' => $request->discovery_radius_km ?? 15,
         ]);
 
         if ($request->session()->has('pending_mission')) {

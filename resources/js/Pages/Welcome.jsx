@@ -354,6 +354,7 @@ export default function Welcome({ missions: initialMissions, providers: initialP
     const [isHeaderScrolled, setIsHeaderScrolled] = useState(false);
     const [openFaq, setOpenFaq] = useState(null);
 
+    /* 
     const pillars = [
         { 
             icon: <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>, 
@@ -380,6 +381,7 @@ export default function Welcome({ missions: initialMissions, providers: initialP
             bg: "linear-gradient(135deg, #f6ad55, #ed8936)"
         }
     ];
+    */
 
     const scrollToHero = (e) => {
         if(e) e.preventDefault();
@@ -790,6 +792,58 @@ export default function Welcome({ missions: initialMissions, providers: initialP
             </section>
 
             {/* ═══ WHY OFLEM SECTION (Trust Pillars) ═══ */}
+            {/* ═══ WHY OFLEM SECTION (New from HTML) ═══ */}
+            <section className="oflem-section section section-gray oflem-section-gray reveal visible" id="why-oflem">
+                <div className="oflem-container">
+                    <div className="section-head reveal visible">
+                        <AnimatedSection>
+                            <div className="section-label">{t('homepage.pillars_section.label')}</div>
+                            <h2 className="section-title">{t('homepage.pillars_section.title')}</h2>
+                            <p className="section-sub">{t('homepage.pillars_section.description')}</p>
+                        </AnimatedSection>
+                    </div>
+
+                    <div className="pillar-grid reveal visible" style={{ gridTemplateColumns: 'repeat(3, 1fr)', maxWidth: '1100px' }}>
+                        <AnimatedSection delay="0ms">
+                            <article className="pillar-card orange">
+                                <div className="pillar-icon-wrap" style={{ background: 'linear-gradient(135deg,#FF6B35,#FF8C5A)' }} aria-hidden="true">
+                                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
+                                        <circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" />
+                                    </svg>
+                                </div>
+                                <h3 className="pillar-title">{t('homepage.pillars_section.items.transparency.title')}</h3>
+                                <p className="pillar-text">{t('homepage.pillars_section.items.transparency.text')}</p>
+                            </article>
+                        </AnimatedSection>
+
+                        <AnimatedSection delay="100ms">
+                            <article className="pillar-card green">
+                                <div className="pillar-icon-wrap" style={{ background: 'linear-gradient(135deg,#10b981,#059669)' }} aria-hidden="true">
+                                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
+                                        <rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                                    </svg>
+                                </div>
+                                <h3 className="pillar-title">{t('homepage.pillars_section.items.escrow.title')}</h3>
+                                <p className="pillar-text">{t('homepage.pillars_section.items.escrow.text')}</p>
+                            </article>
+                        </AnimatedSection>
+
+                        <AnimatedSection delay="200ms">
+                            <article className="pillar-card purple">
+                                <div className="pillar-icon-wrap" style={{ background: 'linear-gradient(135deg,#667eea,#764ba2)' }} aria-hidden="true">
+                                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
+                                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><polyline points="16 11 18 13 22 9" />
+                                    </svg>
+                                </div>
+                                <h3 className="pillar-title">{t('homepage.pillars_section.items.profiles.title')}</h3>
+                                <p className="pillar-text">{t('homepage.pillars_section.items.profiles.text')}</p>
+                            </article>
+                        </AnimatedSection>
+                    </div>
+                </div>
+            </section>
+
+            {/* Previous Why Oflem Section Commented Out
             <section className="oflem-section section section-gray oflem-section-gray reveal visible" id="why-oflem">
                 <div className="oflem-container">
                     <div className="section-head">
@@ -815,6 +869,7 @@ export default function Welcome({ missions: initialMissions, providers: initialP
                     </div>
                 </div>
             </section>
+            */}
 
             {/* ═══ PRICING / COMMISSION SECTION ═══ */}
             <section className="oflem-section section section-white oflem-section-gray reveal visible" id="pricing">

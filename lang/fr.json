@@ -336,14 +336,12 @@
         },
         "pillars_section": {
             "label": "Pourquoi Oflem",
-            "title": "Poster une annonce, ça peut marcher.",
-            "title_sub": "Sauf quand ça se passe mal.",
-            "description": "Poster une annonce entre particuliers ou appeler l'ami d'un ami, ça peut marcher. Mais quand ça se passe mal, vous êtes seul. Oflem, c'est la fiabilité en plus.",
+            "title": "Un cadre clair pour vos services",
+            "description": "Transparence, sécurité et règles simples — pour les clients comme pour les prestataires.",
             "items": {
-                "verified": { "title": "Prestataires vérifiés", "text": "Pièce d'identité, droit de travailler en Suisse, qualifications vérifiées si nécessaire. Pas un inconnu sans historique : quelqu'un que la plateforme a validé." },
-                "escrow": { "title": "Argent protégé par séquestre", "text": "Vous ne payez pas à l'avance dans le vide. Les fonds sont bloqués et ne partent que lorsque vous avez confirmé que le travail est fait. Ni avance. Ni mauvaise surprise." },
-                "local": { "title": "Toujours quelqu'un près de chez vous", "text": "Chaque prestataire qui répond à votre demande vit dans votre région. Pas quelqu'un à 200 km. Pas une plateforme étrangère. Une personne proche, disponible, qui connaît votre coin." },
-                "mediation": { "title": "Médiation en cas de litige", "text": "Quand quelque chose se passe mal (et ça arrive), vous n'êtes pas seul face à un inconnu. Notre équipe intervient, les fonds restent bloqués jusqu'à résolution." }
+                "transparency": { "title": "Transparence totale", "text": "Le prix affiché est le prix final. Aucun frais caché. Aucune surprise. C'est la règle." },
+                "escrow": { "title": "Paiement par séquestre", "text": "L'argent est bloqué jusqu'à la fin de la mission. Vous validez, puis il est libéré. Pas avant." },
+                "profiles": { "title": "Profils vérifiés", "text": "Identité confirmée. Avis visibles. Historique consultable. Vous savez à qui vous faites confiance." }
             }
         },
         "pricing": {

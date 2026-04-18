@@ -906,6 +906,18 @@
   transform: translateY(-5px);
   box-shadow: 0 24px 56px rgba(0,0,0,.09);
 }
+.pillar-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.35s;
+  pointer-events: none;
+}
+.pillar-card.orange::before { background: radial-gradient(ellipse at top, rgba(255,107,53,0.05), transparent 70%); }
+.pillar-card.green::before  { background: radial-gradient(ellipse at top, rgba(16,185,129,0.05), transparent 70%); }
+.pillar-card.purple::before { background: radial-gradient(ellipse at top, rgba(102,126,234,0.05), transparent 70%); }
+.pillar-card:hover::before { opacity: 1; }
 .pillar-icon-wrap {
   width: 64px;
   height: 64px;

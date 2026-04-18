@@ -62,12 +62,15 @@ export default function CompleteIdentity({ user }) {
                         onChange={handlePhotoChange}
                         previewUrl={user?.profile_photo_url}
                     />
+                    <div className="text-center mt-2">
+                        <span className="text-xs text-gray-muted italic">({t('common.optional')})</span>
+                    </div>
                     <InputError message={errors.profile_photo} className="mt-2 text-center" />
                 </div>
 
                 {/* Username/Display Name */}
                 <div className="space-y-1.5">
-                    <InputLabel htmlFor="username" value={t('auth.complete_identity.display_name')} className="text-center lg:text-left" />
+                    <InputLabel htmlFor="username" value={`${t('auth.complete_identity.display_name')} (${t('common.optional')})`} className="text-center lg:text-left" />
                     <TextInput
                         id="username"
                         type="text"
@@ -81,7 +84,7 @@ export default function CompleteIdentity({ user }) {
 
                 {/* Phone Number */}
                 <div className="space-y-1.5">
-                    <InputLabel htmlFor="phone" value={t('auth.complete_identity.phone')} className="text-center lg:text-left" />
+                    <InputLabel htmlFor="phone" value={`${t('auth.complete_identity.phone')} (${t('common.optional')})`} className="text-center lg:text-left" />
                     <TextInput
                         id="phone"
                         type="tel"
@@ -89,19 +92,28 @@ export default function CompleteIdentity({ user }) {
                         onChange={(e) => setData('phone', e.target.value)}
                         placeholder={t('auth.complete_identity.phone_placeholder')}
                         autoComplete="tel"
-                        required
                     />
                     <InputError message={errors.phone} />
                 </div>
 
-                {/* Submit Button */}
-                <PrimaryButton 
-                    className="w-full" 
-                    disabled={processing}
-                    processing={processing}
-                >
-                    {t('auth.select_role.button')}
-                </PrimaryButton>
+                {/* Action Buttons */}
+                <div className="flex flex-col gap-3">
+                    <PrimaryButton 
+                        className="w-full" 
+                        disabled={processing}
+                        processing={processing}
+                    >
+                        {t('auth.select_role.button')}
+                    </PrimaryButton>
+                    <button 
+                        type="button" 
+                        onClick={handleSubmit} 
+                        className="w-full py-3 text-sm font-bold text-gray-500 hover:text-gray-700 transition-colors"
+                        disabled={processing}
+                    >
+                        {t('onboarding.skip_for_now') || 'Passer pour l\'instant'}
+                    </button>
+                </div>
             </form>
 
             <div className="elegant-capsule mt-6">

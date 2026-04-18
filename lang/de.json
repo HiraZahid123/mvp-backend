@@ -336,14 +336,12 @@
         },
         "pillars_section": {
             "label": "Warum Oflem",
-            "title": "Eine Anzeige aufgeben, das kann funktionieren.",
-            "title_sub": "Außer wenn es schief geht.",
-            "description": "Eine Anzeige zwischen Privatpersonen aufzugeben oder den Freund eines Freundes anzurufen, kann funktionieren. Aber wenn es schief geht, sind Sie allein. Oflem ist die zusätzliche Zuverlässigkeit.",
+            "title": "Ein klarer Rahmen für Ihre Dienstleistungen",
+            "description": "Transparenz, Sicherheit und einfache Regeln — für Kunden und Dienstleister.",
             "items": {
-                "verified": { "title": "Verifizierte Anbieter", "text": "Ausweisprüfung, Arbeitsrecht in der Schweiz, verifizierte Qualifikationen falls nötig. Kein Fremder ohne Vorgeschichte: jemand, den die Plattform validiert hat." },
-                "escrow": { "title": "Geld durch Treuhand geschützt", "text": "Sie zahlen nicht im Voraus ins Leere. Die Gelder werden blockiert und erst überwiesen, wenn Sie bestätigen, dass die Arbeit erledigt ist. Keine Vorauszahlung. Keine bösen Überraschungen." },
-                "local": { "title": "Immer jemand in Ihrer Nähe", "text": "Jeder Anbieter, der auf Ihre Anfrage antwortet, lebt in Ihrer Region. Nicht jemand 200 km entfernt. Keine ausländische Plattform. Eine verfügbare Person in Ihrer Nähe, die Ihre Gegend kennt." },
-                "mediation": { "title": "Mediation im Streitfall", "text": "Wenn etwas schief geht (und das passiert), sind Sie nicht allein gegen einen Fremden. Unser Team greift ein, die Gelder bleiben bis zur Lösung blockiert." }
+                "transparency": { "title": "Vollständige Transparenz", "text": "Der angezeigte Preis ist der Endpreis. Keine versteckten Gebühren. Keine Überraschungen. Das ist die Regel." },
+                "escrow": { "title": "Zahlung per Treuhand", "text": "Das Geld wird bis zum Ende des Auftrags blockiert. Sie bestätigen, dann wird es freigegeben. Nicht vorher." },
+                "profiles": { "title": "Verifizierte Profile", "text": "Identität bestätigt. Sichtbare Bewertungen. Einsehbare Historie. Sie wissen, wem Sie vertrauen." }
             }
         },
         "pricing": {

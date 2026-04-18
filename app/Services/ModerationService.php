@@ -70,6 +70,17 @@ class ModerationService
         // Urdu: Common profanity
         '/\b(کتا|گدھا|حرامی|کمینہ)\b/u',
 
+        // ========== ALCOHOL, TOBACCO & VAPING ==========
+        '/\b(alcohol|beer|wine|vodka|whiskey|rum|spirit[s]?|liquor|tobacco|cig[ae]r[e]?s?|cigarette[s]?|vape|vaping|e-cig)\b/iu',
+        '/\b(alcool|bière|vin|vodka|whisky|rhum|spiritueux|tabac|cigare[s]?|cigarette[s]?|vapoteuse|vapotage)\b/iu',
+
+        // ========== WEAPONS & DANGEROUS ITEMS ==========
+        '/\b(weapon[s]?|gun[s]?|pistol[s]?|rifle[s]?|knife|knives|ammunition|ammo|explosive[s]?|bomb[s]?|grenade[s]?)\b/iu',
+        '/\b(arme[s]?|fusil[s]?|pistolet[s]?|couteau|couteaux|munitions|explosif[s]?|bombe[s]?|grenade[s]?)\b/iu',
+
+        // ========== MEDICAL & REGULATED SERVICES ==========
+        '/\b(prescription[s]?|medicine[s]?|medical\s*advice|prescribe|pharmacy|pharmacie|ordonnance|médicament[s]?|docteur|doctor)\b/iu',
+
         // ========== OFF-PLATFORM CONTACT (bypass attempts) ==========
         // Messaging apps — catches leetspeak/normalized forms e.g. "wh4tsapp", "t3legram"
         '/\b(whatsapp|whats\s*app|telegram|signal|viber|snapchat|discord|wechat|we\s*chat|line\s*app)\b/iu',
@@ -231,9 +242,10 @@ class ModerationService
         CRITICAL MULTILINGUAL GUIDELINES:
         - UNDERSTAND content in ALL languages: English, French, Arabic, Urdu, Spanish, German, Italian, etc.
         - ALLOW everyday tasks in ANY language (cleaning, shopping, pet care, moving, gardening, etc.)
-        - ALLOW legal services like alcohol delivery/purchase in ANY language
-        - BLOCK genuinely harmful content in ANY language: hard drugs, illegal weapons, adult services, violence, fraud
-        - Be LENIENT with common everyday requests - err on the side of allowing legitimate tasks
+        - BLOCK STAY-SAFE VIOLATIONS: hard drugs, weapons, adult services, violence, fraud
+        - BLOCK REGULATED GOODS: alcohol delivery/purchase, tobacco, vaping products
+        - BLOCK PROFESSIONAL SERVICES: medical advice, legal advice, prescription fulfillment
+        - Be LENIENT with common everyday requests (cleaning, DIY, gardening) - err on the side of allowing legitimate tasks
         - Watch for bypass attempts in ANY language (symbols, spaces, numbers hiding prohibited words)
         - If the content is in Arabic, Urdu, or other non-Latin scripts, ensure you understand the context properly
         

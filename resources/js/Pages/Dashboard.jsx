@@ -61,7 +61,19 @@ export default function Dashboard({ missions, stats, providerMissions, providerO
 
     const renderDashboardContent = () => {
         const roleParam = urlParams.get('role');
-        const activeRole = roleParam || user.last_selected_role || user.role_type;
+        let activeRole = roleParam || user.last_selected_role;
+
+        // Smart prioritization: If no explicit role is selected and user is 'both',
+        // check if they have managed missions as a client to show them the dashboard they likely need.
+        if (!activeRole && user.role_type === 'both') {
+            if (missions && missions.length > 0) {
+                activeRole = 'client';
+            } else if (providerMissions && providerMissions.length > 0) {
+                activeRole = 'provider';
+            }
+        }
+
+        activeRole = activeRole || user.role_type;
         
         // If the active role is specifically set, use that dashboard
         if (activeRole === 'client') {

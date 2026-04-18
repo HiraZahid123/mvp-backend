@@ -100,10 +100,9 @@ export default function ClientRegister() {
 
                         {/* City */}
                         <div style={{ marginBottom: '24px' }}>
-                            <label htmlFor="client-city" style={labelStyle}>{t('onboarding.main_city')}</label>
+                            <label htmlFor="client-city" style={labelStyle}>{t('onboarding.main_city')} <span style={{ color: 'var(--g500)', fontSize: '11px', fontWeight: 'normal' }}>({t('common.optional')})</span></label>
                             <select
                                 id="client-city"
-                                required
                                 value={data.city}
                                 onChange={e => setData('city', e.target.value)}
                                 style={{ ...inputStyle, background: '#fff' }}
@@ -114,34 +113,33 @@ export default function ClientRegister() {
                             {errors.city && <span style={errorStyle}>{errors.city}</span>}
                         </div>
 
-                        {/* Contact Row */}
-                        <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '20px', marginBottom: '24px' }}>
+                        {/* Email and Phone - Stacked for better readability */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginBottom: '32px' }}>
                             <div>
                                 <label htmlFor="client-email" style={labelStyle}>{t('onboarding.email')}</label>
                                 <input 
                                     type="email" 
                                     id="client-email" 
                                     required 
-                                    placeholder="votre@email.ch" 
+                                    placeholder={t('onboarding.email_placeholder')} 
                                     value={data.email}
                                     onChange={e => setData('email', e.target.value)}
-                                    style={inputStyle}
+                                    style={inputStyle} 
                                 />
                                 {errors.email && <span style={errorStyle}>{errors.email}</span>}
                             </div>
                             <div>
-                                <label htmlFor="client-phone" style={labelStyle}>{t('onboarding.phone')}</label>
-                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                    <span style={{ padding: '16px 12px', background: 'var(--g50)', border: '2px solid var(--g300)', borderRight: 'none', borderRadius: 'var(--rs) 0 0 var(--rs)', fontSize: '15px', fontWeight: 700, color: 'var(--g500)', whiteSpace: 'nowrap', height: '58px', display: 'flex', alignItems: 'center' }}>🇨🇭 +41</span>
+                                <label htmlFor="client-phone" style={labelStyle}>{t('onboarding.phone')} <span style={{ color: 'var(--g500)', fontSize: '11px', fontWeight: 'normal' }}>({t('common.optional')})</span></label>
+                                <div style={{ display: 'flex', alignItems: 'stretch' }}>
+                                    <span style={{ padding: '0 12px', background: 'var(--g50)', border: '2px solid var(--g300)', borderRight: 'none', borderRadius: 'var(--rs) 0 0 var(--rs)', fontSize: '15px', fontWeight: 700, color: 'var(--g500)', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center' }}>🇨🇭 +41</span>
                                     <input 
                                         type="tel" 
                                         id="client-phone" 
-                                        required 
                                         placeholder="79 123 45 67" 
                                         value={data.phone}
                                         onChange={e => setData('phone', e.target.value)}
                                         maxLength="14" 
-                                        style={{ flex: 1, padding: '16px', border: '2px solid var(--g300)', borderLeft: 'none', borderRadius: '0 var(--rs) var(--rs) 0', fontSize: '16px', minWidth: 0, height: '58px' }} 
+                                        style={{ flex: 1, padding: '16px', border: '2px solid var(--g300)', borderLeft: 'none', borderRadius: '0 var(--rs) var(--rs) 0', fontSize: '16px', minWidth: 0 }} 
                                     />
                                 </div>
                                 {errors.phone && <span style={errorStyle}>{errors.phone}</span>}

@@ -336,14 +336,12 @@
         },
         "pillars_section": {
             "label": "Perché Oflem",
-            "title": "Pubblicare un annuncio può funzionare.",
-            "title_sub": "Tranne quando va male.",
-            "description": "Pubblicare un annuncio tra privati o chiamare l'amico di un amico può funzionare. Ma quando va male, sei solo. Oflem è l'affidabilità in più.",
+            "title": "Un quadro chiaro per i vostri servizi",
+            "description": "Trasparenza, sicurezza e regole semplici — sia per i clienti che per i prestatori.",
             "items": {
-                "verified": { "title": "Provider verificati", "text": "Controllo documenti d'identità, diritto di lavorare in Svizzera, qualifiche verificate se necessario. Non un estraneo senza storia: qualcuno che la piattaforma ha validato." },
-                "escrow": { "title": "Denaro protetto da deposito", "text": "Non paghi in anticipo nel vuoto. I fondi sono bloccati e vengono trasferiti solo quando confermi che il lavoro è fatto. Nessun anticipo. Nessuna brutta sorpresa." },
-                "local": { "title": "Sempre qualcuno vicino a te", "text": "Ogni provider che risponde alla tua richiesta vive nella tua regione. Non qualcuno a 200 km. Non una piattaforma straniera. Una persona vicina, disponibile, che conosce la tua zona." },
-                "mediation": { "title": "Mediazione in caso di controversia", "text": "Quando qualcosa va male (e succede), non sei solo contro un estraneo. Il nostro team interviene, i fondi rimangono bloccati fino alla risoluzione." }
+                "transparency": { "title": "Trasparenza totale", "text": "Il prezzo esposto è il prezzo finale. Nessun costo nascosto. Nessuna sorpresa. Questa è la regola." },
+                "escrow": { "title": "Pagamento via deposito a garanzia", "text": "Il denaro è bloccato fino alla fine della missione. Convalidate, quindi viene liberato. Non prima." },
+                "profiles": { "title": "Profili verificati", "text": "Identità confermata. Recensioni visibili. Cronologia consultabile. Sapete di chi vi fidate." }
             }
         },
         "pricing": {

@@ -57,15 +57,25 @@ export default function CompleteLocation({ user, role }) {
                 {errors.location_lat && <InputError message={errors.location_lat} />}
                 {errors.zip_code && <InputError message={errors.zip_code} />}
 
-                {/* Submit Button */}
-                <PrimaryButton 
-                    type="submit"
-                    className="w-full" 
-                    disabled={processing || !locationData}
-                    processing={processing}
-                >
-                    {t('auth.complete_location.button')}
-                </PrimaryButton>
+                {/* Action Buttons */}
+                <div className="flex flex-col gap-3">
+                    <PrimaryButton 
+                        type="submit"
+                        className="w-full" 
+                        disabled={processing}
+                        processing={processing}
+                    >
+                        {t('auth.complete_location.button')}
+                    </PrimaryButton>
+                    <button 
+                        type="button" 
+                        onClick={handleSubmit} 
+                        className="w-full py-3 text-sm font-bold text-gray-500 hover:text-gray-700 transition-colors"
+                        disabled={processing}
+                    >
+                        {t('onboarding.skip_for_now') || 'Passer pour l\'instant'}
+                    </button>
+                </div>
             </form>
 
             <div className="elegant-capsule mt-6">
