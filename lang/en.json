@@ -580,6 +580,7 @@
         "provider_terrain": "Create your field profile",
         "provider_remote": "Create your remote profile",
         "choose_mode": "First choose how you want to offer your services.",
+        "skip_step": "Skip for now",
         "complete_dossier": "Complete your file to start receiving offers.",
         "inscription_label": "Provider registration",
         "join_title": "Join Oflem",
