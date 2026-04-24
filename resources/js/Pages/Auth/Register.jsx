@@ -567,6 +567,12 @@ export default function Register() {
                                     </label>
                                 </div>
 
+                                <div style={{ background: 'var(--g50)', borderRadius: '10px', padding: '14px 16px', marginBottom: '20px', border: '1px solid var(--g100)' }}>
+                                    <p style={{ fontSize: '12px', color: 'var(--g500)', lineHeight: 1.6, margin: 0 }}>
+                                        Votre profil sera <strong>examiné par notre équipe</strong> sous 24–48h. Vous recevrez un email de confirmation dès la validation. En attendant, vous pouvez déjà explorer la plateforme.
+                                    </p>
+                                </div>
+
                                 <div style={{ display: 'flex', gap: '12px' }}>
                                     <button type="button" className="oflem-btn oflem-btn-secondary" style={{ flex: 1, padding: '16px' }} onClick={() => prevStep(4)}>← {t('common.back')}</button>
                                     <button type="submit" className="oflem-btn oflem-btn-primary" style={{ flex: 2, padding: '16px' }} disabled={processing}>

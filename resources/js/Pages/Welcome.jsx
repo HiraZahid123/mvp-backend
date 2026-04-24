@@ -106,7 +106,7 @@ const FAQSection = ({ t }) => {
     const generalItems = ['regions', 'legal', 'commission_why', 'commission_high'];
 
     return (
-        <section className="oflem-section section section-gray reveal" id="faq">
+        <section className="oflem-section section section-gray" id="faq">
             <div className="oflem-container">
                 <div className="section-head">
                     <AnimatedSection>
@@ -180,15 +180,16 @@ const FAQSection = ({ t }) => {
 
 const FinalCTA = ({ t }) => {
     return (
-        <section className="oflem-final-cta reveal" style={{ 
+        <section className="oflem-final-cta" style={{ 
             background: 'linear-gradient(135deg, var(--n) 0%, #2d3748 100%)',
             padding: '90px 0',
             position: 'relative',
             overflow: 'hidden'
         }}>
-            <div className="oflem-final-cta-orb-1"></div>
-            <div className="oflem-final-cta-orb-2"></div>
-            <div className="container" style={{ maxWidth: '860px', textAlign: 'center', position: 'relative', zIndex: 1, margin: '0 auto' }}>
+            <AnimatedSection>
+                <div className="oflem-final-cta-orb-1"></div>
+                <div className="oflem-final-cta-orb-2"></div>
+                <div className="container" style={{ maxWidth: '860px', textAlign: 'center', position: 'relative', zIndex: 1, margin: '0 auto' }}>
                 <div style={{
                     display: 'inline-flex',
                     alignItems: 'center',
@@ -234,7 +235,8 @@ const FinalCTA = ({ t }) => {
                     </a>
                 </div>
             </div>
-        </section>
+        </AnimatedSection>
+    </section>
     );
 };
 
@@ -572,7 +574,7 @@ export default function Welcome({ missions: initialMissions, providers: initialP
                             <div className="oflem-trust-row">
                                 <div className="oflem-trust-item">
                                     <div className="oflem-trust-icon-wrap"><Shield size={18} /></div>
-                                    <div className="oflem-trust-label"><strong>{t('Paiement')}<br />{t('sécurisé')}</strong></div>
+                                    <div className="oflem-trust-label"><strong>{t('homepage.hero.trust.payment')}<br />{t('homepage.hero.trust.secure')}</strong></div>
                                 </div>
                                 <div className="oflem-trust-item">
                                     <div className="oflem-trust-icon-wrap"><ShieldCheck size={18} /></div>
@@ -751,77 +753,42 @@ export default function Welcome({ missions: initialMissions, providers: initialP
                         </div>
                         
                         <AnimatedSection delay="400ms">
-                            <div className="oflem-map-mock">
-                                <div className="oflem-map-inner">
-                                    <div className="oflem-map-grid-overlay" />
-                                    <div className="oflem-radar-ring" style={{ animationDelay: '0s' }} />
-                                    <div className="oflem-radar-ring" style={{ animationDelay: '1s' }} />
-                                    <div className="oflem-radar-ring" style={{ animationDelay: '2s' }} />
-                                    
-                                    <div className="oflem-map-center">
-                                        <div className="oflem-map-center-title">{t('homepage.how_it_works.map.center_title')}</div>
-                                        <div className="oflem-map-center-meta">{t('homepage.how_it_works.map.center_meta')}</div>
-                                    </div>
-                                    
-                                    <div className="oflem-map-card best" style={{ top: '15%', left: '12%', animation: 'fi .6s ease both 1s' }}>
-                                        <span className="oflem-map-card-badge">{t('homepage.how_it_works.map.badge_closest')}</span>
-                                        <div className="oflem-map-card-name">Léa C.</div>
-                                        <div className="oflem-map-card-sub">★★★★★ · {t('homepage.how_it_works.map.cat_courses')}</div>
-                                        <div className="oflem-map-card-price">CHF 20.–</div>
-                                        <div className="oflem-map-card-avail">{t('homepage.how_it_works.map.avail_now')}</div>
-                                    </div>
-                                    
-                                    <div className="oflem-map-card normal" style={{ bottom: '15%', right: '10%', animation: 'fi .6s ease both 1.4s' }}>
-                                        <div className="oflem-map-card-name">Noah T.</div>
-                                        <div className="oflem-map-card-sub">★★★★★ · {t('homepage.how_it_works.map.cat_bricolage')}</div>
-                                        <div className="oflem-map-card-price">CHF 25.–</div>
-                                        <div className="oflem-map-card-avail">{t('homepage.how_it_works.map.avail_fast')}</div>
-                                    </div>
-                                    
-                                    <div className="oflem-dot" style={{ top: '30%', right: '25%' }} />
-                                    <div className="oflem-dot" style={{ bottom: '40%', left: '20%' }} />
-                                </div>
-                                <div className="oflem-map-caption">
-                                    <div className="oflem-map-caption-title">{t('homepage.how_it_works.map.caption_title')}</div>
-                                    <div className="oflem-map-caption-sub">{t('homepage.how_it_works.map.caption_sub')}</div>
-                                </div>
-                            </div>
+                            <MapMock />
                         </AnimatedSection>
                     </div>
                 </div>
             </section>
 
             {/* ═══ WHY OFLEM SECTION (Trust Pillars) ═══ */}
-            {/* ═══ WHY OFLEM SECTION (New from HTML) ═══ */}
             <section className="oflem-section section section-gray oflem-section-gray reveal visible" id="why-oflem">
                 <div className="oflem-container">
                     <div className="section-head reveal visible">
                         <AnimatedSection>
                             <div className="section-label">{t('homepage.pillars_section.label')}</div>
-                            <h2 className="section-title">{t('homepage.pillars_section.title')}</h2>
+                            <h2 className="section-title">
+                                {t('homepage.pillars_section.title')}
+                                <br />
+                                {t('homepage.pillars_section.title_sub')}
+                            </h2>
                             <p className="section-sub">{t('homepage.pillars_section.description')}</p>
                         </AnimatedSection>
                     </div>
 
-                    <div className="pillar-grid reveal visible" style={{ gridTemplateColumns: 'repeat(3, 1fr)', maxWidth: '1100px' }}>
+                    <div className="pillar-grid reveal visible" style={{ gridTemplateColumns: 'repeat(2, 1fr)', maxWidth: '900px' }}>
                         <AnimatedSection delay="0ms">
-                            <article className="pillar-card orange">
-                                <div className="pillar-icon-wrap" style={{ background: 'linear-gradient(135deg,#FF6B35,#FF8C5A)' }} aria-hidden="true">
-                                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
-                                        <circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" />
-                                    </svg>
+                            <article className="pillar-card" style={{ textAlign: 'left' }}>
+                                <div className="pillar-icon-wrap" style={{ background: 'linear-gradient(135deg,var(--o),var(--ol))' }}>
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
                                 </div>
-                                <h3 className="pillar-title">{t('homepage.pillars_section.items.transparency.title')}</h3>
-                                <p className="pillar-text">{t('homepage.pillars_section.items.transparency.text')}</p>
+                                <h3 className="pillar-title">{t('homepage.pillars_section.items.verified.title')}</h3>
+                                <p className="pillar-text">{t('homepage.pillars_section.items.verified.text')}</p>
                             </article>
                         </AnimatedSection>
 
                         <AnimatedSection delay="100ms">
-                            <article className="pillar-card green">
-                                <div className="pillar-icon-wrap" style={{ background: 'linear-gradient(135deg,#10b981,#059669)' }} aria-hidden="true">
-                                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
-                                        <rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                                    </svg>
+                            <article className="pillar-card" style={{ textAlign: 'left' }}>
+                                <div className="pillar-icon-wrap" style={{ background: 'linear-gradient(135deg,var(--g),#34d399)' }}>
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                                 </div>
                                 <h3 className="pillar-title">{t('homepage.pillars_section.items.escrow.title')}</h3>
                                 <p className="pillar-text">{t('homepage.pillars_section.items.escrow.text')}</p>
@@ -829,14 +796,22 @@ export default function Welcome({ missions: initialMissions, providers: initialP
                         </AnimatedSection>
 
                         <AnimatedSection delay="200ms">
-                            <article className="pillar-card purple">
-                                <div className="pillar-icon-wrap" style={{ background: 'linear-gradient(135deg,#667eea,#764ba2)' }} aria-hidden="true">
-                                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
-                                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><polyline points="16 11 18 13 22 9" />
-                                    </svg>
+                            <article className="pillar-card" style={{ textAlign: 'left' }}>
+                                <div className="pillar-icon-wrap" style={{ background: 'linear-gradient(135deg,#667eea,#764ba2)' }}>
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
                                 </div>
-                                <h3 className="pillar-title">{t('homepage.pillars_section.items.profiles.title')}</h3>
-                                <p className="pillar-text">{t('homepage.pillars_section.items.profiles.text')}</p>
+                                <h3 className="pillar-title">{t('homepage.pillars_section.items.local.title')}</h3>
+                                <p className="pillar-text">{t('homepage.pillars_section.items.local.text')}</p>
+                            </article>
+                        </AnimatedSection>
+
+                        <AnimatedSection delay="300ms">
+                            <article className="pillar-card" style={{ textAlign: 'left' }}>
+                                <div className="pillar-icon-wrap" style={{ background: 'linear-gradient(135deg,#f6ad55,#ed8936)' }}>
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+                                </div>
+                                <h3 className="pillar-title">{t('homepage.pillars_section.items.mediation.title')}</h3>
+                                <p className="pillar-text">{t('homepage.pillars_section.items.mediation.text')}</p>
                             </article>
                         </AnimatedSection>
                     </div>

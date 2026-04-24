@@ -245,14 +245,14 @@
             "faq": "FAQ",
             "about": "Chi siamo",
             "login": "Accedi",
-            "register": "Registrati"
+            "register": "Diventa un prestatore"
         },
         "hero": {
             "title_tag": "Oflem — E se non dovessi fare tutto da solo?",
             "badge": "Piattaforma Svizzera",
             "line1": "E se non",
-            "line2": "dovessi fare",
-            "line3": "tutto da solo?",
+            "line2": "dovessi fare tutto",
+            "line3": "da solo?",
             "mantra": "Qualcuno vicino a te",
             "mantra_sub": "può occuparsene.",
             "description": "Passeggiate con il cane, montaggio mobili, giardinaggio, aiuto amministrativo, grandi progetti o piccole emergenze quotidiane, pubblica il tuo bisogno gratuitamente. Persone serie e verificate, vicine a te, ti risponderanno. Pagamento",
@@ -336,19 +336,21 @@
         },
         "pillars_section": {
             "label": "Perché Oflem",
-            "title": "Un quadro chiaro per i vostri servizi",
-            "description": "Trasparenza, sicurezza e regole semplici — sia per i clienti che per i prestatori.",
+            "title": "Pubblicare un annuncio può funzionare.<br>Tranne quando le cose vanno male.",
+            "description": "Pubblicare un annuncio tra privati o chiamare l'amico di un amico può funzionare. Ma quando le cose vanno male, sei solo. Oflem è l'affidabilità in più.",
             "items": {
-                "transparency": { "title": "Trasparenza totale", "text": "Il prezzo esposto è il prezzo finale. Nessun costo nascosto. Nessuna sorpresa. Questa è la regola." },
-                "escrow": { "title": "Pagamento via deposito a garanzia", "text": "Il denaro è bloccato fino alla fine della missione. Convalidate, quindi viene liberato. Non prima." },
-                "profiles": { "title": "Profili verificati", "text": "Identità confermata. Recensioni visibili. Cronologia consultabile. Sapete di chi vi fidate." }
+                "verified": { "title": "Prestatori verificati", "text": "Documento d'identità, diritto di lavorare in Svizzera, qualifiche verificate se necessario. Non un estraneo senza storia: qualcuno che la piattaforma ha convalidato." },
+                "escrow": { "title": "Denaro protetto da escrow", "text": "Non paghi in anticipo nel vuoto. I fondi sono bloccati e partono solo quando hai confermato che il lavoro è fatto. Niente anticipi. Niente cattive sorprese." },
+                "local": { "title": "Sempre qualcuno vicino a te", "text": "Ogni prestatore che risponde alla tua richiesta vive nella tua zona. Non qualcuno a 200 km. Non una piattaforma straniera. Una persona vicina, disponibile, che conosce la tua zona." },
+                "mediation": { "title": "Mediazione in caso di controversia", "text": "Quando qualcosa va male (e succede), non sei solo di fronte a un estraneo. Il nostro team interviene, i fondi rimangono bloccati fino alla risoluzione." }
             }
         },
         "pricing": {
             "label": "Tariffe",
             "title": "Una commissione semplice, esposta prima del pagamento",
-            "description": "Pubblicare è gratuito. Nessun abbonamento. Una commissione viene aggiunta al prezzo del fornitore più la commissione Oflem, visibile prima della conferma.",
-            "tiers": {
+            "description": "La pubblicazione è gratuita. Quando accetti un'offerta, paghi il prezzo del prestatore più la commissione Oflem, visibile prima della conferma."
+        },
+        "tiers": {
                 "small": { "label": "Piccole missioni", "range": "Fino a CHF 149", "example": "Fornitore: CHF 40 → Pagherai: CHF 50" },
                 "medium": { "label": "Missioni comuni", "badge": "Il più comune", "range": "CHF 150 a CHF 499", "example": "Fornitore: CHF 200 → Pagherai: CHF 240" },
                 "large": { "label": "Grandi progetti", "badge": "Miglior tasso", "range": "Da CHF 500", "example": "Fornitore: CHF 600 → Pagherai: CHF 672" }

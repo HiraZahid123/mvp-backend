@@ -49,7 +49,7 @@
             "password_label": "Mot de passe",
             "password_placeholder": "Votre mot de passe",
             "forgot_password": "Mot de passe oublié ?",
-            "button": "Se connecter",
+            "button": "Continuer",
             "back_to_home": "Retour à l'accueil",
             "encrypted_connection": "Connexion chiffrée",
             "data_in_switzerland": "Données en Suisse",
@@ -245,10 +245,10 @@
             "faq": "FAQ",
             "about": "À propos",
             "login": "Se connecter",
-            "register": "S'inscrire"
+            "register": "Devenir prestataire"
         },
         "hero": {
-            "title_tag": "Oflem — Et si vous n'aviez pas à tout faire seul ?",
+            "title_tag": "Oflem — Et si vous n'aviez pas à tout faire vous-même ?",
             "badge": "Plateforme suisse",
             "line1": "Et si vous n'aviez pas",
             "line2": "à tout faire",
@@ -327,27 +327,29 @@
                 "center_meta": "Lausanne · Rayon 15 km",
                 "badge_closest": "La plus proche",
                 "cat_courses": "Courses et livraison",
-                "cat_bricolage": "Bricolage",
-                "avail_now": "Disponible immédiatement",
-                "avail_fast": "Répond en 5 min",
-                "caption_title": "On s'occupe de tout.",
-                "caption_sub": "Oflem scanne les prestataires autour de vous et vous présente les meilleures offres."
+                "cat_bricolage": "Multi-services",
+                "avail_now": "Disponible maintenant",
+                "avail_fast": "Dans 30 minutes",
+                "caption_title": "Comment les offres arrivent",
+                "caption_sub": "Les prestataires proches de chez vous sont notifiés instantanément."
             }
         },
         "pillars_section": {
             "label": "Pourquoi Oflem",
-            "title": "Un cadre clair pour vos services",
-            "description": "Transparence, sécurité et règles simples — pour les clients comme pour les prestataires.",
+            "title": "Poster une annonce, ça peut marcher.",
+            "title_sub": "Sauf quand ça se passe mal.",
+            "description": "Poster une annonce entre particuliers ou appeler l'ami d'un ami, ça peut marcher. Mais quand ça se passe mal, vous êtes seul. Oflem, c'est la fiabilité en plus.",
             "items": {
-                "transparency": { "title": "Transparence totale", "text": "Le prix affiché est le prix final. Aucun frais caché. Aucune surprise. C'est la règle." },
-                "escrow": { "title": "Paiement par séquestre", "text": "L'argent est bloqué jusqu'à la fin de la mission. Vous validez, puis il est libéré. Pas avant." },
-                "profiles": { "title": "Profils vérifiés", "text": "Identité confirmée. Avis visibles. Historique consultable. Vous savez à qui vous faites confiance." }
+                "verified": { "title": "Prestataires vérifiés", "text": "Pièce d'identité, droit de travailler en Suisse, qualifications vérifiées si nécessaire. Pas un inconnu sans historique : quelqu'un que la plateforme a validé." },
+                "escrow": { "title": "Argent protégé par séquestre", "text": "Vous ne payez pas à l'avance dans le vide. Les fonds sont bloqués et ne partent que lorsque vous avez confirmé que le travail est fait. Ni avance. Ni mauvaise surprise." },
+                "local": { "title": "Toujours quelqu'un près de chez vous", "text": "Chaque prestataire qui répond à votre demande vit dans votre région. Pas quelqu'un à 200 km. Pas une plateforme étrangère. Une personne proche, disponible, qui connaît votre coin." },
+                "mediation": { "title": "Médiation en cas de litige", "text": "Quand quelque chose se passe mal (et ça arrive), vous n'êtes pas seul face à un inconnu. Notre équipe intervient, les fonds restent bloqués jusqu'à résolution." }
             }
         },
         "pricing": {
             "label": "Tarification",
             "title": "Une commission simple, affichée avant paiement",
-            "description": "Publier est gratuit. Aucun abonnement. Une commission est ajoutée au prix du prestataire plus la commission Oflem, visible avant de confirmer.",
+            "description": "Publier est gratuit. Quand vous acceptez une offre, vous payez le prix du prestataire plus la commission Oflem, visible avant de confirmer.",
             "tiers": {
                 "small": { "label": "Petites missions", "range": "Jusqu'à CHF 149", "example": "Prestataire : CHF 40 → Vous payez : CHF 50" },
                 "medium": { "label": "Missions courantes", "badge": "Le plus courant", "range": "CHF 150 à CHF 499", "example": "Prestataire : CHF 200 → Vous payez : CHF 240" },
@@ -456,7 +458,7 @@
                 },
                 "cost_provider": {
                     "q": "Combien ça coûte pour un prestataire ?",
-                    "a": "L'inscription est gratuite. Aucun abonnement, aucun frais fixe. Vous proposez un prix, vous recevez 100% de ce montant. Point.<br><br>La commission Oflem (<strong>25%</strong> · <strong>20%</strong> · <strong>12%</strong> selon la mission) est ajoutée côté client, jamais prélevée sur votre gain. C'est ce qui permet d'attirer des clients sérieux, avec un paiement garanti avant même que vous commenciez."
+                    "a": "L'inscription est gratuite. Aucun abonnement, aucun frais fixe. Vous proposez un prix, vous recevez 100% de ce montant. Point.<br><br>La commission Oflem (25% · 20% · 12% selon la mission) est ajoutée côté client, jamais prélevée sur votre gain. C'est ce qui permet d'attirer des clients sérieux, avec un paiement garanti avant même que vous commenciez."
                 },
                 "artisan": {
                     "q": "Faut-il être artisan ou indépendant ?",
@@ -495,7 +497,7 @@
             "rest": "Laissez Oflem s'occuper du reste.",
             "skill": "Et si vous avez une compétence, un talent, ou simplement l'envie d'aider :<br>quelqu'un, près de chez vous, en a besoin.",
             "btn_client": "Publier ma demande, c'est gratuit",
-            "btn_provider": "S'inscrire comme prestataire"
+            "btn_provider": "Devenir prestataire"
         },
         "stats": {
             "happy_lazy": "Clients Heureux",
@@ -549,7 +551,7 @@
             "trust": {
                 "escrow": "🔒 Paiement sécurisé par séquestre",
                 "swiss_data": "🇨🇭 Données hébergées en Suisse",
-                "lausanne": "📍 Basé à Lausanne",
+                "lausanne": "📍 Lausanne, Suisse",
                 "nlpd": "✓ Conforme nLPD"
             },
             "col": {
@@ -559,20 +561,54 @@
             },
             "links": {
                 "publish": "Publier une demande",
-                "provider": "S'inscrire comme prestataire",
+                "provider": "Devenir prestataire",
                 "how": "Comment ça marche",
                 "examples": "Exemples de missions",
                 "faq": "FAQ",
                 "about": "À propos",
                 "contact": "Nous contacter",
                 "mentions": "Mentions légales",
-                "cgu": "CGU",
+                "cgu": "Conditions Générales (CGU)",
                 "privacy": "Protection des données",
                 "cookies": "Politique de cookies"
             },
             "bottom": {
-                "copy": "© 2026 Oflem · Suisse",
-                "made_in": "Made in Switzerland"
+                "copy": "© 2024 Oflem. Tous droits réservés.",
+                "made_in": "Fait avec passion en Suisse"
+            }
+        },
+        "legal": {
+            "label": "Légal",
+            "back": "← Retour",
+            "nav": {
+                "cgu": "CGU",
+                "mentions": "Mentions légales",
+                "privacy": "Protection des données",
+                "cookies": "Cookies",
+                "about": "À propos"
+            },
+            "cgu": {
+                "title": "Conditions Générales d'Utilisation",
+                "subtitle": "Dernière mise à jour : 1er février 2026",
+                "content": "<h2>1. Objet et champ d'application</h2><p>Les présentes Conditions Générales d'Utilisation (ci-après « CGU ») régissent l'accès et l'utilisation de la plateforme Oflem (ci-après « la Plateforme »), accessible à l'adresse oflem.ch, exploitée par Oflem SA (en cours de constitution), société de droit suisse.</p><p>Oflem est une plateforme de mise en relation entre des personnes recherchant des services (ci-après « Clients ») et des prestataires indépendants ou entreprises proposant leurs services (ci-après « Prestataires »). <strong>Oflem agit exclusivement en qualité de courtier au sens des articles 412 et suivants du Code des obligations suisse (CO)</strong>.</p><h2>2. Rôle d'Oflem et absence de lien de subordination</h2><p>Oflem est un intermédiaire technique de mise en relation. <strong>Oflem n'est pas partie au contrat de service conclu entre le Client et le Prestataire.</strong></p><p>Les Prestataires inscrits sur la Plateforme exercent leur activité en tant que travailleurs indépendants au sens de l'art. 12 LAVS ou en tant qu'entreprises inscrites au registre du commerce. Aucun lien de subordination (art. 319 CO) n'existe entre Oflem et les Prestataires. Notamment :</p><ul><li>Oflem ne fixe pas les prix des prestations — le Prestataire détermine librement ses tarifs ;</li><li>Oflem ne donne aucune instruction sur la méthode, le lieu ou l'horaire d'exécution du travail ;</li><li>Oflem ne fournit pas d'outils ni de matériaux pour l'exécution des prestations ;</li><li>Le Prestataire est libre d'accepter ou de refuser toute mission proposée sur la Plateforme ;</li><li>Le Prestataire peut exercer son activité pour d'autres plateformes ou clients simultanément.</li></ul><p>Le Prestataire est seul responsable de ses obligations fiscales (TVA, impôt sur le revenu), sociales (AVS/AI/APG, assurance-accidents) et administratives (autorisation de travail, inscription au registre du commerce si nécessaire).</p><h2>3. Inscription et obligations des utilisateurs</h2><h3>3.1 Conditions d'inscription</h3><p>L'inscription est ouverte à toute personne physique majeure (18 ans révolus) ou personne morale domiciliée en Suisse. L'utilisateur garantit l'exactitude des informations fournies.</p><h3>3.2 Obligations du Client</h3><p>Le Client s'engage à fournir une description précise et honnête de sa demande, à respecter les délais convenus avec le Prestataire, et à valider ou contester le travail dans un délai de 5 jours ouvrés après notification d'achèvement.</p><h3>3.3 Obligations du Prestataire</h3><p>Le Prestataire s'engage à disposer des qualifications nécessaires, à fournir un travail conforme aux termes convenus, et à respecter le droit suisse applicable, notamment la LTr (loi sur le travail) s'il emploie du personnel.</p><h2>4. Fonctionnement du séquestre</h2><p>Le paiement est sécurisé par un mécanisme de séquestre :</p><ul><li><strong>Blocage</strong> : le montant convenu est bloqué sur un compte séquestre dès l'acceptation de l'offre par le Client ;</li><li><strong>Notification</strong> : le Prestataire est informé du blocage des fonds et peut commencer le travail ;</li><li><strong>Libération</strong> : à l'achèvement du travail, le Client valide et les fonds sont libérés au Prestataire, déduction faite de la commission Oflem ;</li><li><strong>Litige</strong> : en cas de désaccord, les fonds restent bloqués pendant la procédure de médiation (cf. art. 7).</li></ul><p>Les fonds en séquestre sont gérés par un <strong>prestataire de services de paiement agréé</strong> (ci-après « le Partenaire financier »), en conformité avec la législation suisse sur les services financiers. <strong>Oflem ne détient jamais directement les fonds des utilisateurs.</strong> Le Partenaire financier (ex. : Stripe Connect ou équivalent) est soumis aux régulations applicables et assure la séparation des fonds conformément aux exigences de la FINMA.</p><h2>5. Commission et tarification</h2><p>La publication d'une demande par un Client est gratuite. Le Client ne paie aucun frais de service additionnel en dehors de la commission Oflem décrite ci-dessous.</p><p>La commission Oflem est <strong>ajoutée au prix proposé par le Prestataire</strong> et facturée au Client. Le Prestataire reçoit <strong>100% du montant de son offre</strong>. La commission est dégressive selon le montant de la mission :</p><ul><li><strong>25% (hors TVA)</strong> — missions jusqu'à CHF 149.–</li><li><strong>20% (hors TVA)</strong> — missions de CHF 150.– à CHF 499.–</li><li><strong>12% (hors TVA)</strong> — missions à partir de CHF 500.–</li></ul><p>La commission est prélevée automatiquement lors du paiement par le Client, avant le blocage des fonds en séquestre. Le montant total affiché au Client inclut toujours la commission Oflem.</p><p>Oflem se réserve le droit de modifier ses tarifs avec un préavis de 30 jours, notifié par email aux utilisateurs concernés.</p><h2>6. Services d'économie domestique</h2><p>Certains services proposés sur la Plateforme, notamment le <strong>nettoyage, le repassage, la garde d'enfants et l'aide à domicile</strong>, relèvent de l'économie domestique au sens du droit suisse du travail.</p><p><strong>Pour ces services, le Client reconnaît qu'il peut acquérir le statut d'employeur au sens de l'art. 319 CO et de la LAVS</strong>, même si la prestation est ponctuelle. À ce titre, le Client s'engage à :</p><ul><li>Procéder aux déclarations obligatoires auprès de la caisse de compensation AVS de son canton ;</li><li>S'acquitter des cotisations sociales (AVS/AI/APG/AC) et de l'assurance-accidents (LAA) conformément à la législation en vigueur ;</li><li>Utiliser, le cas échéant, le <strong>système de chèque-emploi</strong> proposé par son canton, qui simplifie ces démarches.</li></ul><p>Oflem met à disposition un outil de mise en relation et un mécanisme de séquestre pour sécuriser les paiements. <strong>Oflem n'assume aucune responsabilité en cas de non-déclaration du travail par le Client ou le Prestataire.</strong> Les parties sont seules responsables du respect de leurs obligations légales en matière de droit du travail et de sécurité sociale.</p><p>Un rappel informatif est affiché lors de la publication d'une demande relevant de l'économie domestique.</p><h2>7. Protection des communications</h2><p>La messagerie intégrée à la Plateforme est le canal de communication officiel entre Client et Prestataire. <strong>L'échange de coordonnées personnelles (numéro de téléphone, adresse email, adresse postale) via la messagerie est interdit</strong> avant la conclusion et le paiement de la mission, afin de garantir la traçabilité et la protection des deux parties.</p><p>Tout contournement de cette règle pourra entraîner la suspension du compte concerné.</p><h2>8. Médiation et résolution des litiges</h2><p>En cas de litige entre un Client et un Prestataire, les parties s'engagent à recourir en premier lieu à la procédure de médiation proposée par Oflem, gratuite pour les deux parties. Le médiateur rend un avis non contraignant dans un délai de 5 jours ouvrés.</p><p>À défaut d'accord, les parties conservent l'intégralité de leurs droits de recours selon le droit suisse. Le for juridique est fixé au siège social d'Oflem SA, sauf dispositions impératives contraires (art. 32 CPC pour les consommateurs).</p><h2>9. Responsabilité</h2><p>Oflem ne garantit pas la qualité, la ponctualité ou la conformité des prestations fournies par les Prestataires. Le contrat de service est conclu directement entre le Client et le Prestataire.</p><p>La responsabilité d'Oflem est limitée au bon fonctionnement technique de la Plateforme et au mécanisme de séquestre, dans les limites permises par le droit suisse.</p><h2>10. Droit applicable et for</h2><p>Les présentes CGU sont régies par le droit suisse. Le for exclusif est fixé au siège social d'Oflem SA, sous réserve des dispositions impératives du droit de la consommation suisse.</p>"
+            },
+            "mentions": {
+                "title": "Mentions légales",
+                "content": "<h2>Éditeur du site</h2><p>Oflem SA (en cours de constitution)<br>Forme juridique : Société anonyme de droit suisse<br>Siège social : Suisse romande<br>Contact : <a href=\"mailto:contact@oflem.ch\" style=\"color:var(--o)\">contact@oflem.ch</a></p><h2>Propriété intellectuelle</h2><p>L'ensemble du contenu du site (textes, images, graphismes, logo, icônes) est la propriété exclusive d'Oflem SA ou de ses partenaires. Toute reproduction, représentation ou diffusion, même partielle, est interdite sans autorisation préalable écrite (art. 2 LDA).</p><h2>Responsabilité éditoriale</h2><p>Oflem SA s'efforce d'assurer l'exactitude des informations publiées sur le site. Toutefois, Oflem SA ne saurait être tenue responsable d'omissions, d'inexactitudes ou de carences dans la mise à jour de ces informations.</p><p>Les avis et évaluations publiés par les utilisateurs relèvent de leur seule responsabilité. Oflem SA se réserve le droit de modérer ou supprimer tout contenu contraire aux CGU ou au droit suisse.</p><h2>Hébergement</h2><p>Le site est hébergé en Suisse, conformément aux exigences de la nLPD en matière de localisation des données chez Infomaniak.</p>"
+            },
+            "privacy": {
+                "title": "Protection des données",
+                "subtitle": "Conforme à la nLPD (RS 235.1) entrée en vigueur le 1er septembre 2023",
+                "content": "<h2>1. Responsable du traitement</h2><p>Oflem SA (en cours de constitution), Suisse romande.<br>Conseiller à la protection des données : <a href=\"mailto:privacy@oflem.ch\" style=\"color:var(--o)\">privacy@oflem.ch</a></p><h2>2. Données collectées</h2><p>Nous collectons les données suivantes dans le cadre de l'utilisation de la Plateforme :</p><ul><li><strong>Données d'identification</strong> : nom, prénom, adresse email, numéro de téléphone ;</li><li><strong>Données professionnelles</strong> (Prestataires) : catégorie de service, expérience, zone d'intervention, bio professionnelle ;</li><li><strong>Données de transaction</strong> : montants, dates, statut des paiements ;</li><li><strong>Données de communication</strong> : messages échangés via la messagerie intégrée ;</li><li><strong>Données techniques</strong> : adresse IP, type de navigateur, pages consultées, cookies essentiels.</li></ul><h2>3. Finalités du traitement</h2><p>Les données sont traitées pour : l'exécution du contrat de service (art. 31 al. 2 let. a nLPD), la gestion du séquestre, la prévention des fraudes, l'amélioration de la Plateforme, et le respect de nos obligations légales.</p><h2>4. Base juridique</h2><p>Le traitement repose sur : l'exécution du contrat (art. 31 al. 2 let. a nLPD), le consentement de l'utilisateur lorsque nécessaire (art. 6 al. 6 nLPD), et les intérêts légitimes d'Oflem (prévention de la fraude, amélioration du service).</p><h2>5. Durée de conservation</h2><p>Les données personnelles sont conservées pendant la durée de la relation contractuelle, puis pendant 10 ans conformément aux obligations comptables suisses (art. 958f CO). Les données de communication sont conservées 2 ans après la clôture de la mission.</p><h2>6. Transfert de données</h2><p><strong>Aucune donnée personnelle n'est transférée hors de Suisse</strong>. Toutes les données sont hébergées sur des serveurs situés en Suisse.</p><p>En cas de nécessité future de transfert vers un pays tiers, celui-ci ne sera effectué que vers un pays offrant un niveau de protection adéquat au sens de l'art. 16 nLPD, ou moyennant des garanties appropriées (art. 16 al. 2 nLPD).</p><h2>7. Droits des personnes concernées</h2><p>Conformément à la nLPD, vous disposez des droits suivants :</p><ul><li><strong>Droit d'accès</strong> (art. 25 nLPD) : obtenir confirmation du traitement et une copie de vos données ;</li><li><strong>Droit de rectification</strong> : corriger les données inexactes ;</li><li><strong>Droit à l'effacement</strong> : demander la suppression de vos données (sous réserve des obligations légales de conservation) ;</li><li><strong>Droit à la portabilité</strong> (art. 28 nLPD) : recevoir vos données dans un format structuré et lisible ;</li><li><strong>Droit d'opposition</strong> : vous opposer au traitement à des fins de marketing.</li></ul><p>Pour exercer vos droits : <a href=\"mailto:privacy@oflem.ch\" style=\"color:var(--o)\">privacy@oflem.ch</a>. Réponse dans un délai de 30 jours.</p><h2>8. Sécurité</h2><p>Oflem met en œuvre des mesures techniques et organisationnelles appropriées (art. 8 nLPD) : chiffrement TLS/SSL, hachage des mots de passe, contrôle d'accès, journalisation des accès, sauvegardes régulières.</p><h2>9. Violation de données</h2><p>En cas de violation de la sécurité des données présentant un risque élevé pour les personnes concernées, Oflem notifiera le Préposé fédéral à la protection des données (PFPDT) dans les meilleurs délais (art. 24 nLPD) et, si nécessaire, les personnes concernées.</p>"
+            },
+            "cookies": {
+                "title": "Politique de cookies",
+                "content": "<h2>Qu'est-ce qu'un cookie ?</h2><p>Un cookie est un petit fichier texte déposé sur votre appareil lors de la visite d'un site web. Il permet de mémoriser certaines informations pour faciliter votre navigation.</p><h2>Cookies utilisés par Oflem</h2><h3>Cookies strictement nécessaires</h3><p>Ces cookies sont indispensables au fonctionnement de la Plateforme et ne peuvent pas être désactivés :</p><ul><li><strong>oflem_session</strong> : identifiant de session, durée : session du navigateur ;</li><li><strong>oflem_cookies</strong> : mémorisation de votre choix concernant les cookies, durée : 12 mois ;</li><li><strong>oflem_csrf</strong> : protection contre les attaques CSRF, durée : session.</li></ul><h3>Cookies analytiques (optionnels)</h3><p>Ces cookies nous permettent de mesurer l'audience et d'améliorer la Plateforme. Ils ne sont activés qu'avec votre consentement :</p><ul><li><strong>Outil d'analyse</strong> : solution hébergée en Suisse, sans transfert de données vers l'étranger, données anonymisées.</li></ul><h2>Aucun cookie publicitaire</h2><p>Oflem n'utilise <strong>aucun cookie publicitaire ou de ciblage</strong>. Aucune donnée n'est transmise à des réseaux publicitaires tiers.</p><h2>Gestion de vos préférences</h2><p>Vous pouvez à tout moment modifier vos préférences en matière de cookies via les paramètres de votre navigateur. La désactivation des cookies essentiels peut toutefois affecter le fonctionnement de la Plateforme.</p>"
+            },
+            "about": {
+                "label": "Entreprise",
+                "title": "À propos d'Oflem",
+                "content": "<h2>Notre mission</h2><p>Oflem est né d'un constat simple : trouver un prestataire de confiance en Suisse reste compliqué. Entre les recommandations de bouche à oreille sans garantie et les plateformes étrangères inadaptées au marché local, il manquait une solution transparente, sécurisée et ancrée en Suisse.</p><p>Nous avons créé Oflem pour connecter les particuliers aux bons prestataires — avec un paiement protégé par séquestre, une vérification sérieuse, et une transparence totale sur les prix.</p><h2>Qui sommes-nous</h2><p>Oflem est un projet fondé et développé en Suisse romande, ancré à Lausanne. Nous ne sommes pas une grande structure. Nous sommes des gens qui connaissent la région, ses usages et ses attentes. Nous préférons construire quelque chose de solide et fiable à l'échelle de la Suisse romande plutôt que de promettre une expansion mondiale en six mois.</p><h2>Pourquoi la Suisse ?</h2><p>Parce que la qualité de service, la confiance et la protection des données sont des valeurs auxquelles nous tenons. Toutes nos données sont hébergées en Suisse chez Infomaniak. Notre plateforme est conforme à la nLPD. Et notre modèle de séquestre est conçu pour le marché suisse.</p><h2>Notre modèle économique</h2><p>La publication est gratuite pour les clients. Les prestataires s'inscrivent gratuitement et perçoivent 100% du montant de leur offre. Notre commission (12% à 25% selon la mission) est ajoutée côté client et est toujours affichée avant tout paiement. Pas de surprise, pas d'abonnement caché.</p><h2>Nous contacter</h2><p>Email : <a href=\"mailto:contact@oflem.ch\" style=\"color:var(--o)\">contact@oflem.ch</a><br>Pour les prestataires : <a href=\"mailto:providers@oflem.ch\" style=\"color:var(--o)\">providers@oflem.ch</a><br>Protection des données : <a href=\"mailto:privacy@oflem.ch\" style=\"color:var(--o)\">privacy@oflem.ch</a></p>"
             }
         }
     },
@@ -630,7 +666,7 @@
         "upload_photo": "Télécharger une photo",
         "id_piece": "Pièce d'identité",
         "doc_selected": "Document sélectionné",
-        "id_upload_hint": "Cliquez pour télécharger (ID/Passeport)",
+        "id_upload_hint": "Cliquez pour télécharger",
         "address_proof": "Preuve de domicile",
         "upload": "Télécharger",
         "permit_ch": "Permis CH",
@@ -648,7 +684,7 @@
         "accept_terms_end": "et la",
         "cgu": "CGU",
         "privacy": "Politique de confidentialité",
-        "legal_confirm": " Je confirme exercer en tant qu'indépendant ou entreprise.",
+        "legal_confirm": " Je confirme exercer en tant qu'indépendant ou entreprise (art. 412 CO).",
         "create_profile_btn": "Créer mon profil →",
         "client_title": "Créer votre compte — Client",
         "your_request": "Votre demande",

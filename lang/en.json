@@ -36,28 +36,28 @@
     },
     "auth": {
         "login": {
-            "title": "Log In — Oflem",
-            "greeting": "Glad to see you again.",
-            "subtitle": "Continue where you left off, your dashboard is waiting.",
-            "client_space": "Client Space",
-            "client_space_sub": "Manage my missions and received offers",
-            "provider_space": "Provider Space",
-            "provider_space_sub": "See my opportunities and earnings",
+            "title": "Login — Oflem",
+            "greeting": "Nice to see you again.",
+            "subtitle": "Pick up where you left off, your dashboard is waiting.",
+            "client_space": "Client area",
+            "client_space_sub": "Manage my missions and offers",
+            "provider_space": "Provider area",
+            "provider_space_sub": "View my opportunities and earnings",
             "manual_divider": "or log in manually",
-            "email_label": "Email Address",
+            "email_label": "Email address",
             "email_placeholder": "your@email.ch",
             "password_label": "Password",
             "password_placeholder": "Your password",
             "forgot_password": "Forgot password?",
-            "button": "Log In",
-            "back_to_home": "Back to Home",
-            "encrypted_connection": "Encrypted Connection",
+            "button": "Continue",
+            "back_to_home": "Back to home",
+            "encrypted_connection": "Encrypted connection",
             "data_in_switzerland": "Data in Switzerland",
-            "nlpd_compliant": "nLPD Compliant",
-            "no_account": "Don't have an account yet?",
+            "nlpd_compliant": "nLPD compliant",
+            "no_account": "Don't have an account?",
             "sign_up": "Sign up →",
             "manual_title": "You know the drill.",
-            "manual_subtitle": "Your access, securely.",
+            "manual_subtitle": "Your access, completely secure.",
             "memory_gap": "A little memory gap?",
             "no_panic": "Don't panic, we'll send you a reset link."
         },
@@ -245,26 +245,26 @@
             "faq": "FAQ",
             "about": "About",
             "login": "Log In",
-            "register": "Register"
+            "register": "Become a provider"
         },
         "hero": {
-            "title_tag": "Oflem — What if you didn't have to do it all alone?",
+            "title_tag": "Oflem — What if you didn't have to do everything yourself?",
             "badge": "Swiss platform",
-            "line1": "What if you didn't",
-            "line2": "have to do",
-            "line3": "everything yourself?",
-            "mantra": "Someone near you",
-            "mantra_sub": "can take care of it.",
-            "description": "Dog walking, furniture assembly, gardening, administrative help, large projects or small daily emergencies, post your need for free. Serious and verified people near you will answer. Payment",
-            "protected": "protected by escrow",
-            "pub_button": "Post my request →",
+            "line1": "And if you hadn't",
+            "line2": "Do everything",
+            "line3": "yourself?",
+            "mantra": "SOMEONE NEAR YOU CAN TAKE CARE OF IT.",
+            "mantra_sub": "",
+            "description": "Dog walking, furniture assembly, gardening, administrative assistance, major projects, or minor everyday emergencies—post your request for free. Reliable, verified individuals near you will respond. Payment",
+            "protected": "is secured by escrow",
+            "pub_button": "Publish my request →",
             "pub_hints": {
                 "free": "Free",
                 "no_commitment": "No commitment",
                 "commission": "Commission shown before payment"
             },
-            "cta_provider": "I am a provider →",
-            "cta_provider_sub": "Earn money with your skills",
+            "cta_provider": "I am a service provider →",
+            "cta_provider_sub": "Make money with your skills",
             "trust": {
                 "payment": "Payment",
                 "secure": "secure",
@@ -301,75 +301,77 @@
         },
         "categories_section": {
             "label": "What people can post on Oflem",
-            "title": "You might recognize yourself here.",
-            "subtitle": "This isn't a fixed list. Oflem isn't a platform specialized in a single service type, but a space where you freely describe your need.",
+            "title": "You might recognize yourself.",
+            "subtitle": "This is not a fixed list. Oflem is not a platform specializing in a single type of service, but a space where you freely describe your needs.",
             "items": {
-                "pets": { "title": "Walking & Pets", "sub": "Your dog needs to go out. You, not necessarily." },
-                "bricolage": { "title": "Assembly & Handyman", "sub": "That flat-pack furniture that's been waiting too long." },
-                "cleaning": { "title": "Cleaning & Maintenance", "sub": "Because coming home to a clean space changes everything." },
-                "gardening": { "title": "Gardening & Outdoor", "sub": "Tall grass, leaves everywhere, a little refresh." },
-                "daily": { "title": "Daily Help", "sub": "Pick up a parcel, run an errand, go to the recycling center." },
-                "admin": { "title": "Administrative Help", "sub": "Taxes, official letters, Swiss procedures: a human who understands your situation." },
-                "remote": { "title": "Remote Missions", "sub": "Translations, documents, organization, writing. Everything is done from home." },
-                "other": { "title": "Something else?", "sub": "If it's legal and simplifies your life, post it." }
+                "pets": { "title": "Walks & Animals", "sub": "Your dog needs to go out. You don't necessarily." },
+                "bricolage": { "title": "Assembly & DIY", "sub": "This flat-pack furniture that has been waiting for far too long." },
+                "cleaning": { "title": "Cleaning & maintenance", "sub": "Because entering a clean space changes everything." },
+                "gardening": { "title": "Gardening & Outdoors", "sub": "Tall grass, leaves everywhere, a little refreshment." },
+                "daily": { "title": "Daily assistance", "sub": "Pick up a package, run an errand, go to the recycling center." },
+                "admin": { "title": "Administrative assistance", "sub": "Taxes, official correspondence, Swiss procedures: a human who understands your situation." },
+                "remote": { "title": "Remote missions", "sub": "Translations, documents, organization, writing. Everything is done from the comfort of your home." },
+                "other": { "title": "Anything else?", "sub": "If it's legal and makes your life easier, publish it." }
             }
         },
         "how_it_works": {
             "label": "How it works",
             "title": "Three steps. No more.",
             "steps": {
-                "step1": { "title": "Describe what you need", "desc": "One sentence is enough. \"Help for my Vaud tax return\" or \"Someone to assemble a wardrobe Saturday morning in Montreux\". Indicate your budget. Posting is free and without commitment." },
-                "step2": { "title": "Verified providers answer you", "desc": "People near you, verified by Oflem, consult your request and make a proposal. You compare, you choose, without pressure." },
-                "step3": { "title": "You only pay when everything is finished", "desc": "The amount is held safely. The provider is paid only after your validation. In case of trouble, our team intervenes." }
+                "step1": { "title": "Describe what you need", "desc": "One sentence is all it takes. \"Help with my Vaud tax return\" or \"Someone to assemble a wardrobe Saturday morning in Montreux.\" Indicate your budget. Posting is free and without obligation." },
+                "step2": { "title": "Verified service providers will respond to you.", "desc": "People near you, verified by Oflem, review your request and make you an offer. You compare, you choose, without pressure." },
+                "step3": { "title": "You only pay when everything is finished.", "desc": "The funds are held securely. The service provider is only paid after your approval. In case of any issues, our team will intervene." }
             },
             "map": {
                 "center_title": "Your request",
                 "center_meta": "Lausanne · Radius 15 km",
                 "badge_closest": "Closest",
                 "cat_courses": "Errands and delivery",
-                "cat_bricolage": "Handyman",
+                "cat_bricolage": "Multi-services",
                 "avail_now": "Available immediately",
                 "avail_fast": "Answers in 5 min",
-                "caption_title": "We handle everything.",
-                "caption_sub": "Oflem scans providers around you and presents you the best offers."
+                "caption_title": "How the offers arrive",
+                "caption_sub": "Service providers near you are notified instantly."
             }
         },
         "pillars_section": {
             "label": "Why Oflem",
-            "title": "A clear framework for your services",
-            "description": "Transparency, security, and simple rules — for both clients and providers.",
+            "title": "Posting an ad can work.",
+            "title_sub": "Except when things go wrong.",
+            "description": "Posting an ad privately or calling a friend of a friend might work. But when things go wrong, you're on your own. Oflem offers added reliability.",
             "items": {
-                "transparency": { "title": "Total transparency", "text": "The price displayed is the final price. No hidden fees. No surprises. That's the rule." },
-                "escrow": { "title": "Escrow payment", "text": "The money is held until the mission is completed. You validate, then it's released. Not before." },
-                "profiles": { "title": "Verified profiles", "text": "Identity confirmed. Visible reviews. Searchable history. You know who you are trusting." }
+                "verified": { "title": "Verified service providers", "text": "Proof of identity, right to work in Switzerland, qualifications verified if necessary. Not a stranger with no history: someone vetted by the platform." },
+                "escrow": { "title": "Money protected by escrow", "text": "You don't pay in advance for nothing. The funds are held and only released when you have confirmed that the work is done. No deposit. No unpleasant surprises." },
+                "local": { "title": "Always someone near you", "text": "Every service provider who responds to your request lives in your area. Not someone 200 km away. Not a foreign platform. A local person, available, who knows your neighborhood." },
+                "mediation": { "title": "Mediation in case of dispute", "text": "When something goes wrong (and it happens), you're not alone facing a stranger. Our team intervenes, and the funds remain held until resolution." }
             }
         },
         "pricing": {
             "label": "Pricing",
-            "title": "A simple commission, shown before payment",
-            "description": "Posting is free. No subscription. A commission is added to the provider's price plus the Oflem commission, visible before confirming.",
+            "title": "A simple commission, displayed before payment",
+            "description": "Posting is free. When you accept an offer, you pay the service provider's price plus the Oflem commission, visible before confirming.",
             "tiers": {
-                "small": { "label": "Small missions", "range": "Up to CHF 149", "example": "Provider: CHF 40 → You pay: CHF 50" },
-                "medium": { "label": "Common missions", "badge": "Most common", "range": "CHF 150 to CHF 499", "example": "Provider: CHF 200 → You pay: CHF 240" },
-                "large": { "label": "Large projects", "badge": "Best rate", "range": "From CHF 500", "example": "Provider: CHF 600 → You pay: CHF 672" }
+                "small": { "label": "Small missions", "range": "Up to CHF 149", "example": "Service provider: CHF 40 → You pay: CHF 50" },
+                "medium": { "label": "Common missions", "badge": "Most common", "range": "CHF 150 to CHF 499", "example": "Service provider: CHF 200 → You pay: CHF 240" },
+                "large": { "label": "Large projects", "badge": "Best rate", "range": "From CHF 500", "example": "Service provider: CHF 600 → You pay: CHF 672" }
             },
             "info": {
-                "providers": { "title": "For providers", "text": "The provider receives 100% of what they proposed. The commission is on the client side: their compensation is net, from the start." },
-                "purpose": { "title": "What it's for", "text": "Provider verification, escrow payment protection, support in case of dispute. Not a simple ad wall." }
+                "providers": { "title": "For service providers", "text": "The service provider receives 100% of their proposal. The commission is on the client side: their compensation is net, from the start." },
+                "purpose": { "title": "What it's for", "text": "Service provider verification, escrow payment protection, support in case of dispute. Not just a simple ad wall." }
             }
         },
         "audience": {
-            "label": "For who",
+            "label": "For whom",
             "title": "Oflem is for everyone.",
-            "subtitle": "And we say it with a straight face.",
+            "subtitle": "And we say that without an embarrassed smile.",
             "client": {
                 "tag": "👤 You have a need",
-                "title": "A helping hand. Without complications.",
-                "description": "There are days when delegating isn't a luxury, but simply practical. Whether it's a small service or a real helping hand, you're helped by someone reliable, near you.",
+                "title": "A helping hand. No complications.",
+                "description": "There are days when delegating isn't a luxury, but simply practical. Whether it's a small favor or a real helping hand, you're assisted by someone reliable, close to home.",
                 "bullets": [
-                    "Free posting, no commitment",
-                    "Verified providers in your region",
-                    "Money protected until validation",
+                    "Free publication, no obligation",
+                    "Verified service providers in your area",
+                    "Money protected until validated",
                     "Assistance when needed"
                 ],
                 "button": "Post my request, it's free"
@@ -377,41 +379,41 @@
             "provider": {
                 "tag": "🛠️ You have skills",
                 "title": "Your talent deserves to be paid.",
-                "description": "You have know-how, a skill, or simply time. Around you, people are looking for exactly what you know how to do, every day as well as for larger projects.",
+                "description": "You have expertise, a skill, or simply time. Around you, people are looking for exactly what you know how to do, both for everyday tasks and for larger projects.",
                 "bullets": [
                     "Free registration",
-                    "You receive 100% of your offer amount",
-                    "Guaranteed payment before starting",
+                    "You receive 100% of the amount of your offer",
+                    "Payment guaranteed before starting",
                     "Your personal Oflem page to share"
                 ],
-                "button": "Create my provider profile"
+                "button": "Create my service provider profile"
             }
         },
         "remote_missions": {
-            "label": "Remote Missions",
-            "title": "Some things don't need travel.",
-            "description": "Tax returns, document translation, help understanding official letters, proofreading a file, professional layout. These missions are done entirely online.",
+            "label": "Remote missions",
+            "title": "Some things don't need to be moved.",
+            "description": "Tax returns, document translation, help understanding official correspondence, proofreading files, professional formatting. These services are provided entirely online.",
             "examples": [
-                "Help for my Vaud tax return, independent regime",
-                "Translation of a German contract to French",
-                "Revision of my CV for a position in German-speaking Switzerland",
-                "Explain my health insurance statement"
+                "Help with my Vaud tax return, self-employed regime",
+                "Translation of a German contract into French",
+                "Review of my CV for a position in German-speaking Switzerland",
+                "Help me understand my health insurance statement"
             ],
             "client": {
                 "title": "You have a remote need",
-                "description": "Describe your request freely. A qualified provider works from home and delivers the result. Protected payment, as for any Oflem mission.",
+                "description": "Describe your request freely. A qualified service provider works from home and delivers the result to you. Protected payment, as for any Oflem mission.",
                 "button": "Post a remote mission"
             },
             "provider": {
                 "title": "You offer your skills remotely",
-                "description": "Remote-only providers go through a streamlined identity check. In return, they only access remote missions. For any direct contact with a client, complete verification is mandatory.",
+                "description": "\"Remote only\" service providers go through a lighter identity check. In return, they only access remote missions. For any direct contact with a client, full verification is mandatory.",
                 "bullets": [
                     { "text": "Simplified registration, identity only", "active": true },
-                    { "text": "Missions from home, at your pace", "active": true },
+                    { "text": "Missions from home, at your own pace", "active": true },
                     { "text": "100% of your offer comes back to you", "active": true },
                     { "text": "Limited access to remote missions only", "active": false }
                 ],
-                "button": "Create my provider profile"
+                "button": "Create my service provider profile"
             }
         },
         "cookies": {
@@ -425,77 +427,77 @@
             "subtitle": "Everything you need to know before starting.",
             "label": "FAQ",
             "categories": {
-                "clients": "For clients",
-                "providers": "For providers",
+                "clients": "For customers",
+                "providers": "For service providers",
                 "general": "General"
             },
             "items": {
                 "escrow": {
-                    "q": "How does escrow work?",
-                    "a": "Imagine you entrust your money to a trusted referee. He keeps it safe until the work is done and you're happy. If everything goes well, he gives it to the provider. If something goes wrong, he waits until a solution is found. Simple."
+                    "q": "How does sequestration work?",
+                    "a": "Imagine entrusting your money to a trusted arbitrator. They keep it safe until the job is done and you're satisfied. If everything goes smoothly, they release the funds to the service provider. If something goes wrong, they wait until a solution is found. Simple."
                 },
                 "cost_client": {
-                    "q": "How much does it cost for a client?",
-                    "a": "Posting a request is free. When you accept an offer, you pay the amount proposed by the provider, plus the Oflem commission, clearly displayed before validation. No hidden fees, no small print.<br><br>The commission is degressive: <strong>25%</strong> up to CHF 149 · <strong>20%</strong> between CHF 150 and 499 · <strong>12%</strong> from CHF 500. It covers provider verification, protection of your payment by escrow, and our support if something goes wrong. Clearly: you don't just pay for a connection, you pay for a secure framework."
+                    "q": "How much does it cost for a customer?",
+                    "a": "Posting a request is free. When you accept an offer, you pay the amount proposed by the service provider, plus the Oflem commission, clearly displayed before confirmation. No hidden fees, no fine print.<br><br>The commission is tiered: 25% up to CHF 149, 20% between CHF 150 and 499, and 12% from CHF 500 onwards. It covers provider verification, the protection of your payment through escrow, and our support should anything go wrong. In short: you're not just paying for a connection, you're paying for a secure platform."
                 },
                 "any_mission": {
-                    "q": "Can I post any mission?",
-                    "a": "Absolutely. Dog walking, parcel pickup, furniture assembly, tax returns. Anything that is legal and simplifies your life can be published. Oflem is not reserved for major works."
+                    "q": "Can I publish any mission?",
+                    "a": "Absolutely. Dog walking, package pickup, furniture assembly, tax returns—anything legal that simplifies your life can be posted. Oflem isn't just for major projects."
                 },
                 "verification": {
-                    "q": "How are providers verified?",
-                    "a": "For field providers, we check ID piece, the right to work in Switzerland, and qualifications if the mission requires it. For remote providers, no documents are required: a verified email and a complete profile are enough."
+                    "q": "How are service providers vetted?",
+                    "a": "For field service providers, we verify their identity document, their right to work in Switzerland, and their qualifications if required by the assignment. For remote service providers, no documents are required: a verified email address and a complete profile are sufficient."
                 },
                 "unsatisfied": {
                     "q": "What if I am not satisfied?",
-                    "a": "You don't have to validate the mission if the work does not comply. Funds remain blocked until the dispute is resolved. Our mediation team intervenes within 24 business hours."
+                    "a": "You do not need to approve the assignment if the work is not up to standard. The funds will remain frozen until the dispute is resolved. Our mediation team will intervene within 24 business hours."
                 },
                 "payment": {
-                    "q": "How does payment work?",
-                    "a": "The client blocks the amount in escrow before you start. Once the mission is validated, you receive 100% of your offer within 2 to 3 business days. The Oflem commission is added to the price on the client side. It never decreases what you receive."
+                    "q": "How does the payment process work?",
+                    "a": "The client holds the funds in escrow before you begin. Once the project is confirmed, you receive 100% of your payment within 2 to 3 business days. Oflem's commission is added to the client's price. It never reduces your earnings."
                 },
                 "cost_provider": {
-                    "q": "How much does it cost for a provider?",
-                    "a": "Registration is free. No subscription, no fixed fees. You propose a price, you receive 100% of that amount. Period.<br><br>The Oflem commission (<strong>25%</strong> · <strong>20%</strong> · <strong>12%</strong> depending on the mission) is added on the client side, never deducted from your gain. This is what attracts serious clients, with a guaranteed payment even before you start."
+                    "q": "How much does it cost to hire a service provider?",
+                    "a": "Registration is free. No subscription, no fixed fees. You set a price, you receive 100% of that amount. Period.<br><br>The Oflem commission (25%, 20%, or 12% depending on the task) is added on the client's side, never deducted from your earnings. This is what allows us to attract serious clients, with guaranteed payment even before you begin."
                 },
                 "artisan": {
-                    "q": "Do I have to be a professional or self-employed?",
-                    "a": "No. Oflem is open to professionals, self-employed, students, and motivated individuals. For small daily missions, no specific qualification is required. For technical work, we verify your qualifications."
+                    "q": "Should you be a craftsman or self-employed?",
+                    "a": "No. Oflem is open to tradespeople, freelancers, students, and motivated individuals. For small, everyday tasks, no specific qualifications are required. For technical work, we will verify your qualifications."
                 },
                 "freedom": {
-                    "q": "Do I choose my missions freely?",
-                    "a": "Yes. You consult requests around you and respond only to those that interest you. No volume obligation, no penalty if you don't apply. You work when you want, how you want."
+                    "q": "I choose my missions freely?",
+                    "a": "Yes. You review the requests in your area and only respond to those that interest you. There's no minimum volume requirement, and no penalty if you don't apply. You work when you want, how you want."
                 },
                 "dispute": {
-                    "q": "What happens in case of a dispute with a client?",
-                    "a": "Our mediation team intervenes within 24 business hours. Funds remain blocked in escrow during resolution. If you have realized the work in accordance with what was requested, you are protected."
+                    "q": "What happens in the event of a dispute with a client?",
+                    "a": "Our mediation team intervenes within 24 business hours. Funds remain in escrow during the resolution process. If you have completed the work as requested, you are protected."
                 },
                 "regions": {
                     "q": "In which regions are you available?",
-                    "a": "French-speaking Switzerland: Geneva, Vaud, Fribourg, Neuchâtel, Valais and Jura. Extension to German-speaking Switzerland planned soon."
+                    "a": "French-speaking Switzerland: Geneva, Vaud, Fribourg, Neuchâtel, Valais and Jura. Extension to German-speaking Switzerland planned for the near future."
                 },
                 "legal": {
                     "q": "What is the legal relationship between the parties?",
-                    "a": "Oflem is a matching intermediary (broker within the meaning of Art. 412 CO). No subordinate relationship exists between the client and the provider. The provider operates as self-employed or as a company."
+                    "a": "Oflem acts as an intermediary (broker as defined in Art. 412 of the Swiss Code of Obligations). There is no employer-employee relationship between the client and the service provider. The service provider operates as a self-employed individual or company."
                 },
                 "commission_why": {
-                    "q": "What is the commission for specifically?",
-                    "a": "It funds three precise things.<br><br><strong>1. Provider verification</strong>: ID piece and right to work for field providers, profile and email for remote providers. Even before your first request, the sorting is done.<br><br><strong>2. Payment protection</strong>: your money is placed in escrow and released only once the mission is finished and validated by you.<br><br><strong>3. Support in case of problem</strong>: if something goes wrong, the funds remain blocked and our team intervenes to find a solution.<br><br>Without commission, Oflem would be a simple ad. With it, it's a framework."
+                    "q": "What is the commission actually used for?",
+                    "a": "It finances three specific things.<br><br>1. Verification of service providers : ID and work permit for field providers, profile and email for remote providers. The screening is done even before your first request.<br><br>2. Payment protection : your money is held in escrow and released only once the task is completed and validated by you.<br><br>3. Support in case of problems : if something goes wrong, the funds remain blocked and our team intervenes to find a solution.<br><br>Without a commission, Oflem would be just a classified ad. With one, it's a framework."
                 },
                 "commission_high": {
                     "q": "Is 25% a lot for a small mission?",
-                    "a": "On a CHF 40 mission, it represents CHF 10. In exchange, you have: a verified provider, a protected payment, and a team available if things go wrong. Even for a dog walk or an urgent errand, you entrust something — your time, your animal, your keys. This framework has a cost, and it is the same regardless of the mission size."
+                    "a": "On a CHF 40 mission, that represents CHF 10. In return, you get: a verified service provider, secure payment, and a team available if things go wrong. Even for a dog walk or an urgent errand, you're entrusting something to someone—your time, your pet, your keys. This framework has a cost, and it's the same regardless of the mission's size."
                 }
             }
         },
         "cta": {
-            "ready": "Ready to start?",
+            "ready": "Ready to begin?",
             "time": "Your time matters.",
             "energy": "Your energy too.",
-            "rest": "Let Oflem handle the rest.",
+            "rest": "Let Oflem take care of the rest.",
             "skill": "And if you have a skill, a talent, or simply the desire to help:<br>someone near you needs it.",
             "btn_client": "Post my request, it's free",
-            "btn_provider": "Register as a provider"
+            "btn_provider": "Become a service provider"
         },
         "stats": {
             "happy_lazy": "Happy Clients",
@@ -544,11 +546,11 @@
             "language": "Language"
         },
         "footer": {
-            "description": "The Swiss platform to delegate, from express helping hand to qualified professional.",
+            "description": "The Swiss platform for delegating, from express helping hands to qualified craftsmen.",
             "trust": {
-                "escrow": "🔒 Secure payment via escrow",
+                "escrow": "🔒 Secure payment by escrow",
                 "swiss_data": "🇨🇭 Data hosted in Switzerland",
-                "lausanne": "📍 Based in Lausanne",
+                "lausanne": "📍 Lausanne, Switzerland",
                 "nlpd": "✓ nLPD compliant"
             },
             "col": {
@@ -558,20 +560,54 @@
             },
             "links": {
                 "publish": "Post a request",
-                "provider": "Register as a provider",
+                "provider": "Become a service provider",
                 "how": "How it works",
                 "examples": "Mission examples",
                 "faq": "FAQ",
                 "about": "About",
                 "contact": "Contact us",
                 "mentions": "Legal notice",
-                "cgu": "TOS",
+                "cgu": "Terms of Service (TOS)",
                 "privacy": "Data protection",
                 "cookies": "Cookie policy"
             },
             "bottom": {
-                "copy": "© 2026 Oflem · Switzerland",
-                "made_in": "Made in Switzerland"
+                "copy": "© 2024 Oflem. All rights reserved.",
+                "made_in": "Made with passion in Switzerland"
+            }
+        },
+        "legal": {
+            "label": "Legal",
+            "back": "← Back",
+            "nav": {
+                "cgu": "Terms of Service",
+                "mentions": "Legal Notice",
+                "privacy": "Data Protection",
+                "cookies": "Cookies",
+                "about": "About"
+            },
+            "cgu": {
+                "title": "Terms and Conditions of Use",
+                "subtitle": "Last update: February 1, 2026",
+                "content": "<h2>1. Object and Scope</h2><p>These General Terms and Conditions of Use (hereinafter \"T&Cs\") govern access to and use of the Oflem platform (hereinafter \"the Platform\"), accessible at oflem.ch, operated by Oflem SA (in formation), a Swiss company.</p><p>Oflem is a platform connecting people looking for services (hereinafter \"Clients\") and independent service providers or companies offering their services (hereinafter \"Service Providers\"). <strong>Oflem acts exclusively as a broker within the meaning of articles 412 et seq. of the Swiss Code of Obligations (CO)</strong>.</p><h2>2. Oflem's Role and Absence of Subordination</h2><p>Oflem is a technical intermediary for connecting people. <strong>Oflem is not a party to the service contract concluded between the Client and the Service Provider.</strong></p><p>Service Providers registered on the Platform carry out their activity as self-employed workers within the meaning of Art. 12 LAVS or as companies registered in the commercial register. No link of subordination (Art. 319 CO) exists between Oflem and the Service Providers. Notably:</p><ul><li>Oflem does not set the prices for services — the Service Provider freely determines their rates;</li><li>Oflem does not give any instructions on the method, place or schedule of the work;</li><li>Oflem does not provide tools or materials for the execution of services;</li><li>The Service Provider is free to accept or refuse any mission proposed on the Platform;</li><li>The Service Provider can carry out their activity for other platforms or clients simultaneously.</li></ul><p>The Service Provider is solely responsible for their tax (VAT, income tax), social security (AVS/AI/APG, accident insurance) and administrative obligations (work permit, registration in the commercial register if necessary).</p><h2>3. Registration and User Obligations</h2><h3>3.1 Registration Conditions</h3><p>Registration is open to any adult natural person (18 years old) or legal entity domiciled in Switzerland. The user guarantees the accuracy of the information provided.</p><h3>3.2 Client Obligations</h3><p>The Client agrees to provide a precise and honest description of their request, to respect the deadlines agreed with the Service Provider, and to validate or contest the work within 5 business days after notification of completion.</p><h3>3.3 Service Provider Obligations</h3><p>The Service Provider agrees to have the necessary qualifications, to provide work in accordance with the agreed terms, and to comply with applicable Swiss law, in particular the LTr (labor law) if they employ staff.</p><h2>4. Escrow Mechanism</h2><p>Payment is secured by an escrow mechanism:</p><ul><li><strong>Blocking</strong>: the agreed amount is blocked in an escrow account upon acceptance of the offer by the Client;</li><li><strong>Notification</strong>: the Service Provider is informed of the blocking of funds and can start the work;</li><li><strong>Release</strong>: upon completion of the work, the Client validates and the funds are released to the Service Provider, minus the Oflem commission;</li><li><strong>Dispute</strong>: in case of disagreement, the funds remain blocked during the mediation process (see Art. 7).</li></ul><p>Escrow funds are managed by an <strong>authorized payment service provider</strong> (hereinafter \"the Financial Partner\"), in compliance with Swiss legislation on financial services. <strong>Oflem never directly holds user funds.</strong> The Financial Partner (e.g., Stripe Connect or equivalent) is subject to applicable regulations and ensures the separation of funds in accordance with FINMA requirements.</p><h2>5. Commission and Pricing</h2><p>Posting a request by a Client is free. The Client pays no additional service fees outside the Oflem commission described below.</p><p>The Oflem commission is <strong>added to the price proposed by the Service Provider</strong> and billed to the Client. The Service Provider receives <strong>100% of the amount of their offer</strong>. The commission is tiered according to the amount of the mission:</p><ul><li><strong>25% (excl. VAT)</strong> — missions up to CHF 149.–</li><li><strong>20% (excl. VAT)</strong> — missions from CHF 150.– to CHF 499.–</li><li><strong>12% (excl. VAT)</strong> — missions from CHF 500.–</li></ul><p>The commission is automatically collected during payment by the Client, before the funds are blocked in escrow. The total amount displayed to the Client always includes the Oflem commission.</p><p>Oflem reserves the right to modify its rates with 30 days' notice, notified by email to the users concerned.</p><h2>6. Domestic Economy Services</h2><p>Some services proposed on the Platform, in particular <strong>cleaning, ironing, childcare and home assistance</strong>, fall under the domestic economy within the meaning of Swiss labor law.</p><p><strong>For these services, the Client recognizes that they may acquire the status of employer within the meaning of Art. 319 CO and LAVS</strong>, even if the service is occasional. As such, the Client agrees to:</p><ul><li>Carry out mandatory declarations to the AVS compensation fund of their canton;</li><li>Pay social security contributions (AVS/AI/APG/AC) and accident insurance (LAA) in accordance with the legislation in force;</li><li>Use, where appropriate, the <strong>chèque-emploi system</strong> proposed by their canton, which simplifies these steps.</li></ul><p>Oflem provides a connection tool and an escrow mechanism to secure payments. <strong>Oflem assumes no responsibility in case of non-declaration of work by the Client or the Service Provider.</strong> The parties are solely responsible for compliance with their legal obligations regarding labor law and social security.</p><p>An informative reminder is displayed when posting a request related to the domestic economy.</p><h2>7. Communication Protection</h2><p>The messaging system integrated into the Platform is the official communication channel between Client and Service Provider. <strong>The exchange of personal contact details (phone number, email address, postal address) via messaging is prohibited</strong> before the conclusion and payment of the mission, in order to guarantee traceability and protection of both parties.</p><p>Any circumvention of this rule may result in the suspension of the account concerned.</p><h2>8. Mediation and Dispute Resolution</h2><p>In case of dispute between a Client and a Service Provider, the parties agree to use in the first place the mediation procedure proposed by Oflem, free for both parties. The mediator renders a non-binding opinion within 5 business days.</p><p>Failing agreement, the parties retain all their rights of appeal according to Swiss law. The legal venue is fixed at the registered office of Oflem SA, unless mandatory provisions to the contrary (Art. 32 CPC for consumers).</p><h2>9. Liability</h2><p>Oflem does not guarantee the quality, punctuality or compliance of the services provided by the Service Providers. The service contract is concluded directly between the Client and the Service Provider.</p><p>Oflem's liability is limited to the proper technical functioning of the Platform and the escrow mechanism, within the limits permitted by Swiss law.</p><h2>10. Applicable Law and Venue</h2><p>These T&Cs are governed by Swiss law. The exclusive venue is fixed at the registered office of Oflem SA, subject to the mandatory provisions of Swiss consumer law.</p>"
+            },
+            "mentions": {
+                "title": "Legal Notice",
+                "content": "<h2>Site Editor</h2><p>Oflem SA (in formation)<br>Legal form: Swiss stock corporation (SA)<br>Registered office: French-speaking Switzerland<br>Contact: <a href=\"mailto:contact@oflem.ch\" style=\"color:var(--o)\">contact@oflem.ch</a></p><h2>Intellectual Property</h2><p>All content on the site (texts, images, graphics, logo, icons) is the exclusive property of Oflem SA or its partners. Any reproduction, representation or distribution, even partial, is prohibited without prior written authorization (Art. 2 LDA).</p><h2>Editorial Responsibility</h2><p>Oflem SA strives to ensure the accuracy of the information published on the site. However, Oflem SA cannot be held responsible for omissions, inaccuracies or deficiencies in the update of this information.</p><p>The reviews and ratings published by users are their sole responsibility. Oflem SA reserves the right to moderate or delete any content contrary to the T&Cs or Swiss law.</p><h2>Hosting</h2><p>The site is hosted in Switzerland, in accordance with nLPD requirements regarding data localization, at Infomaniak.</p>"
+            },
+            "privacy": {
+                "title": "Data Protection",
+                "subtitle": "Compliant with the nLPD (RS 235.1) which entered into force on September 1, 2023",
+                "content": "<h2>1. Data Controller</h2><p>Oflem SA (in formation), French-speaking Switzerland.<br>Data Protection Officer: <a href=\"mailto:privacy@oflem.ch\" style=\"color:var(--o)\">privacy@oflem.ch</a></p><h2>2. Data Collected</h2><p>We collect the following data in the context of using the Platform:</p><ul><li><strong>Identification data</strong>: name, first name, email address, phone number;</li><li><strong>Professional data</strong> (Service Providers): service category, experience, intervention area, professional bio;</li><li><strong>Transaction data</strong>: amounts, dates, payment status;</li><li><strong>Communication data</strong>: messages exchanged via the integrated messaging system;</li><li><strong>Technical data</strong>: IP address, browser type, pages visited, essential cookies.</li></ul><h2>3. Purposes of Processing</h2><p>Data is processed for: execution of the service contract (Art. 31 para. 2 let. a nLPD), escrow management, fraud prevention, improvement of the Platform, and compliance with our legal obligations.</p><h2>4. Legal Basis</h2><p>The processing is based on: execution of the contract (Art. 31 para. 2 let. a nLPD), user consent when necessary (Art. 6 para. 6 nLPD), and Oflem's legitimate interests (fraud prevention, service improvement).</p><h2>5. Retention Period</h2><p>Personal data is kept for the duration of the contractual relationship, then for 10 years in accordance with Swiss accounting obligations (Art. 958f CO). Communication data is kept for 2 years after the close of the mission.</p><h2>6. Data Transfer</h2><p><strong>No personal data is transferred out of Switzerland</strong>. All data is hosted on servers located in Switzerland.</p><p>In case of future necessity of transfer to a third country, this will only be carried out to a country offering an adequate level of protection within the meaning of Art. 16 nLPD, or with appropriate guarantees (Art. 16 para. 2 nLPD).</p><h2>7. Rights of Data Subjects</h2><p>In accordance with the nLPD, you have the following rights:</p><ul><li><strong>Right of access</strong> (Art. 25 nLPD): obtain confirmation of processing and a copy of your data;</li><li><strong>Right of rectification</strong>: correct inaccurate data;</li><li><strong>Right to erasure</strong>: request the deletion of your data (subject to legal retention obligations);</li><li><strong>Right to portability</strong> (Art. 28 nLPD): receive your data in a structured and readable format;</li><li><strong>Right to object</strong>: object to processing for marketing purposes.</li></ul><p>To exercise your rights: <a href=\"mailto:privacy@oflem.ch\" style=\"color:var(--o)\">privacy@oflem.ch</a>. Response within 30 days.</p><h2>8. Security</h2><p>Oflem implements appropriate technical and organizational measures (Art. 8 nLPD): TLS/SSL encryption, password hashing, access control, access logging, regular backups.</p><h2>9. Data Breach</h2><p>In case of a data security breach presenting a high risk for the persons concerned, Oflem will notify the Federal Data Protection and Information Commissioner (FDPIC) as soon as possible (Art. 24 nLPD) and, if necessary, the persons concerned.</p>"
+            },
+            "cookies": {
+                "title": "Cookies Policy",
+                "content": "<h2>What is a cookie?</h2><p>A cookie is a small text file placed on your device when visiting a website. It allows certain information to be remembered to facilitate your navigation.</p><h2>Cookies used by Oflem</h2><h3>Strictly Necessary Cookies</h3><p>These cookies are essential for the operation of the Platform and cannot be deactivated:</p><ul><li><strong>oflem_session</strong>: session identifier, duration: browser session;</li><li><strong>oflem_cookies</strong>: remembering your choice concerning cookies, duration: 12 months;</li><li><strong>oflem_csrf</strong>: protection against CSRF attacks, duration: session.</li></ul><h3>Analytical Cookies (optional)</h3><p>These cookies allow us to measure the audience and improve the Platform. They are only activated with your consent:</p><ul><li><strong>Analytics Tool</strong>: solution hosted in Switzerland, without data transfer abroad, anonymized data.</li></ul><h2>No Advertising Cookies</h2><p>Oflem uses <strong>no advertising or targeting cookies</strong>. No data is transmitted to third-party advertising networks.</p><h2>Managing your preferences</h2><p>You can change your cookie preferences at any time via your browser settings. Deactivating essential cookies may however affect the operation of the Platform.</p>"
+            },
+            "about": {
+                "label": "Company",
+                "title": "About Oflem",
+                "content": "<h2>Our Mission</h2><p>Oflem was born from a simple observation: finding a trusted service provider in Switzerland remains complicated. Between word-of-mouth recommendations without guarantee and foreign platforms unsuited to the local market, a transparent, secure solution anchored in Switzerland was missing.</p><p>We created Oflem to connect individuals to the right service providers — with payment protected by escrow, serious verification, and total transparency on prices.</p><h2>Who are we?</h2><p>Oflem is a project founded and developed in French-speaking Switzerland, anchored in Lausanne. We are not a large structure. We are people who know the region, its customs and its expectations. We prefer to build something solid and reliable at the scale of French-speaking Switzerland rather than promising worldwide expansion in six months.</p><h2>Why Switzerland?</h2><p>Because quality of service, trust and data protection are values we hold dear. All our data is hosted in Switzerland at Infomaniak. Our platform is compliant with the nLPD. And our escrow model is designed for the Swiss market.</p><h2>Our Business Model</h2><p>Posting is free for clients. Service providers register for free and receive 100% of the amount of their offer. Our commission (12% to 25% depending on the mission) is added on the client side and is always displayed before any payment. No surprises, no hidden subscriptions.</p><h2>Contact Us</h2><p>Email: <a href=\"mailto:contact@oflem.ch\" style=\"color:var(--o)\">contact@oflem.ch</a><br>For Service Providers: <a href=\"mailto:providers@oflem.ch\" style=\"color:var(--o)\">providers@oflem.ch</a><br>Data Protection: <a href=\"mailto:privacy@oflem.ch\" style=\"color:var(--o)\">privacy@oflem.ch</a></p>"
             }
         }
     },
@@ -664,7 +700,7 @@
         "otp_verify_email": "Verify your email",
         "otp_sent_to": "Code sent to",
         "otp_verify_btn": "Verify →",
-        "otp_not_received": "Not received?",
+        "otp_not_received": "Didn't receive it?",
         "otp_resend": "Resend code",
         "otp_resent_alert": "A new code has been sent.",
         "configure_request": "Configure your request",

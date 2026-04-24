@@ -143,8 +143,8 @@ const MapMock = ({ showSocialProof = true }) => {
                 {/* Center Callout */}
                 <div className="map-center absolute top-[55%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 bg-white/95 backdrop-blur-sm p-5 rounded-rl shadow-2xl border-2 border-oflem-terracotta text-center min-w-[240px]">
                     <div className="w-10 h-1 bg-zinc-100 rounded-full mx-auto mb-3" />
-                    <h4 className="text-[17px] font-black text-oflem-charcoal mb-1">{t('Votre demande')}</h4>
-                    <p className="text-[13px] font-bold text-zinc-500 uppercase tracking-widest">{t('Lausanne · Rayon 15 km')}</p>
+                    <h4 className="text-[17px] font-black text-oflem-charcoal mb-1">{t('homepage.how_it_works.map.center_title')}</h4>
+                    <p className="text-[13px] font-bold text-zinc-500 uppercase tracking-widest">{t('homepage.how_it_works.map.center_meta')}</p>
                 </div>
 
                 {/* Offer Card 1 - Best Offer */}
@@ -160,8 +160,9 @@ const MapMock = ({ showSocialProof = true }) => {
                             )}
                         </div>
                     </div>
+                    <div className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1">{t('homepage.how_it_works.map.cat_courses')}</div>
                     <div className="text-[20px] font-black text-oflem-green mb-1">CHF 20.–</div>
-                    <div className="text-[10px] font-black bg-oflem-green/10 text-oflem-green px-2 py-1 rounded-md uppercase tracking-wide inline-block">Disponible</div>
+                    <div className="text-[10px] font-black bg-oflem-green/10 text-oflem-green px-2 py-1 rounded-md uppercase tracking-wide inline-block">{t('homepage.how_it_works.map.avail_now')}</div>
                 </div>
 
                 {/* Offer Card 2 */}
@@ -171,22 +172,22 @@ const MapMock = ({ showSocialProof = true }) => {
                         <div>
                             <h5 className="text-[14px] font-black text-oflem-charcoal leading-none mb-1">Noah A.</h5>
                             {showSocialProof && (
-                                <div className="flex gap-0.5">
+                                <div className="flex Hand-0.5">
                                     {[1,2,3,4,5].map(s => <Star key={s} size={10} className="text-[#FFD23F] fill-[#FFD23F]" />)}
                                 </div>
                             )}
                         </div>
                     </div>
+                    <div className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1">{t('homepage.how_it_works.map.cat_bricolage')}</div>
                     <div className="text-[20px] font-black text-oflem-charcoal mb-1">CHF 25.–</div>
-                    <div className="text-[10px] font-black bg-zinc-100 text-zinc-500 px-2 py-1 rounded-md uppercase tracking-wide inline-block">Dans 20 min</div>
+                    <div className="text-[10px] font-black bg-zinc-100 text-zinc-500 px-2 py-1 rounded-md uppercase tracking-wide inline-block">{t('homepage.how_it_works.map.avail_fast')}</div>
                 </div>
             </div>
             
             <div className="map-caption text-center mt-8">
-                <span className="inline-block px-3 py-1 bg-zinc-100 rounded-full text-[11px] font-black text-zinc-400 uppercase tracking-widest mb-3">{t('Temps réel')}</span>
-                <h3 className="text-[24px] font-black text-oflem-charcoal mb-2">{t('Les offres arrivent')}</h3>
+                <h3 className="text-[24px] font-black text-oflem-charcoal mb-2">{t('homepage.how_it_works.map.caption_title')}</h3>
                 <p className="text-[15px] text-zinc-500 max-w-[400px] mx-auto leading-relaxed">
-                    {t('Des prestataires vérifiés à proximité sont notifiés et vous répondent en quelques minutes.')}
+                    {t('homepage.how_it_works.map.caption_sub')}
                 </p>
             </div>
 

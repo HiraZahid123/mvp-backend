@@ -245,10 +245,10 @@
             "faq": "FAQ",
             "about": "Über uns",
             "login": "Anmelden",
-            "register": "Registrieren"
+            "register": "Dienstleister werden"
         },
         "hero": {
-            "title_tag": "Oflem — Was wäre, wenn Sie nicht alles allein tun müssten?",
+            "title_tag": "Oflem — Was wäre, wenn Sie nicht alles selbst tun müssten?",
             "badge": "Schweizer Plattform",
             "line1": "Was wäre, wenn Sie",
             "line2": "nicht alles",
@@ -336,18 +336,20 @@
         },
         "pillars_section": {
             "label": "Warum Oflem",
-            "title": "Ein klarer Rahmen für Ihre Dienstleistungen",
-            "description": "Transparenz, Sicherheit und einfache Regeln — für Kunden und Dienstleister.",
+            "title": "Eine Anzeige zu schalten kann funktionieren.<br>Außer wenn es schief geht.",
+            "description": "Eine Anzeige unter Privatpersonen aufzugeben oder den Freund eines Freundes anzurufen, kann funktionieren. Aber wenn es schief geht, sind Sie allein. Oflem ist das Plus an Zuverlässigkeit.",
             "items": {
-                "transparency": { "title": "Vollständige Transparenz", "text": "Der angezeigte Preis ist der Endpreis. Keine versteckten Gebühren. Keine Überraschungen. Das ist die Regel." },
-                "escrow": { "title": "Zahlung per Treuhand", "text": "Das Geld wird bis zum Ende des Auftrags blockiert. Sie bestätigen, dann wird es freigegeben. Nicht vorher." },
-                "profiles": { "title": "Verifizierte Profile", "text": "Identität bestätigt. Sichtbare Bewertungen. Einsehbare Historie. Sie wissen, wem Sie vertrauen." }
+                "verified": { "title": "Verifizierte Anbieter", "text": "Ausweis, Arbeitsbewilligung in der Schweiz, verifizierte Qualifikationen falls erforderlich. Kein Unbekannter ohne Historie: jemand, den die Plattform validiert hat." },
+                "escrow": { "title": "Geld geschützt durch Treuhand", "text": "Sie zahlen nicht im Voraus ins Leere. Die Gelder sind blockiert und werden erst freigegeben, wenn Sie bestätigt haben, dass die Arbeit erledigt ist. Keine Vorauskasse. Keine bösen Überraschungen." },
+                "local": { "title": "Immer jemand in Ihrer Nähe", "text": "Jeder Anbieter, der auf Ihre Anfrage antwortet, lebt in Ihrer Region. Nicht jemand in 200 km Entfernung. Keine ausländische Plattform. Eine nahegelegene, verfügbare Person, die Ihre Gegend kennt." },
+                "mediation": { "title": "Mediation im Streitfall", "text": "Wenn etwas schief geht (und das passiert), sind Sie nicht allein mit einem Unbekannten konfrontiert. Unser Team greift ein, die Gelder bleiben bis zur Lösung blockiert." }
             }
         },
         "pricing": {
             "label": "Tarife",
             "title": "Eine einfache Provision, vor der Zahlung angezeigt",
-            "description": "Veröffentlichen ist kostenlos. Kein Abonnement. Eine Provision wird zum Preis des Anbieters plus der Oflem-Provision hinzugefügt, vor der Bestätigung sichtbar.",
+            "description": "Die Veröffentlichung ist kostenlos. Wenn Sie ein Angebot annehmen, zahlen Sie den Preis des Anbieters plus die Oflem-Provision, die vor der Bestätigung sichtbar ist."
+        },
             "tiers": {
                 "small": { "label": "Kleine Missionen", "range": "Bis CHF 149", "example": "Anbieter: CHF 40 → Sie zahlen: CHF 50" },
                 "medium": { "label": "Gängige Missionen", "badge": "Am häufigsten", "range": "CHF 150 bis CHF 499", "example": "Anbieter: CHF 200 → Sie zahlen: CHF 240" },

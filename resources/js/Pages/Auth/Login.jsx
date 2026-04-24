@@ -81,8 +81,9 @@ export default function Login({ canResetPassword, status }) {
                         >
                             <div className="login-choice-icon" style={{ background: 'rgba(102,126,234,.15)' }}>
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(102,126,234,1)" strokeWidth="2" strokeLinecap="round">
-                                    <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3-3a1 1 0 000-1.4l-1.6-1.6a1 1 0 00-1.4 0z"/>
-                                    <path d="M5 20L3 22l2-7 5 5-7 2zM14.5 4.5L20 10"/>
+                                    <path d="M14.7 6.3a1 1 0 00 0 1.4l1.6 1.6a1 1 0 001.4 0l3-3a1 1 0 000-1.4l-1.6-1.6a1 1 0 00-1.4 0z"/>
+                                    <path d="M5 1v1m0 8v1m4-5h1M9 5H8M7 3L6 4M3 7l-1 1m5-1 1 1"/>
+                                    <path d="M2 12a5 5 0 005 5l4 4 4-4a5 5 0 000-7"/>
                                 </svg>
                             </div>
                             <div className="login-choice-title">{t('auth.login.provider_space')}</div>

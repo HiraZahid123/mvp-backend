@@ -41,7 +41,7 @@ export default function RegistrationSuccess() {
 
                     <div style={{ display: 'flex', gap: '14px', justifyContent: 'center', marginTop: '32px' }}>
                         <Link href={route('dashboard')} className="oflem-btn oflem-btn-primary" style={{ padding: '16px 32px' }}>
-                            {t('onboarding.go_to_dashboard')}
+                            {t('onboarding.continue_to_account')}
                         </Link>
                     </div>
 

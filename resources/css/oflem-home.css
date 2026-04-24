@@ -821,11 +821,11 @@
 }
 
 /* ── Category tiles (from reference) ── */
-.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:1fr;gap:16px}
 @media(max-width:1024px){.cat-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:600px){.cat-grid{grid-template-columns:repeat(2,1fr);gap:12px}}
 
-.cat-tile{background:#fff;border:1.5px solid var(--g300);border-radius:18px;padding:28px 22px;cursor:pointer;transition:all .25s cubic-bezier(.4,0,.2,1);text-align:left;opacity:0;transform:translateY(20px);animation:catIn .5s cubic-bezier(.22,1,.36,1) forwards}
+.cat-tile{background:#fff;border:1.5px solid var(--g300);border-radius:18px;padding:28px 22px;cursor:pointer;transition:all .25s cubic-bezier(.4,0,.2,1);text-align:left;opacity:0;transform:translateY(20px);animation:catIn .5s cubic-bezier(.22,1,.36,1) forwards;height:100%;display:flex;flex-direction:column}
 
 @keyframes catIn{to{opacity:1;transform:translateY(0)}}
 
@@ -1244,15 +1244,16 @@
   left: 50%;
   width: 200px;
   height: 200px;
-  border: 2px solid var(--o);
+  border: 1.5px solid rgba(255,107,53,0.15);
   border-radius: 50%;
-  animation: rp 3s ease-out infinite;
+  animation: rp 4s ease-out infinite;
 }
-.oflem-radar-ring:nth-child(2) { animation-delay: 1s; }
-.oflem-radar-ring:nth-child(3) { animation-delay: 2s; }
+.oflem-radar-ring:nth-child(2) { animation-delay: 1.5s; }
+.oflem-radar-ring:nth-child(3) { animation-delay: 3s; }
 @keyframes rp {
-  0% { transform: translate(-50%, -50%) scale(0); opacity: .7; }
-  100% { transform: translate(-50%, -50%) scale(3.2); opacity: 0; }
+  0% { transform: translate(-50%, -50%) scale(0.6); opacity: 0; }
+  20% { opacity: 0.8; }
+  100% { transform: translate(-50%, -50%) scale(2.8); opacity: 0; }
 }
 .oflem-map-center {
   position: absolute;
@@ -2141,3 +2142,7 @@ input:focus-visible {
     max-width: 200px;
   }
 }
+@keyframes fi { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease }
+.reveal.visible { opacity: 1; transform: translateY(0) }

@@ -100,13 +100,13 @@ export default function VerifyOTP({ email = 'votre@email.ch' }) {
                         </div>
 
                         <h2 className="oflem-section-title" style={{ fontSize: '32px' }}>{t('onboarding.otp_verify_email')}</h2>
-                        <p style={{ color: 'var(--g500)', fontSize: '15px' }}>
+                        <p style={{ color: 'var(--g500)', fontSize: '15px', marginBottom: '30px' }}>
                             {t('onboarding.otp_sent_to')} <strong style={{ color: 'var(--n)', fontWeight: 800 }}>{email}</strong>
                         </p>
                     </div>
 
-                    <form onSubmit={submit} style={{ background: '#fff', border: '1px solid var(--g300)', borderRadius: 'var(--rl)', padding: '40px', boxShadow: 'var(--sh)' }}>
-                        <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginBottom: '32px' }}>
+                    <form onSubmit={submit} style={{ background: '#fff', border: '1px solid var(--g300)', borderRadius: 'var(--rl)', padding: '36px', boxShadow: 'var(--sh)' }}>
+                        <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginBottom: '24px' }}>
                             {otp.map((digit, index) => (
                                 <input
                                     key={index}
@@ -119,7 +119,7 @@ export default function VerifyOTP({ email = 'votre@email.ch' }) {
                                     onChange={(e) => handleOtpChange(e.target.value, index)}
                                     onPaste={handlePaste}
                                     onKeyDown={(e) => handleKeyDown(e, index)}
-                                    style={{ width: '58px', height: '68px', textAlign: 'center', fontSize: '28px', fontWeight: 900, border: '2.5px solid var(--g300)', borderRadius: 'var(--rs)', transition: 'all .25s', background: 'var(--g50)', outline: 'none' }}
+                                    style={{ width: '52px', height: '62px', textAlign: 'center', fontPadding: '0', fontSize: '24px', fontWeight: 900, border: '2px solid var(--g300)', borderRadius: 'var(--rs)', transition: 'all .25s', background: '#fff', outline: 'none' }}
                                 />
                             ))}
                         </div>
@@ -130,12 +130,12 @@ export default function VerifyOTP({ email = 'votre@email.ch' }) {
                             </div>
                         )}
 
-                        <button type="submit" className="oflem-btn-primary" style={{ width: '100%', fontSize: '18px', padding: '18px', borderRadius: '999px', fontWeight: 900, border: 'none', cursor: 'pointer', transition: 'all .25s' }} disabled={processing || data.code.length !== 6}>
+                        <button type="submit" className="oflem-btn-primary" style={{ width: '100%', fontSize: '17px', padding: '18px', borderRadius: '12px', fontWeight: 900, border: 'none', cursor: 'pointer', transition: 'all .25s' }} disabled={processing || data.code.length !== 6}>
                             {processing ? <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin inline-block"></span> : t('onboarding.otp_verify_btn')}
                         </button>
 
-                        <p style={{ textAlign: 'center', marginTop: '24px', fontSize: '14px', color: 'var(--g500)' }}>
-                            {t('onboarding.otp_not_received')} <a onClick={resendCode} style={{ color: 'var(--o)', fontWeight: 800, cursor: 'pointer', textDecoration: 'underline' }}>{t('onboarding.otp_resend')}</a>
+                        <p style={{ textAlign: 'center', marginTop: '18px', fontSize: '13px', color: 'var(--g500)' }}>
+                            {t('onboarding.otp_not_received')} <a onClick={resendCode} style={{ color: 'var(--o)', fontWeight: 800, cursor: 'pointer' }}>{t('onboarding.otp_resend')}</a>
                         </p>
                     </form>
 
