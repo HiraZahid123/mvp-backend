@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Head, useForm, usePage, Link } from '@inertiajs/react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import useTranslation from '@/Hooks/useTranslation';
 import TextInput from '@/Components/TextInput';
 import InputLabel from '@/Components/InputLabel';
 import InputError from '@/Components/InputError';
+import ModerationShield from '@/Components/ModerationShield';
 import axios from 'axios';
 import { 
     ArrowLeft, 
@@ -19,6 +20,10 @@ export default function Edit({ mission }) {
     const { t } = useTranslation();
     const [isModerating, setIsModerating] = useState(false);
     const [moderationError, setModerationError] = useState('');
+    const [shieldStatus, setShieldStatus] = useState('idle'); // 'idle'|'scanning'|'verified'|'blocked'
+    const [shieldMessage, setShieldMessage] = useState('');
+    const debounceTimer = useRef(null);
+    const lastCheck = useRef({ content: '', result: null });
 
     const { data, setData, patch, processing, errors } = useForm({
         title: mission.title || '',
@@ -28,22 +33,39 @@ export default function Edit({ mission }) {
         category: mission.category || '',
     });
 
-    const checkModeration = async (content) => {
-        setIsModerating(true);
-        setModerationError('');
+    const runShieldCheck = async (content) => {
         try {
             const response = await axios.post(route('api.moderation.check'), { content });
-            if (!response.data.is_clean) {
-                setModerationError(t('Content violates moderation rules.'));
-                return false;
+            lastCheck.current = { content, result: response.data };
+            if (response.data.is_clean) {
+                setShieldStatus('verified');
+                setShieldMessage('');
+            } else {
+                setShieldStatus('blocked');
+                setShieldMessage(response.data.reason || '');
+                setModerationError(response.data.reason || t('Content violates moderation rules.'));
             }
-            return true;
-        } catch (error) {
-            return true; // Proceed if service is down
-        } finally {
-            setIsModerating(false);
+            return response.data;
+        } catch {
+            setShieldStatus('idle');
+            return { is_clean: true };
         }
     };
+
+    // Debounced shield check on title / description change.
+    useEffect(() => {
+        const content = (data.title + ' ' + data.description).trim();
+        if (!content) {
+            setShieldStatus('idle');
+            clearTimeout(debounceTimer.current);
+            return;
+        }
+        setShieldStatus('scanning');
+        setModerationError('');
+        clearTimeout(debounceTimer.current);
+        debounceTimer.current = setTimeout(() => runShieldCheck(content), 1400);
+        return () => clearTimeout(debounceTimer.current);
+    }, [data.title, data.description]);
 
     const [isWriting, setIsWriting] = useState(false);
 
@@ -69,9 +91,22 @@ export default function Edit({ mission }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
-        const isClean = await checkModeration(data.title + ' ' + data.description);
-        if (!isClean) return;
+        if (shieldStatus === 'blocked') return;
+
+        const content = data.title + ' ' + data.description;
+        let checkResult = (lastCheck.current.content === content && lastCheck.current.result)
+            ? lastCheck.current.result
+            : null;
+
+        if (!checkResult) {
+            setIsModerating(true);
+            clearTimeout(debounceTimer.current);
+            setShieldStatus('scanning');
+            checkResult = await runShieldCheck(content);
+            setIsModerating(false);
+        }
+
+        if (!checkResult.is_clean) return;
 
         patch(route('missions.update', mission.id));
     };
@@ -117,7 +152,12 @@ export default function Edit({ mission }) {
                             placeholder={t('e.g. Need help moving a sofa')}
                             required
                         />
-                        <InputError message={errors.title || moderationError} className="mt-2" />
+                        <InputError message={errors.title || (shieldStatus !== 'blocked' ? moderationError : '')} className="mt-2" />
+                        {shieldStatus !== 'idle' && (
+                            <div style={{ marginTop: '8px' }}>
+                                <ModerationShield status={shieldStatus} message={shieldMessage} />
+                            </div>
+                        )}
                     </div>
 
                     {/* Description */}
@@ -201,14 +241,14 @@ export default function Edit({ mission }) {
                         </Link>
                         <button
                             type="submit"
-                            disabled={processing || isModerating || !data.title.trim()}
+                            disabled={processing || isModerating || shieldStatus === 'blocked' || shieldStatus === 'scanning' || !data.title.trim()}
                             className={`flex-1 py-5 font-black rounded-full transition-all shadow-xl text-lg flex items-center justify-center gap-3 active:scale-[0.98] ${
-                                !data.title.trim() || processing || isModerating
+                                !data.title.trim() || processing || isModerating || shieldStatus === 'blocked' || shieldStatus === 'scanning'
                                     ? 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none'
                                     : 'bg-oflem-charcoal text-white hover:bg-black'
                             }`}
                         >
-                            {processing || isModerating ? (
+                            {processing || isModerating || shieldStatus === 'scanning' ? (
                                 <span className="w-6 h-6 border-4 border-oflem-terracotta border-t-white rounded-full animate-spin"></span>
                             ) : (
                                 <>

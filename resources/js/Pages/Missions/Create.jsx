@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Head, useForm, usePage, Link, router } from '@inertiajs/react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import useTranslation from '@/Hooks/useTranslation';
@@ -8,6 +8,7 @@ import InputLabel from '@/Components/InputLabel';
 import InputError from '@/Components/InputError';
 import axios from 'axios';
 import MissionLocationPicker from '@/Components/MissionLocationPicker';
+import ModerationShield from '@/Components/ModerationShield';
 import { 
     Sparkles, 
     Rocket, 
@@ -30,6 +31,10 @@ export default function Create({ prefillTitle = '', aiTitle = null }) {
     const [isGeneratingDescription, setIsGeneratingDescription] = useState(false);
     const [priceInputMode, setPriceInputMode] = useState('quick'); // 'quick' or 'custom'
     const [aiGenerationError, setAiGenerationError] = useState('');
+    const [shieldStatus, setShieldStatus] = useState('idle'); // 'idle'|'scanning'|'verified'|'blocked'
+    const [shieldMessage, setShieldMessage] = useState('');
+    const debounceTimer = useRef(null);
+    const lastCheck = useRef({ content: '', result: null });
 
     const { data, setData, post, processing, errors, reset } = useForm({
         title: aiTitle || prefillTitle,
@@ -78,37 +83,68 @@ export default function Create({ prefillTitle = '', aiTitle = null }) {
         }
     };
 
-    const checkModeration = async (content) => {
-        setIsModerating(true);
-        setModerationError('');
+    const runShieldCheck = async (content) => {
         try {
-            const response = await axios.post(route('moderation.check'), { content });
-            if (!response.data.is_clean) {
-                setModerationError(t('Content violates moderation rules.'));
-                return false;
+            const response = await axios.post(route('api.moderation.check'), { content });
+            lastCheck.current = { content, result: response.data };
+            if (response.data.is_clean) {
+                setShieldStatus('verified');
+                setShieldMessage('');
+            } else {
+                setShieldStatus('blocked');
+                setShieldMessage(response.data.reason || '');
+                setModerationError(response.data.reason || t('Content violates moderation rules.'));
             }
-            return true;
-        } catch (error) {
-            return true;
-        } finally {
-            setIsModerating(false);
+            return response.data;
+        } catch {
+            setShieldStatus('idle');
+            return { is_clean: true }; // fail open for UX; server enforces the final gate
         }
     };
 
+    // Trigger debounced shield check whenever title or description changes.
+    useEffect(() => {
+        const content = (data.title + ' ' + data.description).trim();
+        if (!content) {
+            setShieldStatus('idle');
+            clearTimeout(debounceTimer.current);
+            return;
+        }
+        setShieldStatus('scanning');
+        setModerationError('');
+        clearTimeout(debounceTimer.current);
+        debounceTimer.current = setTimeout(() => runShieldCheck(content), 1400);
+        return () => clearTimeout(debounceTimer.current);
+    }, [data.title, data.description]);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
-        // Validate location is provided
+
         if (!data.location && !data.lat && !data.lng && !data.city) {
             setModerationError(t('Please select a location for your mission.'));
             return;
         }
-        
-        const isClean = await checkModeration(data.title + ' ' + data.description);
-        if (!isClean) return;
+
+        if (shieldStatus === 'blocked') return;
+
+        const content = data.title + ' ' + data.description;
+
+        // Use cached result when content matches the last AI check.
+        let checkResult = (lastCheck.current.content === content && lastCheck.current.result)
+            ? lastCheck.current.result
+            : null;
+
+        if (!checkResult) {
+            setIsModerating(true);
+            clearTimeout(debounceTimer.current);
+            setShieldStatus('scanning');
+            checkResult = await runShieldCheck(content);
+            setIsModerating(false);
+        }
+
+        if (!checkResult.is_clean) return;
 
         if (!auth.user) {
-            // For guests, we ensure name/city are filled
             if (!data.first_name || !data.city) {
                 setModerationError(t('Please provide your name and city.'));
                 return;
@@ -164,7 +200,12 @@ export default function Create({ prefillTitle = '', aiTitle = null }) {
                         onChange={e => setData('title', e.target.value)}
                         style={{ width: '100%', padding: '14px 16px', border: '2px solid var(--g300)', borderRadius: 'var(--rs)', fontSize: '16px', fontWeight: 600, color: 'var(--n)', background: data.title ? 'var(--g50)' : '#fff' }} 
                     />
-                    <InputError message={errors.title || moderationError} className="mt-2" />
+                    <InputError message={errors.title || (shieldStatus !== 'blocked' ? moderationError : '')} className="mt-2" />
+                    {shieldStatus !== 'idle' && (
+                        <div style={{ marginTop: '8px' }}>
+                            <ModerationShield status={shieldStatus} message={shieldMessage} />
+                        </div>
+                    )}
                 </div>
 
                 {/* Guest Details: Name & City */}
@@ -279,10 +320,14 @@ export default function Create({ prefillTitle = '', aiTitle = null }) {
                 <div className="pt-6">
                     <button
                         type="submit"
-                        disabled={processing}
-                        className={`w-full py-5 font-black rounded-full transition-all shadow-xl text-lg flex items-center justify-center gap-3 active:scale-[0.98] bg-oflem-charcoal text-white hover:bg-black`}
+                        disabled={processing || isModerating || shieldStatus === 'blocked' || shieldStatus === 'scanning'}
+                        className={`w-full py-5 font-black rounded-full transition-all shadow-xl text-lg flex items-center justify-center gap-3 active:scale-[0.98] ${
+                            processing || isModerating || shieldStatus === 'blocked' || shieldStatus === 'scanning'
+                                ? 'bg-gray-300 text-gray-400 cursor-not-allowed shadow-none'
+                                : 'bg-oflem-charcoal text-white hover:bg-black'
+                        }`}
                     >
-                        {processing ? <span className="w-6 h-6 border-4 border-oflem-terracotta border-t-white rounded-full animate-spin"></span> : <span>{t('onboarding.find_provider')}</span>}
+                        {(processing || isModerating || shieldStatus === 'scanning') ? <span className="w-6 h-6 border-4 border-oflem-terracotta border-t-white rounded-full animate-spin"></span> : <span>{t('onboarding.find_provider')}</span>}
                     </button>
                     <p className="mt-4 text-center text-xs text-zinc-400 font-bold flex items-center justify-center gap-1.5">
                         <ShieldCheck size={14} className="text-oflem-green" /> {t('onboarding.payment_secured')}

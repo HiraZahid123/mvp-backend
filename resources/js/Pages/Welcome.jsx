@@ -1,5 +1,6 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import ModerationShield from '@/Components/ModerationShield';
 import useTranslation from '@/Hooks/useTranslation';
 import Header from '@/Components/Header';
 import Footer from '@/Components/Footer';
@@ -353,6 +354,10 @@ export default function Welcome({ missions: initialMissions, providers: initialP
     const [isChecking, setIsChecking] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [shieldStatus, setShieldStatus] = useState('idle'); // 'idle'|'scanning'|'verified'|'blocked'
+    const [shieldMessage, setShieldMessage] = useState('');
+    const debounceTimer = useRef(null);
+    const lastCheck = useRef({ content: '', result: null });
     const [isHeaderScrolled, setIsHeaderScrolled] = useState(false);
     const [openFaq, setOpenFaq] = useState(null);
 
@@ -439,26 +444,70 @@ export default function Welcome({ missions: initialMissions, providers: initialP
         return () => clearTimeout(timer);
     }, [placeholder, isDeleting, currentExampleIndex, examples, typingSpeed]);
 
+    const runShieldCheck = async (content) => {
+        try {
+            const response = await axios.post('/api/moderation/check', { content });
+            lastCheck.current = { content, result: response.data };
+            if (response.data.is_clean) {
+                setShieldStatus('verified');
+                setShieldMessage('');
+            } else {
+                setShieldStatus('blocked');
+                setShieldMessage(response.data.reason || '');
+            }
+            return response.data;
+        } catch {
+            setShieldStatus('idle');
+            return null;
+        }
+    };
+
+    const handleSearchChange = (e) => {
+        const val = e.target.value;
+        setSearchTerm(val);
+        setErrorMessage('');
+
+        if (!val.trim()) {
+            setShieldStatus('idle');
+            clearTimeout(debounceTimer.current);
+            return;
+        }
+
+        setShieldStatus('scanning');
+        clearTimeout(debounceTimer.current);
+        debounceTimer.current = setTimeout(() => runShieldCheck(val), 1400);
+    };
+
     const handleSearchSubmit = async (e) => {
         e.preventDefault();
-        if (!searchTerm || isChecking) return;
+        if (!searchTerm || isChecking || shieldStatus === 'blocked') return;
 
+        // Use cached result when content hasn't changed since last successful check.
+        if (lastCheck.current.content === searchTerm && lastCheck.current.result?.is_clean) {
+            router.get('/missions/create', {
+                search: searchTerm,
+                improved_title: lastCheck.current.result.improved_title,
+            });
+            return;
+        }
+
+        clearTimeout(debounceTimer.current);
         setIsChecking(true);
+        setShieldStatus('scanning');
         setErrorMessage('');
-        try {
-            const response = await axios.post('/api/moderation/check', { content: searchTerm });
-            if (response.data.is_clean) {
-                router.get('/missions/create', { 
-                    search: searchTerm,
-                    improved_title: response.data.improved_title 
-                });
-            } else {
-                setErrorMessage(t('Ce type de contenu n\'est pas autorisé sur Oflem. Veuillez modifier votre description.'));
-            }
-        } catch (error) {
+
+        const result = await runShieldCheck(searchTerm);
+        setIsChecking(false);
+
+        if (result?.is_clean) {
+            router.get('/missions/create', {
+                search: searchTerm,
+                improved_title: result.improved_title,
+            });
+        } else if (result) {
+            setErrorMessage(t('Ce type de contenu n\'est pas autorisé sur Oflem. Veuillez modifier votre description.'));
+        } else {
             setErrorMessage(t('Une erreur est survenue lors de la vérification. Veuillez réessayer.'));
-        } finally {
-            setIsChecking(false);
         }
     };
 
@@ -526,16 +575,22 @@ export default function Welcome({ missions: initialMissions, providers: initialP
                                     <input
                                         type="text"
                                         value={searchTerm}
-                                        onChange={(e) => { setSearchTerm(e.target.value); if (errorMessage) setErrorMessage(''); }}
+                                        onChange={handleSearchChange}
                                         placeholder={placeholder}
-                                        className={`oflem-pub-bar-input${errorMessage ? ' border-red-400' : ''}`}
+                                        className={`oflem-pub-bar-input${shieldStatus === 'blocked' ? ' border-red-400' : shieldStatus === 'verified' ? ' border-green-400' : ''}`}
                                     />
-                                    <button type="submit" disabled={isChecking} className="oflem-pub-bar-btn">
+                                    <button type="submit" disabled={isChecking || shieldStatus === 'blocked'} className="oflem-pub-bar-btn">
                                         {isChecking ? '...' : t('homepage.hero.pub_button')}
                                     </button>
                                 </form>
 
-                                {errorMessage && (
+                                {shieldStatus !== 'idle' && (
+                                    <div style={{ marginTop: '10px' }}>
+                                        <ModerationShield status={shieldStatus} message={shieldMessage} />
+                                    </div>
+                                )}
+
+                                {errorMessage && shieldStatus === 'idle' && (
                                     <div style={{
                                         display: 'flex',
                                         alignItems: 'center',

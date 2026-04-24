@@ -84,11 +84,12 @@ class MissionController extends Controller
 
         $content = $validated['title'] . ' ' . ($validated['description'] ?? '');
 
-        if (!$this->moderationService->isCleanFast($content)) {
-            return back()->withErrors(['title' => 'Content violates keyword moderation rules.']);
+        $aiResult = $this->moderationService->isCleanAI($content);
+        if (!$aiResult['is_clean']) {
+            return back()->withErrors(['title' => $aiResult['reason'] ?? 'Ce contenu n\'est pas autorisé sur Oflem.']);
         }
 
-        $validated['category'] = $validated['category'] ?? 'Other';
+        $validated['category'] = $aiResult['category'] ?? 'Other';
 
         if (!Auth::check()) {
             session(['pending_mission' => $validated]);
@@ -200,8 +201,9 @@ class MissionController extends Controller
             'category' => 'nullable|string|max:100',
         ]);
 
-        if (!$this->moderationService->isCleanFast($validated['title'] . ' ' . ($validated['description'] ?? ''))) {
-            return back()->withErrors(['title' => 'Content violates rules.']);
+        $aiResult = $this->moderationService->isCleanAI($validated['title'] . ' ' . ($validated['description'] ?? ''));
+        if (!$aiResult['is_clean']) {
+            return back()->withErrors(['title' => $aiResult['reason'] ?? 'Ce contenu n\'est pas autorisé sur Oflem.']);
         }
 
         $mission->update($validated);
@@ -284,19 +286,36 @@ class MissionController extends Controller
     {
         $request->validate(['content' => 'required|string|max:5000']);
 
-        // Per-user rate limit: max 30 fast moderation checks per minute.
-        $rateLimitKey = 'check_moderation:' . Auth::id();
-        if (RateLimiter::tooManyAttempts($rateLimitKey, 30)) {
+        // AI calls are expensive — limit to 15 per minute. Use IP as fallback for guests.
+        $rateLimitKey = 'check_moderation:' . (Auth::id() ?? $request->ip());
+        if (RateLimiter::tooManyAttempts($rateLimitKey, 15)) {
             return response()->json(['error' => 'Too many requests.'], 429);
         }
         RateLimiter::hit($rateLimitKey, 60);
 
-        $isClean = $this->moderationService->isCleanFast($request->content);
-        $violations = $isClean ? [] : $this->moderationService->getViolations($request->content);
+        // Fast pre-screen: skip the AI token if content is obviously prohibited.
+        if (!$this->moderationService->isCleanFast($request->content)) {
+            $violations = $this->moderationService->getViolations($request->content);
+            return response()->json([
+                'is_clean'       => false,
+                'improved_title' => null,
+                'category'       => null,
+                'reason'         => 'Contenu non autorisé détecté.',
+                'risk_level'     => 'high',
+                'violations'     => $violations,
+            ]);
+        }
+
+        // Full AI check — primary gatekeeper for all submissions.
+        $result = $this->moderationService->isCleanAI($request->content);
 
         return response()->json([
-            'is_clean' => $isClean,
-            'violations' => $violations,
+            'is_clean'       => $result['is_clean'],
+            'improved_title' => $result['improved_title'] ?? null,
+            'category'       => $result['category'] ?? null,
+            'reason'         => $result['reason'] ?? null,
+            'risk_level'     => $result['risk_level'] ?? 'low',
+            'violations'     => [],
         ]);
     }
 }
