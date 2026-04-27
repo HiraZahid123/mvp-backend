@@ -79,6 +79,10 @@ class AuthenticatedSessionController extends Controller
             return redirect()->route('admin.dashboard');
         }
 
+        if ($request->session()->has('pending_mission')) {
+            return redirect()->route('missions.pending');
+        }
+
         return redirect()->intended(route('dashboard'));
     }
 

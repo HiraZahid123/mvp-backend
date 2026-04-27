@@ -138,8 +138,14 @@ class SocialAuthController extends Controller
         }
 
         if ($authType === 'login') {
+            if (session()->has('pending_mission')) {
+                return redirect()->route('missions.pending');
+            }
             return redirect()->intended(route('dashboard'));
         } else {
+            if (session()->has('pending_mission')) {
+                return redirect()->route('missions.pending');
+            }
             // Registration flow - go to Select Role
             return redirect()->route('auth.select-role');
         }
@@ -159,6 +165,10 @@ class SocialAuthController extends Controller
         // Admins bypass role selection
         if ($user->isAdmin()) {
             return redirect()->route('dashboard');
+        }
+
+        if (session()->has('pending_mission')) {
+            return redirect()->route('missions.pending');
         }
 
         // New social users always need role selection

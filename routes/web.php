@@ -72,7 +72,7 @@ Route::get('/system-clear', function () {
 |--------------------------------------------------------------------------
 */
 
-Route::prefix('api')->name('api.')->middleware('throttle:missions')->group(function () {
+Route::prefix('api')->name('api.')->middleware(['web', 'throttle:missions'])->group(function () {
     Route::post('/missions', [MissionController::class, 'store'])->name('missions.store');
     Route::post('/moderation/check', [MissionController::class, 'checkModeration'])->name('moderation.check');
     Route::post('/missions/ai-rewrite', [MissionController::class, 'aiRewrite'])->name('missions.ai-rewrite');

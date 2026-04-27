@@ -128,7 +128,7 @@ class OTPVerificationController extends Controller
 
             // Redirect to pending mission handler if exists, otherwise to success page
             if (Session::has('pending_mission')) {
-                return redirect()->route('pending');
+                return redirect()->route('missions.pending');
             }
 
             return redirect()->route('auth.registration-success');
