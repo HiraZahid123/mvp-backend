@@ -20,6 +20,7 @@ import {
     Calendar,
     Clock
 } from 'lucide-react';
+import OnboardingProgressBar from '@/Components/OnboardingProgressBar';
 
 export default function Create({ prefillTitle = '', aiTitle = null, category = null }) {
     const { t } = useTranslation();
@@ -171,30 +172,13 @@ export default function Create({ prefillTitle = '', aiTitle = null, category = n
 
     const swissCities = ['Genève', 'Lausanne', 'Fribourg', 'Neuchâtel', 'Sion', 'Montreux', 'Nyon', 'Morges', 'Vevey', 'Yverdon-les-Bains'];
 
-    const renderProgressBar = () => (
-        <div className="progress-bar-wrap">
-            <div className="progress-step-item">
-                <div className="progress-step-circle active">1</div>
-                <div className="progress-step-label active">{t('onboarding.your_request')}</div>
-            </div>
-            <div className="progress-connector"></div>
-            <div className="progress-step-item">
-                <div className="progress-step-circle">2</div>
-                <div className="progress-step-label">{t('onboarding.your_account')}</div>
-            </div>
-            <div className="progress-connector"></div>
-            <div className="progress-step-item">
-                <div className="progress-step-circle">3</div>
-                <div className="progress-step-label">{t('onboarding.verification')}</div>
-            </div>
-        </div>
-    );
+
 
     const formContent = (
         <div className={auth.user ? "max-w-2xl mx-auto" : "max-w-[720px] mx-auto py-12"}>
             {!auth.user && (
                 <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-                    {renderProgressBar()}
+                    <OnboardingProgressBar step={1} />
                     <h2 className="section-title" style={{ fontSize: '36px' }}>{t('onboarding.configure_request')}</h2>
                     <p style={{ color: 'var(--g500)', fontSize: '15px' }}>{t('onboarding.precision_hint')}</p>
                 </div>

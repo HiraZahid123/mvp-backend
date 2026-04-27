@@ -4,6 +4,7 @@ import { Head, useForm, router } from '@inertiajs/react';
 import InputError from '@/Components/InputError';
 import PrimaryButton from '@/Components/PrimaryButton';
 import useTranslation from '@/Hooks/useTranslation';
+import OnboardingProgressBar from '@/Components/OnboardingProgressBar';
 
 export default function VerifyEmailCode({ email }) {
     const [code, setCode] = useState(['', '', '', '', '', '']);
@@ -127,7 +128,8 @@ export default function VerifyEmailCode({ email }) {
             <Head title={t('auth.verify_otp.title')} />
 
             <div className="text-center mb-8">
-                <h1 className="text-[32px] lg:text-[40px] font-serif font-bold text-oflem-charcoal tracking-tight mb-3 leading-tight">
+                <OnboardingProgressBar step={3} />
+                <h1 className="text-[32px] lg:text-[40px] font-serif font-bold text-oflem-charcoal tracking-tight mb-3 leading-tight mt-6">
                     {t('auth.verify_otp.title')}
                 </h1>
                 <p className="text-gray-muted text-base font-medium">

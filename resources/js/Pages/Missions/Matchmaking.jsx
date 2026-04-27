@@ -3,6 +3,7 @@ import { Head, Link, useForm } from '@inertiajs/react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import useTranslation from '@/Hooks/useTranslation';
 import { Search, Check, Star } from 'lucide-react';
+import OnboardingProgressBar from '@/Components/OnboardingProgressBar';
 
 export default function Matchmaking({ mission, providers, isGuest = false }) {
     const { t } = useTranslation();
@@ -41,6 +42,7 @@ export default function Matchmaking({ mission, providers, isGuest = false }) {
                 <main className="oflem-container py-12 animate-in fade-in duration-700">
                     <div className="max-w-5xl mx-auto">
                         <div className="mb-10 text-center">
+                            <OnboardingProgressBar step={2} />
                             <h1 className="text-4xl font-black text-oflem-charcoal mb-4">
                                 {t('onboarding.excellent_news')} <span className="text-oflem-terracotta">{providers.length} {t('onboarding.providers_count')}</span> {t('onboarding.around_you')}
                             </h1>
