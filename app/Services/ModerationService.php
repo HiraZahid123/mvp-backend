@@ -270,16 +270,16 @@ class ModerationService
                 'result' => $result
             ]);
 
-            // Fail-closed: empty or malformed response blocks the content and flags for manual review.
+            // Fail-open on technical error: if AI is down, we trust isCleanFast (regex) 
+            // and allow the content to prevent blocking legitimate users.
             if (empty($result)) {
-                Log::warning('AI Moderation empty response — content blocked pending review', ['content' => $content]);
+                Log::warning('AI Moderation empty response — failing open', ['content' => $content]);
                 return [
-                    'is_clean' => false,
+                    'is_clean' => true,
                     'improved_title' => null,
                     'category' => 'Other',
-                    'reason' => 'AI Service Timeout/Empty Response - Content blocked pending review',
+                    'reason' => null,
                     'risk_level' => 'low',
-                    'needs_manual_review' => true,
                     'detected_language' => $langName
                 ];
             }
@@ -301,16 +301,13 @@ class ModerationService
         } catch (\Exception $e) {
             Log::error("AI Multilingual Moderation failed: " . $e->getMessage());
             
-            // Fail-closed: block content on exception and flag for manual review.
-            // Service outages must not become a bypass vector.
+            // Fail-open: allow content on exception but log it.
             return [
-                'is_clean' => false,
+                'is_clean' => true,
                 'improved_title' => null,
                 'category' => 'Other',
-                'reason' => 'AI service error - content blocked pending review',
+                'reason' => null,
                 'risk_level' => 'low',
-                'needs_manual_review' => true,
-                'ai_error' => true,
                 'detected_language' => $langName
             ];
         }

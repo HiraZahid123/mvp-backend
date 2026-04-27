@@ -149,7 +149,7 @@ const FAQSection = ({ t }) => {
 
                 <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
                     <p className="faq-category-label label-general">{t('homepage.faq.categories.general')}</p>
-                    <div className="faq-grid" style={{ gridTemplateColumns: 'repeat(2, 1fr)', gap: '24px', marginBottom: 0 }}>
+                    <div className="faq-grid" style={{ marginBottom: 0 }}>
                         {generalItems.map((itemKey) => {
                             const isOpen = openIndices.has(itemKey);
                             return (
@@ -310,35 +310,35 @@ const CookieBar = () => {
     const [isVisible, setIsVisible] = useState(false);
 
     React.useEffect(() => {
-        const consent = localStorage.getItem('oflem_cookie_consent');
+        const consent = localStorage.getItem('oflem_cookies');
         if (!consent) {
             setIsVisible(true);
         }
     }, []);
 
     const handleAccept = () => {
-        localStorage.setItem('oflem_cookie_consent', 'accepted');
+        localStorage.setItem('oflem_cookies', 'accepted');
         setIsVisible(false);
     };
 
     const handleDecline = () => {
-        localStorage.setItem('oflem_cookie_consent', 'declined');
+        localStorage.setItem('oflem_cookies', 'declined');
         setIsVisible(false);
     };
 
     if (!isVisible) return null;
 
     return (
-        <div className={`cookie-bar ${isVisible ? 'show shadow-2xl' : ''}`}>
+        <div className={`cookie-bar ${isVisible ? 'show' : ''}`} role="dialog" aria-label="Cookies">
             <div className="cookie-bar-inner">
                 <p className="cookie-text">
-                    {t('homepage.cookies.text')} <a className="underline cursor-pointer ml-1">{t('homepage.cookies.learn_more')}</a>
+                    {t('homepage.cookies.text')} <a onClick={() => router.get(route('legal', { section: 'cookies' }))}>{t('homepage.cookies.learn_more')}</a>
                 </p>
                 <div className="cookie-actions">
-                    <button onClick={handleAccept} className="cookie-btn cookie-accept font-black">
+                    <button onClick={handleAccept} className="cookie-btn cookie-accept">
                         {t('homepage.cookies.accept')}
                     </button>
-                    <button onClick={handleDecline} className="cookie-btn cookie-decline font-bold">
+                    <button onClick={handleDecline} className="cookie-btn cookie-decline">
                         {t('homepage.cookies.decline')}
                     </button>
                 </div>
@@ -628,22 +628,17 @@ export default function Welcome({ missions: initialMissions, providers: initialP
 
                             <div className="oflem-trust-row">
                                 <div className="oflem-trust-item">
-                                    <div className="oflem-trust-icon-wrap"><Shield size={18} /></div>
-                                    <div className="oflem-trust-label"><strong>{t('homepage.hero.trust.payment')}<br />{t('homepage.hero.trust.secure')}</strong></div>
+                                    <div className="oflem-trust-icon-wrap"><Shield size={20} /></div>
+                                    <div className="oflem-trust-label">{t('homepage.hero.trust.payment')}</div>
                                 </div>
                                 <div className="oflem-trust-item">
-                                    <div className="oflem-trust-icon-wrap"><ShieldCheck size={18} /></div>
-                                    <div className="oflem-trust-label"><strong>{t('homepage.hero.trust.providers')}<br />{t('homepage.hero.trust.verified')}</strong></div>
+                                    <div className="oflem-trust-icon-wrap"><ShieldCheck size={20} /></div>
+                                    <div className="oflem-trust-label">{t('homepage.hero.trust.providers')}</div>
                                 </div>
                                 <div className="oflem-trust-item">
                                     <div className="oflem-trust-icon-wrap" style={{ background: '#fff', borderColor: 'var(--n)' }}>CH</div>
-                                    <div className="oflem-trust-label"><strong>{t('homepage.hero.trust.data')}<br />{t('homepage.hero.trust.swiss')}</strong></div>
+                                    <div className="oflem-trust-label">{t('homepage.hero.trust.data')}<br />{t('homepage.hero.trust.swiss')}</div>
                                 </div>
-                            </div>
-                            
-                            <div className="oflem-hero-stamp">
-                                <span className="oflem-hero-stamp-ch">CH</span>
-                                {t('homepage.hero.stamp.made_in')} · {t('homepage.hero.stamp.hosting')} · <Link href={route('legal', { section: 'about' })} className="underline cursor-pointer" style={{ color: 'var(--o)', fontWeight: 700 }}>{t('homepage.hero.stamp.about')}</Link>
                             </div>
                         </div>
 
@@ -747,7 +742,7 @@ export default function Welcome({ missions: initialMissions, providers: initialP
                     <AnimatedSection>
                         <div className="section-head" style={{ marginBottom: '48px' }}>
                             <div className="section-label">{t('homepage.categories_section.label')}</div>
-                            <h2 className="section-title" style={{ fontSize: '42px' }}>{t('homepage.categories_section.title')}</h2>
+                            <h2 className="section-title">{t('homepage.categories_section.title')}</h2>
                             <p className="section-sub">{t('homepage.categories_section.subtitle')}</p>
                         </div>
                     </AnimatedSection>
@@ -781,10 +776,10 @@ export default function Welcome({ missions: initialMissions, providers: initialP
             {/* ═══ HOW IT WORKS SECTION ═══ */}
             <section className="oflem-section" id="how-it-works">
                 <div className="oflem-container">
-                    <div className="oflem-section-head">
+                    <div className="section-head">
                         <AnimatedSection>
-                            <span className="oflem-section-label">{t('homepage.how_it_works.label')}</span>
-                            <h2 className="oflem-section-title">{t('homepage.how_it_works.title')}</h2>
+                            <span className="section-label">{t('homepage.how_it_works.label')}</span>
+                            <h2 className="section-title">{t('homepage.how_it_works.title')}</h2>
                         </AnimatedSection>
                     </div>
                     
@@ -979,7 +974,7 @@ export default function Welcome({ missions: initialMissions, providers: initialP
                     </div>
                     
                     <div className="audience-split">
-                        <AnimatedSection delay="100ms">
+                        <AnimatedSection delay="100ms" className="audience-anim">
                             <div className="audience-card client">
                                 <span className="aud-tag client-tag">{t('homepage.audience.client.tag')}</span>
                                 <h3>{t('homepage.audience.client.title')}</h3>
@@ -989,11 +984,11 @@ export default function Welcome({ missions: initialMissions, providers: initialP
                                         <li key={i}>{check}</li>
                                     ))}
                                 </ul>
-                                <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="oflem-btn oflem-btn-primary" style={{ width: '100%', fontSize: '16px', padding: '15px', marginTop: 'auto' }}>{t('homepage.audience.client.button')}</button>
+                                <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="oflem-btn oflem-btn-primary oflem-btn-full" style={{ marginTop: 'auto' }}>{t('homepage.audience.client.button')}</button>
                             </div>
                         </AnimatedSection>
                         
-                        <AnimatedSection delay="300ms">
+                        <AnimatedSection delay="300ms" className="audience-anim">
                             <div className="audience-card provider">
                                 <span className="aud-tag provider-tag">{t('homepage.audience.provider.tag')}</span>
                                 <h3>{t('homepage.audience.provider.title')}</h3>
@@ -1003,7 +998,7 @@ export default function Welcome({ missions: initialMissions, providers: initialP
                                         <li key={i}>{check}</li>
                                     ))}
                                 </ul>
-                                <Link href={route('register')} className="oflem-btn oflem-btn-secondary" style={{ width: '100%', fontSize: '16px', padding: '15px', textAlign: 'center', display: 'block', marginTop: 'auto' }}>{t('homepage.audience.provider.button')}</Link>
+                                <Link href={route('register')} className="oflem-btn oflem-btn-secondary oflem-btn-full" style={{ textAlign: 'center', marginTop: 'auto' }}>{t('homepage.audience.provider.button')}</Link>
                             </div>
                         </AnimatedSection>
                     </div>

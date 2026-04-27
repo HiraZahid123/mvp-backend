@@ -266,10 +266,10 @@
             "cta_provider": "I am a service provider →",
             "cta_provider_sub": "Make money with your skills",
             "trust": {
-                "payment": "Payment",
-                "secure": "secure",
-                "providers": "Providers",
-                "verified": "verified",
+                "payment": "Secure payment",
+                "secure": "",
+                "providers": "Verified service providers",
+                "verified": "",
                 "data": "Data",
                 "swiss": "in Switzerland"
             },
@@ -356,8 +356,8 @@
                 "large": { "label": "Large projects", "badge": "Best rate", "range": "From CHF 500", "example": "Service provider: CHF 600 → You pay: CHF 672" }
             },
             "info": {
-                "providers": { "title": "For service providers", "text": "The service provider receives 100% of their proposal. The commission is on the client side: their compensation is net, from the start." },
-                "purpose": { "title": "What it's for", "text": "Service provider verification, escrow payment protection, support in case of dispute. Not just a simple ad wall." }
+                "providers": { "title": "For service providers", "text": "The service provider receives 100% of what they offered. The commission is paid to the client: their compensation is net, from the outset." },
+                "purpose": { "title": "What is it used for?", "text": "Verification of service providers, payment protection through escrow, support in case of disputes. Not just a wall of ads." }
             }
         },
         "audience": {
@@ -374,7 +374,7 @@
                     "Money protected until validated",
                     "Assistance when needed"
                 ],
-                "button": "Post my request, it's free"
+                "button": "Posting my request is free"
             },
             "provider": {
                 "tag": "🛠️ You have skills",
@@ -386,7 +386,7 @@
                     "Payment guaranteed before starting",
                     "Your personal Oflem page to share"
                 ],
-                "button": "Create my service provider profile"
+                "button": "Create my provider profile"
             }
         },
         "remote_missions": {
@@ -531,7 +531,7 @@
             "my_wallet": "My Wallet",
             "find_helpers": "Find help",
             "why_us": "Why us?",
-            "become_provider": "Register as a provider",
+            "become_provider": "Becoming a service provider",
             "faq": "FAQ",
             "profile_settings": "Profile settings",
             "payments": "Payments",

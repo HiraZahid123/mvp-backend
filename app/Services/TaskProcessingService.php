@@ -122,18 +122,28 @@ class TaskProcessingService
      */
     private function parseJsonFromText(string $text): array
     {
-        // Try extracting a JSON object literal first (handles extra prose around it).
-        if (preg_match('/\{(?:[^{}]|(?R))*\}/s', $text, $matches)) {
-            $decoded = json_decode(trim($matches[0]), true);
+        // 1. Clean up potential markdown fences
+        $clean = preg_replace('/^```(?:json)?|```$/m', '', trim($text));
+        
+        // 2. Try direct decode
+        $decoded = json_decode($clean, true);
+        if (is_array($decoded)) {
+            return $decoded;
+        }
+
+        // 3. Fallback: Try to find the first '{' and last '}' to extract the object
+        $firstBracket = strpos($text, '{');
+        $lastBracket = strrpos($text, '}');
+        
+        if ($firstBracket !== false && $lastBracket !== false) {
+            $jsonCandidate = substr($text, $firstBracket, $lastBracket - $firstBracket + 1);
+            $decoded = json_decode($jsonCandidate, true);
             if (is_array($decoded)) {
                 return $decoded;
             }
         }
 
-        // Strip markdown code fences and retry.
-        $clean   = str_replace(['```json', '```'], '', $text);
-        $decoded = json_decode(trim($clean), true);
-        return is_array($decoded) ? $decoded : [];
+        return [];
     }
 
     public function analyzeTask(string $taskContent): array

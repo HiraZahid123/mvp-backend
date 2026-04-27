@@ -102,6 +102,7 @@ export default function Create({ prefillTitle = '', aiTitle = null }) {
         }
     };
 
+    /* 
     // Trigger debounced shield check whenever title or description changes.
     useEffect(() => {
         const content = (data.title + ' ' + data.description).trim();
@@ -116,6 +117,7 @@ export default function Create({ prefillTitle = '', aiTitle = null }) {
         debounceTimer.current = setTimeout(() => runShieldCheck(content), 1400);
         return () => clearTimeout(debounceTimer.current);
     }, [data.title, data.description]);
+    */
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -195,7 +197,6 @@ export default function Create({ prefillTitle = '', aiTitle = null }) {
                     <label style={{ fontSize: '14px', fontWeight: 900, color: 'var(--n)', display: 'block', marginBottom: '8px' }}>{t('onboarding.your_need')}</label>
                     <input 
                         type="text" 
-                        readOnly={!!data.title}
                         value={data.title}
                         onChange={e => setData('title', e.target.value)}
                         style={{ width: '100%', padding: '14px 16px', border: '2px solid var(--g300)', borderRadius: 'var(--rs)', fontSize: '16px', fontWeight: 600, color: 'var(--n)', background: data.title ? 'var(--g50)' : '#fff' }} 

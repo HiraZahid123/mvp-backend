@@ -356,8 +356,8 @@
                 "large": { "label": "Grands projets", "badge": "Meilleur taux", "range": "Dès CHF 500", "example": "Prestataire : CHF 600 → Vous payez : CHF 672" }
             },
             "info": {
-                "providers": { "title": "Pour les prestataires", "text": "Le prestataire reçoit 100% de ce qu'il a proposé. La commission est côté client : sa rémunération est nette, dès le départ." },
-                "purpose": { "title": "À quoi elle sert", "text": "Vérification des prestataires, protection du paiement par séquestre, support en cas de litige. Pas un simple mur d'annonces." }
+                "providers": { "title": "Pour les prestataires", "text": "Le prestataire reçoit 100% du montant de son offre. La commission est payée par le client : sa rémunération est nette, dès le départ." },
+                "purpose": { "title": "À quoi sert-elle ?", "text": "Vérification des prestataires, protection du paiement par séquestre, assistance en cas de litige. Pas juste un mur d'annonces." }
             }
         },
         "audience": {
