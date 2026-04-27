@@ -21,7 +21,7 @@ import {
     Clock
 } from 'lucide-react';
 
-export default function Create({ prefillTitle = '', aiTitle = null }) {
+export default function Create({ prefillTitle = '', aiTitle = null, category = null }) {
     const { t } = useTranslation();
     const { auth } = usePage().props;
     const [showAuthModal, setShowAuthModal] = useState(false);
@@ -48,6 +48,7 @@ export default function Create({ prefillTitle = '', aiTitle = null }) {
         price_type: 'fixed',
         first_name: '',
         city: '',
+        category: category || '',
     });
 
     const [totalWithCommission, setTotalWithCommission] = useState(60); // 50 + 20%
@@ -149,14 +150,22 @@ export default function Create({ prefillTitle = '', aiTitle = null }) {
         if (!auth.user) {
             if (!data.first_name || !data.city) {
                 setModerationError(t('Please provide your name and city.'));
+                // Trigger browser validation if possible, but also set state
                 return;
             }
-            router.post(route('api.missions.store'), data);
+            router.post(route('api.missions.store'), data, {
+                onError: (err) => {
+                    console.error('Store Error:', err);
+                }
+            });
             return;
         }
 
         post(route('api.missions.store'), {
             onSuccess: () => reset(),
+            onError: (err) => {
+                console.error('Store Error:', err);
+            }
         });
     };
 
@@ -201,7 +210,12 @@ export default function Create({ prefillTitle = '', aiTitle = null }) {
                         onChange={e => setData('title', e.target.value)}
                         style={{ width: '100%', padding: '14px 16px', border: '2px solid var(--g300)', borderRadius: 'var(--rs)', fontSize: '16px', fontWeight: 600, color: 'var(--n)', background: data.title ? 'var(--g50)' : '#fff' }} 
                     />
-                    <InputError message={errors.title || (shieldStatus !== 'blocked' ? moderationError : '')} className="mt-2" />
+                    <InputError message={errors.title} className="mt-2" />
+                    {moderationError && !errors.title && (
+                        <div className="mt-2 p-3 bg-red-50 border border-red-100 rounded-xl text-red-600 text-sm font-bold flex items-center gap-2">
+                            <Lock size={14} /> {moderationError}
+                        </div>
+                    )}
                     {shieldStatus !== 'idle' && (
                         <div style={{ marginTop: '8px' }}>
                             <ModerationShield status={shieldStatus} message={shieldMessage} />

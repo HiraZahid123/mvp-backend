@@ -64,6 +64,7 @@ class MissionController extends Controller
         return Inertia::render('Missions/Create', [
             'prefillTitle' => $prefillTitle,
             'aiTitle' => $aiTitle,
+            'category' => $request->query('category'),
         ]);
     }
 
@@ -89,7 +90,7 @@ class MissionController extends Controller
             return back()->withErrors(['title' => $aiResult['reason'] ?? 'Ce contenu n\'est pas autorisé sur Oflem.']);
         }
 
-        $validated['category'] = $aiResult['category'] ?? 'Other';
+        $validated['category'] = $request->input('category') ?? ($aiResult['category'] ?? 'Other');
 
         if (!Auth::check()) {
             session(['pending_mission' => $validated]);
