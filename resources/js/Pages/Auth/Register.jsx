@@ -269,6 +269,16 @@ export default function Register() {
                                         <strong>{t('onboarding.remote_notice_label')}</strong> {t('onboarding.remote_notice_desc')}
                                     </p>
                                 </div>
+
+                                <p style={{ textAlign: 'center', fontSize: '14px', color: 'var(--g500)', marginTop: '32px' }}>
+                                    {t('auth.login.already_have_account') || "Vous avez déjà un compte ?"}{' '}
+                                    <Link
+                                        href={route('login')}
+                                        style={{ color: 'var(--o)', fontWeight: 700, textDecoration: 'none' }}
+                                    >
+                                        {t('auth.login.title') || "Se connecter"}
+                                    </Link>
+                                </p>
                             </div>
                         )}
 

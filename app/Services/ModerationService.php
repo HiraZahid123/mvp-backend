@@ -27,8 +27,8 @@ class ModerationService
     protected array $forbiddenPatterns = [
         // ========== DRUGS & NARCOTICS ==========
         // English, French, Spanish, German, Italian
-        '/\b(cannabis|w[e3]{2}d|marijuana|coca[i1]ne|hero[i1]ne|heroin|ecstasy|mdma|lsd|meth|crack|drug[s]?|narcotic[s]?)\b/iu',
-        '/\b(stupéfiants?|drogue[s]?|marihuana|cocaína|heroína|Drogen|Kokain|Heroin|droga|eroina)\b/iu',
+        '/\b(cannabis|w[e3]{2}d|marijuana|coca[i1]ne|hero[i1]ne|heroin|ecstasy|mdma|lsd|meth|crack|drug[s]?|narcotic[s]?|white\s*powder|party\s*supplies|herbal\s*high|high\s*quality\s*snow)\b/iu',
+        '/\b(stupéfiants?|drogue[s]?|marihuana|cocaína|heroína|Drogen|Kokain|Heroin|droga|eroina|poudre\s*blanche)\b/iu',
         // Arabic: مخدرات (drugs), حشيش (hashish), كوكايين (cocaine), هيروين (heroin)
         '/\b(مخدرات|حشيش|كوكايين|هيروين|أفيون|مخدر)\b/u',
         // Urdu: منشیات (drugs), چرس (hashish), کوکین (cocaine), ہیروئن (heroin)
@@ -36,8 +36,8 @@ class ModerationService
         
         // ========== ADULT/SEXUAL CONTENT ==========
         // English, French, Spanish, German, Italian
-        '/\b(p[o0]rn[o]?|escort[s]?|hooker[s]?|prostitut(ion|e[s]?)|érotique|xxx|adult\s*content|sex\s*work)\b/iu',
-        '/\b(prost[ií]tut[ao]|prostitución|Prostitution|prostituzione)\b/iu',
+        '/\b(p[o0]rn[o]?|escort[s]?|hooker[s]?|prostitut(ion|e[s]?)|érotique|xxx|adult\s*content|sex\s*work|happy\s*ending|massage\s*with\s*benefit[s]?|adult\s*fun|sensual\s*massage)\b/iu',
+        '/\b(prost[ií]tut[ao]|prostitución|Prostitution|prostituzione|fin\s*heureuse|massage\s*sensuel)\b/iu',
         // Arabic: دعارة (prostitution), محتوى إباحي (porn content)
         '/\b(دعارة|محتوى\s*إباحي|إباحي|جنس)\b/u',
         // Urdu: فحاشی (obscenity), جنسی (sexual)
@@ -164,16 +164,20 @@ class ModerationService
             $content = normalizer_normalize($content, \Normalizer::NFKC) ?: $content;
         }
 
-        // 3. Collapse single separator characters between letters: "w h a t s" → "whats",
-        //    "t.e.l.e.g.r.a.m" → "telegram". Only strips isolated separators (one char wide).
-        $content = preg_replace('/(?<=\w)([\s\.\-\_\*](?=\w))+/u', '', $content);
+        // 3. De-obfuscate: Strip ALL non-alphanumeric characters (including multiple spaces/symbols) 
+        // that are sandwiched between letters/numbers. This catches "c...o...c...a...i...n...e", etc.
+        $content = preg_replace('/(?<=[\w\p{L}])[^\w\p{L}]+(?=[\w\p{L}])/u', '', $content);
 
-        // 4. Leetspeak substitution — map common digit/symbol substitutions back to letters.
+        // 4. Enhanced Leetspeak substitution — map common digit/symbol substitutions back to letters.
         $leet = [
             '0' => 'o', '1' => 'i', '3' => 'e', '4' => 'a',
             '5' => 's', '6' => 'g', '7' => 't', '8' => 'b',
-            '@' => 'a', '$' => 's', '!' => 'i', '+' => 't',
+            '9' => 'g', '@' => 'a', '$' => 's', '!' => 'i',
+            '+' => 't', '|' => 'l', '()' => 'o', '[]' => 'o',
+            '{}' => 'o', 'vv' => 'w',
         ];
+        // Note: strtr works best with single chars or fixed strings. 
+        // For '()' we might need a separate replace but let's keep it simple for now.
         $content = strtr($content, $leet);
 
         return $content;
@@ -228,34 +232,33 @@ class ModerationService
         ];
         $langName = $langNames[$detectedLang] ?? 'Unknown';
 
-        $prompt = "You are a multilingual content moderator and professional editor for Oflem, a premium Swiss platform.
-        Analyze this mission text for any violations (drugs, illegal services, adult content, violence, fraud, or hidden double meanings).
+        $prompt = "You are a highly vigilant multilingual content moderator for Oflem, a premium Swiss service platform.
+        Your goal is to detect and BLOCK any content that violates safety rules, even if it uses obfuscation, spelling mistakes, or coded language.
         
-        Mission Text: \"{$content}\"
+        Mission Text to Analyze: \"{$content}\"
         Detected Language: {$langName}
         
-        Task:
-        1. Check if the content is safe and professional IN ANY LANGUAGE.
-        2. If (and ONLY if) the content is clean, generate a more comprehensive, professional, and clear version of this title (max 5-8 words) IN THE SAME LANGUAGE as the input.
-        3. Suggest a high-level category (e.g., Cleaning, Moving, DIY, IT, Admin, Delivery, Pets, Gardening, Events, Education, Wellness, Other).
+        CRITICAL MODERATION RULES:
+        1. BLOCK HIDDEN INTENT: Look for euphemisms or indirect phrasing for prohibited items. 
+           Example: \"special white powder\", \"herbal relaxation\", \"adult fun\", \"fast money\", \"outside payment\".
+        2. BLOCK OBFUSCATION: Identify words hidden with symbols, numbers, or extra spaces (e.g., \"c.o.c.a.i.n.e\", \"whats@pp\").
+        3. BLOCK SPELLING MISTAKES: If a word is clearly a misspelling of a prohibited word (e.g., \"canabis\", \"mariuana\"), BLOCK it.
+        4. CATEGORIES TO BLOCK:
+           - DRUGS: Narcotics, cannabis, prescriptions, \"party supplies\".
+           - ADULT: Sexual services, escorting, pornographic requests.
+           - ILLEGAL: Stolen goods, hacking, fraud, weapons.
+           - OFF-PLATFORM: Requests to move to WhatsApp, Telegram, or pay via PayPal/Crypto/Direct Cash.
+           - REGULATED: Alcohol, tobacco, vaping (unless it's a simple grocery delivery that might include these, but prioritize blocking direct requests).
         
-        CRITICAL MULTILINGUAL GUIDELINES:
-        - UNDERSTAND content in ALL languages: English, French, Arabic, Urdu, Spanish, German, Italian, etc.
-        - ALLOW everyday tasks in ANY language (cleaning, shopping, pet care, moving, gardening, etc.)
-        - BLOCK STAY-SAFE VIOLATIONS: hard drugs, weapons, adult services, violence, fraud
-        - BLOCK REGULATED GOODS: alcohol delivery/purchase, tobacco, vaping products
-        - BLOCK PROFESSIONAL SERVICES: medical advice, legal advice, prescription fulfillment
-        - Be LENIENT with common everyday requests (cleaning, DIY, gardening) - err on the side of allowing legitimate tasks
-        - Watch for bypass attempts in ANY language (symbols, spaces, numbers hiding prohibited words)
-        - If the content is in Arabic, Urdu, or other non-Latin scripts, ensure you understand the context properly
+        5. ALLOW LEGITIMATE TASKS: Be professional but firm. Everyday help like \"Cleaning my house\", \"Moving furniture\", \"Gardening\", \"IT help\" is perfectly fine.
         
-        Return ONLY a JSON object with:
+        JSON RETURN FORMAT:
         {
           \"is_clean\": boolean,
-          \"reason\": \"Brief reason if not clean, else null\",
+          \"reason\": \"Detailed reason in English if blocked\",
           \"risk_level\": \"high|medium|low\",
-          \"improved_title\": \"The polished, professional title IN THE SAME LANGUAGE (only if clean)\",
-          \"category\": \"The suggested category\",
+          \"improved_title\": \"If clean, a professional title (max 6 words) in {$langName}\",
+          \"category\": \"Cleaning|Moving|DIY|IT|Admin|Delivery|Pets|Gardening|Events|Education|Wellness|Other\",
           \"detected_language\": \"{$langName}\"
         }";
 

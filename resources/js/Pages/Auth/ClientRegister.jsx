@@ -193,6 +193,15 @@ export default function ClientRegister() {
                         <p style={{ textAlign: 'center', fontSize: '12px', color: 'var(--g500)', marginTop: '20px' }}>
                             {t('onboarding.terms_start')} <a href="#" style={{ color: 'var(--o)', fontWeight: 700, textDecoration: 'underline' }}>{t('onboarding.cgu')}</a> {t('onboarding.terms_and')} <a href="#" style={{ color: 'var(--o)', fontWeight: 700, textDecoration: 'underline' }}>{t('onboarding.privacy')}</a>.
                         </p>
+                        <p style={{ textAlign: 'center', fontSize: '13px', color: 'var(--g500)', marginTop: '24px' }}>
+                            {t('auth.login.already_have_account') || "Vous avez déjà un compte ?"}{' '}
+                            <Link
+                                href={route('login')}
+                                style={{ color: 'var(--o)', fontWeight: 700, textDecoration: 'none' }}
+                            >
+                                {t('auth.login.title') || "Se connecter"}
+                            </Link>
+                        </p>
                     </form>
 
                     {/* Trust Indicators */}
