@@ -124,7 +124,7 @@ class MissionController extends Controller
         $user = Auth::user();
         $lat = $user->location_lat;
         $lng = $user->location_lng;
-        $radius = $request->query('radius', $user->discovery_radius_km ?? 10);
+        $radius = $request->query('radius', $user->discovery_radius_km ?? 50);
         $filters = $request->only(['search', 'budget_min', 'budget_max', 'start_date', 'end_date', 'categories', 'category']);
 
         if ($request->has('category') && !$request->has('categories')) {

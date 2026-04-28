@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
-import { Head, Link, useForm, router } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import useTranslation from '@/Hooks/useTranslation';
+import axios from 'axios';
 import '../../../css/oflem-home.css';
 import '../../../css/oflem-register.css';
 
@@ -55,15 +56,17 @@ export default function VerifyOTP({ email = 'votre@email.ch' }) {
 
     const resendCode = () => {
         setResendStatus('sending');
-        router.post(route('auth.verify-otp.send'), { method: 'email' }, {
-            onSuccess: () => {
+        
+        axios.post(route('auth.verify-otp.send'), { method: 'email' })
+            .then(response => {
                 setResendStatus('sent');
                 setTimeout(() => setResendStatus(null), 5000);
-            },
-            onError: (err) => {
+            })
+            .catch(error => {
                 setResendStatus(null);
-            }
-        });
+                const message = error.response?.data?.message || 'Failed to resend code';
+                setError('code', message);
+            });
     };
 
     return (

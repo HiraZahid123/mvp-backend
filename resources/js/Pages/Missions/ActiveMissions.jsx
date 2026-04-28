@@ -68,7 +68,7 @@ export default function ActiveMissions({ missions, userLocation, currentFilters,
                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
                             <div>
                                 <p className="text-gray-muted font-bold">
-                                    {t('Showing missions within')} <span className="text-oflem-terracotta">{filters.radius || 5}km</span> {t('of your location.')}
+                                    {t('Showing missions within')} <span className="text-oflem-terracotta">{filters.radius || 50}km</span> {t('of your location.')}
                                 </p>
                             </div>
                             
@@ -201,7 +201,7 @@ export default function ActiveMissions({ missions, userLocation, currentFilters,
                                     {t("We couldn't find any active missions matching your filters. Try clearing some filters or expanding your radius.")}
                                 </p>
                                 <button 
-                                    onClick={() => handleFilterChange({ radius: 5, sort_by: 'distance' })}
+                                    onClick={() => handleFilterChange({ radius: 50, sort_by: 'distance' })}
                                     className="inline-flex items-center gap-3 px-10 py-4 bg-gradient-to-br from-oflem-terracotta to-oflem-terracotta-light text-white font-black rounded-full hover:opacity-90 transition-all shadow-md group"
                                 >
                                     <RefreshCw size={20} className="group-hover:rotate-180 transition-transform duration-500" /> {t('Reset Filters')}
