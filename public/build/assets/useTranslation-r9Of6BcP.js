@@ -1,1 +1,0 @@
-import{b as o}from"./app-B_a7jeNv.js";function i(){const{translations:r}=o().props;return{t:n=>{if(!r)return n;const e=n.split(".");let t=r;for(const s of e)if(t&&t[s]!==void 0)t=t[s];else return n;return t}}}export{i as u};
