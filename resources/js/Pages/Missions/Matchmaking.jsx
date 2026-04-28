@@ -28,46 +28,77 @@ export default function Matchmaking({ mission, providers, isGuest = false }) {
 
     if (isGuest) {
         return (
-            <div className="oflem-home-page" style={{ background: 'var(--g50)', minHeight: '100vh' }}>
+            <div className="oflem-home-page min-h-screen" style={{ background: 'linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%)' }}>
                 <Head title={t('onboarding.match_providers_title')} />
-                <header className="oflem-header" style={{ background: '#fff' }}>
+                
+                <header className="oflem-header sticky top-0 bg-white/80 backdrop-blur-xl z-50 border-b border-gray-100">
                     <div className="oflem-container">
-                        <nav className="oflem-nav">
-                            <Link href={route('welcome')} className="oflem-logo">Oflem<span className="oflem-logo-dot">.</span></Link>
-                            <Link href={route('welcome')} className="oflem-nav-btn-login">← {t('common.back')}</Link>
+                        <nav className="oflem-nav py-4 flex justify-between items-center">
+                            <Link href={route('welcome')} className="oflem-logo">
+                                Oflem<span className="oflem-logo-dot">.</span>
+                            </Link>
+                            <Link 
+                                href={route('welcome')} 
+                                className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-gray-600 hover:text-oflem-charcoal transition-colors rounded-xl hover:bg-gray-50"
+                            >
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                                {t('common.back')}
+                            </Link>
                         </nav>
                     </div>
                 </header>
 
-                <main className="oflem-container py-12 animate-in fade-in duration-700">
+                <main className="oflem-container py-16 animate-in fade-in slide-in-from-top-4 duration-1000">
                     <div className="max-w-5xl mx-auto">
-                        <div className="mb-10 text-center">
-                            <OnboardingProgressBar step={2} />
-                            <h1 className="text-4xl font-black text-oflem-charcoal mb-4">
-                                {t('onboarding.excellent_news')} <span className="text-oflem-terracotta">{providers.length} {t('onboarding.providers_count')}</span> {t('onboarding.around_you')}
-                            </h1>
-                            <p className="text-gray-muted font-bold text-lg">
-                                {t('onboarding.signup_to_contact_hint')}
-                            </p>
+                        <div className="mb-16 text-center">
+                            <div className="inline-block mb-8">
+                                <OnboardingProgressBar step={2} />
+                            </div>
+                            
+                            {providers.length > 0 ? (
+                                <>
+                                    <h1 className="text-4xl md:text-5xl font-black text-oflem-charcoal mb-6 tracking-tight">
+                                        {t('onboarding.excellent_news')} <br className="hidden md:block" />
+                                        <span className="bg-gradient-to-r from-oflem-terracotta to-orange-400 bg-clip-text text-transparent">
+                                            {providers.length} {t('onboarding.providers_count')}
+                                        </span> {t('onboarding.around_you')}
+                                    </h1>
+                                    <p className="text-gray-500 font-medium text-xl max-w-2xl mx-auto">
+                                        {t('onboarding.signup_to_contact_hint')}
+                                    </p>
+                                </>
+                            ) : (
+                                <>
+                                    <h1 className="text-4xl md:text-5xl font-black text-oflem-charcoal mb-6 tracking-tight">
+                                        {t('onboarding.almost_there')}
+                                    </h1>
+                                    <p className="text-gray-500 font-medium text-xl max-w-2xl mx-auto">
+                                        {t('onboarding.no_providers_nearby_hint')}
+                                    </p>
+                                </>
+                            )}
                         </div>
 
-                        <div className="mb-10 p-8 bg-white border border-gray-border rounded-[40px] shadow-sm flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden relative">
-                            <div className="oflem-final-cta-orb-1" style={{ opacity: 0.05, top: '-50px', left: '-50px' }}></div>
-                            <div style={{ position: 'relative', zIndex: 1 }}>
+                        <div className="mb-12 p-10 bg-white border border-gray-100 rounded-[32px] shadow-[0_20px_50px_rgba(0,0,0,0.04)] flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden group">
+                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-oflem-terracotta/20 via-oflem-terracotta to-oflem-terracotta/20"></div>
+                            <div className="relative z-10 text-center md:text-left">
                                 <h3 className="text-2xl font-black text-oflem-charcoal mb-2">{t('onboarding.last_step')}</h3>
-                                <p className="text-gray-muted font-bold">{t('onboarding.finalize_request_hint')}</p>
+                                <p className="text-gray-500 font-bold">{t('onboarding.finalize_request_hint')}</p>
                             </div>
-                            <div className="flex gap-4 items-center relative z-1">
+                            <div className="relative z-10">
                                 <Link 
                                     href={route('register.client')} 
-                                    className="px-10 py-5 bg-oflem-charcoal text-white font-black rounded-full hover:bg-black transition-all shadow-xl text-lg flex items-center gap-3"
+                                    className="group/btn px-10 py-5 bg-oflem-charcoal text-white font-black rounded-full hover:bg-black transition-all shadow-[0_15px_30px_rgba(26,29,63,0.2)] hover:shadow-[0_20px_40px_rgba(26,29,63,0.3)] hover:-translate-y-1 text-lg flex items-center gap-3"
                                 >
-                                    {t('onboarding.continue_to_account')} →
+                                    {t('onboarding.continue_to_account')}
+                                    <svg className="group-hover/btn:translate-x-1 transition-transform" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
                                 </Link>
                             </div>
                         </div>
 
-                        {providers.length > 0 ? renderProviders() : emptyState}
+                        <div className="relative">
+                            {providers.length > 0 ? renderProviders() : emptyState}
+                        </div>
                     </div>
                 </main>
             </div>

@@ -37,7 +37,7 @@ class OTPService
             ->count();
 
         if ($recentOTPs >= 5) {
-            throw new \Exception('Too many OTP requests. Please wait before requesting another code.');
+            throw new \Exception('Trop de demandes de code. Veuillez patienter avant d\'en demander un nouveau.');
         }
 
         // Generate new OTP
@@ -64,27 +64,44 @@ class OTPService
     }
 
     /**
-     * Verify OTP code
+     * Verify OTP code and return status
+     * Statuses: 'success', 'invalid', 'expired', 'too_many_attempts', 'not_found'
      */
-    public function verifyOTP(string $token, string $code): bool
+    public function verifyOTPWithStatus(string $token, string $code): string
     {
         $otpVerification = OTPVerification::findByToken($token);
 
-        if (!$otpVerification || $otpVerification->isExpired() || $otpVerification->isVerified()) {
-            return false;
+        if (!$otpVerification) {
+            return 'not_found';
+        }
+
+        if ($otpVerification->isVerified()) {
+            return 'already_verified';
+        }
+
+        if ($otpVerification->isExpired()) {
+            return 'expired';
         }
 
         if (!$otpVerification->canAttempt()) {
-            return false;
+            return 'too_many_attempts';
         }
 
         if (!Hash::check($code, $otpVerification->otp_code)) {
             $otpVerification->incrementAttempts();
-            return false;
+            return 'invalid';
         }
 
         $otpVerification->verify();
-        return true;
+        return 'success';
+    }
+
+    /**
+     * Verify OTP code (backward compatibility)
+     */
+    public function verifyOTP(string $token, string $code): bool
+    {
+        return $this->verifyOTPWithStatus($token, $code) === 'success';
     }
 
     /**

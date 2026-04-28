@@ -138,10 +138,16 @@ class AuthController extends Controller
             'type' => 'required|in:registration,login',
         ]);
 
-        $verified = $this->otpService->verifyOTP($request->token, $request->code);
+        $status = $this->otpService->verifyOTPWithStatus($request->token, $request->code);
 
-        if (!$verified) {
-            return response()->json(['message' => 'Invalid verification code'], 400);
+        if ($status !== 'success') {
+            $message = match ($status) {
+                'expired' => 'The verification code has expired.',
+                'too_many_attempts' => 'Too many attempts. Please request a new code.',
+                'already_verified' => 'This account is already verified.',
+                default => 'Invalid verification code',
+            };
+            return response()->json(['message' => $message], 400);
         }
 
         // Find user from token
@@ -275,10 +281,15 @@ class AuthController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $verified = $this->otpService->verifyOTP($request->token, $request->code);
+        $status = $this->otpService->verifyOTPWithStatus($request->token, $request->code);
 
-        if (!$verified) {
-            return response()->json(['message' => 'Invalid or expired verification code'], 400);
+        if ($status !== 'success') {
+            $message = match ($status) {
+                'expired' => 'The verification code has expired.',
+                'too_many_attempts' => 'Too many attempts. Please request a new code.',
+                default => 'Invalid or expired verification code',
+            };
+            return response()->json(['message' => $message], 400);
         }
 
         $otpVerification = \App\Models\OTPVerification::where('token', $request->token)->first();

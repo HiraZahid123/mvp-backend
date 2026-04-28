@@ -13,6 +13,8 @@ export default function VerifyLoginOTP() {
     const [timeLeft, setTimeLeft] = useState(30);
     const [canResend, setCanResend] = useState(false);
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
+    const [resendStatus, setResendStatus] = useState(null); // 'sending', 'sent', 'error'
+    const [resendError, setResendError] = useState(null);
 
     const { data, setData, post, processing, errors, reset } = useForm({
         code: '',
@@ -36,8 +38,19 @@ export default function VerifyLoginOTP() {
     const resendOTP = () => {
         setTimeLeft(30);
         setCanResend(false);
+        setResendStatus('sending');
+        setResendError(null);
+        
         axios.post(route('login.verify-otp.resend'))
-            .catch(() => {});
+            .then(response => {
+                setResendStatus('sent');
+                setTimeout(() => setResendStatus(null), 5000);
+            })
+            .catch(error => {
+                setResendStatus('error');
+                setResendError(error.response?.data?.message || 'Failed to resend code');
+                setCanResend(true);
+            });
     };
 
     const handlePaste = (e) => {
@@ -122,7 +135,13 @@ export default function VerifyLoginOTP() {
                         </div>
                     </div>
 
-                    <InputError message={errors.code || errors.general} className="text-center ml-0" />
+                    <InputError message={errors.code || errors.general || resendError} className="text-center ml-0" />
+                    
+                    {resendStatus === 'sent' && (
+                        <p className="text-sm text-green-600 font-bold text-center mt-2 animate-in fade-in">
+                            {t('onboarding.otp_resent_alert')}
+                        </p>
+                    )}
 
                     <PrimaryButton
                         type="submit"

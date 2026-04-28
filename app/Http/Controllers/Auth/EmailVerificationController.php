@@ -79,9 +79,18 @@ class EmailVerificationController extends Controller
             $token = $otp?->token;
         }
 
-        if (!$token || !$this->otpService->verifyOTP($token, $request->code)) {
+        $status = $this->otpService->verifyOTPWithStatus($token ?? '', $request->code);
+
+        if ($status !== 'success') {
+            $message = match ($status) {
+                'expired' => 'Le code de vérification a expiré.',
+                'too_many_attempts' => 'Trop de tentatives. Veuillez demander un nouveau code.',
+                'already_verified' => 'Cet e-mail est déjà vérifié.',
+                default => 'Code de vérification invalide.',
+            };
+
             throw ValidationException::withMessages([
-                'code' => 'Code de vérification invalide ou expiré.',
+                'code' => $message,
             ]);
         }
 
@@ -112,9 +121,19 @@ class EmailVerificationController extends Controller
         $email = session('verification_email') ?? $request->email;
 
         if (!$email) {
-            return back()->withErrors(['email' => 'Email non trouvé.']);
+            return back()->withErrors(['code' => 'Session expirée. Veuillez vous réinscrire.']);
         }
 
-        return $this->sendCode(new Request(['email' => $email]));
+        $user = User::where('email', $email)->first();
+
+        try {
+            $otpVerification = $this->otpService->sendOTP($email, 'email', $user);
+            session(['verification_token' => $otpVerification->token]);
+            session(['verification_email' => $email]);
+        } catch (\Exception $e) {
+            return back()->withErrors(['code' => $e->getMessage()]);
+        }
+
+        return back()->with('status', 'Un nouveau code a été envoyé.');
     }
 }

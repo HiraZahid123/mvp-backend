@@ -107,10 +107,17 @@ class OTPVerificationController extends Controller
 
         try {
             // Verify OTP
-            $verified = $this->otpService->verifyOTP($otpToken, $request->code);
+            $status = $this->otpService->verifyOTPWithStatus($otpToken, $request->code);
 
-            if (!$verified) {
-                return back()->withErrors(['code' => 'Invalid verification code.']);
+            if ($status !== 'success') {
+                $message = match ($status) {
+                    'expired' => 'Le code de vérification a expiré.',
+                    'too_many_attempts' => 'Trop de tentatives. Veuillez demander un nouveau code.',
+                    'already_verified' => 'Cet identifiant est déjà vérifié.',
+                    default => 'Code de vérification invalide.',
+                };
+
+                return back()->withErrors(['code' => $message]);
             }
 
             // Mark user as verified based on method used

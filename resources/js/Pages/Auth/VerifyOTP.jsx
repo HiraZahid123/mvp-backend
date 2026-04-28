@@ -8,8 +8,9 @@ export default function VerifyOTP({ email = 'votre@email.ch' }) {
     const { t } = useTranslation();
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
     const inputs = useRef([]);
+    const [resendStatus, setResendStatus] = useState(null); // 'sending', 'sent'
 
-    const { data, setData, post, processing, errors } = useForm({
+    const { data, setData, post, processing, errors, setError } = useForm({
         code: '',
     });
 
@@ -53,8 +54,15 @@ export default function VerifyOTP({ email = 'votre@email.ch' }) {
     };
 
     const resendCode = () => {
-        router.post(route('auth.verify-otp.send'), {}, {
-            onSuccess: () => alert(t('onboarding.otp_resent_alert')),
+        setResendStatus('sending');
+        router.post(route('auth.verify-otp.send'), { method: 'email' }, {
+            onSuccess: () => {
+                setResendStatus('sent');
+                setTimeout(() => setResendStatus(null), 5000);
+            },
+            onError: (err) => {
+                setResendStatus(null);
+            }
         });
     };
 
@@ -127,6 +135,12 @@ export default function VerifyOTP({ email = 'votre@email.ch' }) {
                         {(errors.code || errors.general) && (
                             <div style={{ color: '#dc2626', fontSize: '13px', marginBottom: '24px', fontWeight: 'bold', background: '#fff5f5', border: '1.5px solid #fca5a5', borderRadius: '12px', padding: '12px 16px' }}>
                                 {errors.code || errors.general}
+                            </div>
+                        )}
+
+                        {resendStatus === 'sent' && (
+                            <div style={{ color: '#059669', fontSize: '13px', marginBottom: '24px', fontWeight: 'bold', background: '#f0fdf4', border: '1.5px solid #86efac', borderRadius: '12px', padding: '12px 16px' }}>
+                                {t('onboarding.otp_resent_alert')}
                             </div>
                         )}
 

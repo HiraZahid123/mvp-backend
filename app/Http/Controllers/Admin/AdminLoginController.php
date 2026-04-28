@@ -77,12 +77,20 @@ class AdminLoginController extends Controller
             return redirect()->route('admin.login')->withErrors(['email' => 'Session expired. Please login again.']);
         }
 
-        if ($this->otpService->verifyOTP($token, $request->code)) {
+        $status = $this->otpService->verifyOTPWithStatus($token, $request->code);
+
+        if ($status === 'success') {
             session(['admin_2fa_verified' => true]);
             return redirect()->route('admin.dashboard');
         }
 
-        return back()->withErrors(['code' => 'Invalid or expired code.']);
+        $message = match ($status) {
+            'expired' => 'Le code de vérification a expiré.',
+            'too_many_attempts' => 'Trop de tentatives. Veuillez demander un nouveau code.',
+            default => 'Code de vérification invalide.',
+        };
+
+        return back()->withErrors(['code' => $message]);
     }
 
     /**

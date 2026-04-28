@@ -17,7 +17,7 @@ export default function VerifyEmailCode({ email }) {
         code: '',
     });
 
-    const { post: resendPost, processing: resending } = useForm({
+    const { data: resendData, post: resendPost, processing: resending, errors: resendErrors } = useForm({
         email: email,
     });
 
@@ -116,7 +116,14 @@ export default function VerifyEmailCode({ email }) {
             onSuccess: () => {
                 setTimeLeft(30);
                 setCanResend(false);
+                // Clear any previous errors
+                setCode(['', '', '', '', '', '']);
+                document.getElementById('code-0')?.focus();
             },
+            onError: (err) => {
+                console.error('Resend failed:', err);
+                setCanResend(true);
+            }
         });
     };
 
@@ -164,7 +171,7 @@ export default function VerifyEmailCode({ email }) {
                             />
                         ))}
                     </div>
-                    <InputError message={errors.code} className="mt-3 text-center" />
+                    <InputError message={errors.code || resendErrors.code} className="mt-3 text-center" />
                 </div>
 
                 {/* Resend Code */}

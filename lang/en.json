@@ -732,6 +732,8 @@
         "signup_to_contact_hint": "Sign up in 30 seconds to contact them and secure your mission.",
         "finalize_request_hint": "Register now to finalize your request and start chatting.",
         "continue_to_account": "Continue to Account",
+        "almost_there": "Almost there!",
+        "no_providers_nearby_hint": "We are looking for providers to help you. Post your mission to notify everyone in your area.",
         "help_found_for": "Help found for",
         "choose_provider_hint": "Choose a provider to start negotiating and finalize your mission.",
         "reviews": "reviews",
