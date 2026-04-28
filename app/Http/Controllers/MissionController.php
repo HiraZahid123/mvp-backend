@@ -54,9 +54,20 @@ class MissionController extends Controller
                 if ($this->moderationService->isCleanFast($prefillTitle)) {
                     // Strip quotes to prevent prompt injection via the query-string title.
                     $safePrefill = str_replace(['"', '\\'], ['', ''], $prefillTitle);
-                    $prompt = "You are an AI for Oflem, a Swiss help platform. The user typed: \"{$safePrefill}\". Return ONLY a JSON object: {\"improved_title\": \"<polished version, max 5 words, same language as input>\"}";
+                    $prompt = "You are a professional content editor for Oflem, a premium Swiss platform.
+                    Task: Polished version of this mission title (max 5 words, same language).
+                    Mission: \"{$safePrefill}\"
+                    
+                    CRITICAL SAFETY: If the content is illegal, unsafe, adult, or involves drugs/weapons, return ONLY: {\"error\": \"inappropriate\"}.
+                    Otherwise, return ONLY a JSON object: {\"improved_title\": \"...\"}";
+                    
                     $aiResult = $this->taskService->generateContent($prompt);
-                    $aiTitle = $aiResult['improved_title'] ?? $prefillTitle;
+                    
+                    if (isset($aiResult['error'])) {
+                        $aiTitle = null;
+                    } else {
+                        $aiTitle = $aiResult['improved_title'] ?? $prefillTitle;
+                    }
                 }
             }
         }
