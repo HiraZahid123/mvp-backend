@@ -4,9 +4,12 @@ namespace App\Services;
 
 use App\Models\ChatStrike;
 use App\Models\User;
+use App\Services\ModerationService;
 
 class ChatModerationService
 {
+    public function __construct(protected ModerationService $moderationService) {}
+
     protected $patterns = [
         'phone'    => '/(\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/',
         'email'    => '/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/',
@@ -54,6 +57,16 @@ class ChatModerationService
                 'allowed' => false,
                 'reason' => 'chat_suspended',
                 'suspended_until' => $user->chat_suspended_until,
+            ];
+        }
+
+        // Check prohibited content (drugs, violence, adult, etc.) before contact-info patterns.
+        if (!$this->moderationService->isCleanFast($content)) {
+            $this->issueStrike($user, 'prohibited_content', mb_substr($content, 0, 100));
+            return [
+                'allowed' => false,
+                'reason' => 'prohibited_content',
+                'violation_type' => 'prohibited_content',
             ];
         }
 

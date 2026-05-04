@@ -82,26 +82,44 @@ class MissionController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'location' => 'nullable|string|max:255',
-            'lat' => 'nullable|numeric|between:-90,90',
-            'lng' => 'nullable|numeric|between:-180,180',
-            'exact_address' => 'nullable|string|max:500',
-            'date_time' => 'nullable|date|after_or_equal:now',
-            'budget' => 'nullable|numeric|min:10',
-            'price_type' => 'required|in:fixed,open',
-            'additional_details' => 'nullable|string',
+            'title'              => 'required|string|max:255',
+            'description'        => 'nullable|string|max:5000',
+            'location'           => 'nullable|string|max:255',
+            'lat'                => 'nullable|numeric|between:-90,90',
+            'lng'                => 'nullable|numeric|between:-180,180',
+            'exact_address'      => 'nullable|string|max:500',
+            'date_time'          => 'nullable|date|after_or_equal:now',
+            'budget'             => 'nullable|numeric|min:10',
+            'price_type'         => 'required|in:fixed,open',
+            'additional_details' => 'nullable|string|max:2000',
         ]);
 
-        $content = $validated['title'] . ' ' . ($validated['description'] ?? '');
+        // Concatenate every user-supplied text field so nothing slips through unmoderated.
+        $content = implode(' ', array_filter([
+            $validated['title'],
+            $validated['description']        ?? '',
+            $validated['additional_details'] ?? '',
+            $validated['exact_address']      ?? '',
+        ]));
+
+        // Fast regex check runs first on the FULL content (no truncation).
+        // Rejects immediately without spending an AI token, and acts as the
+        // fail-closed safety net when AI is unavailable.
+        if (!$this->moderationService->isCleanFast($content)) {
+            return back()->withErrors(['title' => 'Ce contenu n\'est pas autorisé sur Oflem.']);
+        }
 
         $aiResult = $this->moderationService->isCleanAI($content);
         if (!$aiResult['is_clean']) {
             return back()->withErrors(['title' => $aiResult['reason'] ?? 'Ce contenu n\'est pas autorisé sur Oflem.']);
         }
 
-        $validated['category'] = $request->input('category') ?? ($aiResult['category'] ?? 'Other');
+        // Accept category only if it's one of the known values; otherwise let AI decide.
+        $allowedCategories = ['Cleaning','Moving','DIY','IT','Admin','Delivery','Pets','Gardening','Events','Education','Wellness','Other'];
+        $requestedCategory = $request->input('category');
+        $validated['category'] = in_array($requestedCategory, $allowedCategories, true)
+            ? $requestedCategory
+            : ($aiResult['category'] ?? 'Other');
 
         if (!Auth::check()) {
             session(['pending_mission' => $validated]);
@@ -205,15 +223,26 @@ class MissionController extends Controller
         if (Auth::id() != $mission->user_id) abort(403);
         if ($mission->status !== Mission::STATUS_OUVERTE) return back()->withErrors(['mission' => 'Cannot update.']);
 
+        $allowedCategories = ['Cleaning','Moving','DIY','IT','Admin','Delivery','Pets','Gardening','Events','Education','Wellness','Other'];
+
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'budget' => 'nullable|numeric|min:10',
-            'date_time' => 'nullable|date|after_or_equal:now',
-            'category' => 'nullable|string|max:100',
+            'title'       => 'required|string|max:255',
+            'description' => 'nullable|string|max:5000',
+            'budget'      => 'nullable|numeric|min:10',
+            'date_time'   => 'nullable|date|after_or_equal:now',
+            'category'    => ['nullable', 'string', 'in:' . implode(',', $allowedCategories)],
         ]);
 
-        $aiResult = $this->moderationService->isCleanAI($validated['title'] . ' ' . ($validated['description'] ?? ''));
+        $content = implode(' ', array_filter([
+            $validated['title'],
+            $validated['description'] ?? '',
+        ]));
+
+        if (!$this->moderationService->isCleanFast($content)) {
+            return back()->withErrors(['title' => 'Ce contenu n\'est pas autorisé sur Oflem.']);
+        }
+
+        $aiResult = $this->moderationService->isCleanAI($content);
         if (!$aiResult['is_clean']) {
             return back()->withErrors(['title' => $aiResult['reason'] ?? 'Ce contenu n\'est pas autorisé sur Oflem.']);
         }

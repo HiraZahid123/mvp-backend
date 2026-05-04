@@ -99,8 +99,9 @@ export default function Create({ prefillTitle = '', aiTitle = null, category = n
             }
             return response.data;
         } catch {
-            setShieldStatus('idle');
-            return { is_clean: true }; // fail open for UX; server enforces the final gate
+            setShieldStatus('error');
+            setModerationError(t('Unable to verify content. Please try again.'));
+            return { is_clean: false }; // fail closed: block submit if we cannot reach the moderation API
         }
     };
 
